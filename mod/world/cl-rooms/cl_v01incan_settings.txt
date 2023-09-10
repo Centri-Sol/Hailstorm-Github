@@ -1,0 +1,10 @@
+CeilingDrips: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+PlacedObjects: LanternOnStick><2518.375><406.8443><19~-72, LanternOnStick><2088.559><432.5602><11~-78, LanternOnStick><2019.187><458.0703><-23~-106, LanternOnStick><604.9398><455.0631><0~-81, LanternOnStick><292.1465><413.8289><12~-99, ReliableSpear><121.072><332.8134><, LanternOnStick><1451.594><444.3749><12~-96, 
+WetTerrain: OFF

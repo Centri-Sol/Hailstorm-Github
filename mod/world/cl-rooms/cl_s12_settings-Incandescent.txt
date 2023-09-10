@@ -1,0 +1,11 @@
+CeilingDrips: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 1.497852E-12
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+AmbientSounds: OMNI><AM_ENV-CityTone.ogg><832.3001><644.744><0.2826087><0.7847826, OMNI><AM_WIN-SubWnd.ogg><651.1884><647.5673><0.2826087><1, 
+FadePalette: 0, 0.2608696
+WetTerrain: OFF

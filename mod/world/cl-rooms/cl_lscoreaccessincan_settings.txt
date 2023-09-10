@@ -1,0 +1,15 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+WaveSpeed: 0.5657158
+WaveLength: 0.7171421
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 12
+Effects: Coldness-1-19-70, Dustpuffs-1-23-127, SilenceWater-0.423913-279-19, Desaturation-0.1413043-284-74, 
+PlacedObjects: LightSource><1690.069><1470.336><0.2173913~White~-1194~-759~-320~-486.3975~1~0~None~0~0, SnowSource><1639.603><1464.365><Radial~-819~-747~-34~-184.3975~0.7934783~1, SnowSource><546.4426><866.054><Radial~60~279~50~86.60254~0.6195652~1, SnowSource><2535.058><914.8073><Radial~132~354~455~-208.3975~0.4347826~1, SteamPipe><2842.312><493.1814><-14~18, SteamPipe><2847.601><488.4224><-50~-20, Stowaway><2754.858><1289.582><0~-68, CosmeticSlimeMold2><3005.208><963.4458><-51~98, CosmeticSlimeMold><2864.896><822.1713><-1~87, SlimeMold><2956.945><904.7938><39~-112~3~5, SlimeMold><3014.948><981.9435><-22~-126~8~9, 
+AmbientSounds: SPOT><AM_WIN-StrongWnd2.ogg><878.6364><612.6038><0.2499998><1><1664.636><1474.604><432.6447><-289.3553><0><0.6869566, OMNI><AM_ENV-NatWind.ogg><702.3168><651.0803><0.2608696><1, DIR><AM_WIN-SubWnd.ogg><701.6323><543.6><0.1956522><1><180><0, SPOT><AM_WIN-SubWnd.ogg><885.9348><378.3264><0.3913043><1><1547.935><78.32639><-519.3553><105.6447><0><1, SPOT><SO_WAT-MoreDrips.ogg><886.5959><252.6226><0.5><1><186.5959><237.6226><715.6447><195.6447><0><0.7304349, SPOT><SO_WAT-ProperDrips.ogg><878.0854><490.1136><0.5><1><3115.085><328.1136><-573.3553><-4.355347><0><1, OMNI><AM_ENV-CityTone.ogg><533.7043><644.9447><0.2065217><1, SPOT><AM_IND-DeepHum.ogg><725.9479><311.4714><0.2717391><1><3210.948><435.4714><-426.3553><70.64465><0><1, 
+FadePalette: 0, 0.4891304, 0.5760869, 0.5434783, 0.4130435, 0.4130435, 0.4021739
+WetTerrain: OFF
