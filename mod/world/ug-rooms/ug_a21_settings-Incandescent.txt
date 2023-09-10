@@ -1,0 +1,19 @@
+DangerType: Rain
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.51
+WaveLength: 1
+WaveAmplitude: 0.0001
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 4
+EffectColorA: 6
+EffectColorB: 2
+Effects: Fog-0.1956522-265-80, 
+PlacedObjects: DangleFruit><333.8203><529.1622><-444~22~4~6, DangleFruit><822.686><497.0736><143.0001~15~4~6, CustomDecal><594.3><106.7535><-1~250~253~260~259~0~372.0001~-426~0.3043478~1~0~SR~0.6413044~0~0.7282609~0.5869565~0.2717391~1~0.2717391~0.6304348, CustomDecal><290.1666><117.1393><-57~196~342~263~344~29~-426~-439~0.3043478~1~0~Radio~0~0.3478261~0.8043478~0.3478261~1~0.9130435~1~0.5543478, BlueToken><637.5531><556.7147><-12~59~329~33~1~Hazer~White|Yellow|Red|Rivulet|Artificer|Spear|Gourmand~0~0~0~0, DeadTokenStalk><560.095><551.6236><12~67, Vine><439.5415><582.6957><-302~-45, Vine><751.7052><586.8051><190~-241, Vine><589.6571><616.8229><234~-259, 
+AmbientSounds: SPOT><SO_WAT-LilDrips.ogg><268.304><125.29><0.4021739><0.8826087><275.304><412.29><-128.3553><39.64465><0><0.3500001, SPOT><SO_NAT-LilDrips.ogg><838.1865><457.4276><0.3369565><1.058696><736.1865><171.4276><-159.3553><42.64465><0><0.4586958, OMNI><AM_IND-Utility02.ogg><837.3013><645.9775><0><1, OMNI><SO_IND-HeatDuct.ogg><857.5117><573.3004><0><1, SPOT><AM_ENV-LushNight.ogg><650.4948><514.8><0.3913043><1><-11.50525><480.8><119.6447><-212.3553><0><1, 
+FadePalette: 11, 0.4347826
+WetTerrain: OFF

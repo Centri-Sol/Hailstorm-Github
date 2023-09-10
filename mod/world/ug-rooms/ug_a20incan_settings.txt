@@ -1,0 +1,19 @@
+DangerType: Rain
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.51
+WaveLength: 1
+WaveAmplitude: 0.0001
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 8
+EffectColorA: 18
+EffectColorB: 2
+Effects: WaterDepth-0.1195652-267-76, Fog-0.2065217-269-142, HeatWave-0.2608696-278-15, SilenceWater-0.326087-16-140, 
+PlacedObjects: WaterNut><521.7762><441.3017><382.9999~-489~5~8, WaterNut><618.358><449.8591><283.9999~-422~5~8, KarmaFlower><330.3511><376.6336><-434~-411~5~7, BlinkingFlower><775.55><367.0017><, BlinkingFlower><742.5701><351.9128><, BlinkingFlower><439.9491><445.9812><, BlinkingFlower><490.653><455.1749><, BlinkingFlower><727.8627><457.1652><, BlinkingFlower><225.5502><455.9905><, BlinkingFlower><190.6141><405.8532><, BlinkingFlower><262.8883><467.0841><, BlinkingFlower><464.7606><489.6997><, BlinkingFlower><653.5899><462.4286><, BlinkingFlower><532.6447><484.42><, Vine><186.0782><435.8524><139~80, Vine><661.4574><511.1954><-163~-1, 
+AmbientSounds: OMNI><AM_ENV-LushNight.ogg><824.9368><496.9397><0.3804348><1, SPOT><AM_ENV-CricketsWnd.ogg><654.0082><521.1998><0.4130435><1><308.0082><640.1998><-24.35535><-144.3553><0><0.8065219, 
+FadePalette: 11, 0.8152174
+WetTerrain: OFF

@@ -1,0 +1,18 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.326087
+RumbleIntensity: 0
+WaveSpeed: 0.4998346
+WaveLength: 0.9183955
+WaveAmplitude: 0.01630434
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.6243479
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 2
+Effects: Coldness-1-281-83, Fog-0-283-143, HeatWave-0-285-25, Flies-0-16-77, WaterDepth-0.07608695-277-194, 
+PlacedObjects: LanternOnStick><312.8477><373.3796><-18~-85, LanternOnStick><262.5961><413.0746><23~-141, LanternOnStick><805.0934><373.8755><-6~-76, LanternOnStick><500.1942><435.3079><-43~-102, LanternOnStick><420.585><412.681><6~-77, LanternOnStick><899.6465><412.8289><29~-81, 
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><831.8464><500.0748><0.3043478><1, OMNI><AM_IND-Utility02.ogg><837.3013><645.9775><0><1, OMNI><SO_IND-HeatDuct.ogg><819.5117><569.3004><0><1, OMNI><SO_WAT-ProperDrips.ogg><659.6927><568.8033><0.5><1, 
+FadePalette: 8, 0.326087
+WetTerrain: OFF

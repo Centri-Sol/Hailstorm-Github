@@ -1,0 +1,19 @@
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.51
+WaveLength: 1
+WaveAmplitude: 0.0001
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.8369565
+Grime: 0.1956522
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 9
+Effects: RockFlea-0.3804348-20-20, HeatWave-0.1086956-273-74, SilenceWater-0.2717391-14-125, Fog-0-270-136, 
+PlacedObjects: WaterNut><1898.197><449.3073><-65~87~5~8, DataPearl><1701.891><405.6676><-884~29~0~0~DS~1, InsectGroup><377.1484><303.4223><279~24~0~0~FireFly~0.7826087, InsectGroup><1614.171><406.4336><103~142~139~192~FireFly~0.5, InsectGroup><2011.192><497.0587><162~116~-5~100~FireFly~0.5, InsectGroup><2340.05><433.2546><0~100~-82~163~FireFly~0.5, BubbleGrass><2682.95><436.2528><231~189~8~12, Vine><3053.3><206.9946><144~117, Vine><3404.654><210.8718><75~110, Vine><3576.3><192.9884><-31~131, Vine><3806.311><209.9337><60~116, Vine><2693.347><324.1747><101~-138, 
+AmbientSounds: SPOT><SO_NAT-LilDrips.ogg><652.9898><531.5502><0.3804348><1><2545.99><427.5502><-193.3553><1.644653><0><0.5347828, SPOT><SO_WAT-LilDrips.ogg><485.5674><534.9183><0.2934784><1><1975.567><460.9183><-146.3553><64.64465><0><0.3391306, OMNI><AM_IND-Utility02.ogg><837.3013><645.9775><0.173913><1, OMNI><SO_IND-HeatDuct.ogg><819.5117><569.3004><0><1, SPOT><AM_ENV-LushNight.ogg><815.8018><437.7229><0.3804348><1><3801.802><270.7229><-354.3553><-2.355347><0><1, SPOT><AM_ENV-CricketsWnd.ogg><832.6026><315.3648><0.4130435><1><2996.603><383.3648><212.6447><-85.35535><0><1, SPOT><AM_SUB-BlankState.ogg><845.2128><199.0535><0.25><1><5.21283><327.0535><785.6447><-75.35535><0><1, SPOT><AM_ENV-CricketsWnd.ogg><649.9419><414.9436><0.3695652><1><157.9419><254.9436><264.6447><49.64465><0><0.9804349, 
+FadePalette: 8, 0.7717391, 0.75, 0.7282609, 0.7065217
+WetTerrain: OFF
