@@ -1,0 +1,20 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.4306504
+WaveLength: 0.7153252
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.4456522
+Grime: 0.2608696
+BkgDroneVolume: 0.2869565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorA: 10
+EffectColorB: 2
+Effects: Flies-0-20-20, Coldness-1-276-69, Dustpuffs-1-24-124, SkyDandelions-0.25-275-22, 
+PlacedObjects: CustomDecal><19.05359><243.7122><0~268.9777~521.8167~268.9777~521.8167~0~-76~-572~0.173913~0.4021739~0~GreySnakes~0~0~0.423913~0~0.5434783~1~0.3695652~0.6739131, CustomDecal><73.17957><267.4119><0~241.0305~429.6088~241.0305~429.6088~0~-269~-596~0.1847826~0.4021739~0~IRAF~1~0.3586957~1~0.3586957~0.3586957~0.3586957~0.4130435~0.3586957, SnowSource><384.1502><637.9233><Radial~1276~-750~-578~-94.39752~0.8586958~0.5, SnowSource><244.3166><285.1886><Strip~-198~293~-347~-302.3975~1~0, SnowSource><679.1845><609.3271><None~180~7~228.0001~-667.3975~0.8586956~0.2065217, SnowSource><1000.565><350.3255><Radial~-55~288~-96~-242.3975~0.8043478~0.4021739, SnowSource><-98.85828><306.0818><Radial~411~-100~-96~148.6025~1~0.5, SnowSource><344.6472><620.8647><Radial~191~10~-538~-255.3975~1~0, DandelionPeach><93.0528><355.7833><-290~-284~7~10, SnowSource><699.9309><318.1877><UnSnow~64~125~210~-291.3975~0.3804348~1, DandelionPatch><268.0023><288.8><-131~141, 
+AmbientSounds: OMNI><AM_ENV-LightWind.ogg><711.424><492.3486><0><1, OMNI><AM_ENV-WinterHum.ogg><714.2805><420.8023><0.3152174><1, 
+FadePalette: 15, 0.6304348
+WetTerrain: OFF

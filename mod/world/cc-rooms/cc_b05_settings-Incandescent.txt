@@ -1,0 +1,18 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.2883848
+WaveLength: 0.6441924
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.4456522
+BkgDroneVolume: 0.2869565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorB: 7
+Effects: Flies-0-5-47, Fog-0.1195652-6-0, Coldness-1-259-49, Dustpuffs-1-5-98, SkyDandelions-0.3369565-259-1, 
+PlacedObjects: CustomDecal><179.358><248.6409><-5~195.491~233.1211~176.491~207.1211~-18~-244~-567~0.326087~1~0~BlueWhiteJunk~0.6630435~0~0.326087~0~0.5~0.6304348~0.173913~0.4673913, SnowSource><971.557><367.5583><None~1279~-773~49~-412.3975~0.5543478~1, DandelionPeach><385.7736><644.3014><-466~-90~7~13, DandelionPeach><710.1504><653.3818><-791~-181~9~15, SnowSource><114.6733><231.3498><Radial~-100~191~75~-281.3975~1~0, SnowSource><156.95><628.0049><Strip~440~1~287~-675.3975~1~0, SnowSource><863.1849><616.6738><Strip~-763~-132~-167~-663.3975~1~0, SnowSource><1361.658><617.9275><Radial~-127~43~-86~-662.3975~1~0, SnowSource><2168.363><233.6046><Strip~-270~26~-131~-275.3974~1~0, SnowSource><2149.64><628.9167><Strip~-203~-3~-111~-589.3975~1~0, SnowSource><1757.038><625.8037><Strip~139~-1~282~-505.3975~1~0, SnowSource><528.6898><224.3132><Radial~-119~164~-616~-168.3975~1~0, SnowSource><939.111><275.9164><Radial~182~86~590~-325.3975~1~0, SnowSource><1762.7><295.2445><UnSnow~19~232~277~-86.39746~0.2934783~1, SnowSource><1396.552><552.2247><UnSnow~-16~44~641~-258.3975~0.4130435~1, DandelionPatch><326.0931><685.626><88~-67, DandelionPatch><653.449><666.7695><48~-80, DandelionPatch><1108.202><644.0009><-27~-60, DandelionPatch><201.3818><265.5887><0~100, DandelionPatch><1057.32><246.9119><0~100, 
+AmbientSounds: SPOT><SO_IND-Generator.ogg><597.5757><21.40189><0.2065217><0.9608696><707.5757><343.4019><-110.3553><20.64465><0><0.4152175, SPOT><SO_IND-HVAC.ogg><785.6649><306.431><0.2391304><1><1703.665><331.431><-65.35535><16.64465><0><0.4260871, OMNI><AM_ENV-LightWind.ogg><711.424><492.3486><0><1, OMNI><AM_ENV-WinterHum.ogg><734.6901><399.0592><0.3152174><1, 
+FadePalette: 15, 0.6304348, 0.6304348
+WetTerrain: OFF

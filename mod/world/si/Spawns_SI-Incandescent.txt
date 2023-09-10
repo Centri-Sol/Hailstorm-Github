@@ -1,0 +1,89 @@
+OFFSCREEN : 0-KingVulture-{Night}-2, 0-Scavenger-5
+LINEAGE : OFFSCREEN_SI : 0 : Scavenger-{Night}-1.0, Vulture-{Night}-0.2, KingVulture-{Night}-0.05, MirosVulture-{Night}-0
+LINEAGE : OFFSCREEN_SI : 1 : Vulture-0.25, KingVulture-0
+LINEAGE : OFFSCREEN_SI : 2 : Vulture-0.33, KingVulture-0
+LINEAGE : OFFSCREEN_SI : 3 : Vulture-0.50, KingVulture-0
+LINEAGE : OFFSCREEN_SI : 4 : Vulture-1.00, KingVulture-0
+
+SI_B01 : 4-Snail-{PreCycle}-2, 5-Snail-{PreCycle}-3, 5-Centiwing-{Night}-2, 6-Small Centipede-2
+LINEAGE : SI_B01 : 5 : NONE-0.1, Small Centipede-{Night}-0
+LINEAGE : SI_B01 : 6 : NONE-1.0, NONE-1.0, NONE-0.1, Small Centipede-0.25, Centiwing-{0.5}-0.1, Centiwing-{0.9}-0
+SI_D01 : 5-Cyanwing, 6-Centiwing
+LINEAGE : SI_D01 : 5 : NONE-0.2, Cyan-0.1, NONE-0.2, White-0.15, NONE-0.3, Small Centipede-0
+LINEAGE : SI_D01 : 6 : Small Centipede-0.5, Centiwing-{Night}-0.3, White-0.15, Strawberry-1.0, IcyBlue-0.5, Cyan-{Ignorecycle}-0
+LINEAGE : SI_D01 : 7 : Cicada-0.5, DropBug-0
+LINEAGE : SI_D01 : 8 : Cicada-{PreCycle}-0.5, DropBug-{PreCycle}-0.33, Small Centipede-0
+LINEAGE : SI_D01 : 9 : Cicada-{PreCycle}-0.5, DropBug-{PreCycle}-0.33, Small Centipede-0
+LINEAGE : SI_D01 : 10 : Cicada-0.5, DropBug-0
+SI_B04 : 2-White
+LINEAGE : SI_B04 : 2 : NONE-1.0, NONE-0.1, White-0.3, NONE-0.1, IcyBlue-{Night}-0
+
+SI_C01 : 2-Snail-{PreCycle}-3, 3-Yellow-{Ignorecycle}-3, 4-Snail-{PreCycle}, 5-Snail-{PreCycle}
+LINEAGE : SI_C01 : 4 : Yellow-{Ignorecycle}-0.25, NONE-0.5, White-0.75, IcyBlue-1.0, Cyan-{Night}-0
+LINEAGE : SI_C01 : 5 : Yellow-{Ignorecycle}-0.25, NONE-0.5, White-0.75, IcyBlue-1.0, Cyan-{Night}-0
+SI_C02 : 6-Cyanwing, 7-TentaclePlant, 9-TentaclePlant-{PreCycle} 
+LINEAGE : SI_C02 : 5 : Mimic-0.5, Mimic-0.5, TentaclePlant-0
+LINEAGE : SI_C02 : 6 : NONE-1.0, NONE-0.1, Small Centipede-0
+LINEAGE : SI_C02 : 8 : NONE-0.2, Mimic-{21}-1.0, Mimic-{7}-1.0, Mimic-{14}-1.0, Cyan-{Ignorecycle}-0
+SI_C07 : 1-Centiwing-2, 1-Centiwing-{Night}, 2-Cyan, 2-Cyan-{Night}, 3-Snail-{PreCycle}-4
+LINEAGE : SI_C07 : 1 : Small Centipede-{Night}-1.0, Centiwing-{Night}-0.15, Cyanwing-{Night}-0
+LINEAGE : SI_C07 : 2 : Cyan-{Ignorecycle}-0.01, NONE-1.0, NONE-1.0, NONE-0.05, Freezer-0
+
+SI_SAINTINTRO : 2-White
+
+SI_A17 : 3-Yellow-{Ignorecycle}-3, 4-DropBug-{Night}-2
+SI_A18 : 3-Small Centipede-{Night}-2, 3-Cyanwing-{Night}
+LINEAGE : SI_A18 : 3 : Small Centipede-0.33, Centiwing-0.33, NONE-0.33, IcyBlue-{Night}-0.33, White-{Night}-0.33, Cyan-{Night}-0
+LINEAGE : SI_C05 : 3 : Mimic-{22}-1.0, DropBug-0.5, White-0.33, TentaclePlant-0.25, Cyan-{Ignorecycle}-0
+LINEAGE : SI_C05 : 4 : Mimic-{22}-1.0, DropBug-0.5, White-0.33, TentaclePlant-0.25, Cyan-{Ignorecycle}-0
+LINEAGE : SI_C05 : 5 : NONE-0.2, Yellow-{Ignorecycle}-0.2, Strawberry-0.2, IcyBlue-0.2, White-0.2, Cyan-{Ignorecycle}-0
+LINEAGE : SI_C05 : 6 : NONE-1.0, NONE-0.3, TentaclePlant-{Night}-0
+SI_D06 : 5-DropBug-{Night}, 5-DropBug-{PreCycle}, 7-Yellow-{Ignorecycle}-2, 8-Yellow-{Ignorecycle}-2
+LINEAGE : SI_D06 : 6 : DropBug-{Night}-0.3, Centiwing-{Night}-0.5, NONE-0.2, Strawberry-{Night}-0.2, Centipede-{Night}-0.1, Cyanwing-{Night}-0
+SI_B03 : 3-Centiwing, 3-Centiwing-{Night}, 4-White-{Night}
+LINEAGE : SI_B03 : 3 : NONE-1.0, NONE-1.0, NONE-0.05, Small Centipede-{Night}-0
+SI_B12 : 1-TentaclePlant-{PreCycle}, 2-Centiwing-{Night}, 3-Small Centipede-{Night}-2
+LINEAGE : SI_B12 : 2 : Centiwing-{0.5}-0.5, Centiwing-{0.8}-0.75, NONE-1.0, NONE-0.1, White-{Night}-0.33, IcyBlue-{Night}-0
+LINEAGE : SI_B12 : 3 : Small Centipede-1.0, Centiwing-{0.3}-0.3, Centiwing-{0.6}-0.6, Centiwing-{0.9}-0.9, Cyanwing-0
+SI_C09 : 2-Centiwing, 2-Cyanwing, 2-Small Centipede, 2-Centiwing-{Night}, 3-Snail-{PreCycle}-3
+LINEAGE : SI_C09 : 2 : Small Centipede-{Night}-0.5, Centiwing-{Night}-0.1, NONE-0.05, IcyBlue-{Night}-0.2, White-{Night}-0
+LINEAGE : SI_C09 : 3 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.05, Small Centipede-0
+
+SI_A03x : 3-Yellow-{Ignorecycle}-3
+LINEAGE : SI_A03x : 2 : NONE-1.0, NONE-0.1, IcyBlue-{Night}-0.2, White-{Night}-0.05, Cyan-{Night}-0
+SI_C01x : 3-Yellow-{Night}-3, 3-Snail-{PreCycle}-3
+SI_C06x : 4-Cyanwing, 4-Centiwing-{Night}, 5-Yellow-{Night}, 6-Yellow-{Ignorecycle}-3
+LINEAGE : SI_C06x : 4 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.05, Small Centipede-0
+LINEAGE : SI_C06x : 5 : Yellow-{Night}-0.33, White-{Night}-0.33, IcyBlue-{Night}-0
+SI_B02x : 3-TentaclePlant-{PreCycle}, 3-Yellow-{Ignorecycle}-4, 4-TentaclePlant-{PreCycle}, 4-Small Centipede-{Night}-2
+LINEAGE : SI_B02x : 4 : NONE-1.0, NONE-0.01, Small Centipede-0
+SI_A08x : 4-Scavenger-2, 4-Elite-{Night}
+
+SI_A27 : 3-Small Centipede-{Night}, 4-Yellow-{Ignorecycle}-3
+LINEAGE : SI_A27 : 3 : Small Centipede-{Night}-0.2, Centiwing-{0.7}-0.33, NONE-0.33, Cicada-1.0, NONE-0.2, DropBug-0
+LINEAGE : SI_A27 : 4 : Yellow-{Night}-0.33, Cyan-{Night}-0.2, White-{Night}-0.33, IcyBlue-{Night}-0.5, NONE-0.05, Freezer-{Night}-0
+SI_C06 : 2-CicadaA, 2-CicadaB, 2-Cicada-{Night}-2, 3-Cyanwing, 3-Centiwing-{Night}
+SI_B09 : 4-TentaclePlant, 5-Small Centipede-{Night}-2, 5-Cyanwing-{Night}, 7-Cicada-{Night}, 7-Cicada-{PreCycle}
+LINEAGE : SI_B09 : 5 : Small Centipede-0.7, Centiwing-{0.4}-0.4, Centiwing-{0.7}-0.1, NONE-0.05, Cyanwing-{Night}-0
+LINEAGE : SI_B09 : 6 : White-0.2, Cyan-{Ignorecycle}-0.05, NONE-1.0, NONE-0.2, IcyBlue-0
+LINEAGE : SI_B09 : 7 : NONE-1.0, NONE-0.05, Cyan-{Ignorecycle}-0
+LINEAGE : SI_A02 : 2 : NONE-0.15, IcyBlue-0.2, NONE-1.0, NONE-0.1, Freezer-0
+SI_A23 : 2-Centiwing, 2-Small Centipede-2, 2-Centiwing-{Night}
+SI_C08 : 4-Centiwing, 5-Small Centipede, 6-DropBug, 6-DropBug-{PreCycle}, 7-TentaclePlant-{Night}
+LINEAGE : SI_C08 : 8 : NONE-1.0, NONE-0.2, White-0.25, Strawberry-0.25, Red-{Ignorecycle}-0
+SI_D05 : 3-Yellow-{Ignorecycle}-3, 4-Strawberry-{PreCycle}, 5-Centiwing, 6-Small Centipede-3
+LINEAGE : SI_D05 : 5 : NONE-1.0, NONE-1.0, NONE-0.1, Small Centipede-0
+LINEAGE : SI_D05 : 6 : NONE-0.05, Small Centipede-1.0, Centiwing-{0.5}-0.5, Centiwing-{0.8}-0.2, NONE-0.05, Strawberry-0
+SI_B11 : 2-Cyanwing, 2-Small Centipede-2, 2-White-{Night}-2
+LINEAGE : SI_B11 : 2 : NONE-1.0, NONE-1.0, NONE-0.1, Small Centipede-{Night}-0
+
+SI_D09 : 2-Centiwing, 3-Centiwing
+
+SI_A30 : 2-Yellow-{PreCycle}-3, 3-TentaclePlant-{PreCycle}
+SI_B16 : 6-Centiwing-{Night}-2, 7-White, 8-Cyan-{PreCycle}, 9-White-{PreCycle}
+LINEAGE : SI_B16 : 6 : NONE-1.0, NONE-0.05, Small Centipede-{Night}-0.2, DropBug-{Night}-0.5, White-{Night}-0.3, IcyBlue-{Night}-0
+SI_A31 : 2-Snail-{PreCycle}-4, 3-Centiwing
+SI_D08 : 4-White, 5-White-{Night}, 6-Cyanwing
+LINEAGE : SI_D08 : 8 : Small Centipede-0.4, Centiwing-{0.5}-0.2, Centiwing-{0.8}-0.1, Cyanwing-{Night}-0
+SI_F01 : 3-Snail-{PreCycle}-4, 4-TentaclePlant-{PreCycle}, 6-Snail-{PreCycle}-3, 10-Centiwing-2, 11-Snail-{PreCycle}-2, 12-Small Centipede-{AlternateForm}-2
+LINEAGE : SI_F01 : 8 : Small Centipede-{Night}-0.5, Centiwing-{Night}-0.1, NONE-0.25, IcyBlue-{Night}-0

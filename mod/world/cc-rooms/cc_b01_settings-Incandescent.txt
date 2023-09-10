@@ -1,0 +1,19 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.5891579
+WaveLength: 0.7054211
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.3043478
+Grime: 0.3586957
+BkgDroneVolume: 0.2869565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorB: 21
+Effects: Flies-0-17-21, Fog-0.25-271-21, Coldness-1-16-70, Dustpuffs-1-15-123, SkyDandelions-0.3369565-270-71, 
+PlacedObjects: CustomDecal><300.8921><303.6407><14~171.2359~295.293~171.2359~316.293~-7~-500~-522~0.326087~0.4456522~0~OrangePink~0.7065217~0.1630435~0.6630435~0.173913~0.2934783~0.4130435~0.4130435~0.7391304, CustomDecal><343.6306><330.4014><0~69.38615~113.0914~86.38614~120.0914~24~-406~-553~0.3152174~1~0~WhiteTag3~0.9130435~0~0.5~0~0.5~0.3913043~0.5~0.5217391, SnowSource><494.1587><864.1217><None~1281~-757~401~-32.39746~0.5543478~1, SnowSource><-54.22961><459.551><Radial~702~294~50~86.60254~1~0, SnowSource><991.0557><426.5573><Radial~-624~285~-391~122.6025~1~0, SnowSource><1.623505><1382.093><Radial~377~-306~-210~44.60254~1~0, SnowSource><1004.827><1385.851><Radial~-425~-327~-103~113.6025~1~0, DandelionPeach><189.3126><1548.69><-395~-198.9998~0~27, DandelionPeach><88.42441><1247.402><-294~24~6~9, DandelionPeach><623.8099><1553.438><278.9999~-204~0~3, DandelionPeach><826.4091><1545.428><76~-119~0~3, DandelionPatch><202.8391><1218.179><-80~-120, DandelionPatch><118.9147><926.1366><-4~34, DandelionPatch><318.7887><1529.196><119~-196, DandelionPatch><706.8675><1524.338><-13~-149, 
+AmbientSounds: OMNI><AM_ENV-LightWind.ogg><711.424><492.3486><0><1, OMNI><AM_ENV-WinterHum.ogg><711.3276><423.6013><0.3478261><1, 
+FadePalette: 15, 0.6413044, 0.6521739
+WetTerrain: OFF

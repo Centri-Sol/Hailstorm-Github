@@ -1,0 +1,14 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.6423087
+WaveLength: 0.6788456
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: SkyDandelions-0-458-57, Flies-0-461-6, Coldness-1-20-20, Dustpuffs-1-25-68, 
+PlacedObjects: DeadSeedCob><2006.837><321.4299><, DeadSeedCob><1379.645><312.0795><, DeadSeedCob><1462.936><228.3239><, DeadSeedCob><197.8718><351.4035><, DeadSeedCob><303.1803><269.3366><, SnowSource><2240.204><320.9446><None~1022~-370~50~86.60254~0.6521739~0.9021739, SnowSource><636.8627><326.1625><None~955~-577~50~86.60254~0.6521739~0.7065217, SnowSource><1712.101><578.4227><Radial~35~137~-455~-182.3975~1~0, DeadSeedCob><1421.18><289.4125><, DandelionPatch><2712.614><162.5854><0~100, DandelionPatch><913.0532><183.214><1~73, 
+AmbientSounds: OMNI><AM_ENV-WinterHum.ogg><740.0624><399.06><0.2934783><1, 
+FadePalette: 0, 0.3478261, 0.3804348, 0.3804348
+WetTerrain: OFF

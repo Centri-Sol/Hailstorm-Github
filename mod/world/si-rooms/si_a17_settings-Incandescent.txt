@@ -1,0 +1,22 @@
+Template: SI_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2065217
+RumbleIntensity: 0.2608696
+WaveSpeed: 0.4983945
+WaveLength: 0.9475669
+WaveAmplitude: 0.01032608
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.3043478
+Grime: 0.3586957
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorA: 11
+EffectColorB: 2
+Effects: Flies-0-30-30, Coldness-1-24-82, Dustpuffs-1-40-132, 
+PlacedObjects: FirecrackerPlant><429.5569><221.3021><-625~338~6~9, FirecrackerPlant><454.0468><222.1945><-649~263~6~9, FirecrackerPlant><471.064><219.3236><-664~192~6~9, FirecrackerPlant><495.3878><219.6656><-688~118~6~9, FirecrackerPlant><526.9263><221.3141><-722~41~6~9, SnowSource><468.948><-51.72192><Radial~629~-356~50~86.60254~0.6521739~0.4021739, DevToken><444.075><289.9033><-35~86~450.9999~287~0~~~0~0~0~1, SnowSource><480.6702><89.56662><UnSnow~-9~126~50~86.60254~0.25~0.25, 
+AmbientSounds: SPOT><Basic Mech.ogg><747.3741><159.0946><0.1956522><1><479.3741><78.09457><-110.3553><-29.35535><0><0.4804349, OMNI><AM_ENV-LightWind.ogg><765.3163><518.5792><0><1, OMNI><AM_ENV-NatWind.ogg><780.6914><393.192><0.2608696><1, 
+FadePalette: 3, 0.5217391
+WetTerrain: OFF

@@ -1,0 +1,13 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.5398138
+WaveLength: 0.7300931
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: Coldness-1-20-20, Dustpuffs-1-288-23, SkyDandelions-0-17-96, Flies-0-21-148, 
+PlacedObjects: DeadSeedCob><711.8893><404.4166><, DeadSeedCob><745.9536><346.0555><, DeadSeedCob><828.1703><355.3549><, SnowSource><600.1689><543.4328><Radial~598~-562~367.0001~-558.3975~1~0.8043478, 
+FadePalette: 0, 0.4891304
+WetTerrain: OFF

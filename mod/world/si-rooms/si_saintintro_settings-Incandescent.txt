@@ -1,0 +1,22 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.8152174
+RumbleIntensity: 0.9565217
+WaveSpeed: 0.5211629
+WaveLength: 0.9894186
+WaveAmplitude: 0.001605684
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.3152174
+Grime: 0.3152174
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 2
+EffectColorB: 14
+Effects: SkyDandelions-0-20-20, Flies-0-59-58, Dustpuffs-1-200-72, LightBurn-0.0326087-160-85, Coldness-1-88-90, AboveCloudsView-1-136-140, 
+PlacedObjects: NoSpearStickZone><1399.296><1077.695><-23~266, ReliableSpear><868.4486><219.774><, ReliableSpear><829.0504><226.7636><, ReliableSpear><437.0703><85.83771><, ReliableSpear><678.0796><40.8546><, ReliableSpear><349.2344><77.5506><, DeadSeedCob><442.4482><204.0268><, DeadSeedCob><290.2122><214.8036><, SnowSource><675.704><93.6947><Radial~1274~-493~476~434.6025~0.8586956~0.7065217, SnowSource><719.2518><1189.95><Radial~1133~-573~1~43.60254~0.8260869~1, SnowSource><334.998><176.8><UnSnow~-13~102~814.0001~501.6025~0.5~0.6086956, SnowSource><761.928><252.8411><UnSnow~11~52~389~354.6025~0.4782609~0.4347826, SnowSource><495.1692><1986.893><Radial~617~-559~50~86.60254~0.1956522~1, ExitSymbolHidden><209.6472><106.9216><, KarmaFlower><380.0289><113.8021><767~-111~1~1, 
+AmbientSounds: SPOT><AM_IND-Utility03.ogg><745.7552><406.9499><0.3804348><1><98.75525><374.95><109.6447><-70.35535><0><0.3717393, SPOT><SO_IND-FlourLight.ogg><746.6072><270.89><0.3586957><1><137.6072><226.89><164.6447><-42.35535><0><1, SPOT><SO_IND-HeatDuct.ogg><892.8687><367.5992><0.3913043><1><1189.869><490.5992><-124.3553><-213.3553><0><0.3173914, OMNI><AM_ENV-NatWind.ogg><859.5842><582.1382><0.4347826><1, OMNI><AM_ENV-WinterHum.ogg><684.7199><579.0522><0.4130435><1, 
+Triggers: Spot<tA>event<tB>MusicEvent<eA>songName<eB>RW_86 - The Cycle<eA>vol<eB>0.2021737<eA>prio<eB>1<eA>mxThrt<eB>1<eA>loop<eB>0<eA>droneTol<eB>0<eA>rooms<eB>-1<eA>rest<eB>-1<eA>fadeIn<eB>202.174<eA>oneSongPerCycle<eB>0<eA>stopAtDeath<eB>0<eA>stopAtGate<eB>0<tA>multiUse<tB>0<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>208<tA>panPos<tB>1106.138<tB>268.6657<tA>fireChance<tB>1<tA>entrance<tB>-1<tA>karma<tB>0<tA>slugcats<tB>White|Yellow|Red|Rivulet|Artificer|Saint|Spear|Gourmand<tA>pos<tB>459.1379<tB>153.6657<tA>handlePos<tB>-209.3553<tB>180.6447, 
+FadePalette: 0, 0.4891304, 0.4891304, 0.4891304
+RoomSpecificScriptActive: ON
+WetTerrain: OFF

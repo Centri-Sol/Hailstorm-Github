@@ -1,0 +1,15 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.6239849
+WaveLength: 0.6880075
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: Flies-0-20-20, SkyDandelions-0-24-61, LightBurn-0.06521739-20-119, Coldness-1-283-20, Dustpuffs-1-283-68, 
+PlacedObjects: NoSpearStickZone><1179.42><1075.895><-45~169, InsectGroup><425.1628><445.1339><-204~116~-478~-295~StandardFly~0.2282609, ReliableSpear><523.4449><459.5446><, DeadSeedCob><423.8968><411.3642><, ReliableSpear><50.19501><474.6923><, DeadSeedCob><408.842><483.8727><, Rainbow><772.4499><1159.744><-62~441~-427~-316~0,0.5,0.5434783,0.5217391,0.8695652,0.2043477, SnowSource><1265.984><813.1993><Radial~-1291~752~-218~3.602509~1~1, SnowSource><-2.64325><1473.581><Radial~215~-163~-52~-108.3975~1~0.3043478, SnowSource><212.1963><485.3074><Radial~604~-333~-190~-425.3975~0.8043478~1, DeadSeedCob><390.6472><500.2856><, DandelionPeach><561.8481><208.4243><482.0001~-153~4~6, DandelionPeach><73.94946><499.2648><967~-363~4~6, DandelionPeach><1211.727><1228.801><-168~-324~4~6, 
+AmbientSounds: SPOT><AM_ENV-WinterHum.ogg><748.3176><395.3118><0.25><1><446.3176><1245.312><-99.35535><-180.3553><0><0.5239132, 
+Triggers: RegionBump<tA>event<tB>MusicEvent<eA>songName<eB>BM_SI_STRUT<eA>vol<eB>0.343478<eA>prio<eB>0.5<eA>mxThrt<eB>1<eA>loop<eB>0<eA>droneTol<eB>0<eA>rooms<eB>-1<eA>rest<eB>5<eA>fadeIn<eB>0<eA>oneSongPerCycle<eB>0<eA>stopAtDeath<eB>0<eA>stopAtGate<eB>0<tA>multiUse<tB>0<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>0<tA>panPos<tB>724.5928<tB>434.8764<tA>fireChance<tB>1<tA>entrance<tB>-1<tA>karma<tB>0<tA>slugcats<tB>, 
+FadePalette: 0, 0.4782609, 0.5326087
+WetTerrain: OFF

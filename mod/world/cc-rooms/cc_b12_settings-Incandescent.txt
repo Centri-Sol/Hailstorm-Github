@@ -1,0 +1,14 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.2787213
+WaveLength: 0.6393607
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Coldness-1-20-20, Flies-0-275-77, Dustpuffs-1-22-135, SkyDandelions-0.25-276-20, 
+PlacedObjects: NoSpearStickZone><0.984375><1554.551><-40~45, NoSpearStickZone><923.697><1273.284><0~100, SnowSource><458.1011><1152.173><Radial~1271~-741~447~369.6025~1~0.7065217, DandelionPeach><707.8076><1160.305><197~-304~5~8, DandelionPatch><711.833><1117.318><0~100, 
+FadePalette: 15, 0.6304348, 0.6304348
+WetTerrain: OFF
