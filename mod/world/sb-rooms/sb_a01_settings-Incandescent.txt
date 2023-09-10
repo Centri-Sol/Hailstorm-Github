@@ -1,0 +1,22 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.4021739
+RumbleIntensity: 0.25
+WaveSpeed: 0.4999245
+WaveLength: 0.8994188
+WaveAmplitude: 0.02010869
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.5543478
+Grime: 0.173913
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 21
+EffectColorB: 6
+Effects: LightBurn-0.3586957-20-20, Coldness-0.5326087-30-30, Darkness-0.2934783-40-40, 
+PlacedObjects: CentipedeAttractor><524.0043><214.2><-333~59, LightSource><869.8612><288.856><1~White~-341~5~115~191.6025~1~0~None~0~0, LightSource><863.0972><307.847><0.5869565~Environment~-133~139~123~61.60248~1~1~None~0~0, LightSource><1018.59><665.1649><0.4565217~White~-38~-350~-35~-68.39771~1~1~None~0~0, LightBeam><578.1754><123.5961><534~620~686~611~170~-111~-608~-170.9967~0.5086948~1~0~1~None~0~0, InsectGroup><338.4467><105.964><121~237~-113~-153~RockFlea~0.06521739, SnowSource><886.2273><247.4487><Radial~0~156~97~-133.4543~1~0.7064978, SnowSource><756.3007><118.2661><Radial~-27~101~225.9465~-162.7891~0.9021739~0.9021739, SnowSource><732.9103><258.6304><Radial~-36~117~251~-225.3975~0.7577979~0.75, GooieDuck><328.9533><532.0555><-451~-57~8~12, GooieDuck><239.8032><521.2141><-362~32~8~12, SnowSource><1097.881><466.0407><Radial~-330~221~-114.0015~-266.4251~0.5~0.5, 
+AmbientSounds: OMNI><AM_SUB-CaveTone.ogg><826.9515><646.944><0.3695652><1, OMNI><AM_SUB-BlankState.ogg><645.0742><645.1857><0.3586957><1, OMNI><SO_WAT-LilDrips.ogg><825.7477><566.05><0.3369565><1, 
+FadePalette: 0, 0.7608696
+WetTerrain: OFF

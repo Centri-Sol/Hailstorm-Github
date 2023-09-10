@@ -1,0 +1,21 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2065217
+RumbleIntensity: 0.1956522
+WaveSpeed: 0.5032809
+WaveLength: 0.9642584
+WaveAmplitude: 0.006810361
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2608696
+Grime: 0.04347826
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorB: 18
+Effects: Darkness-0.173913-20-20, Coldness-0.4130435-24-80, 
+PlacedObjects: KarmaFlower><404.5757><358.0649><-515~-400~5~7, InsectGroup><638.1793><347.6614><-163~66~269~301~RockFlea~0.2826087, ReliableSpear><536.8878><371.0845><, ReliableSpear><54.17651><269.1559><, ReliableSpear><668.9343><322.0611><, SnowSource><289.684><255.4214><Radial~-152~112~-484~-108.3975~0.75~0.75, SnowSource><159.9462><146.7893><Radial~-66~134~-356~-86.39746~0.6195652~0.8043478, SnowSource><731.7402><324.4498><Radial~-106~130~174.0001~-271.3975~0.75~0.4021739, SnowSource><754.27><188.801><UnSnow~0~100~154~-228.3975~1~0, SnowSource><748.6392><422.5836><UnSnow~0~100~157.9999~137.6026~1~0, 
+AmbientSounds: OMNI><SO_WAT-LilDrips.ogg><647.6005><638.8672><0.1847826><1, OMNI><AM_SUB-CaveTone.ogg><830.9134><641.8197><0.3152174><1, OMNI><AM_SUB-BlankState.ogg><831.8081><556.9437><0.2065217><1, 
+FadePalette: 14, 0.2065217
+WetTerrain: OFF

@@ -1,0 +1,21 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2391304
+RumbleIntensity: 0.2282609
+WaveSpeed: 0.4948916
+WaveLength: 0.9376632
+WaveAmplitude: 0.01195652
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2173913
+Grime: 0
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorB: 18
+Effects: Coldness-0.5978261-20-20, 
+PlacedObjects: GhostSpot><620.9124><367.6168><, FirecrackerPlant><379.8074><191.0538><-432~-238~5~8, FirecrackerPlant><307.6997><201.0103><-358~-174~5~8, DeadSeedCob><841.0406><258.9458><, SnowSource><767.4548><219.3052><Radial~-1~173~194.0001~-267.3975~0.6521739~0.5, SnowSource><494.9169><174.8181><Radial~-64~195~212~-222.3974~0.7065217~0.7065217, GooieDuck><383.4329><450.5808><583~182~7~11, GooieDuck><716.4476><418.5308><250.9999~139~7~11, DeadSeedCob><880.0945><314.1258><, 
+AmbientSounds: SPOT><AM_ENV-NatWind.ogg><86.92493><499.403><0.3478261><1><120.9249><233.403><-129.3553><-55.35535><0><0.5565219, SPOT><SO_NAT-LilDrips.ogg><273.1884><499.1829><0.1956522><1><613.1884><99.18289><-210.3553><-104.3553><0><0.2739132, 
+FadePalette: 14, 0.2934783
+WetTerrain: OFF
