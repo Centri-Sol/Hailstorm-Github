@@ -1,0 +1,16 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+WaveSpeed: 0.4728175
+WaveLength: 0.7364087
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 15
+EffectColorB: 21
+Effects: LightBurn-0.09782609-30-30, Coldness-1-23-84, Dustpuffs-1-28-132, 
+PlacedObjects: SnowSource><262.4476><3618.219><Radial~510~-420~58~-336.3975~0.7282609~1, SnowSource><577.3462><2568.378><Radial~533~-218~94~-299.3975~0.6956522~1, SnowSource><613.4489><1588.012><Radial~423~-50~381.0001~-156.3975~0.6739131~1, SnowSource><242.5937><1303.927><Radial~998~-411~220~-167.3975~0.7391304~1, SnowSource><122.0086><383.3002><Radial~361~-48~50~86.60254~0.7065217~1, SnowSource><332.0699><43.41304><Radial~219~-26~50~86.60254~0.6413044~1, SnowSource><714.9144><342.8192><Radial~101~154~50~86.60254~0.4347826~1, DangleFruit><782.8293><1861.816><244.0001~159~4~6, DangleFruit><689.9495><1877.986><339.9999~217~4~6, Stowaway><728.4446><1935.454><0~-105, ReliableSpear><706.153><1648.122><, ReliableSpear><630.1992><1644.194><, ReliableSpear><770.4482><1632.974><, 
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><830.0891><640.8209><0.2717391><1, OMNI><AM_ENV-CityTone.ogg><844.5981><560.9243><0.3152174><1, SPOT><AM_WIN-SubWnd.ogg><839.6999><436.7438><0.4021739><1><745.6999><445.7438><-407.3553><-87.35535><0><1, SPOT><AM_WIN-StrongWnd2.ogg><860.3027><309.6929><0.4347826><1><-60.69727><3548.693><904.6447><-423.3553><0><1, 
+FadePalette: 0, 0.5760869, 0.5760869, 0.5760869, 0.5760869, 0.5760869
+WetTerrain: OFF

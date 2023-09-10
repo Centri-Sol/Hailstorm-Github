@@ -1,0 +1,17 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: Coldness-1-20-20, 
+PlacedObjects: FlareBomb><429.5612><472.3159><-620~84~6~9, FlareBomb><809.2783><380.302><96.99994~-54~6~9, VoidSpawnEgg><685.6771><439.6862><223.9999~67~2~3~1, VoidSpawnEgg><238.6787><459.1601><668.0001~148.0001~2~3~1, VoidSpawnEgg><419.2793><405.4478><490.0001~3~2~3~1, ExitSymbolHidden><388.6465><70.86389><, 
+AmbientSounds: SPOT><Weird Deep Hole.wav><728.7072><510.0547><0.1413043><1><467.7072><385.0547><-304.3553><-148.3553><0><0.2413045, OMNI><SO_WAT-DripTap.ogg><711.8578><633.1093><0.2065217><1, 
+FadePalette: 0, 0.173913
+WetTerrain: OFF

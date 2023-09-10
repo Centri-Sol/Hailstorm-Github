@@ -1,0 +1,16 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+WaveSpeed: 0.5132882
+WaveLength: 0.8502114
+WaveAmplitude: 0.03205754
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 11
+EffectColorB: 21
+Effects: LightBurn-0.2065217-30-30, Coldness-1-31-79, Dustpuffs-1-26-123, 
+PlacedObjects: SnowSource><627.2518><622.3><Radial~-663~-554~-276~-138.3975~0.8478261~1, SnowSource><1637.182><727.834><Radial~266~-543~-61~-539.3975~0.8913044~1, SnowSource><2608.632><414.8999><Radial~-647~-561~11~-259.3975~0.7065217~1, DeadSeedCob><2401.302><267.7789><, DeadSeedCob><2336.521><239.9489><, DeadSeedCob><1545.591><457.1779><, DeadSeedCob><1427.627><405.8457><, DeadSeedCob><532.6793><260.5629><, DeadTokenStalk><1144.166><399.6111><30~-51, DeadTokenStalk><1094.102><497.6718><9~-74, DeadTokenStalk><1124.933><513.6738><-2~-50, DeadTokenStalk><1211.836><447.6138><-63~-18, BlueToken><1170.642><533.6093><-32~-80~159~-10~1~YellowLizard~White|Yellow|Red|Rivulet|Artificer|Spear|Gourmand~0~0~0~0, DeadSeedCob><2270.924><335.435><, DeadSeedCob><485.2704><298.8011><, DeadSeedCob><407.3334><250.8862><, 
+AmbientSounds: OMNI><AM_ENV-CityTone.ogg><869.1997><655.7603><0.2934783><1, OMNI><AM_ENV-NatWind.ogg><696.1804><648.5625><0.3043478><1, SPOT><AM_WIN-StrongWnd2.ogg><875.7438><533.55><0.3260867><1><3113.744><206.5501><-557.3553><62.64465><0><1, 
+FadePalette: 0, 0.7608696, 0.7391304, 0.7282609
+WetTerrain: OFF

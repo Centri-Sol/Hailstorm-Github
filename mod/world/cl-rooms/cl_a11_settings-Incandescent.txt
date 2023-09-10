@@ -1,0 +1,20 @@
+Template: CL_SettingsTemplate_DarkSun
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.1956522
+RumbleIntensity: 0
+WaveSpeed: 0.5051374
+WaveLength: 0.9485182
+WaveAmplitude: 0.009782607
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.3043478
+Grime: 0.1086956
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: LightBurn-0.25-39-180, RockFlea-0.4891304-20-20, Coldness-1-17-85, 
+PlacedObjects: LightSource><658.9033><269.8716><0.3985224~Environment~249~356~307~-314.3975~1~0~None~0~0, LightSource><576.9232><499.85><0.4456522~Environment~3~160~134~-547.3975~1~0~None~0~0, SnowSource><514.0077><307.9499><Radial~4~76~-649~-252.3975~0.4347826~0.3369565, SnowSource><494.9403><497.5591><Radial~-1~31~-632~-29.39746~0.5652174~1, SnowSource><796.9497><498.7607><Radial~5~24~166~44.60254~0.6086956~0.5326087, SnowSource><498.5822><583.6412><Radial~-3~25~-636~-30.39746~0.75~1, SnowSource><787.0551><581.0577><Radial~13~23~172.0001~41.60254~0.6956522~1, SnowSource><780.6687><290.3926><Radial~-5~93~193~172.6025~0.5543478~0.6086956, SnowSource><784.6895><317.3139><UnSnow~11~19~180.9999~62.60254~1~0, SnowSource><525.5881><361.9295><Radial~-25~50~-667~16.60254~0.3695652~1, 
+AmbientSounds: SPOT><AM_ENV-CityTone.ogg><720.5479><564.0558><0.3804348><0.7065217><584.548><564.0558><-189.3553><-36.35535><0><0.3934784, OMNI><AM_ENV-CityTone.ogg><835.8067><646.0582><0.3913043><0.8434783, 
+FadePalette: 0, 0.2934783
+WetTerrain: OFF

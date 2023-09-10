@@ -1,0 +1,19 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.25
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 2
+EffectColorB: 6
+Effects: Coldness-1-21-79, Dustpuffs-1-20-132, 
+PlacedObjects: LightBeam><537.9454><324.0424><-37~451~78~418~288~-170~363.9999~-371~0.4652173~0~0~1~None~0~0, LightSource><641.5501><313.2569><0.1304348~Environment~-604~302~-10~244.6025~1~1~None~0~0, KarmaFlower><653.0503><284.0104><247~-96~5~7, SnowSource><628.9429><216.6971><Radial~93~171~273~-114.3975~1~1, DangleFruit><772.9184><463.1079><128.0001~-197~4~6, DangleFruit><198.8196><464.8125><-387~-417~4~6, DangleFruit><331.8284><439.6472><-444~-484~4~6, 
+AmbientSounds: OMNI><AM_IND-SuperStructure.ogg><867.7319><642.4492><0.1086956><1, OMNI><MSC-StructureStrain.ogg><875.7568><562.9499><0.3369565><0.1782609, SPOT><AM_ENV-NatWind.ogg><693.933><599.0806><0.4021739><1><563.933><717.0806><-5.355347><-54.35535><0><0.7413045, 
+FadePalette: 0, 0.3043478
+WetTerrain: OFF

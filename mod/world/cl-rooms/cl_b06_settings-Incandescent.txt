@@ -1,0 +1,18 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: VoidSpawn-0.2065217-20-20, Coldness-1-20-73, 
+PlacedObjects: CosmeticSlimeMold2><844.6611><433.2928><-167~232, SlimeMold><891.0422><342.0637><7~-323~9~12, SlimeMold><674.804><448.2894><-35~-428~9~12, LightFixture><801.5886><428.3809><SlimeMoldLight~88.3205~-263.0123~48, LightFixture><454.3196><543.4375><SlimeMoldLight~-651.6795~-565~46, ExitSymbolHidden><273.5416><143.9456><, CosmeticSlimeMold2><419.3><510.0041><0~100, CosmeticSlimeMold><648.9167><675.8895><-73~-122, SlimeMold><888.4443><604.4677><6~-518~9~12, CosmeticSlimeMold><858.8256><709.1852><-46~60, CosmeticSlimeMold2><895.1996><325.487><-25~26, 
+AmbientSounds: SPOT><Weird Deep Hole.wav><833.9169><576.6102><0.1847826><1><507.9169><963.6102><-218.3553><-49.35535><0><0.3934784, SPOT><Weird Deep Hole.wav><738.5601><386.6907><0.1847826><1.03913><475.5601><444.6907><-185.3553><16.64465><0><0.3608697, SPOT><SO_WAT-LilDrips.ogg><18.4101><357.6786><0.1195652><1><88.41846><397.6786><-158.3553><-45.35535><0><0.3934782, SPOT><SO_NAT-LilDrips.ogg><737.8153><267.0768><0.2391304><1><927.8152><417.0768><-161.3553><42.64465><0><0.4695654, OMNI><SO_WAT-DripTap.ogg><638.032><611.0526><0.2391304><1, 
+FadePalette: 0, 0.1086956, 0.1086956
+WetTerrain: OFF

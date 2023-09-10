@@ -1,0 +1,17 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+WaveSpeed: 0.4829969
+WaveLength: 0.7414985
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.25
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 21
+EffectColorB: 6
+Effects: Coldness-1-19-73, Dustpuffs-1-15-129, SilenceWater-0.6413044-276-19, BorderPushBack-1-272-72, 
+PlacedObjects: LightSource><1181.12><853.5983><0.1413043~Environment~1263~-762~-143~-151.3975~1~1~None~0~0, SnowSource><327.0594><375.3105><Radial~1272~557~50~86.60254~0.7173913~1, SnowSource><2338.801><649.2651><Radial~-1263~579~-308~-164.3975~0.5543478~1, BigJellyFish><1540.687><264.9294><0~100, 
+AmbientSounds: OMNI><AM_ENV-CityTone.ogg><881.8013><652.4433><0.2934783><1, OMNI><AM_ENV-NatWind.ogg><705.1315><652.5889><0.2934783><1, SPOT><AM_IND-SuperStructure.ogg><881.8112><539.4341><0.2282609><1><3095.811><531.4341><-760.3553><90.64465><0><1, SPOT><AM_WIN-StrongWnd2.ogg><706.1829><539.5616><0.4021739><1><1492.183><861.5616><-539.3553><-349.3553><0><1, 
+FadePalette: 0, 0.4673913, 0.4891304, 0.5217391
+WetTerrain: OFF

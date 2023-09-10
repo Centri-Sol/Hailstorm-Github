@@ -1,0 +1,16 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+WaveSpeed: 0.5237737
+WaveLength: 0.7381132
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 15
+EffectColorB: 11
+Effects: LightBurn-0.07608695-30-30, Coldness-1-31-86, Dustpuffs-1-33-134, 
+PlacedObjects: SnowSource><599.4351><230.4242><Radial~592~-521~65~-347.3975~0.5869565~1, SnowSource><58.5163><620.4493><Radial~382~-261~-226~-174.3975~0.6195652~1, LightSource><693.9435><725.4495><0.3913043~Environment~1221~-748~-844~-197.3975~1~0~None~0~0, LightSource><1443.449><724.265><0.5760869~Environment~342~-578~130~-248.3975~1~0~None~0~0, SnowSource><1517.092><526.3725><Radial~621~-539~57~63.60254~0.5326087~1, SnowSource><1262.666><488.8187><Radial~328~-62~50~86.60254~0.8260869~1, SnowSource><1985.685><411.1741><Radial~263~282~-678~74.60251~1~0.4347826, LanternOnStick><1065.648><277.9222><44~-190, LanternOnStick><529.7888><285.5538><-53~-224, LanternOnStick><470.9078><224.8729><14~-149, DeadSeedCob><1341.929><256.589><, DeadSeedCob><1312.921><285.3965><, DeadSeedCob><780.0938><233.6252><, DeadTokenStalk><1745.234><263.9493><-30~-59, DeadTokenStalk><1651.053><310.7823><-36~-58, DeadTokenStalk><1537.775><281.6985><27~-63, GoldToken><1586.022><317.6987><17~-57~-420~-20~0~CL~~0~0~0~0, DevToken><424.4882><265.8004><-41~-66~-598~63~0~~~0~0~0~1, DeadSeedCob><679.3075><266.8041><, 
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><823.309><643.6906><0.2717391><1, OMNI><AM_ENV-CityTone.ogg><828.6997><572.3064><0.2608696><1, 
+FadePalette: 0, 0.8152174, 0.7608696
+WetTerrain: OFF

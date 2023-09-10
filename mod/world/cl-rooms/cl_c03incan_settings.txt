@@ -1,0 +1,17 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+RainIntensity: 0.7282609
+RumbleIntensity: 1
+WaveSpeed: 0.5091551
+WaveLength: 0.8433273
+WaveAmplitude: 0.03026833
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.5
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: LightBurn-0.3478261-30-30, SilenceWater-0.5543478-30-86, Coldness-1-32-137, 
+PlacedObjects: LightSource><1166.087><724.1155><0.25~White~910~-496~-255~-156.3975~1~0~None~0~0, SnowSource><1158.1><521.3266><Radial~763~-596~50~86.60254~0.6630435~1, SnowSource><508.6885><720.683><Radial~-629~-555~-243~-294.3975~0.5108696~1, BubbleGrass><2811.896><410.8216><140.5826~148.6~4~9, BubbleGrass><2729.793><414.7335><224.5833~219.1555~4~9, BubbleGrass><2850.989><391.9206><102~94.57773~4~9, 
+AmbientSounds: OMNI><AM_ENV-CityTone.ogg><865.821><644.063><0.2826087><1, OMNI><AM_ENV-NatWind.ogg><686.0632><643.8214><0.2826087><1, SPOT><SO_WAT-MoreDrips.ogg><864.0108><518.5503><0.5><1><2796.011><438.5503><-393.3553><-84.35535><0><1, SPOT><AM_WIN-SubWnd.ogg><865.3785><395.3467><0.2934783><1><3.378479><181.3467><366.6447><41.64465><0><0.828261, 
+FadePalette: 0, 0.4130435, 0.3586957, 0.326087
+WetTerrain: OFF

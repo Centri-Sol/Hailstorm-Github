@@ -1,0 +1,17 @@
+Template: CL_SettingsTemplate_DarkSun
+CeilingDrips: 0
+WaveSpeed: 0.5742644
+WaveLength: 0.7128678
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.6304348
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 13
+EffectColorB: 11
+Effects: LightBurn-0.1521739-30-30, Dustpuffs-1-32-82, Coldness-1-28-135, 
+PlacedObjects: SnowSource><-12.00977><468.4498><None~1137~-459~50~86.60254~0.6304348~1, SnowSource><1956.196><403.4595><Radial~-1238~694~-637~-129.3975~0.8478261~1, SnowSource><3482.627><241.1542><Radial~1136~647~50~86.60254~0.5760869~1, SnowSource><5637.077><202.3494><Radial~1240~709~50~86.60254~0.7282609~1, SnowSource><6943.459><629.9459><Radial~935~681~110~-133.3975~0.5217391~1, SnowSource><7144.999><134.8><Radial~270~154~50~86.60254~0.6956522~1, SnowSource><4055.174><468.6852><Radial~708~-444~50~86.60254~0.5543478~1, SnowSource><7556.065><755.439><Radial~508~-451~47~-212.3975~0.5652174~1, DeadSeedCob><1833.603><296.9214><, DeadSeedCob><457.3325><287.8593><, DeadSeedCob><728.6497><282.8827><, DeadSeedCob><822.4272><343.5637><, SeedCob><1891.838><250.0705><0~0~0~10, DeadSeedCob><6530.928><349.9096><, DeadSeedCob><6660.949><333.9758><, DeadSeedCob><642.0506><336.2928><, DeadSeedCob><6606.283><321.9473><, 
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><823.309><643.6906><0.2717391><1, OMNI><AM_ENV-CityTone.ogg><828.6997><572.3064><0.2608696><1, 
+FadePalette: 0, 0.7173913, 0.7065217, 0.7065217, 0.7173913, 0.7065217, 0.7065217, 0.6847826, 0.6956522
+WetTerrain: OFF
