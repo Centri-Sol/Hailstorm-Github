@@ -1,0 +1,17 @@
+Template: LF_SettingsTemplate_Farms
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.5145303
+WaveLength: 0.7114848
+WaveAmplitude: 0.05416999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.1413043
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Fog-0.4782609-1-71, Coldness-1-1-128, Dustpuffs-1-261-10, 
+PlacedObjects: SnowSource><1824.81><531.5621><Radial~1149~-586~199~-239.3975~1~0, SnowSource><2952.408><697.1223><None~-1283~-736~-573~-118.3975~0.4782609~1, SnowSource><4561.128><722.6724><Radial~-980~-730~20~-83.39752~1~0, SnowSource><643.6305><599.8485><Radial~188~-437~-757~-652.3975~1~0, SnowSource><4662.05><630.9877><UnSnow~102~-62~-81~-167.3975~0.5~0.5, SnowSource><3075.661><149.361><Radial~743~531~-85~-151.3975~1~0, 
+AmbientSounds: SPOT><AM_ENV-WindGrass.ogg><833.3478><543.6297><0.4347826><1><478.3478><300.6297><302.6447><-205.3553><0><0.4130435, SPOT><AM_ENV-WindGrass.ogg><834.3934><430.0808><0.4021739><1><1316.393><166.0808><216.6447><38.64465><0><0.2956523, SPOT><AM_ENV-WindGrass.ogg><833.0914><321.6282><0.3804348><1><3220.091><227.6282><-333.3553><77.64465><0><0.328261, SPOT><AM_ENV-WindGrass.ogg><829.8162><205.6711><0.3369565><1><4574.816><268.6711><-109.3553><-104.3553><0><0.3065219, OMNI><AM_ENV-NatWind.ogg><836.8199><656.1874><0.4130435><1, 
+FadePalette: 14, 0.2826087, 0.2826087, 0.2826087, 0.2826087, 0.2826087
+WetTerrain: OFF

@@ -1,0 +1,17 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.25
+RumbleIntensity: 0.25
+WaveSpeed: 0.4994345
+WaveLength: 0.9294047
+WaveAmplitude: 0.01329029
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.07608695
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+AmbientSounds: SPOT><AM_IND-Utility02.ogg><731.8688><457.5891><0.3913043><1><465.8688><454.5891><-123.3553><-24.35535><0><0.2739132, 
+FadePalette: 8, 0.5217391
+WetTerrain: OFF

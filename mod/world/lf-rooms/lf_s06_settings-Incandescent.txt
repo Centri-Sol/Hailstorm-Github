@@ -1,0 +1,17 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.25
+RumbleIntensity: 0.25
+WaveSpeed: 0.5023772
+WaveLength: 0.9284989
+WaveAmplitude: 0.01312355
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: WaterDepth-0.07608695-8-63, Flies-0-20-20, Coldness-1-12-123, 
+AmbientSounds: SPOT><AM_IND-DeepHum.ogg><745.4012><304.6191><0.3152174><1><155.4012><149.6191><-83.35535><-109.3553><0><0.1869567, OMNI><AM_ENV-NatWind.ogg><731.9445><490.0466><0.173913><1, 
+FadePalette: 8, 0.5217391
+WetTerrain: OFF

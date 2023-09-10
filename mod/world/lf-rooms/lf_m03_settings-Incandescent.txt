@@ -1,0 +1,19 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0.173913
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 3.105894E-40
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.5869565
+Grime: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Flies-0-20-20, 
+PlacedObjects: PuffBall><49.80017><238.4914><-162~-272~6~9, 
+AmbientSounds: OMNI><SO_WAT-ProperDrips.ogg><830.4429><565.0529><0.2826087><1, OMNI><AM_ENV-NatWind.ogg><651.947><573.5342><0.2826087><1, 
+FadePalette: 10, 0.4347826
+WetTerrain: OFF

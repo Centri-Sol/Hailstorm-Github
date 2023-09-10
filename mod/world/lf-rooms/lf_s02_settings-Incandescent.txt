@@ -1,0 +1,14 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.25
+RumbleIntensity: 0.25
+WaveSpeed: 0.4946642
+WaveLength: 0.9270196
+WaveAmplitude: 0.01314663
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><805.4462><603.4612><0.2608696><1, 
+FadePalette: 0, 0.5543478
+WetTerrain: OFF

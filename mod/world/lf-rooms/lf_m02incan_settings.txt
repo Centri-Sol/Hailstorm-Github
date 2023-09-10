@@ -1,0 +1,18 @@
+Template: LF_SettingsTemplate_Farms
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.53857
+WaveLength: 0.699465
+WaveAmplitude: 0.05624998
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.4456522
+Grime: 0.326087
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: Fog-0.06521739-2-59, SilenceWater-1-0-0, Flies-0-6-130, LightBurn-0.0326087-243-0, Coldness-1-243-55, Dustpuffs-1-257-124, SkyDandelions-0.3369565-257-195, 
+PlacedObjects: DeadSeedCob><316.067><1331.669><, DeadSeedCob><341.1917><1266.941><, DeadSeedCob><1444.898><1303.384><, DeadSeedCob><1504.879><1322.097><, DeadSeedCob><1529.891><1278.392><, DeadSeedCob><2099.113><1310.605><, DeadSeedCob><2184.163><1350.57><, DeadSeedCob><2633.266><1282.949><, DeadSeedCob><2688.121><1385.597><, DeadSeedCob><2733.259><1306.95><, SporePlant><910.5569><1511.302><-7~-543~7~10, SporePlant><1307.577><1460.149><-148~-565~7~10, SporePlant><1345.589><1529.132><-188~-562~7~10, SporePlant><1882.923><1250.6><-83~-196~7~10, SporePlant><1981.597><1351.371><68~-297~7~10, SnowSource><1124.884><1634.837><None~-1289~-643~-219~-748.3975~0.7065217~1, SnowSource><3258.408><1558.678><Radial~956~-521~569~-217.3975~1~1, SnowSource><3921.916><1518.138><Radial~212~139~-99~-86.39746~1~1, SnowSource><2244.932><886.438><UnSnow~-138~61~-195~83.60254~0.4456522~0.8043478, SnowSource><1910.871><890.9093><UnSnow~130~95~-117~75.60254~0.3804401~0.5, SnowSource><1652.328><907.6488><UnSnow~0~100~-239~39.60254~0.2282609~0, DandelionPatch><1528.07><1153.444><-31~112, DandelionPatch><1976.665><1177.681><-53~154, DandelionPatch><2658.131><1205.347><5~59, 
+AmbientSounds: SPOT><AM_ENV-WindGrass.ogg><785.0834><461.1107><0.2826087><1><503.0834><1136.111><-188.3553><151.6447><0><1, SPOT><waterGurgleLOOP1.wav><782.3387><353.0707><0.5><1><4181.339><284.0707><-605.3553><82.64465><0><0.01086957, OMNI><AM_ENV-WinterTrees.ogg><791.3713><577.591><0.3478261><1, OMNI><AM_ENV-NatWind.ogg><613.1264><578.595><0.2282609><1, 
+Triggers: Spot<tA>event<tB>MusicEvent<eA>songName<eB>NA_24 - Emotion Thread<eA>vol<eB>0.3<eA>prio<eB>0.5<eA>mxThrt<eB>1<eA>loop<eB>0<eA>droneTol<eB>0<eA>rooms<eB>-1<eA>rest<eB>5<eA>fadeIn<eB>19.56522<eA>oneSongPerCycle<eB>0<eA>stopAtDeath<eB>0<eA>stopAtGate<eB>0<tA>multiUse<tB>0<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>104<tA>panPos<tB>1102.086<tB>530.636<tA>fireChance<tB>1<tA>entrance<tB>-1<tA>karma<tB>0<tA>slugcats<tB>White|Yellow|Red|Rivulet|Artificer|Saint|Spear|Gourmand<tA>pos<tB>4119.088<tB>336.6377<tA>handlePos<tB>-172.3553<tB>58.64465, 
+FadePalette: 0, 0.4565217, 0.423913, 0.4456522, 0.4782609, 1
+WetTerrain: OFF
