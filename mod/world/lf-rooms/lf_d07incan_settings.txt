@@ -1,0 +1,18 @@
+Template: LF_SettingsTemplate_Farms
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.3851942
+WaveLength: 0.6425971
+WaveAmplitude: 0.05999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.4456522
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorB: 18
+Effects: Flies-0-20-20, LightBurn-0.08695652-19-74, Coldness-1-272-13, Dustpuffs-1-276-70, SkyDandelions-0.1086956-267-127, 
+PlacedObjects: DeadSeedCob><1543.418><262.6408><, DeadSeedCob><245.0614><291.9337><, DeadSeedCob><3050.125><250.4063><, UniqueDataPearl><487.8124><549.6764><-611.0038~-428~0~0~LF_bottom~0, ReliableSpear><3712.612><138.6659><, InsectGroup><15.18158><290.4379><-121~115~-142~-236~RedSwarmer~0.3043478, SnowSource><3156.179><482.3387><None~1263~-533~137~-56.39746~1~1, SnowSource><931.0835><481.1392><None~1263~-518~50~86.60254~1~1, SnowSource><0.5731201><260.8434><UnSnow~0~100~-54~-301.3975~0.4021739~0, DeadSeedCob><1677.696><353.7876><, ReliableSpear><1394.05><229.4949><, ReliableSpear><1256.23><240.301><, ReliableSpear><1005.843><257.927><, ReliableSpear><110.7147><228.5532><, DeadSeedCob><3147.051><328.7359><, DandelionPeach><509.4414><584.0588><-626~-33~5~8, DandelionPeach><3803.821><472.3394><0~0~5~8, FirecrackerPlant><2523.656><147.5829><-57~-186~8~12, FirecrackerPlant><2500.826><143.6849><-285~-181~8~12, SporePlant><4056.149><226.6728><-28~-268~7~10, DandelionPatch><697.692><412.6914><118~246, DandelionPatch><1818.144><217.1109><-47~94, DandelionPatch><3285.248><150.2><0~100, DandelionPatch><3787.552><439.5315><-12~47, SnowSource><497.0804><488.3951><UnSnow~7.791626~80.08887~-358~90.15808~0.507246~1, 
+AmbientSounds: SPOT><AM_ENV-WindGrass.ogg><121.5635><503.8222><0.3804348><1><3513.563><131.8222><-370.3553><-10.35535><0><0.4260871, SPOT><AM_ENV-WindGrass.ogg><119.3712><373.153><0.3586957><1><1865.371><225.153><-116.3553><-58.35535><0><0.2304347, SPOT><AM_ENV-WindGrass.ogg><778.8148><417.1744><0.4021739><1><2617.815><134.1744><-155.3553><-82.35535><0><0.3500001, SPOT><AM_ENV-WindGrass.ogg><104.0935><244.8754><0.3695652><1><519.0935><192.8754><-240.3553><-71.35535><0><0.3391306, SPOT><AM_ENV-NatWind.ogg><105.3981><112.4221><0.423913><1><-107.6019><574.4221><38.64466><-250.3553><0><0.3282608, OMNI><AM_ENV-NatWind.ogg><812.6896><618.4364><0.1630435><1, 
+FadePalette: 14, 0.3043478, 0.3152174, 0.3043478, 0.2934783
+WetTerrain: OFF

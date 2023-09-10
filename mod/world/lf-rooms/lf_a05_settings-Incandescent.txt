@@ -1,0 +1,19 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0.1521739
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.1847826
+BkgDroneVolume: 0.2569565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Flies-0-20-20, 
+PlacedObjects: CentipedeAttractor><443.4341><195.8282><-220~-83, Mushroom><611.2436><374.4499><293~-351~8~12, Mushroom><571.1746><382.4353><336~-430~8~12, Mushroom><712.4204><386.0665><190.9999~-286~8~12, ReliableSpear><471.9499><181.8063><, ReliableSpear><412.4733><134.3018><, Mushroom><392.0856><540.5693><-503~-583.9445~8~12, Mushroom><377.0356><528.7754><-561~-476~8~12, Mushroom><321.8875><531.3951><-502~-403~8~12, 
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><807.6965><632.0372><0.3369565><1, 
+FadePalette: 8, 0.4130435
+WetTerrain: OFF

@@ -1,0 +1,15 @@
+Template: LF_SettingsTemplate_Farms
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.5086109
+WaveLength: 0.8674042
+WaveAmplitude: 0.02565806
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Effects: Flies-0-7-10, Coldness-1-10-63, Dustpuffs-1-256-12, LightBurn-0.08695652-260-58, 
+PlacedObjects: GhostSpot><581.0605><1443.559><, CustomDecal><643.9451><1200.058><-9~67~44~80~50~10~453.9999~-540~0~1~0~ScavMark Ghost~0~0~1~0~0.5~0.3369565~0.5~0.6304348, Rainbow><425.6837><1252.561><-136~200~-352~-73~0,0,0.2826087,0.3804348,0.7826087,0.1847826, SnowSource><595.4909><805.9498><None~744~773~50~86.60254~0.7934783~0.6086956, SnowSource><642.1828><206.6688><Radial~1120~529~-24~-166.3975~1~0.4456522, WaterNut><1278.14><237.3568><-406~-180~5~7, WaterNut><1299.197><226.5348><-176~-170~5~7, Mushroom><730.8737><176.095><-611~-131~5~8, Mushroom><779.1986><174.2737><-410~-129~5~8, SporePlant><206.4146><299.5692><-175~-152~7~10, 
+AmbientSounds: SPOT><AM_ENV-WindGrass.ogg><776.0961><412.1754><0.423913><1><744.0961><171.1754><-256.3553><-11.35535><0><0.5673915, OMNI><AM_ENV-NatWind.ogg><793.3892><611.8564><0.326087><1, 
+FadePalette: 0, 0.3152174, 0.2934783
+WetTerrain: OFF

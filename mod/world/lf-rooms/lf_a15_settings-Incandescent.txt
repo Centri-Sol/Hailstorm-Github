@@ -1,0 +1,18 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.25
+RumbleIntensity: 0.25
+WaveSpeed: 0.4921991
+WaveLength: 0.9524894
+WaveAmplitude: 0.008719236
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.1413043
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Flies-0-20-20, Coldness-1-15-76, 
+PlacedObjects: Mushroom><317.0513><198.773><-438~-251~6~9, Mushroom><411.1833><165.5615><-30~-217~6~9, Mushroom><334.1906><180.6894><-204~-232~6~9, 
+AmbientSounds: OMNI><SO_NAT-LilDrips.ogg><625.8201><613.1627><0.2608696><1, OMNI><AM_ENV-NatWind.ogg><805.8551><623.3622><0.25><1, 
+FadePalette: 8, 0.5108696
+WetTerrain: OFF
