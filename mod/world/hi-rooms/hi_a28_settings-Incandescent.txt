@@ -1,0 +1,19 @@
+Template: HI_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.1521739
+RumbleIntensity: 0.08695652
+WaveSpeed: 0.5060148
+WaveLength: 0.9513404
+WaveAmplitude: 0.009130431
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+BkgDroneVolume: 0
+RandomItemDensity: 0.5
+RandomItemSpearChance: 0.33
+Palette: 0
+Effects: Coldness-1-20-20, 
+PlacedObjects: DangleFruit><80.61188><293.3553><-188~-331~4~6, 
+AmbientSounds: OMNI><AM_ENV-SubTerr.ogg><732.6912><607.4412><0.3369565><1, OMNI><AM_IND-Utility02.ogg><737.8163><457.5613><0.1521739><1, 
+FadePalette: 8, 0.5
+WetTerrain: OFF

@@ -1,0 +1,52 @@
+OFFSCREEN : 0-Vulture-3, 0-MirosVulture, 0-MirosVulture-{Night}-2, 0-Scavenger-11
+LINEAGE : OFFSCREEN_HI : 0 : Vulture-0.25, KingVulture-0
+
+HI_D01 : 2-Mouse-6, 2-MotherSpider-{PreCycle}
+HI_B14 : 3-BigSpider, 4-Spider-35
+LINEAGE : HI_B14 : 4 : NONE-1.0, NONE-0.75, NONE-0.5, SpitterSpider-0
+HI_B07 : 3-Centiwing, 3-TentaclePlant-{Night}
+LINEAGE : HI_B07 : 2 : BigSpider-1.0, NONE-0.5, SpitterSpider-0.33, NONE-0.25, MotherSpider-0
+HI_B09 : 2-Centiwing, 3-White
+HI_C11 : 3-White, 4-Cyan-{Night}
+LINEAGE : HI_C11 : 4 : BigSpider-0.25, Centiwing-0.2, Centipede-{0.9}-0.15, RedCentipede-0.5, NONE-0.1, Cyanwing-0
+HI_A10 : 3-Centiwing, 3-Small Centipede-{AlternateForm}
+LINEAGE : HI_A10 : 3 : Centiwing-{0.4}-0.4, Centiwing-{0.7}-0.7, Centiwing-{1.0}-1.0, Cyanwing-{Night}-0
+HI_B06 : 3-Spider-35, 4-Yellow-{Ignorecycle}-3, 4-Yellow-{Night}-2, 4-Yellow-2
+LINEAGE : HI_B06 : 3 : NONE-1.0, NONE-1.0, NONE-0.1, BigSpider-0.1, DropBug-0
+LINEAGE : HI_B06 : 4 : Yellow-0.5, Yellow-{Night}-0.33, Yellow-{Ignorecycle}-0
+HI_C04 : 5-Mouse-4, 6-Salamander-{PreCycle}, 7-TentaclePlant-{Night}, 8-Eel-{PreCycle}
+HI_B03 : 3-Small Centipede-{AlternateForm}
+LINEAGE : HI_B03 : 2 : NONE-1.0, NONE-1.0, NONE-0.25, Strawberry-0
+LINEAGE : HI_B03 : 3 : Centiwing-0.33, Centiwing-{0.9}-0.5, Cyanwing-{Night}-0
+HI_C01 : 3-Yellow-{Ignorecycle}-4, 4-Yellow-2, 4-Yellow-{Night}-2
+LINEAGE : HI_C01 : 5 : NONE-1.0, NONE-0.05, BigSpider-0
+HI_C15 : 5-Centipede
+LINEAGE : HI_C15 : 3 : Mimic-{7}-1.0, Centipede-{0.7}-0
+LINEAGE : HI_C15 : 5 : NONE-1.0, NONE-0.15, Centipede-{0.8}-0.5, RedCentipede-0
+HI_A28 : 3-Eel-{PreCycle}
+
+HI_C03 : 3-BigSpider, 3-BigSpider-{Night}
+HI_B15 : 2-Centipede-{0.7}, 2-Centipede-{0.9}, 3-BigSpider-2, 3-SpitterSpider-{PreCycle}
+LINEAGE : HI_A04 : 2 : Red-{Night}-1.0, NONE-0.2, NONE-0.1, NONE-0.05, Freezer-{Night}-0
+HI_B05 : 3-Cyan-3, 3-Mouse-3, 3-Mouse-{Night}-3
+HI_A16 : 4-Centipede-{0.6}, 4-Centipede
+LINEAGE : HI_A16 : 4 : Centipede-{0.9}-1.0, Centipede-0.4, RedCentipede-0
+HI_A25 : 2-Spider-30
+LINEAGE : HI_A25 : 2 : BigSpider-0.05, SpitterSpider-0
+HI_A17 : 3-Mouse-2
+LINEAGE : HI_A17 : 3 : Mouse-1.0, MotherSpider-0
+HI_A18 : 2-IcyBlue, 3-Strawberry-{Night}
+LINEAGE : HI_A18 : 3 : IcyBlue-0.25, NONE-1.0, NONE-0.5, Freezer-0
+HI_C05 : 2-DropBug, 2-DropBug-{Night}-2, 3-Yellow-{Ignorecycle}-2, 4-Yellow-{Ignorecycle}-2
+LINEAGE : HI_C05 : 3 : Yellow-{Night}-0.33, Caramel-0
+LINEAGE : HI_C05 : 4 : Yellow-{Night}-0.50, Caramel-0
+HI_A06 : 2-Strawberry
+LINEAGE : HI_A06 : 2 : NONE-0.1, White-0.4, NONE-0.25, Eel-0.25, Strawberry-0.25, Cyan-0
+HI_A19 : 2-InfantAquapede-{PreCycle}-2
+
+HI_A23 : 2-Strawberry-{Night}, 2-MotherSpider-{PreCycle}
+LINEAGE : HI_A23 : 2 : NONE-1.0, NONE-0.2, BigSpider-0.3, IcyBlue-0
+HI_C02 : 4-DropBug-{PreCycle}-3, 5-Mouse-3, 5-Spider-20, 6-BigSpider, 6-Spider-20
+HI_B13 : 2-Yellow-{Ignorecycle}-4, 2-Yellow, 2-Yellow-{Night}-2
+HI_B12 : 2-BigSpider-2, 3-Centiwing, 3-Small Centipede-{AlternateForm}-2
+LINEAGE : HI_B12 : 3 : Centiwing-0.07, Cyanwing-{Night}-0

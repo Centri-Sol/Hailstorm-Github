@@ -1,0 +1,18 @@
+Template: SL_SettingsTemplate_Sewer
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 1.491683E-26
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 1
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Coldness-1-30-30, 
+PlacedObjects: GlowWeed><418.0277><449.0519><-610~15~2~3, GlowWeed><504.8121><531.3184><-695~-146~2~3, GlowWeed><529.903><369.0751><-719~-59~2~3, GlowWeed><456.8182><1195.833><-474~-11~2~3, GlowWeed><530.8408><1297.629><-548~-38~3~5, GlowWeed><550.1367><943.6038><-566~166~2~3, GlowWeed><253.8952><411.9203><-443~127~2~3, GlowWeed><174.0074><461.9499><-366~154~2~3, GlowWeed><713.6151><444.0864><-906~-211~3~4, 
+FadePalette: 10, 0.6413044, 0.7391304, 0.8152174
+WetTerrain: OFF

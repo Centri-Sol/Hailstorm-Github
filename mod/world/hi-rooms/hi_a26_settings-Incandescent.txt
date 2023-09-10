@@ -1,0 +1,20 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2391304
+RumbleIntensity: 0.2391304
+WaveSpeed: 0.5002895
+WaveLength: 0.9998552
+WaveAmplitude: 1.487014E-05
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.25
+Grime: 0.3804348
+BkgDroneVolume: 0.2469565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+PlacedObjects: InsectGroup><373.3822><254.1617><-6~101~-565~240~Ant~1, DeadVultureGrub><660.5584><361.8087><-854~196~3~4, ReliableSpear><699.1174><365.1497><, 
+AmbientSounds: OMNI><AM_IND-Warehouse02.ogg><771.6337><395.6488><0.5><0.5695652, 
+FadePalette: 20, 0.2391304
+WetTerrain: OFF

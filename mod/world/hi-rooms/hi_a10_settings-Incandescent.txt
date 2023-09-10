@@ -1,0 +1,18 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.4669954
+WaveLength: 0.7022477
+WaveAmplitude: 0.05624998
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2391304
+BkgDroneVolume: 0.2469565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Flies-0-20-20, LightBurn-0.06521739-23-74, Coldness-1-21-136, Dustpuffs-1-276-20, SkyDandelions-0.1086956-271-74, 
+PlacedObjects: SnowSource><103.2335><396.0507><Radial~925~-306~800.9186~-443.186~1~1, SnowSource><403.0905><273.6206><Radial~227~323~497.009~-233.7549~1~1, DandelionPeach><24.81514><337.6735><-135~-376~5~7, DandelionPatch><8.294861><305.6089><9~27, DandelionPatch><242.6336><398.181><4~49, DandelionPatch><443.2767><172.0518><0~100, 
+AmbientSounds: SPOT><AM_IND-Utility03.ogg><471.3587><253.6679><0.5><1><833.3586><656.6678><-26.35535><-67.35535><0><0.3500001, OMNI><AM_ENV-NatWind.ogg><736.6118><634.8554><0.2282609><1, OMNI><AM_ENV-WinterTrees.ogg><744.1459><552.3292><0.326087><1, 
+FadePalette: 15, 0.6086956
+WetTerrain: OFF
