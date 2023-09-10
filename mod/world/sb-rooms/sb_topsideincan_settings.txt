@@ -1,0 +1,20 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.5056778
+WaveLength: 0.7471611
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.3804348
+Grime: 0.1630435
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorA: 8
+EffectColorB: 18
+Effects: FireFlies-0-20-20, LightBurn-0.05434782-24-74, Darkness-0.3369565-289-28, Coldness-1-34-114, 
+PlacedObjects: NoSpearStickZone><1708.183><287.6688><-9~277, ScavengerOutpost><682.9299><139.9369><-199~357~-132~-177~0.169492~60~0, DeadSeedCob><1442.386><327.3965><, DeadSeedCob><1577.07><320.1637><, SeedCob><1543.594><309.6254><320~0~0~10, SnowSource><1699.953><435.1943><Radial~-652~-191~162~201.6025~1~1, SnowSource><1243.309><-34.4415><Radial~-323~280~613~-0.3975067~1~0, SnowSource><722.0481><375.1941><Radial~-91~101~183~13.60254~0.7282609~1, SnowSource><396.733><476.5507><None~208~9~-599~64.60254~1~1, SnowSource><368.2471><160.95><Radial~208~453~-481~-209.3974~1~0.5, SnowSource><340.3226><355.1864><UnSnow~4~128~-526~-305.3975~0.3804348~0, SnowSource><1658.285><184.9469><UnSnow~-140~198~233~-134.3975~0.2065217~0, 
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><656.676><646.8142><0.3369565><1, 
+FadePalette: 12, 0, 0.1195652
+WetTerrain: OFF

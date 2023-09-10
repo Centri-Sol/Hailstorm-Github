@@ -1,0 +1,19 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 1
+RumbleIntensity: 1
+WaveSpeed: 0.5274072
+WaveLength: 0.9862964
+WaveAmplitude: 0.00517624
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 11
+EffectColorB: 8
+Effects: Coldness-1-20-20, Dustpuffs-1-21-77, 
+PlacedObjects: DeadTokenStalk><513.4734><2638.552><-39~71, DeadTokenStalk><508.5151><2786.551><-33~-46, BlueToken><477.9213><2887.418><-13~-146~99~-99~1~MirosVulture~White|Yellow|Red|Artificer|Saint|Spear|Gourmand~0~0~0~0, SnowSource><532.4819><2113.551><Radial~-536~-561~59~50.60254~0.8478261~1, SnowSource><494.3801><2854.402><Radial~-207~-319~95~-213.3975~0.5543478~0.7173913, SnowSource><485.5085><442.9498><Radial~511~-396~-146~-120.3975~0.8804348~1, SnowSource><1124.313><1180.06><Radial~-406~-229~-501~-160.3975~1~1, SnowSource><30.4314><1465.584><Radial~214~-170~172~-295.3975~0.6956522~0.9782609, GhostSpot><221.3943><2817.329><, DangleFruit><472.2884><525.8037><434.9999~-321~5~6, DangleFruit><460.2392><714.8003><446.0001~-588~4~5, DangleFruit><496.4122><689.117><410~-636~4~5, 
+AmbientSounds: SPOT><SO_IND-Humm.ogg><558.3062><596.7006><0.1847826><1><478.3062><1166.701><-249.3553><-268.3553><0><0.4369566, SPOT><SO_IND-Deep50hz.ogg><558.6835><471.3297><0.3369565><1><480.6835><1179.33><-292.3553><-338.3553><0><0.5565219, SPOT><AM_IND-Utility02.ogg><570.6245><346.5943><0.4130435><1><280.6245><1195.594><-98.35535><-235.3553><0><0.2413045, SPOT><SO_SFX-Data4.ogg><587.8022><215.2201><0.423913><1><551.8022><1294.22><-145.3553><-216.3553><0><0.2413045, 
+FadePalette: 40, 0.8478261, 0.6847826, 0.5434783, 0.6413044
+WetTerrain: OFF
