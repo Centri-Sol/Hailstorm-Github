@@ -1,0 +1,412 @@
+{"frames": {
+"ArmorIceSpike0A.0.png":
+{
+	"frame": {"x":0,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike0A.1.png":
+{
+	"frame": {"x":0,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike0A.2.png":
+{
+	"frame": {"x":0,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike0A.3.png":
+{
+	"frame": {"x":0,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+"ArmorIceSpike0B.0.png":
+{
+	"frame": {"x":34,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike0B.1.png":
+{
+	"frame": {"x":34,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike0B.2.png":
+{
+	"frame": {"x":34,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike0B.3.png":
+{
+	"frame": {"x":34,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+
+"ArmorIceSpike1A.0.png":
+{
+	"frame": {"x":68,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike1A.1.png":
+{
+	"frame": {"x":68,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike1A.2.png":
+{
+	"frame": {"x":68,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike1A.3.png":
+{
+	"frame": {"x":68,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+"ArmorIceSpike1B.0.png":
+{
+	"frame": {"x":102,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike1B.1.png":
+{
+	"frame": {"x":102,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike1B.2.png":
+{
+	"frame": {"x":102,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike1B.3.png":
+{
+	"frame": {"x":102,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+
+"ArmorIceSpike2A.0.png":
+{
+	"frame": {"x":136,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike2A.1.png":
+{
+	"frame": {"x":136,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike2A.2.png":
+{
+	"frame": {"x":136,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike2A.3.png":
+{
+	"frame": {"x":136,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+"ArmorIceSpike2B.0.png":
+{
+	"frame": {"x":170,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike2B.1.png":
+{
+	"frame": {"x":170,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike2B.2.png":
+{
+	"frame": {"x":170,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike2B.3.png":
+{
+	"frame": {"x":170,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+
+"ArmorIceSpike3A.0.png":
+{
+	"frame": {"x":204,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike3A.1.png":
+{
+	"frame": {"x":204,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike3A.2.png":
+{
+	"frame": {"x":204,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike3A.3.png":
+{
+	"frame": {"x":204,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+"ArmorIceSpike3B.0.png":
+{
+	"frame": {"x":238,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike3B.1.png":
+{
+	"frame": {"x":238,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike3B.2.png":
+{
+	"frame": {"x":238,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike3B.3.png":
+{
+	"frame": {"x":238,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+
+"ArmorIceSpike4A.0.png":
+{
+	"frame": {"x":272,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike4A.1.png":
+{
+	"frame": {"x":272,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike4A.2.png":
+{
+	"frame": {"x":272,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike4A.3.png":
+{
+	"frame": {"x":272,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+"ArmorIceSpike4B.0.png":
+{
+	"frame": {"x":306,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike4B.1.png":
+{
+	"frame": {"x":306,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike4B.2.png":
+{
+	"frame": {"x":306,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike4B.3.png":
+{
+	"frame": {"x":306,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+
+"ArmorIceSpike5A.0.png":
+{
+	"frame": {"x":340,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike5A.1.png":
+{
+	"frame": {"x":340,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike5A.2.png":
+{
+	"frame": {"x":340,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike5A.3.png":
+{
+	"frame": {"x":340,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+
+"ArmorIceSpike5B.0.png":
+{
+	"frame": {"x":374,"y":0,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike5B.1.png":
+{
+	"frame": {"x":374,"y":20,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike5B.2.png":
+{
+	"frame": {"x":374,"y":40,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+},
+"ArmorIceSpike5B.3.png":
+{
+	"frame": {"x":374,"y":60,"w":34,"h":20},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":34,"h":20},
+	"sourceSize": {"w":34,"h":20}
+}
+}
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "armorIceSpikes.png",
+	"format": "RGBA8888",
+	"size": {"w":408,"h":80},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:973378c2cb09336e50b99b24f9f25ab6:7fdaa0b1b36e0d28f35d253cba055c9f:9eaa3507303827772746237d9f0342b5$"
+}
+}

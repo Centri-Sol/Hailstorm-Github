@@ -1,0 +1,18 @@
+{
+	"id": "Slugcat_Incandescent",
+	"scene_folder": "slugbase/scenes/slugcat - incandescent",
+	"images": [
+		{ "name": "Background", "pos": [450, 220], "depth": 5, "shader": "Basic" },
+		{ "name": "Incandescent", "pos": [450, 220], "depth": 4.6, "shader": "Basic" },
+		{ "name": "Waistband", "pos": [450, 220], "depth": 4.6, "shader": "Basic" },
+		{ "name": "Embers", "pos": [450, 220], "depth": 4.2, "shader": "Basic" },
+		{ "name": "Wigglegrass1", "pos": [450, 230], "depth": 2.1, "shader": "Basic" },
+		{ "name": "Wigglegrass2", "pos": [450, 210], "depth": 1.6, "shader": "Basic" },
+		{ "name": "Wigglegrass3", "pos": [450, 230], "depth": 1.1, "shader": "Basic" }
+	],
+	"idle_depths": [ 2.2 ],
+	"glow_pos": [688, 484],
+	"mark_pos": [689, 583],
+	"select_menu_pos": [0, 0],
+	"slugcat_depth": 2.7
+}

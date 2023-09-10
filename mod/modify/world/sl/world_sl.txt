@@ -1,0 +1,72 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CONDITIONAL LINKS
+//unlink shaded and subterranean paths on incandescent
+Incandescent : SL_B02 : SL_A02 : DISCONNECTED
+Incandescent : SL_B02 : SL_C11 : DISCONNECTED
+Incandescent : SL_B02 : SL_A14 : DISCONNECTED
+Incandescent : SL_A03 : SL_D03 : DISCONNECTED
+Incandescent : SL_D03 : SL_A03 : DISCONNECTED
+
+//link CL rooms on incandescent
+Incandescent : SL_B02SAINT : 1 : SL_A02
+Incandescent : SL_B02SAINT : 2 : SL_A14
+Incandescent : SL_A02 : SL_B02 : SL_B02SAINT
+Incandescent : SL_A14 : SL_B02 : SL_B02SAINT
+
+//Exclusive and Hidden rooms
+Incandescent : EXCLUSIVEROOM : GATE_SL_CL
+Incandescent : EXCLUSIVEROOM : SL_B02SAINT
+Incandescent : EXCLUSIVEROOM : SL_C16
+Incandescent : EXCLUSIVEROOM : SL_I02
+Incandescent : EXCLUSIVEROOM : SL_SCRUSHED
+Incandescent : EXCLUSIVEROOM : SL_B10
+Incandescent : EXCLUSIVEROOM : SL_B11
+
+Incandescent : HIDEROOM : SL_B02
+Incandescent : HIDEROOM : SL_C11
+Incandescent : HIDEROOM : SL_S02
+Incandescent : HIDEROOM : GATE_SH_SL
+Incandescent : HIDEROOM : SL_A03
+Incandescent : HIDEROOM : SL_C06
+Incandescent : HIDEROOM : SL_S04
+Incandescent : HIDEROOM : SL_A06
+Incandescent : HIDEROOM : SL_D05
+Incandescent : HIDEROOM : GATE_SB_SL
+Incandescent : HIDEROOM : GATE_UW_SL
+Incandescent : HIDEROOM : SL_BRIDGEEND
+Incandescent : HIDEROOM : SL_S13
+Incandescent : HIDEROOM : SL_EDGE01
+Incandescent : HIDEROOM : SL_EDGE02
+Incandescent : HIDEROOM : SL_BRIDGE01
+END CONDITIONAL LINKS
+
+CREATURES
+(X-Incandescent)SL_C15 : 5-InfantAquapede, 7-InfantAquapede
+(X-Incandescent,Saint)SL_H02 : 10-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint)LINEAGE : SL_H02 : 10 : InfantAquapede-{PreCycle}-1.0, NONE-0.2, InfantAquapede-0.2, Aquapede-0
+(X-Incandescent,Saint)SL_D04 : 7-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint)SL_D03 : 7-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint)SL_F02 : 8-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint,Yellow)SL_D03 : 7-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint,Yellow)SL_F02 : 8-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint,Yellow)SL_D02 : 5-InfantAquapede-{PreCycle}
+(X-Incandescent,Yellow,White)SL_D01 : 4-InfantAquapede
+(X-Incandescent,Yellow,White)SL_D06 : 9-InfantAquapede, 9-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint,Yellow,White,Red)SL_F01 : 7-InfantAquapede
+(X-Incandescent,Saint,Yellow,White,Gourmand)SL_F01 : 7-InfantAquapede-{PreCycle}
+(X-Incandescent,Saint,Yellow,White,Gourmand)SL_E01 : 5-InfantAquapede-{PreCycle}
+(Rivulet)SL_D01 : 4-InfantAquapede-{PreCycle}
+(Rivulet)SL_D02 : 5-InfantAquapede
+(Rivulet,Saint)SL_D03 : 7-InfantAquapede
+(Saint)SL_H03 : 4-InfantAquapede-{Night}
+(Saint)SL_H02 : 10-InfantAquapede-{Night}
+(Saint)LINEAGE : SL_H02 : 10 : NONE-0.1, InfantAquapede-0.2, Aquapede-0
+(Saint)SL_D02 : 5-InfantAquapede-{Night}
+(Saint)SL_F01 : 5-InfantAquapede, 5-InfantAquapede-{Night}
+(Saint)SL_D04 : 6-InfantAquapede-{Night}
+END CREATURES
+[ENDMERGE]

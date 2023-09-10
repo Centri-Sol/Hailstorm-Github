@@ -1,0 +1,19 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CONDITIONAL LINKS
+// Unlinks that one shelter near the Outskirts gate
+Incandescent : HI_S03 : HI_B04 : DISCONNECTED
+Incandescent : HI_B04 : HI_S03 : DISCONNECTED
+
+Incandescent : REPLACEROOM : HI_A19 : HI_A19INCAN
+Incandescent : REPLACEROOM : HI_A25 : HI_A25INCAN
+Incandescent : REPLACEROOM : HI_C04 : HI_C04INCAN
+END CONDITIONAL LINKS
+
+CREATURES
+(Incandescent)HI_C04INCAN : 6-IcyBlue
+END CREATURES
+[ENDMERGE]

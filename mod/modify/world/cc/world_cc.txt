@@ -1,0 +1,16 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CONDITIONAL LINKS
+Incandescent : REPLACEROOM : CC_H01 : CC_H01SAINT
+Incandescent : GATE_CC_UW : CC_H01 : DISCONNECTED
+Incandescent : CC_H01 : GATE_CC_UW : CC_A06
+Incandescent : CC_A06 : 1 : CC_H01
+END CONDITIONAL LINKS
+
+CREATURES
+(Incandescent)OFFSCREEN : 0-Vulture
+END CREATURES
+[ENDMERGE]

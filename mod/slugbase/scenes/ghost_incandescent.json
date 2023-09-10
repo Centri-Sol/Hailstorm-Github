@@ -1,0 +1,10 @@
+{
+	"id": "Ghost_Incandescent",
+	"scene_folder": "slugbase/scenes/ghost - incandescent",
+	"images": [
+		{ "name": "Flatscene", "pos": [0, 0], "depth": -1.0, "flatmode": true},
+		{ "name": "Etherglow", "pos": [390, 170], "depth": 3.5, "shader": "Basic" },
+		{ "name": "Incandescent Ghost", "pos": [390, 170], "depth": 5.0, "shader": "Basic" }
+	],
+	"idle_depths": [ 2.8 ]
+}

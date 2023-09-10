@@ -1,0 +1,69 @@
+{"frames": {
+"ChillipedeChunk.png":
+{
+	"frame": {"x":0,"y":0,"w":24,"h":24},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":24,"h":24},
+	"sourceSize": {"w":24, "h":24}
+},
+
+"ChillipedeTopShell0.png":
+{
+	"frame": {"x":25,"y":0,"w":32,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":26},
+	"sourceSize": {"w":32, "h":26}
+},
+"ChillipedeTopShell1.png":
+{
+	"frame": {"x":25,"y":27,"w":32,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":26},
+	"sourceSize": {"w":32, "h":26}
+},
+"ChillipedeTopShell2.png":
+{
+	"frame": {"x":25,"y":54,"w":32,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":26},
+	"sourceSize": {"w":32, "h":26}
+},
+"ChillipedeBottomShell0.png":
+{
+	"frame": {"x":58,"y":0,"w":32,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":26},
+	"sourceSize": {"w":32, "h":26}
+},
+"ChillipedeBottomShell1.png":
+{
+	"frame": {"x":58,"y":27,"w":32,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":26},
+	"sourceSize": {"w":32, "h":26}
+},
+"ChillipedeBottomShell2.png":
+{
+	"frame": {"x":58,"y":54,"w":32,"h":26},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":32,"h":26},
+	"sourceSize": {"w":32, "h":26}
+}
+}
+"meta": {
+	"app": "https://www.codeandweb.com/texturepacker",
+	"version": "1.0",
+	"image": "chillipede.png",
+	"format": "RGBA8888",
+	"size": {"w":89,"h":80},
+	"scale": "1",
+	"smartupdate": "$TexturePacker:SmartUpdate:973378c2cb09336e50b99b24f9f25ab6:7fdaa0b1b36e0d28f35d253cba055c9f:9eaa3507303826772646327d9f0342b5$"
+}
+}

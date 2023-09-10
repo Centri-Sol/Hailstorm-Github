@@ -1,0 +1,9 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CREATURES
+(Incandescent)OFFSCREEN : 0-Vulture
+END CREATURES
+[ENDMERGE]

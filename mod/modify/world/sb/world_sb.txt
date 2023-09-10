@@ -1,0 +1,67 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CONDITIONAL LINKS
+//removes access to shoreline
+Incandescent : SB_G02 : GATE_SB_SL : DISCONNECTED
+Incandescent : GATE_SB_SL : SB_G02 : DISCONNECTED
+
+Incandescent : SB_G04 : GATE_SB_VS : DISCONNECTED
+Incandescent : GATE_SB_VS : SB_G04 : DISCONNECTED
+
+//swaps out the depths
+Incandescent : REPLACEROOM : SB_A03 : SB_A03INCAN
+Incandescent : REPLACEROOM : SB_A04 : SB_A04INCAN
+Incandescent : REPLACEROOM : SB_A09 : SB_A09INCAN
+Incandescent : REPLACEROOM : SB_A11 : SB_A11INCAN
+Incandescent : REPLACEROOM : SB_B01 : SB_B01INCAN
+Incandescent : REPLACEROOM : SB_B02 : SB_B02INCAN
+Incandescent : REPLACEROOM : SB_C02 : SB_C02INCAN
+Incandescent : REPLACEROOM : SB_C07 : SB_C07INCAN
+Incandescent : REPLACEROOM : SB_F03 : SB_F03INCAN
+Incandescent : REPLACEROOM : SB_GOR02 : SB_GOR02INCAN
+Incandescent : REPLACEROOM : SB_H03 : SB_H03INCAN
+Incandescent : REPLACEROOM : SB_J02 : SB_J02INCAN
+Incandescent : REPLACEROOM : SB_J03 : SB_J03INCAN
+Incandescent : REPLACEROOM : SB_J10 : SB_J10INCAN
+Incandescent : REPLACEROOM : SB_TESTB : SB_TESTBINCAN
+Incandescent : REPLACEROOM : SB_TESTC : SB_TESTCINCAN
+Incandescent : REPLACEROOM : SB_TOPSIDE : SB_TOPSIDEINCAN
+Incandescent : REPLACEROOM : SB_D06 : SB_D06INCAN
+
+
+Incandescent : GATE_SB_OE : SB_GOR02 : DISCONNECTED
+Incandescent : SB_GOR02 : GATE_SB_OE : SB_GOR01
+Incandescent : SB_GOR01 : 1 : SB_GOR02
+
+//hidden on incandescent
+Incandescent : HIDEROOM : SB_E05
+Incandescent : HIDEROOM : SB_A14
+Incandescent : HIDEROOM : SB_D02
+Incandescent : HIDEROOM : SB_A02
+Incandescent : HIDEROOM : SB_J04
+Incandescent : HIDEROOM : SB_A08
+Incandescent : HIDEROOM : SB_B03
+Incandescent : HIDEROOM : SB_A07
+Incandescent : HIDEROOM : SB_E03
+Incandescent : HIDEROOM : SB_D05
+Incandescent : HIDEROOM : SB_A06
+Incandescent : HIDEROOM : SB_A05
+Incandescent : HIDEROOM : SB_D03
+Incandescent : HIDEROOM : SB_D07
+Incandescent : HIDEROOM : SB_D01
+Incandescent : HIDEROOM : SB_C08
+Incandescent : HIDEROOM : SB_E01
+Incandescent : HIDEROOM : SB_E06
+Incandescent : HIDEROOM : SB_C09
+Incandescent : HIDEROOM : SB_L01
+Incandescent : HIDEROOM : GATE_SB_OE
+Incandescent : HIDEROOM : GATE_SB_SL
+END CONDITIONAL LINKS
+
+CREATURES
+(Incandescent)OFFSCREEN : 0-MirosBird
+END CREATURES
+[ENDMERGE]

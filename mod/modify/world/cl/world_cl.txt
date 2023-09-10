@@ -1,0 +1,77 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CONDITIONAL LINKS
+// Completely new rooms
+Incandescent : CL_A14 : CL_C02 : DISCONNECTED
+Incandescent : CL_C02 : CL_A14 : CL_bncrumble01
+Incandescent : CL_bncrumble01 : 2 : CL_C02
+
+Incandescent : CL_A14 : CL_A12 : DISCONNECTED
+Incandescent : CL_A12 : CL_A14 : CL_bncrumble01
+Incandescent : CL_bncrumble01 : 3 : CL_A12
+
+Incandescent : CL_A13 : CL_A11 : DISCONNECTED
+Incandescent : CL_A11 : CL_A13 : CL_bncrumble01
+Incandescent : CL_bncrumble01 : 4 : CL_A11
+
+// Waterlevel changes
+Incandescent : REPLACEROOM : CL_A07 : CL_A07INCAN
+Incandescent : REPLACEROOM : CL_A33 : CL_A33INCAN
+Incandescent : REPLACEROOM : CL_B03 : CL_B03INCAN
+Incandescent : REPLACEROOM : CL_B15 : CL_B15INCAN
+Incandescent : REPLACEROOM : CL_B16 : CL_B16INCAN
+Incandescent : REPLACEROOM : CL_B25 : CL_B25INCAN
+Incandescent : REPLACEROOM : CL_B29 : CL_B29INCAN
+Incandescent : REPLACEROOM : CL_B30 : CL_B30INCAN
+Incandescent : REPLACEROOM : CL_C03 : CL_C03INCAN
+Incandescent : REPLACEROOM : CL_C08 : CL_C08INCAN
+Incandescent : REPLACEROOM : CL_C12 : CL_C12INCAN
+Incandescent : REPLACEROOM : CL_C14 : CL_C14INCAN
+Incandescent : REPLACEROOM : CL_CORE : CL_COREINCAN
+Incandescent : REPLACEROOM : CL_D13 : CL_D13INCAN
+Incandescent : REPLACEROOM : CL_LCFILTERS : CL_LCFILTERSINCAN
+Incandescent : REPLACEROOM : CL_LCSWAP : CL_LCSWAPINCAN
+Incandescent : REPLACEROOM : CL_LSCOREACCESS : CL_LSCOREACCESSINCAN
+Incandescent : REPLACEROOM : CL_LSENTRANCE : CL_LSENTRANCEINCAN
+Incandescent : REPLACEROOM : CL_LSSECRET : CL_LSSECRETINCAN
+Incandescent : REPLACEROOM : CL_V01 : CL_V01INCAN
+Incandescent : REPLACEROOM : CL_V03 : CL_V03INCAN
+
+Incandescent : CL_CORE : CL_LSCOREACCESS : DISCONNECTED
+Incandescent : CL_LSCOREACCESS : CL_CORE : CL_COREINCAN
+Incandescent : CL_COREINCAN : 1 : CL_LSCOREACCESS
+
+Incandescent : CL_D13 : CL_D11 : DISCONNECTED
+Incandescent : CL_D13 : CL_A33 : DISCONNECTED
+Incandescent : CL_D13 : CL_LSCOREACCESS : DISCONNECTED
+Incandescent : CL_D11 : CL_D13 : CL_D13INCAN
+Incandescent : CL_A33 : CL_D13 : CL_D13INCAN
+Incandescent : CL_LSCOREACCESS : CL_D13 : CL_D13INCAN
+Incandescent : CL_D13INCAN : 1 : CL_D11
+Incandescent : CL_D13INCAN : 2 : CL_A33
+Incandescent : CL_D13INCAN : 3 : CL_LSCOREACCESS
+
+// Exclusive and Hidden rooms
+Incandescent : EXCLUSIVEROOM : CL_bncrumble01
+Incandescent : EXCLUSIVEROOM : CL_COREINCAN
+Incandescent : EXCLUSIVEROOM : CL_D13INCAN
+
+Incandescent : HIDEROOM : CL_A13
+Incandescent : HIDEROOM : CL_A14
+Incandescent : HIDEROOM : CL_CORE
+Incandescent : HIDEROOM : CL_D13
+END CONDITIONAL LINKS
+
+ROOMS
+CL_bncrumble01 : DISCONNECTED, DISCONNECTED, DISCONNECTED, DISCONNECTED
+CL_COREINCAN : CL_D13INCAN, DISCONNECTED
+CL_D13INCAN : DISCONNECTED, DISCONNECTED, CL_COREINCAN, DISCONNECTED
+END ROOMS
+
+CREATURES
+(Saint)SL_V01 : 6-InfantAquapede-{Night}
+END CREATURES
+[ENDMERGE]

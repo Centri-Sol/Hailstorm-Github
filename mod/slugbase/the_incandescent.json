@@ -1,0 +1,67 @@
+{
+	"id": "Incandescent",
+	"name": "The Incandescent",
+	"description": "A recluse capable of astounding mobility. Emotions stir you into a search for brighter lands, but<LINE>journeying through a wasteland so cold and cruel will require careful management of your needs.",
+	"features": {
+		"color": "AB372C",
+		"custom_colors": [
+			{
+				"name": "Body",
+				"story": "AB372C",
+				"arena": [ "EDF3F2", "F5C737", "E687A0", "201F43" ]
+			},
+			{
+				"name": "Eyes",
+				"story": "4F0900",
+				"arena": [ "0C663D", "9A1614", "872296", "FFFFFF" ]
+			},
+			{
+				"name": "Flames",
+				"story": "FB8602",
+				"arena": [ "08CA98", "F0822D", "E645D8", "C1BAF8" ]
+			},
+			{
+				"name": "Waistband",
+				"story": "281714",
+				"arena": [ "1C3328", "682F2F", "462D49", "6A687C" ]
+			}
+		],
+
+		"start_room": "MS_S10",
+		"world_state": ["Incandescent", "Saint"],
+		"timeline_after": "Saint",
+		"story_regions": ["MS", "SL", "CL", "GW", "HI", "UG", "SU", "CC", "VS", "SI", "LF", "SB", "-HR"],
+		"food_min": 8,
+		"food_max": 9,
+		"diet": {
+			"corpses": 0.5,
+			"meat": 0.5,
+			"plants": 1
+		},
+		"karma": 3,
+		"karma_cap": 3,
+		"the_mark": true,
+		
+		"alignments": {
+			"Scavengers": { "like": -0.33 },
+			"Lizards": { "like": -0.25 }
+		},
+
+		"auto_grab_batflies": false,
+		"weight": [ 0.9, 0.7 ],
+		"walk_speed": [ 1.15, 1 ],
+		"climb_speed": [ 1.15, 1 ],
+		"tunnel_speed": [ 1.15, 1 ],
+		"crouch_stealth": [ 0.2, 0.45 ],
+		"throw_skill": [1 , 1],
+		"loudness": [ 1.5, 1 ],
+		"perma_unlock_gates": true,
+				
+		"select_menu_scene": "Slugcat_Incandescent",
+		"sleep_scene": "Sleep_Scene_Incandescent",
+		"select_menu_scene_ascended": "Ghost_Incandescent",
+		
+		"expedition_description": "A sorrowful flame that looks for a brighter future. Returning to this painful land is<LINE>not a pleasant experience, but if it must be done, then the Incandescent will do their best."
+		
+	}
+}

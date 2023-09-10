@@ -1,0 +1,12 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CREATURES
+(X-Incandescent)MS_VENT09 : 6-InfantAquapede-2
+(X-Incandescent)MS_VENT08 : 3-InfantAquapede-2
+(X-Incandescent)MS_ARTERY07 : 5-InfantAquapede-2
+(X-Incandescent)MS_FARSIDE : 11-InfantAquapede-{Night}-2
+END CREATURES
+[ENDMERGE]

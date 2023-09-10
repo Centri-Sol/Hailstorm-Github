@@ -1,0 +1,56 @@
+[FIND]X-
+[ADDAFTER]Incandescent,
+[FINDREGEX]^(?:\w+ : \d+-\w+.+|LINEAGE : \w+ : \d+ : .+)$
+[ADDAFTER](X-Incandescent)
+[MERGE]
+CONDITIONAL LINKS
+Incandescent : REPLACEROOM : VS_A10 : VS_A10INCAN
+Incandescent : REPLACEROOM : VS_A11 : VS_A11INCAN
+Incandescent : REPLACEROOM : VS_A12 : VS_A12INCAN
+Incandescent : REPLACEROOM : VS_A15 : VS_A15INCAN
+Incandescent : REPLACEROOM : VS_B03 : VS_B03INCAN
+Incandescent : REPLACEROOM : VS_B04 : VS_B04INCAN
+Incandescent : REPLACEROOM : VS_B05 : VS_B05INCAN
+Incandescent : REPLACEROOM : VS_B07 : VS_B07INCAN
+Incandescent : REPLACEROOM : VS_B08 : VS_B08INCAN
+Incandescent : REPLACEROOM : VS_B13 : VS_B13INCAN
+Incandescent : REPLACEROOM : VS_B15 : VS_B15INCAN
+Incandescent : REPLACEROOM : VS_B17 : VS_B17INCAN
+Incandescent : REPLACEROOM : VS_B18 : VS_B18INCAN
+Incandescent : REPLACEROOM : VS_C01 : VS_C01INCAN
+Incandescent : REPLACEROOM : VS_C02 : VS_C02INCAN
+Incandescent : REPLACEROOM : VS_C03 : VS_C03INCAN
+Incandescent : REPLACEROOM : VS_C08 : VS_C08INCAN
+Incandescent : REPLACEROOM : VS_C11 : VS_C11INCAN
+Incandescent : REPLACEROOM : VS_C12 : VS_C12INCAN
+Incandescent : REPLACEROOM : VS_D01 : VS_D01INCAN
+Incandescent : REPLACEROOM : VS_D02 : VS_D02INCAN
+Incandescent : REPLACEROOM : VS_E01 : VS_E01INCAN
+Incandescent : REPLACEROOM : VS_E06 : VS_E06INCAN
+Incandescent : REPLACEROOM : VS_F01 : VS_F01INCAN
+Incandescent : REPLACEROOM : VS_F02 : VS_F02INCAN
+
+Incandescent : VS_E02 : VS_C11 : DISCONNECTED
+Incandescent : VS_C11 : VS_E02 : VS_B17
+Incandescent : VS_B17 : 1 : VS_C11
+
+Incandescent : VS_E02 : VS_B17 : DISCONNECTED
+Incandescent : VS_B17 : VS_E02 : VS_C11
+Incandescent : VS_C11 : 1 : VS_B17
+
+
+// Exclusive and Hidden rooms
+Incandescent : HIDEROOM : VS_B06
+Incandescent : HIDEROOM : VS_E02
+Incandescent : HIDEROOM : VS_S03
+Incandescent : HIDEROOM : VS_H01
+Incandescent : HIDEROOM : GATE_SB_VS
+END CONDITIONAL LINKS
+
+CREATURES
+(Rivulet,Saint)VS_E01 : 7-InfantAquapede
+(Rivulet)VS_C08 : 7-InfantAquapede-{PreCycle}
+(Saint)VS_C08 : 7-InfantAquapede
+(Saint)VS_C01 : 17-InfantAquapede-{Night}
+END CREATURES
+[ENDMERGE]
