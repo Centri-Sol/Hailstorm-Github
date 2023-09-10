@@ -1,0 +1,17 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 3.978504E-17
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.2608696
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorA: 13
+FadePalette: 8, 0.5326087
+WetTerrain: OFF

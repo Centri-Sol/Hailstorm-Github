@@ -1,0 +1,24 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.8260869
+RumbleIntensity: 0.02173913
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.1847826
+Grime: 0.3152174
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+WaterReflectionAlpha: 0.2934783
+Palette: 0
+EffectColorA: 18
+EffectColorB: 13
+Effects: Coldness-1-20-20, 
+PlacedObjects: WaterNut><1629.496><418.05><293~231~4~6, ReliableSpear><2492.597><484.3713><, InsectGroup><534.676><383.0949><0~67~-332~-321~Ant~0.2826087, Hazer><534.302><346.472><356~296.0001~6~9, DeadHazer><781.9446><367.546><112~199.9959~5~8, Stowaway><1692.99><590.6997><0~-168, Hazer><1746.484><146.4493><180~-180~7~10, Hazer><1377.526><168.4483><549~-127~7~10, Hazer><1603.64><224.3926><324~-115~7~10, WaterNut><2340.182><294.0831><605~-326~5~7, 
+AmbientSounds: OMNI><SO_WAT-OpenFlow.ogg><834.944><634.9515><0.423913><1, SPOT><SO_WAT-OpenFlow.ogg><65.14081><498.642><0.4891304><1><1444.141><158.642><-178.3553><-78.35535><0><0.578261, SPOT><SO_WAT-OpenFlow.ogg><257.8592><487.892><0.4891304><1.03913><1782.859><138.892><-158.3553><-89.35535><0><0.4586958, SPOT><SO_WAT-RunningWater.ogg><59.36041><375.3568><0.4347826><1><1621.36><172.3567><-133.3553><-66.35535><0><0.3065219, SPOT><SO_WAT-Pour.ogg><251.6158><367.1483><0.3586957><0.9608696><1748.616><130.1483><-97.35535><-31.35535><0><0.4695654, SPOT><SO_WAT-OpenFlow.ogg><47.91742><247.1094><0.3804348><0.8826087><1835.917><166.1094><-113.3553><-78.35535><0><0.4913045, SPOT><SO_WAT-Splashes.ogg><247.0566><246.3011><0.2282609><1><1647.057><576.3011><-216.3553><0.6446533><0><0.3826088, 
+FadePalette: 9, 0.5326087, 0.5326087, 0.5326087
+WetTerrain: OFF
