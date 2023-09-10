@@ -1,0 +1,16 @@
+Template: VS_SettingsTemplate_Surface
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.7716157
+WaveLength: 0.6141921
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Coldness-1-20-20, Dustpuffs-1-24-77, 
+PlacedObjects: ExitSymbolHidden><130.6743><385.3483><, SnowSource><850.4153><539.9312><Radial~-216~134~50~86.60254~0.75~1, SnowSource><548.8157><356.5776><None~-494~289~354~182.6025~0.2065217~0.2065217, SnowSource><296.4052><525.1761><Radial~-168~-144~-477~16.60254~0.5~1, 
+AmbientSounds: SPOT><AM_ENV-LightWind.ogg><503.6385><582.834><0.3478261><1><503.6385><698.834><-65.35535><-279.3553><0><0.3826088, SPOT><AM_IND-Utility02.ogg><866.8912><516.5822><0.4130435><1><-54.10883><265.5822><-55.35535><-233.3553><0><0.3173914, 
+FadePalette: 8, 0.2934783
+WetTerrain: OFF

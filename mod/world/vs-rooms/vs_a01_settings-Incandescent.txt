@@ -1,0 +1,18 @@
+Template: VS_SettingsTemplate_Surface
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.534659
+WaveLength: 0.9826705
+WaveAmplitude: 0.0001029689
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2065217
+Grime: 0.4130435
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Coldness-1-20-20, Dustpuffs-1-23-78, 
+PlacedObjects: DeadSeedCob><767.4113><304.9292><, DeadSeedCob><-147.545><560.9448><, SnowSource><448.6145><370.8529><Radial~-654~-572~461~200.6025~1~0.5, DeadSeedCob><149.3192><254.5855><, ReliableSpear><212.6795><158.5883><, DandelionPeach><-24.99908><444.8><-175~-180~5~7, DandelionPeach><-97.66415><475.1806><-102~-135~5~7, 
+Triggers: RegionBump<tA>event<tB>MusicEvent<eA>songName<eB>RW_7 - Rooftops<eA>vol<eB>0.3<eA>prio<eB>0.5<eA>mxThrt<eB>1<eA>loop<eB>0<eA>droneTol<eB>0<eA>rooms<eB>-1<eA>rest<eB>5<eA>fadeIn<eB>0<eA>oneSongPerCycle<eB>0<eA>stopAtDeath<eB>0<eA>stopAtGate<eB>0<tA>multiUse<tB>0<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>0<tA>panPos<tB>699.1094<tB>434.1422<tA>fireChance<tB>1<tA>entrance<tB>-1<tA>karma<tB>0<tA>slugcats<tB>, 
+FadePalette: 20, 0.2282609
+WetTerrain: OFF

@@ -1,0 +1,16 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Coldness-1-20-20, 
+PlacedObjects: DangleFruit><649.2874><507.6965><244.9999~126~4~6, Stowaway><703.7342><605.6993><0~-78, 
+FadePalette: 8, 0.5869565
+WetTerrain: OFF

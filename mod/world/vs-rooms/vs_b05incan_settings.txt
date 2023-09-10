@@ -1,0 +1,21 @@
+Template: VS_SettingsTemplate_Sewer
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.8260869
+Grime: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorA: 10
+EffectColorB: 2
+Effects: Fog-0-20-20, Coldness-1-30-30, 
+PlacedObjects: BigJellyFish><1187.89><-1.142502><0~262, BubbleGrass><602.199><408.2697><-14~122~5~8, BubbleGrass><539.8257><391.3482><-202~139~5~8, 
+FadePalette: 10, 0.7717391, 0.7934783
+WetTerrain: OFF

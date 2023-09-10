@@ -1,0 +1,17 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.1956522
+RumbleIntensity: 0.1630435
+WaveSpeed: 0.4994647
+WaveLength: 0.9508193
+WaveAmplitude: 0.009782607
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+WaterReflectionAlpha: 0.5434783
+Palette: 0
+Effects: Coldness-1-20-20, Dustpuffs-1-22-72, 
+PlacedObjects: DeadTokenStalk><828.7305><258.051><-24~27, DeadTokenStalk><698.7711><250.0511><22~29, DeadTokenStalk><787.7888><229.0538><-23~52, BlueToken><742.052><219.0285><5~63~161~-208~1~LillyPuck~Rivulet|Saint|Incandescent~0~0~0~0, SnowSource><540.1219><760.3415><None~-562~-505~361.9999~-1.397461~0.5~0.6630435, SnowSource><219.6126><1550.165><Radial~896~522~651.9999~425.6025~0.8043478~0.5, UniqueDataPearl><630.7758><1046.802><250.0001~327~0~0~VS~1, 
+FadePalette: 8, 0.2391304, 0.2826087, 0.326087
+WetTerrain: OFF

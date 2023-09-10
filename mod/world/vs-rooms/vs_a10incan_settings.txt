@@ -1,0 +1,19 @@
+Template: VS_SettingsTemplate_Sewer
+DangerType: Rain
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.51
+WaveLength: 1
+WaveAmplitude: 0.0001
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.2717391
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 21
+Effects: HeatWave-0.1630435-20-20, 
+PlacedObjects: ReliableSpear><836.1855><246.6893><, ReliableSpear><659.2807><262.6976><, ReliableSpear><711.328><175.898><, BubbleGrass><604.4829><392.9969><302.4583~105.9556~4~9, BubbleGrass><482.7674><388.2265><425.0002~181.3334~4~9, BubbleGrass><448.8502><400.8167><459.0001~241.0667~4~9, 
+AmbientSounds: OMNI><waterGurgleLOOP1.wav><725.6159><567.8984><0.3586957><1, 
+FadePalette: 10, 0.5326087
+WetTerrain: OFF

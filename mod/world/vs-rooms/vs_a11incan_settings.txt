@@ -1,0 +1,17 @@
+Template: VS_SettingsTemplate_Sewer
+DangerType: Rain
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.51
+WaveLength: 1
+WaveAmplitude: 0.0001
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 2
+Effects: Coldness-1-20-20, 
+PlacedObjects: GlowWeed><219.2804><196.7987><675.125~-170~3~5, GlowWeed><599.3859><129.5753><299.8334~-177.0222~3~5, ReliableSpear><274.6554><463.1241><, ReliableSpear><354.6971><383.2161><, GlowWeed><820.8364><326.7726><73.66681~-219.7333~3~5, 
+FadePalette: 10, 0.5
+WetTerrain: OFF

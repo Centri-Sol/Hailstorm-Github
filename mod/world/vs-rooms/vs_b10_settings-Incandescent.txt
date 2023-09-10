@@ -1,0 +1,17 @@
+Template: VS_SettingsTemplate_Surface
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 1
+WaveSpeed: 0.5764022
+WaveLength: 0.7117989
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Dustpuffs-1-20-20, Coldness-1-30-30, 
+PlacedObjects: FlyLure><706.6944><1181.608><195~-8~0~9, SnowSource><459.5078><1055.45><None~1279~752~127~-133.3975~0.8043478~0.7065217, NoSpearStickZone><875.0527><1380.305><5~51, FlyLure><697.0405><747.054><204~-40~0~9, FlyLure><72.61545><545.3979><-269~46~0~9, FlyLure><745.8945><595.3616><157~30~20~30, BlueToken><799.2001><1367.751><60~-48~100.9999~-120~1~FlyLure~White|Yellow|Red|Rivulet|Artificer|Saint|Spear|Gourmand~0~0~0~0, 
+Triggers: RegionBump<tA>event<tB>MusicEvent<eA>songName<eB>RW_61 - Rain<eA>vol<eB>0.3<eA>prio<eB>0.5<eA>mxThrt<eB>1<eA>loop<eB>0<eA>droneTol<eB>0<eA>rooms<eB>-1<eA>rest<eB>5<eA>fadeIn<eB>0<eA>oneSongPerCycle<eB>0<eA>stopAtDeath<eB>0<eA>stopAtGate<eB>0<tA>multiUse<tB>0<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>0<tA>panPos<tB>1084.154<tB>478.1279<tA>fireChance<tB>1<tA>entrance<tB>-1<tA>karma<tB>0<tA>slugcats<tB>, 
+FadePalette: 8, 0.1195652, 0.2608696
+WetTerrain: OFF
