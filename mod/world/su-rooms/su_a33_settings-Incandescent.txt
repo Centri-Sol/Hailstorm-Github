@@ -1,0 +1,19 @@
+Template: SU_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2391304
+RumbleIntensity: 0.25
+WaveSpeed: 0.4952666
+WaveLength: 0.9473618
+WaveAmplitude: 0.01005251
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0
+Grime: 0.25
+RandomItemDensity: 0.375
+RandomItemSpearChance: 0.25
+PlacedObjects: LightSource><297.6627><657.6162><1~Environment~0~100~50~86.60254~1~0~None~0~0, ProjectedImagePosition><338.7881><603.9464><, SnowSource><90.72498><530.3016><Radial~88~16~-196~-578.3975~0.6847826~1, SnowSource><863.5505><624.2368><Radial~-37~8~38~-10.39746~0.8260869~1, SnowSource><777.8012><609.2726><Strip~-80~-19~126~-85.39746~0.4891304~0.09782609, SnowSource><144.8336><514.8889><Strip~-18~6~50~86.60254~0.7065217~0, 
+AmbientSounds: SPOT><AM_IND-ElectricHum02.ogg><782.8247><278.6855><0.2282609><1><299.8247><703.6855><-49.35535><-39.35535><0><0.3391306, OMNI><AM_ENV-Outside.ogg><764.0152><469.9494><0><1, OMNI><AM_ENV-NatWind.ogg><775.8005><551.986><0.2717391><1, 
+Triggers: Spot<tA>event<tB>ShowProjectedImageEvent<eA>afterEncounter<eB>0<eA>fromCycle<eB>0<eA>onlyWhenShowingDirection<eB>1<tA>multiUse<tB>1<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>0<tA>panPos<tB>712.8327<tB>213.8904<tA>fireChance<tB>1<tA>entrance<tB>-1<tA>karma<tB>0<tA>slugcats<tB><tA>pos<tB>420.8327<tB>540.8904<tA>handlePos<tB>-444.3553<tB>-228.3553, Spot<tA>event<tB>MusicEvent<eA>songName<eB>RW_84 - Chilblain Grace<eA>vol<eB>0.3543481<eA>prio<eB>1<eA>mxThrt<eB>1<eA>loop<eB>0<eA>droneTol<eB>0<eA>rooms<eB>-1<eA>rest<eB>5<eA>fadeIn<eB>84.78261<eA>oneSongPerCycle<eB>0<eA>stopAtDeath<eB>0<eA>stopAtGate<eB>1<tA>multiUse<tB>0<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>208<tA>panPos<tB>111.9861<tB>280.5505<tA>fireChance<tB>1<tA>entrance<tB>0<tA>karma<tB>0<tA>slugcats<tB>White|Yellow|Red|Night|Rivulet|Artificer|Saint|Spear|Gourmand|Slugpup|Inv<tA>pos<tB>292.9861<tB>658.5505<tA>handlePos<tB>-35.35534<tB>-35.35534, 
+FadePalette: 10, 0.1956522
+WetTerrain: OFF

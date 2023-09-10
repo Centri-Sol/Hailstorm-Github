@@ -1,0 +1,46 @@
+OFFSCREEN : 0-Scavenger-16, 0-Elite
+
+UG_B02 : 2-CicadaA-2, 2-CicadaB-2, 4-Salamander, 5-JungleLeech-12
+LINEAGE : UG_B02 : 3 : NONE-1.0, NONE-1.0, NONE-1.0, Eel-{Night}-0
+UG_A22 : 3-Salamander, 4-Eel
+UG_A06 : 2-JungleLeech-10
+UG_A02 : 3-Eel, 6-JungleLeech-{Night}-4, 7-JungleLeech-10
+UG_A09 : 3-Snail-{Night}-3, 4-Snail-3
+UG_A19 : 2-Centipede-4, 2-BigSpider-{Night}-4
+UG_B04 : 2-BigSpider-4, 2-MotherSpider-{Night}, 2-BigSpider-{Night}, 3-Centipede-3, 3-Luminescipede-{PreCycle}-6, 4-Eel, 4-Salamander, 5-Snail-2, 5-Snail-{PreCycle}-3
+UG_A08 : 3-Eel-{Night}, 4-TentaclePlant, 5-Snail, 5-Snail-{PreCycle}-2
+UG_B07 : 3-BigSpider-3-{Night}, 4-Centipede-4, 4-RedCentipede, 4-Centipede-{PreCycle}-5, 5-Salamander-{PreCycle}-2, 6-Snail-{PreCycle}-4, 7-Aquapede-2
+UG_C04 : 3-TentaclePlant-{Night}, 3-MotherSpider
+UG_C01 : 7-Eel, 8-Snail-{Night}-3
+LINEAGE : UG_C01 : 6 : NONE-0.25, Mimic-0.25, Snail-0
+LINEAGE : UG_C01 : 8 : Mimic-{30}-0.2, TentaclePlant-0
+
+UG_A21 : 2-Mimic-{14}, 3-Salamander, 3-Eel, 3-Snail-{Night}-3
+UG_GUTTER04 : 3-BigSpider, 4-MotherSpider
+LINEAGE : UG_GUTTER04 : 6 : BigSpider-0.2, MotherSpider-0.5, SpitterSpider-0
+UG_RIVSTART : 1-Snail-2, 2-Snail-2
+UG_GUTTER03 : 7-DropBug, 7-DropBug-{PreCycle}, 8-Snail-2, 9-Snail-3
+LINEAGE : UG_GUTTER03 : 5 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.1, Cyan-0
+LINEAGE : UG_GUTTER03 : 5 : NONE-1.0, NONE-1.0, NONE-0.2, Eel-0
+UG_GUTTER02 : 2-SpitterSpider, 2-BigSpider-{Night}-3, 2-MotherSpider-{Night}
+UG_GUTTER01 : 2-Snail-3, 3-Salamander, 4-JungleLeech-12
+UG_A25 : 3-Eel, 4-Spider-30, 5-JungleLeech-6, 6-JungleLeech-8
+UG_Filters : 2-Snail-{PreCycle}-4, 3-Salamander, 4-JungleLeech-7
+UG_TOLL : 3-Green, 5-Green, 7-Salamander-{PreCycle}, 9-Snail-{PreCycle}-3
+LINEAGE : UG_TOLL : 4 : Mimic-{11}-1.0, TentaclePlant-0
+LINEAGE : UG_TOLL : 6 : Mimic-{21}-1.0, Green-0
+LINEAGE : UG_TOLL : 8 : Mimic-{16}-1.0, TentaclePlant-0
+UG_D03 : 2-TentaclePlant, 3-Eel-{Night}, 4-TentaclePlant-{PreCycle}, 5-Eel, 7-JungleLeech-4, 8-JungleLeech-6, 8-TentaclePlant-{Night}
+UG_A05 : 5-Mimic-{18}, 6-Mimic-{20}
+UG_C03 : 2-DropBug, 2-Snail-2
+
+UG_DARK03 : 3-MotherSpider
+UG_DARK01 : 2-TentaclePlant-{Night}, 3-White-{PreCycle}, 5-TentaclePlant, 6-BigSpider-{Night}-3
+UG_D02 : 2-Centipede-2, 2-Small Centipede-2
+
+UG_B03 : 4-Eel-{PreCycle}, 4-Salamander-{PreCycle}, 4-Snail-{PreCycle}-2
+LINEAGE : UG_B03 : 4 : Mimic-{14}-1.0, TentaclePlant-0
+UG_A16 : 2-TentaclePlant, 4-TentaclePlant, 6-JungleLeech-15
+UG_A07 : 3-JungleLeech-7, 3-Snail-{Night}-2, 4-JungleLeech-7, 4-Snail-{Night}-2, 6-Mimic-{18}
+LINEAGE : UG_A07 : 5 : Mimic-{14}-0.5, Salamander-0
+UG_A11 : 1-Salamander, 1-JungleLeech-{PreCycle}-5, 2-Salamander, 2-JungleLeech-{PreCycle}-5

@@ -1,0 +1,21 @@
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.3586957
+RumbleIntensity: 1
+WaveSpeed: 0.5045367
+WaveLength: 0.8968485
+WaveAmplitude: 0.02017662
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2717391
+Grime: 0.4130435
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+WaterReflectionAlpha: 0.75
+Palette: 0
+EffectColorB: 10
+Effects: Brightness-0-17-74, Flies-0-30-30, Coldness-1-23-138, Dustpuffs-1-284-30, LightBurn-0.05434782-267-90, 
+PlacedObjects: LightBeam><353.6449><263.1702><-594~564~-297~562~41~4~-461~-328~0.09565204~0~0~1~None~0~0, LightSource><182.8221><143.3414><0.3369565~Environment~-129~21~701.9999~-51.39749~1~1~None~0~0, LightSource><563.5514><139.7736><0.2934783~Environment~-18~122~322~66.60254~1~1~None~0~0, DangleFruit><597.09><551.37><278.0001~24~3~6, DangleFruit><476.7214><613.3021><405~-197~2~5, Mushroom><223.87><105.59><658~225~3~5, LightSource><-61.1579><748.1227><0.5108696~Environment~126~-112~50~86.60254~1~0~None~0~0, CustomDecal><68.30457><336.7923><0~139~214~228~268~-55~487~-549~0.6195652~0.6847826~1~Rabbit~1~0.25~1~0.25~1~0.25~1~0.25, UniqueDataPearl><179.1062><113.139><705~-146~0~0~SU_filt~0, SnowSource><-17.14569><514.863><Radial~385~-3~-181~-427.3975~1~0, NoSpearStickZone><17.2807><353.1976><-2~209, DangleFruit><537.05><630.2531><341.0001~-134~4~5, DangleFruit><630.0866><489.1346><246.0001~162~3~4, SnowSource><404.8014><262.2262><Radial~76~261~-481~-41.39746~0.3043478~0, 
+AmbientSounds: OMNI><AM_ENV-Outside.ogg><765.4963><477.05><0><1, OMNI><AM_ENV-NatWind.ogg><769.3131><549.5712><0.1847826><1, 
+FadePalette: 8, 0.06521739
+WetTerrain: OFF

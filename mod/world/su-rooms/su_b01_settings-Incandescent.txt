@@ -1,0 +1,18 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.4467167
+WaveLength: 0.6921083
+WaveAmplitude: 0.05624998
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2717391
+Grime: 0.3804348
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 11
+Effects: Flies-0-20-20, LightBurn-0.09782609-24-81, Coldness-1-22-133, Dustpuffs-1-281-19, 
+PlacedObjects: CustomDecal><345.1729><93.64948><-45~285~397~331~400~-15~-481~-315~0.3043478~1~0~GhostSplash~0.9347826~0.1956522~0.5~0.423913~0.3913043~0.1086956~0.2173913~0.06521739, CustomDecal><202.5831><1076.61><-81~522~168~475~215~-18~-309~108~0.5434783~1~0~Rust1~1~0.7391304~1~0.7391304~0~0.7391304~0~0.7391304, SnowSource><240.8><1027.999><Radial~128~427~-318~52.60254~0.7282609~0.3586957, SnowSource><872.1765><1004.406><Radial~-106~293~-237~-109.3975~0.9021739~1, SnowSource><536.5598><1363.059><Radial~423~160~50~86.60254~1~0.7391669, SnowSource><542.6999><149.2556><Radial~-17~610~147~-90.39746~1~0.5652177, SnowSource><316.9376><390.8193><Radial~-109~303~-449~-237.3975~1~0, SnowSource><777.843><392.374><Radial~-56~245~174~-335.3975~0.9021739~0, 
+AmbientSounds: SPOT><Mech Basic.wav><285.6055><454.17><0.2173913><0.7847826><965.6055><462.17><-61.35535><-64.35535><0><0.295652, OMNI><AM_ENV-NatWind.ogg><733.6291><551.8473><0.3913043><1, OMNI><AM_ENV-Outside.ogg><765.4963><477.05><0><1, 
+FadePalette: 14, 0.01086957, 0.05434782
+WetTerrain: OFF

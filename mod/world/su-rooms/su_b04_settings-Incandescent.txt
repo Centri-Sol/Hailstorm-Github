@@ -1,0 +1,20 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.5057578
+WaveLength: 0.7158711
+WaveAmplitude: 0.05624998
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2826087
+Grime: 0.2934783
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorA: 9
+EffectColorB: 11
+Effects: Flies-0-20-20, Coldness-1-24-78, Dustpuffs-1-23-137, LightBurn-0.1304348-280-24, 
+PlacedObjects: LightSource><395.439><357.4347><0.6521739~Environment~0~100~-16~-465.3975~1~0~None~0~0, CustomDecal><664.3756><543.3434><-35~135~403~152~388~3~-806~-850~0.3478261~1~0~Long Tag~0.5434783~0.4021739~1~0~0.8152174~0.4673913~0.5~0.5978261, CustomDecal><1799.305><314.0449><-25~503~263~565~211~-129~183~-459~0~0.6630435~0~RustB3~0.5~0.7282609~0.7391304~0.7282609~0~0.7282609~0~0.7282609, CustomDecal><351.4107><-2.369171><0~394~553~365~544~-14~-233~-299~0.6413044~1~0~Rust1~0.7282609~1~0.7282609~1~0.2065217~1~0.2717391~1, SnowSource><1715.829><279.3164><Radial~-779~392~6~-318.3975~1~0.25, SnowSource><1480.052><152.2187><Radial~87~366~-12~-191.3975~1~0, SnowSource><1018.591><604.0718><Radial~286~-59~72~-181.3975~1~0.25, SnowSource><363.8271><692.3155><Radial~214~199~-507~-641.3975~1~0.2173913, SnowSource><702.632><583.3385><Radial~-293~-18~128~-160.3975~1~1, SnowSource><1798.08><90.85571><UnSnow~0~100~185~70.60254~0.4347853~0.1086956, SnowSource><669.1><317.428><UnSnow~-183~-60~-91~116.6025~0.06521739~1, 
+AmbientSounds: SPOT><AM_IND-ElectricHum01.ogg><785.749><296.7><0.3152174><1><390.7489><346.7><-45.35535><-36.35535><0><0.328261, OMNI><AM_ENV-Outside.ogg><765.4963><477.05><0><1, OMNI><AM_ENV-NatWind.ogg><747.059><568.5594><0.3804348><1, 
+Triggers: Spot<tA>event<tB>MusicEvent<eA>songName<eB>RW_1 - Urban Jungle<eA>vol<eB>0.2999997<eA>prio<eB>0.5<eA>mxThrt<eB>1<eA>loop<eB>0<eA>droneTol<eB>0<eA>rooms<eB>-1<eA>rest<eB>5<eA>fadeIn<eB>45.65217<eA>oneSongPerCycle<eB>0<eA>stopAtDeath<eB>0<eA>stopAtGate<eB>0<tA>multiUse<tB>0<tA>toCycle<tB>-1<tA>fromCycle<tB>0<tA>delay<tB>0<tA>panPos<tB>611.3611<tB>594.4163<tA>fireChance<tB>0.4565217<tA>entrance<tB>-1<tA>karma<tB>0<tA>slugcats<tB><tA>pos<tB>1670.361<tB>255.4163<tA>handlePos<tB>-338.3553<tB>68.64465, 
+FadePalette: 10, 0.06521739, 0.08695652
+WetTerrain: OFF

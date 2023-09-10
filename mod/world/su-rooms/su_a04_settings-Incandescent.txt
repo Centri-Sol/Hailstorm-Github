@@ -1,0 +1,17 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.4404699
+WaveLength: 0.6889849
+WaveAmplitude: 0.05624998
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.1956522
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 10
+Effects: Flies-0-20-20, LightBurn-0.1086956-23-85, Coldness-1-26-139, Dustpuffs-1-278-23, 
+PlacedObjects: CustomDecal><38.35614><250.3304><-14~406~152~352~71~-8~86~-565~0.3152174~1~0~RustB1~0.7717391~0.2282609~0.6413044~0.2282609~0~0.2282609~0.3152174~0.2282609, CustomDecal><68.61096><50.1438><0~200~637~194~623~-6~-196~-365.0043~0.6521739~0.6956522~0~GreySnakes~0.8043478~1~0.5434783~0.6521739~0~0.8043478~0~0.8695652, NoSpearStickZone><918.743><558.3001><-138~111, NoSpearStickZone><68.7038><366.8054><123~99, SnowSource><494.3818><91.66132><Radial~260~219~-105~-140.3975~1~0, SnowSource><-46.56006><468.1874><None~330~-342~-3~-475.3975~0.9021739~1, SnowSource><453.8408><379.3218><Radial~637~-48~192~-430.3975~1~0, SnowSource><893.6768><510.0935><Radial~-297~166~16~-559.3975~0.8043478~1, 
+AmbientSounds: SPOT><SO_IND-HeatDuct.ogg><764.4069><555.624><0.3695653><1><975.4069><425.624><-46.35535><-40.35535><0><0.2847827, SPOT><AM_IND-DeepHum.ogg><751.3984><308.634><0.326087><1><-22.60156><360.634><-34.35534><-35.35535><0><0.328261, OMNI><AM_ENV-Outside.ogg><765.4963><477.05><0><1, OMNI><AM_ENV-NatWind.ogg><609.8055><595.7968><0.3586957><1, 
+FadePalette: 14, 0.04347826
+WetTerrain: OFF

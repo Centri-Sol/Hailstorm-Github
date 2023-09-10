@@ -1,0 +1,20 @@
+Template: SU_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.25
+RumbleIntensity: 0.2173913
+WaveSpeed: 0.5019786
+WaveLength: 0.9286982
+WaveAmplitude: 0.0140625
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0
+Grime: 0.3804348
+BkgDroneVolume: 0.006521806
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 10
+PlacedObjects: DangleFruit><493.84><313.0714><-475~93~3~4, DangleFruit><357.0418><254.0544><-351~92~4~6, 
+AmbientSounds: OMNI><SO_WAT-DripTap.ogg><662.3217><572.5906><0.3043478><1, OMNI><AM_ENV-Outside.ogg><764.0152><469.9494><0><1, 
+FadePalette: 10, 0.1413043
+WetTerrain: OFF

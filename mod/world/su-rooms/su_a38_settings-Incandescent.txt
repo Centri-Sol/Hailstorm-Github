@@ -1,0 +1,20 @@
+Template: SU_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2934783
+RumbleIntensity: 0.2717391
+WaveSpeed: 0.4890259
+WaveLength: 0.9119722
+WaveAmplitude: 0.01650815
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.07608695
+Grime: 0.2173913
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 10
+PlacedObjects: DangleFruit><479.8164><403.3293><-401~196~0~6, DangleFruit><565.9489><387.9794><396~247~0~5, CustomDecal><363.9821><156.3008><0~40~-52~40~-58~-1~-471~-26.00002~0~1~0~Ghostling1~1~0.5869565~0.369478~0.5869565~0.3043478~0.5869565~0.5~0.5869565, LanternOnStick><421.8588><283.8322><82~-99, ReliableSpear><536.5508><205.0179><, SnowSource><149.8778><105.8462><Radial~83~0~-190~-152.3975~0.8804348~1, SnowSource><932.442><86.90257><Radial~-61~11~-723~-141.3975~0.6739131~1, DandelionPatch><533.8907><209.5825><0~100, 
+AmbientSounds: SPOT><SO_IND-Fridge.ogg><772.2277><372.4488><0.2065217><1><531.2277><146.4488><-53.35535><-41.35535><0><0.4152175, OMNI><AM_ENV-Outside.ogg><764.0152><469.9494><0><1, OMNI><AM_ENV-NatWind.ogg><767.5363><545.4467><0.2065217><1, 
+FadePalette: 10, 0.08695652
+WetTerrain: OFF

@@ -1,0 +1,60 @@
+OFFSCREEN : 0-MirosVulture, 0-KingVulture-{Night}, 0-Scavenger-12, 0-Elite
+LINEAGE : OFFSCREEN_SU : 0 : Vulture-0.25, NONE-0.33, MirosVulture-0
+
+SU_B11 : 3-Centiwing-2, 4-Cyan-{Night}, 6-Small Centipede-{AlternateForm}-2, 7-Centiwing-{Night}, 8-TentaclePlant-{Night}
+LINEAGE : SU_B11 : 5 : NONE-0.25, Cyan-{Ignorecycle}-0.3, Strawberry-0.5, White-0.15, IcyBlue-0
+LINEAGE : SU_B11 : 7 : Centiwing-{Night}-0.25, DropBug-{Night}-0.4, NONE-0.1, Cyanwing-{Night}-0.25, IcyBlue-{Night}-0
+SU_B02 : 5-CicadaA, 5-CicadaB, 7-Strawberry, 8-DropBug-{Night}-2
+LINEAGE : SU_B02 : 4 : NONE-1.0, NONE-0.1, Centiwing-0.02, IcyBlue-0
+LINEAGE : SU_B02 : 6 : Mimic-{17}-0.7, Mimic-{14}-1.0, TentaclePlant-0.02, IcyBlue-0
+SU_A13 : 2-CicadaA-{Night}, 2-CicadaB-{PreCycle}, 3-Mimic-{5}, 5-Mimic-{8}
+LINEAGE : SU_A13 : 4 : NONE-0.2, Cicada-0.3, NONE-1.0, NONE-0.2, Yeek-0
+
+SU_B07 : 2-Yellow, 3-TentaclePlant-{PreCycle}
+LINEAGE : SU_B07 : 2 : Yellow-{Ignorecycle}-0.25, NONE-0.5, Strawberry-0.75, IcyBlue-0
+LINEAGE : SU_B07 : 3 : Yellow-1.0, Strawberry-0.75, NONE-0.5, IcyBlue-0.25, Caramel-0
+
+SU_B12 : 2-IcyBlue
+LINEAGE : SU_B12 : 3 : Cyan-{Night}-0.2, Strawberry-{Night}-1.0, IcyBlue-{Night}-1.0, Strawberry-{Night}-0
+SU_C02 : 2-Centiwing-2, 3-Small Centipede-{AlternateForm}
+LINEAGE : SU_C02 : 5 : Caramel-1.0, Caramel-{Night}-1.0, Caramel-{PreCycle}-1.0, IcyBlue-0
+LINEAGE : SU_A17 : 2 : Cyan-{Ignorecycle}-0.25, White-0.5, NONE-0.75, Strawberry-0.1, IcyBlue-0
+SU_A07 : 2-Centiwing, 3-Small Centipede-{AlternateForm}-2, 5-IcyBlue-{Night}
+LINEAGE : SU_A07 : 4 : Caramel-0.33, NONE-0.33, Strawberry-0.15, IcyBlue-0
+SU_B04 : 3-Salamander-{PreCycle}-2, 4-DropBug-{Night}-2, 5-IcyBlue
+LINEAGE : SU_B04 : 4 : DropBug-{Night}-0.5, NONE-0.33, IcyBlue-{Night}-0
+
+LINEAGE : SU_A10 : 2 : Mimic-{7}-1.0, NONE-1.0, NONE-1.0, TentaclePlant-0.02, IcyBlue-0
+LINEAGE : SU_A10 : 3 : Salamander-0.5, NONE-1.0, Salamander-{Ignorecycle}-0.25, NONE-0.5, Eel-{Ignorecycle}-1.0, IcyBlue-0
+SU_B09 : 4-Small Centipede-{AlternateForm}-3, 4-Centiwing
+LINEAGE : SU_B09 : 4 : Centiwing-0.05, White-0.1, Cyan-0.15, IcyBlue-0.2, Freezer-0
+SU_A20 : 4-Small Centipede-{AlternateForm}-2, 4-Centiwing, 5-Small Centipede-{AlternateForm}, 6-Centiwing-2
+LINEAGE : SU_A20 : 5 : Centiwing-1.0, Cyanwing-0.15, RedCentipede-0.3, IcyBlue-0.05, Freezer-0
+SU_B06 : 6-White-{PreCycle}
+LINEAGE : SU_B06 : 4 : NONE-1.0, NONE-0.5, Centipede-{0.7}-1.0, Centipede-{1.0}-0.33, Red-0.33, Freezer-0
+SU_B05 : 3-IcyBlue-{Night}
+LINEAGE : SU_B05 : 4 : Mimic-{14}-1.0, Mimic-{18}-1.0, NONE-1.0, TentaclePlant-0.02, IcyBlue-0
+
+SU_A32 : 2-Freezer
+SU_B08 : 2-IcyBlue-{Night}, 3-Cicada-{Night}-2, 4-Centiwing, 4-Small Centipede-{AlternateForm}
+LINEAGE : SU_B08 : 2 : NONE-1.0, NONE-1.0, NONE-0.2, Caramel-0.2, IcyBlue-0
+LINEAGE : SU_B08 : 3 : IcyBlue-0.2, Freezer-0
+LINEAGE : SU_A30 : 2 : NONE-0.1, BigSpider-0.15, Salamander-{Ignorecycle}-0.3, MotherSpider-0.5, IcyBlue-0
+SU_A31 : 3-Centiwing
+
+SU_C01 : 5-Eel-{Ignorecycle}, 5-BigSpider-{Night}-2
+LINEAGE : SU_C01 : 3 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.33, MotherSpider-0
+LINEAGE : SU_C01 : 4 : NONE-1.0, NONE-0.05, Cicada-0.5, BigSpider-0
+SU_B14 : 2-Spider-39, 2-MotherSpider-{PreCycle}
+LINEAGE : SU_B14 : 2 : Spider-0.33, BigSpider-0
+
+SU_A04 : 2-IcyBlue, 4-Strawberry, 5-Mimic-{12}
+SU_B01 : 4-CicadaA, 4-CicadaB, 5-Cicada
+LINEAGE : SU_B01 : 6 : NONE-1.0, NONE-0.25, Salamander-{Night}-0.25, Salamander-{Ignorecycle}-0.5, Eel-{Night}-0.5, Eel-{Ignorecycle}-0.02, IcyBlue-0
+SU_A06 : 4-Strawberry
+SU_A02 : 3-Strawberry
+LINEAGE : SU_A02 : 2 : Mimic-{7}-0.5, NONE-0.3, Strawberry-0.1, IcyBlue-0
+SU_A40 : 2-Centiwing-2
+
+SU_CAVE02 : 6-IcyBlue-{Night}, 7-IcyBlue-{Night}, 9-IcyBlue, 10-IcyBlue
+SU_CAVE03 : 6-IcyBlue, 6-IcyBlue-{Night}

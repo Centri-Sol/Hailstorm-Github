@@ -1,0 +1,19 @@
+Template: SU_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2282609
+RumbleIntensity: 0.2173913
+WaveSpeed: 0.5086797
+WaveLength: 0.9314618
+WaveAmplitude: 0.01283967
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.1413043
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 11
+PlacedObjects: CustomDecal><-43.65973><126.1296><-103~285~648~567~737~-5~193~-423~0.3369499~1~0.1334155~FaceAndTag~0.9782609~0.423913~0.4456522~0.2934783~0.5~0.2934783~0.2065217~0.6195652, CustomDecal><126.3286><182.353><-11~138~162~158~160~4~-232.892~-479.2724~0.326087~1~0.5326087~Barnacle~0.9347826~0.5652174~0.4891304~0.2282609~0.4130435~0.6630435~0.7717391~0.6195652, CustomDecal><658.8685><464.0994><-7~53~41~51~40~0~-253.0001~-761~0~1~0~Ghostling3~0.5~0.3369565~0.5~0.3369565~0.5~0.3369565~0.1413043~0.3369565, SnowSource><101.7817><171.0525><Radial~40~47~-289~20.60255~1~1, 
+AmbientSounds: OMNI><AM_ENV-Outside.ogg><764.0152><469.9494><0><1, OMNI><AM_ENV-NatWind.ogg><760.2343><548.4493><0.2608696><1, 
+FadePalette: 8, 0.08695652
+WetTerrain: OFF

@@ -1,0 +1,20 @@
+Template: SU_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.2826087
+RumbleIntensity: 0.2391304
+WaveSpeed: 0.5007657
+WaveLength: 0.9201335
+WaveAmplitude: 0.01589673
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.01086957
+Grime: 0.2608696
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 10
+PlacedObjects: SnowSource><483.431><1170.165><Radial~-8~130~389~204.6025~0.6630435~0.5, 
+AmbientSounds: OMNI><AM_ENV-Outside.ogg><764.0152><469.9494><0><1, SPOT><AM_ENV-NatWind.ogg><764.1743><350.0981><0.3152174><1><502.1743><1244.098><-84.35535><-102.3553><0><0.3500001, 
+FadePalette: 8, 0.07608695, 0.1195652
+WetTerrain: OFF

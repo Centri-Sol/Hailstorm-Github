@@ -1,0 +1,16 @@
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.4703864
+WaveLength: 0.7039432
+WaveAmplitude: 0.05624998
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 11
+Effects: LightBurn-0.08695652-19-65, Coldness-1-19-120, Dustpuffs-1-268-20, SkyDandelions-0.1521739-267-72, 
+PlacedObjects: FirecrackerPlant><277.4919><1187.05><-414~51~4~7, FirecrackerPlant><312.4433><1188.308><-448~-32~4~6, DataPearl><591.9456><623.5419><56~10~0~0~SU~1, CustomDecal><371.9081><220.8224><-20~350~283~340~245~-13~-421~-411.9539~0.3152174~0.5~0.1847826~GodOfEyes~0.8043478~0.173913~0.7391304~0.423913~0.2826087~0.2173913~0.5760869~0.4456522, CustomDecal><273.5507><276.7334><-56~131~395~47~381~-117~-62~-467~0.1521739~0.293478~0~Radio~0.09782609~0.4891304~0.7173913~0.4891304~1~0.4891304~0.630435~0.4891304, SnowSource><180.1707><1219.184><Radial~274~-246~-312~-233.3975~1~0, SnowSource><794.8713><1272.899><Radial~-325~269~-929.9936~-361.3043~1~0, SnowSource><496.1623><279.9791><Radial~676~544~-20.34302~-250.3897~1~1, BlueToken><475.4843><365.7296><-15.375~-115.4667~-607.7083~-209.981~1~IcyBlueLizard~White|Yellow|Red|Rivulet|Artificer|Saint|Spear|Gourmand~0~0~0~0, FirecrackerPlant><123.5984><1195.741><-260~199~5~6, FirecrackerPlant><201.6396><1190.305><-339~127~3~7, FirecrackerPlant><384.5192><1181.949><-521~-107~5~5, ReliableSpear><390.5861><312.3854><, ReliableSpear><437.2235><264.0518><, ReliableSpear><584.8867><279.3125><, DeadTokenStalk><542.1982><314.5266><21~-63, DandelionPatch><499.4345><258.061><-5~120, 
+AmbientSounds: OMNI><AM_ENV-Outside.ogg><765.4963><477.05><0><1, OMNI><AM_ENV-NatWind.ogg><773.5885><552.368><0.3804348><1, 
+FadePalette: 8, 0, 0.0326087
+WetTerrain: OFF

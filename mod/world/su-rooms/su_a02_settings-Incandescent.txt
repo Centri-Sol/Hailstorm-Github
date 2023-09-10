@@ -1,0 +1,19 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+RumbleIntensity: 1
+WaveSpeed: 0.434799
+WaveLength: 0.6861495
+WaveAmplitude: 0.05624998
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.1086956
+BkgDroneVolume: 0.2769565
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 10
+Effects: Flies-0-20-20, LightBurn-0.08695652-19-71, Coldness-1-25-129, Dustpuffs-1-281-19, 
+PlacedObjects: CustomDecal><442.3381><300.1795><-26~312~206~343~177~2~-486~-585~0.5217391~1~0.9239131~Actual Vertical Pink~0.1521739~0.217319~0.2282609~0.1345646~0.3478261~0.06591~0.4021739~0, SnowSource><539.6864><658.9275><None~429~-160~-59~-714.3975~1~1, SnowSource><548.3052><428.5577><Radial~629~-403~-326~-482.3975~1~1, 
+AmbientSounds: OMNI><AM_ENV-NatWind.ogg><850.1306><589.5896><0.3152174><1, 
+FadePalette: 10, 0.02173913
+WetTerrain: OFF
