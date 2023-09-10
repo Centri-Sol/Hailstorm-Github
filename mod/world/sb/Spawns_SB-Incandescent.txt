@@ -1,0 +1,70 @@
+OFFSCREEN : 0-MirosBird-8, 0-Scavenger-17, 0-Elite, 0-Leviathan-{Night}
+
+SB_TOPSIDE : 2-Cicada-{Ignorecycle}-2, 2-Cicada-{Night}
+LINEAGE : SB_A10 : 2 : TentaclePlant-1.0, NONE-1.0, NONE-1.0, NONE-0.33, CicadaA-0
+SB_GOR02 : 1-Cicada-2, 2-Strawberry, 3-Cyanwing
+SB_GOR01 : 3-Centipede-2, 4-Yeek-4, 5-Spider-25, 5-SpitterSpider-{Night}, 6-White, 7-BigSpider-2
+SB_H03 : 7-MotherSpider, 9-Centipede-{PreCycle,1.0}-2, 12-Yellow-{Night}-2, 13-Yellow-{Ignorecycle}-3, 14-Centipede-3, 15-Centipede-2
+LINEAGE : SB_H03 : 6 : BigSpider-0.33, DropBug-0.5, Strawberry-0.05, IcyBlue-0
+LINEAGE : SB_H03 : 8 : BigSpider-0.33, DropBug-0.5, Cyan-0
+LINEAGE : SB_H03 : 10 : BigSpider-0.33, DropBug-0.5, White-0.01, Freezer-0
+SB_TESTB : 2-Salamander-{PreCycle}, 3-Caramel-{Night}, 4-TentaclePlant, 5-Centipede-3
+LINEAGE : SB_TESTB : 2 : Mimic-{7}-1.0, NONE-0.33, DropBug-{Night}-0
+SB_C02 : 2-Eel-{Ignorecycle}-2, 4-TentaclePlant, 5-Jetfish-3
+LINEAGE : SB_C02 : 2 : Mimic-{11}-1.0, NONE-0.33, Salamander-{Ignorecycle}-0
+SB_TESTC : 2-TentaclePlant, 4-Centipede-3, 5-Strawberry, 6-Caramel, 6-Salamander-{Night}, 6-Salamander-{PreCycle}, 7-TentaclePlant-{Night}
+LINEAGE : SB_TESTC : 3 : BigSpider-0.5, MotherSpider-0.33, SpitterSpider-0.25, DropBug-0
+LINEAGE : SB_TESTC : 5 : White-0.33, Salamander-{Ignorecycle}-0.33, Eel-{Ignorecycle}-0.25, Strawberry-0
+SB_E04 : 4-Centipede-{0.6}-2, 4-DropBug-{Night}-2
+LINEAGE : SB_E04 : 5 : Centipede-{0.8}-0.8, RedCentipede-0
+SB_G03 : 3-TentaclePlant-{Night}, 4-MotherSpider, 4-BigSpider-{Night}-2
+LINEAGE : SB_G03 : 3 : DropBug-0.25, NONE-0.25, Centipede-{1.0}-0
+LINEAGE : SB_G03 : 4 : BigSpider-0.25, NONE-0.25, DropBug-0
+LINEAGE : SB_G03 : 5 : TentaclePlant-0.33, NONE-0.33, Caramel-0.33, Cyan-{Night}-0.33, Strawberry-0
+LINEAGE : SB_G03 : 6 : White-1.0, Cyan-{Ignorecycle}-0.33, TentaclePlant-0
+LINEAGE : SB_G03 : 7 : Strawberry-0.2, Salamander-{Ignorecycle}-0.5, Eel-{Ignorecycle}-0.33, White-0.25, Cyan-{Ignorecycle}-0
+SB_J01 : 4-Salamander-{Ignorecycle}, 4-Salamander-{Night}, 4-Eel-{PreCycle}-2, 5-MotherSpider, 5-BigSpider-{Night}, 6-TentaclePlant
+LINEAGE : SB_J01 : 4 : BigSpider-{Night}-0.25, DropBug-{Night}-0
+LINEAGE : SB_J01 : 5 : BigSpider-0.25, DropBug-0
+SB_E02 : 3-White-{Night}, 3-Cyan-{Ignorecycle}, 4-Mouse-4, 5-Mouse-4, 6-TentaclePlant, 8-Centipede-2, 8-RedCentipede-{Night}, 9-Centipede-{PreCycle}-3
+LINEAGE : SB_E02 : 7 : TentaclePlant-0.25, Red-{Ignorecycle}-0
+SB_G02 : 3-Mouse-4, 4-Mouse-4, 5-TentaclePlant, 6-TentaclePlant, 7-BigSpider-5, 8-BigSpider-3-{Night}, 9-MotherSpider-{Night}-2, 11-TentaclePlant
+
+SB_C07 : 2-Mouse-8, 2-DropBug-{Night}-2, 3-Eel-{Ignorecycle}, 4-Salamander-{Ignorecycle}
+SB_J02 : 4-Jetfish-3, 5-Eel-{Ignorecycle}, 5-Eel-{Night}, 5-Salamander-{PreCycle}-2
+LINEAGE : SB_J02 : 3 : White-0.5, Cyan-0.1, NONE-1.0, NONE-0.1, IcyBlue-0.1, Freezer-0
+LINEAGE : SB_J02 : 5 : Salamander-{Night}-1.0, NONE-0.1, Aquapede-{Night,2.0}-0
+SB_J03 : 4-SpitterSpider, 5-Centipede-2, 5-BigSpider-3-{Night}, 6-TentaclePlant, 7-Salamander-{Night}-2, 8-Black
+LINEAGE : SB_J03 : 5 : Centipede-{1.2}-0.33, RedCentipede-0
+LINEAGE : SB_J03 : 8 : Black-0.2, Eel-{Ignorecycle}-0
+SB_F01 : 3-MotherSpider, 4-Centipede-{PreCycle,Night}-2, 5-Black-2, 5-Black-{Night}
+SB_C10 : 5-BigSpider-2, 6-MotherSpider-{PreCycle}, 8-Black-2, 11-Black-{PreCycle}, 14-Centipede, 16-White, 18-TentaclePlant
+SB_G04 : 6-SpitterSpider-2, 9-DropBug-2
+SB_B04 : 4-Centipede, 5-Centipede
+SB_E07 : 8-Black-2, 9-White-2, 10-Mouse-4
+SB_J10 : 3-BigSpider-2, 3-BigSpider-{PreCycle}-2, 4-MotherSpider, 4-MotherSpider-{Night}, 12-Eel-{Ignorecycle}
+LINEAGE : SB_J10 : 12 : Eel-{Ignorecycle}-0.15, Salamander-{Ignorecycle}-0
+SB_C11 : 2-Yellow-2, 3-Eel-{PreCycle}
+
+SB_H02 : 4-Centipede-3, 6-SpitterSpider, 6-MotherSpider, 7-BigSpider-5, 7-Spider-30
+LINEAGE : SB_H02 : 5 : RedCentipede-0.1, NONE-0
+LINEAGE : SB_H02 : 7 : BigSpider-0.25, MotherSpider-0.125, SpitterSpider-0
+SB_A04 : 3-TentaclePlant, 4-Centipede-3, 5-Cyan
+SB_A01 : 4-Centipede-4
+LINEAGE : SB_A01 : 3 : Centipede-{0.7}-0.4, Centipede-{0.4}-0.7, RedCentipede-0
+SB_A11 : 2-White-{Night}, 3-Cyan-{Night}, 4-Black-{PreCycle}-4, 5-Centipede-4, 5-Centipede-{1.5}
+SB_B01 : 3-BigSpider-2, 4-Centipede-{PreCycle}-2, 5-Centipede-{PreCycle}-2, 7-Salamander-2, 8-TentaclePlant
+LINEAGE : SB_B01 : 3 : BigSpider-0.5, SpitterSpider-0.3, MotherSpider-0.1, Red-0
+LINEAGE : SB_B01 : 6 : Caramel-0.5, Black-0.3, Strawberry-0.7, Red-0
+SB_A03 : 5-Caramel-{Night}, 5-DropBug-{PreCycle}-2
+LINEAGE : SB_A03 : 3 : BigSpider-0.3, NONE-0.65, MotherSpider-1.0, TentaclePlant-0
+LINEAGE : SB_A03 : 4 : BigSpider-0.3, NONE-0.65, SpitterSpider-1.0, TentaclePlant-0
+LINEAGE : SB_A03 : 6 : BigSpider-0.3, White-0.5, NONE-0.4, Cyan-{Night}-0.7, Red-0
+SB_C01 : 2-TentaclePlant, 4-Eel-{PreCycle}, 6-Mimic-{7}, 7-Black-2, 8-Caramel, 9-Yeek-4, 9-Yeek-{Night}-3
+LINEAGE : SB_C01 : 4 : Eel-{PreCycle}-0.5, Eel-{Ignorecycle}-0.3, NONE-0.1, MotherSpider-0
+SB_B02 : 2-TentaclePlant-{PreCycle}, 2-Eel-{Ignorecycle}, 3-TentaclePlant, 3-Eel-{Night}, 4-Strawberry, 6-MotherSpider-{Night}-2, 7-Yeek-5
+LINEAGE : SB_B02 : 6 : BigSpider-0.5, Black-0.2, Red-1.0, NONE-1.0, NONE-0.2, Freezer-0
+SB_I01 : 6-White, 7-BigSpider-{PreCycle}, 9-Black, 10-Black, 11-Black, 12-Black, 14-BigSpider-{PreCycle}, 15-White
+SB_F02 : 4-White-{Night}, 5-Black, 6-White-{PreCycle}, 7-Black
+LINEAGE : SB_F02 : 8 : NONE-1.0, NONE-0.6, NONE-0.2, White-{Night}-0
+SB_C06 : 3-Cyan-{Ignorecycle}

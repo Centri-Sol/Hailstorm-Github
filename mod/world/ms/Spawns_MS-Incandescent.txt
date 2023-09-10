@@ -1,0 +1,52 @@
+OFFSCREEN : 0-Leviathan-4, 0-Vulture, 0-KingVulture, 0-MirosVulture, 0-Scavenger-4, 0-Scavenger-2
+LINEAGE : OFFSCREEN_MS : 0 : MirosVulture-{Night}-1.0, NONE-0
+
+MS_ENTRANCE : 6-Eel-{Ignorecycle}
+
+MS_CROSSOVER02 : 7-Leech-12
+MS_VENT01 : 8-TentaclePlant, 9-Jetfish, 10-Jetfish, 11-Jetfish, 12-TentaclePlant, 13-TentaclePlant
+MS_VENT02 : 3-Mimic-{15}
+MS_VENT04 : 6-TentaclePlant, 8-TentaclePlant, 10-TentaclePlant, 13-TentaclePlant
+MS_AIR02 : 4-Jetfish
+MS_VENT09 : 6-InfantAquapede-2, 7-Aquapede
+MS_VENT08 : 3-InfantAquapede-2, 4-Aquapede, 7-Jetfish-2, 8-Jetfish-2, 9-TentaclePlant, 11-Eel
+MS_AIR03 : 3-TentaclePlant, 6-Leech-6
+MS_VENT12 : 3-Jetfish, 6-Aquapede-{Night}
+MS_VENT14 : 8-Eel-{Night}
+MS_ARTERY07 : 4-Jetfish, 5-InfantAquapede-2, 6-Aquapede
+MS_ARTERY01 : 5-Jetfish
+MS_ARTERY02 : 5-Jetfish
+MS_O05 : 2-Jetfish, 3-Jetfish
+
+MS_VENT18 : 4-TentaclePlant, 6-TentaclePlant
+MS_ARTERY06 : 6-Jetfish, 7-Jetfish
+MS_FARSIDE : 5-Jetfish, 6-Jetfish, 7-TentaclePlant, 8-TentaclePlant-{Night}, 9-SeaLeech-10, 10-TentaclePlant, 11-Aquapede-{Night}, 11-InfantAquapede-{Night}-2
+MS_ARTERY06 : 6-Jetfish, 7-Jetfish
+MS_EAST01 : 4-Salamander
+MS_EAST03 : 8-Mimic-{15}
+MS_EAST06 : 5-Mimic-{23}
+MS_VENT21 : 6-TentaclePlant
+MS_VENT22 : 3-Eel-{Ignorecycle}
+
+MS_VENT16 : 2-Eel-{Ignorecycle}
+MS_VENT17 : 3-Leech-3, 7-Leech-7
+MS_I12 : 4-Leech-10
+MS_LAB1 : 2-TentaclePlant
+MS_LAB3 : 8-Mimic-{12}, 10-Mimic-{16}
+MS_LAB5 : 5-White
+MS_LAB6 : 5-Eel
+MS_LAB8 : 4-TentaclePlant
+MS_LAB12 : 5-CicadaA-2, 6-CicadaB-2
+MS_LAB13 : 4-Mimic-{9}, 5-Mimic-{24}-{Night}, 6-Mimic-{16}
+
+MS_MEMOUTSIDE : 5-TentaclePlant, 7-SeaLeech-11, 8-Jetfish, 9-TentaclePlant-{PreCycle}, 10-Jetfish
+MS_MEM04 : 4-TentaclePlant, 5-TentaclePlant, 6-TentaclePlant, 7-Jetfish-3
+MS_CROSSOVER01 : 5-Eel-{Ignorecycle}
+MS_I02 : 4-Jetfish-3, 5-TentaclePlant
+MS_VENT03 : 3-Eel, 6-Eel-{Night}
+MS_I01 : 3-Aquapede, 4-Jetfish-3
+
+MS_CORTEX : 8-Mimic-{30}, 11-Jetfish-2
+MS_AI : 9-Jetfish
+MS_MEMENTRANCE : 3-Eel
+MS_MEM01 : 2-TentaclePlant-{Night}, 3-SeaLeech-4, 4-SeaLeech-4

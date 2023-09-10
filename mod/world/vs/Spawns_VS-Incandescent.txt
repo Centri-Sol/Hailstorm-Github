@@ -1,0 +1,75 @@
+OFFSCREEN : 0-Vulture-2, 0-MirosVulture-{Night}-2, 0-Scavenger-15
+LINEAGE : OFFSCREEN_VS : 0 : Scavenger-{Night}-1.0, KingVulture-{Night}-0
+
+VS_E01 : 3-Aquapede, 4-Aquapede-{Night}, 7-InfantAquapede-2
+VS_C08 : 3-Snail-{PreCycle}-2, 4-Snail-{PreCycle}-2, 6-Eel-{Ignorecycle}, 7-InfantAquapede, 7-Eel-{Night}
+VS_B13 : 3-Eel-{PreCycle}, 4-Mimic-{7}, 5-Mimic-{10}
+
+VS_A15 : 3-TentaclePlant-{PreCycle}, 7-BigSpider-{Night}-3
+VS_B15 : 2-Mimic-{10}
+VS_A10 : 4-SeaLeech-4
+VS_D03 : 3-Black, 4-Eel-{Night}
+VS_C10 : 3-Mouse-4, 4-Yellow-{Ignorecycle}-2, 7-Black-2
+VS_C12 : 5-Snail-{PreCycle}-5, 11-InfantAquapede
+LINEAGE : VS_C12 : 9 : InfantAquapede-0.05, Aquapede-{0.6}-0
+VS_C11 : 4-BigSpider-2
+
+VS_B16 : 3-Mouse-2, 4-Yellow-{Ignorecycle}-3, 6-Black-2, 6-Black-{Night}, 7-BigSpider-2, 7-BigSpider-{Night}-2
+VS_D04 : 3-Yellow-{Ignorecycle}-3, 8-Black-{PreCycle}
+LINEAGE : VS_D04 : 4 : Mouse-0.5, BigSpider-0
+LINEAGE : VS_D04 : 6 : Mouse-0.3, BigSpider-0
+LINEAGE : VS_D04 : 7 : Mouse-0.7, BigSpider-0.35, Yellow-{Ignorecycle}-0
+VS_F01 : 5-Centipede-3, 5-Centipede-{0.8}, 6-BigSpider-2, 6-BigSpider-{Night}, 9-Mouse-7, 11-Eel-{Ignorecycle}
+LINEAGE : VS_F01 : 6 : BigSpider-0.25, MotherSpider-0.33, NONE-0.5, SpitterSpider-0
+LINEAGE : VS_F01 : 8 : NONE-0.1, Centiwing-0.15, Cyanwing-0
+VS_F02 : 5-Yellow-{Ignorecycle}-2, 7-Black-{Night}-2, 10-Mouse-4, 12-Salamander-{PreCycle}-2, 16-Mimic, 17-TentaclePlant, 20-TentaclePlant
+LINEAGE : VS_F02 : 6 : Yellow-{Night}-0.2, White-{Night}-0.33, Strawberry-{Night}-0.5, Cyan-{Night}-0
+LINEAGE : VS_F02 : 7 : Black-0.2, White-0.33, NONE-0.15, IcyBlue-0.1, Red-{Ignorecycle}-0
+VS_E06 : 3-Centipede-5, 4-TentaclePlant, 5-Salamander-{PreCycle}, 6-InfantAquapede-{Night}, 10-Eel-{Night}
+LINEAGE : VS_E06 : 3 : Centipede-{0.6}-0.6, Centipede-{0.9}-0.9, BigSpider-0.4, Centipede-{0.4}-0.4, RedCentipede-0
+LINEAGE : VS_E06 : 6 : NONE-1.0, NONE-1.0, NONE-0.05, InfantAquapede-0
+VS_B17 : 2-Mouse-3, 3-TentaclePlant-{Night}, 6-Salamander-{Ignorecycle}, 7-TentaclePlant-{PreCycle}
+LINEAGE : VS_B17 : 6 : Salamander-0.15, Eel-0.15, Aquapede-0
+
+VS_A13 : 3-BigSpider, 4-Spider-20
+LINEAGE : VS_A13 : 4 : NONE-1.0, NONE-0.2, BigSpider-{Night}-0.3, BigSpider-0.15, MotherSpider-0
+VS_C09 : 2-SpitterSpider, 4-Centipede-3, 5-Mimic-{5}, 6-Eel-{Night}
+LINEAGE : VS_C09 : 2 : SpitterSpider-0.33, NONE-0.33, MotherSpider-0
+VS_B12 : 3-White, 4-Centipede-4, 5-White-{Night}, 6-RedCentipede-{PreCycle}
+VS_C07 : 4-White, 7-Yellow-{Night}-2, 10-Strawberry
+LINEAGE : VS_C07 : 13 : NONE-0.2, Yellow-{Ignorecycle}-0.4, White-0.4, Strawberry-0.7, Cyan-{Ignorecycle}-0
+VS_A08 : 2-Centipede-{1.0}-2, 2-Small Centipede, 2-Cyan-{Night}
+VS_B10 : 3-White, 4-White-{Night}, 6-Mimic-{7}, 7-Eel-{PreCycle}-2
+VS_C06 : 5-TentaclePlant-{Night}
+VS_C13 : 2-Small Centipede-{AlternateForm}-2, 3-Centiwing-2, 3-Centiwing-{Night}, 3-Cyanwing-{Night}, 4-Cyan-{Night}, 5-White, 6-TentaclePlant-{PreCycle}, 8-CicadaB-{PreCycle}-2
+LINEAGE : VS_C13 : 2 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.1, Cyanwing-{Night}-0
+VS_E07 : 2-Strawberry-{Night}, 3-White
+
+VS_B09 : 3-Strawberry, 4-BigSpider-{Night}-3, 5-Salamander-{Ignorecycle}-2
+VS_C05 : 3-TentaclePlant-{Night}, 4-Salamander-{Ignorecycle}-2, 5-Centipede-{PreCycle}-3
+VS_A04 : 4-Eel, 4-Salamander-{Night}, 5-Strawberry
+VS_H02 : 7-White-{Night}, 8-BigSpider, 8-BigSpider-{Night}, 10-IcyBlue, 12-Eel-{PreCycle}, 12-Eel
+LINEAGE : VS_H02 : 9 : BigSpider-0.25, MotherSpider-0
+LINEAGE : VS_H02 : 11 : IcyBlue-0.25, Freezer-0
+LINEAGE : VS_H02 : 13 : NONE-0.1, Centiwing-0.15, Cyanwing-0
+VS_C03 : 4-BigSpider-3, 4-MotherSpider-{Night}, 7-Salamander-{Ignorecycle}, 7-Salamander-{Night}
+VS_C01 : 2-TentaclePlant, 4-TentaclePlant, 13-InfantAquapede-{Night}, 15-Eel-{Ignorecycle}, 17-Eel-{Ignorecycle}
+LINEAGE : VS_C01 : 6 : TentaclePlant-{Night}-0.5, IcyBlue-{Night}-0
+VS_A03 : 4-Salamander-{Ignorecycle}, 4-Salamander-{Night}, 5-MotherSpider-{Night}
+VS_B02 : 5-MotherSpider-{PreCycle}, 6-Caramel-{Night}
+VS_A02 : 2-Caramel
+VS_B01 : 5-Spider-25
+LINEAGE : VS_B01 : 4 : Mimic-{5}-1.0, BigSpider-0.2, MotherSpider-0
+
+VS_C04 : 2-Centiwing-2, 2-Centiwing-{Night}, 3-Caramel, 4-Strawberry, 5-BigSpider-3, 5-BigSpider-{Night}
+LINEAGE : VS_C04 : 2 : Centiwing-{Night}-0.2, DropBug-{Night}-0.5, Cyanwing-{Night}-0
+LINEAGE : VS_C04 : 5 : BigSpider-0.3, DropBug-0.4, Centiwing-0.5, SpitterSpider-0
+VS_A06 : 3-MotherSpider, 2-BigSpider-{Night}, 4-Salamander-{Ignorecycle}
+VS_D01 : 4-Eel, 4-MotherSpider-{PreCycle}
+LINEAGE : VS_A05 : 2 : Caramel-0.3, NONE-0.25, Mimic-{13}-1.0, TentaclePlant-0.5, White-0.3, Cyan-{Ignorecycle}-0
+
+VS_C02 : 4-MotherSpider
+LINEAGE : VS_C02 : 3 : Salamander-{Ignorecycle}-0.5, Cyan-{Ignorecycle}-0.33, White-0.25, NONE-0.2, Red-{Ignorecycle}-0
+LINEAGE : VS_C02 : 5 : NONE-1.0, NONE-0.3, Eel-1.0, Eel-{Ignorecycle}-0
+VS_B07 : 6-Salamander-{Night}, 6-Eel-{PreCycle}-2
+VS_A01 : 4-TentaclePlant

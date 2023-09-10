@@ -1,0 +1,4 @@
+OFFSCREEN : 0-Scavenger-34, 0-Elite-6, 0-Vulture-6, 0-KingVulture-3
+LINEAGE : OFFSCREEN_OE : 0 : Vulture-0.25, KingVulture-0.1, NONE-1.0, NONE-0.05, MirosVulture-0
+
+OE_RUIN14 : 6-TentaclePlant, 7-Mimic, 8-TentaclePlant, 9-Mimic, 10-TentaclePlant, 12-Mimic

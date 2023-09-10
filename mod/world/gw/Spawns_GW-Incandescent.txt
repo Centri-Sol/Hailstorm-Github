@@ -1,0 +1,47 @@
+OFFSCREEN : 0-Vulture-2, 0-MirosVulture-4, 0-Scavenger-14, 0-Elite
+LINEAGE : OFFSCREEN_GW : 0 : Vulture-0.25, KingVulture-0
+
+GW_B08 : 2-BigSpider, 4-MotherSpider, 8-SeaLeech-3, 9-SeaLeech-2, 10-SeaLeech-3, 12-SeaLeech-6, 13-Mimic-{10}
+GW_C04 : 4-Caramel, 4-Salamander-2-{PreCycle}
+GW_A11 : 3-Centiwing-2, 3-Centiwing-{Night}, 5-White-{Night}
+LINEAGE : GW_B02 : 4 : BigSpider-0.5, White-0.15, IcyBlue-0
+GW_C08 : 3-Eel, 4-Salamander-{Night}, 5-Eel-{PreCycle}
+GW_C09 : 4-SeaLeech-9, 4-InfantAquapede-{PreCycle}-2
+GW_E01 : 2-BigSpider-2, 3-SpitterSpider, 4-SpitterSpider-{Night}, 5-Snail-4, 6-Aquapede, 6-InfantAquapede-{Night}, 7-Salamander-{Ignorecycle}, 7-Snail-{PreCycle}-4, 8-Aquapede, 9-Eel-{Night}
+LINEAGE : GW_E01 : 8 : NONE-1.0, NONE-1.0, NONE-0.1, InfantAquapede-{Night}-0
+GW_C10 : 2-JungleLeech-4, 3-SeaLeech-2, 3-JungleLeech-{Night}-4, 4-Garbage Worm-3
+GW_D02 : 3-DropBug, 4-BigSpider-2, 6-JungleLeech-7
+LINEAGE : GW_D02 : 4 : BigSpider-0.33, MotherSpider-0
+GW_B09 : 3-JungleLeech-12-{Ignorecycle}, 2-DropBug, 4-Garbage Worm-2-{Ignorecycle}
+GW_A12 : 2-MotherSpider
+
+GW_EDGE03 : 3-Mouse-4, 6-Spider-15, 8-Mouse-4, 12-Mimic-{9}, 13-BigSpider-3, 14-MotherSpider, 15-Salamander-{Ignorecycle}, 17-Eel-{PreCycle}, 18-Salamander
+GW_EDGE05 : 2-DropBug-2
+GW_EDGE02 : 3-BigSpider, 6-TentaclePlant-{Night}, 10-Mimic-{15}
+GW_A25 : 3-Mouse-4, 4-Spider-15, 8-Mimic-{6}
+LINEAGE : GW_C05 : 2 : NONE-0.33, NONE-0.25, NONE-0.2, Caramel-0
+GW_C03 : 3-Centiwing-2, 3-White-{Night}, 4-Caramel
+LINEAGE : GW_C03 : 3 : Centiwing-0.15, White-{Night}-0.25, NONE-0.1, IcyBlue-{Night}-0.25, Cyan-{Night}-0
+LINEAGE : GW_C03 : 5 : Caramel-0.2, NONE-0.25, Red-0
+GW_E02 : 3-Cyanwing-{Night}, 5-Yellow-{Ignorecycle}-3, 5-Yellow-{Night}-2, 6-Centiwing, 6-Small Centipede-{AlternateForm}, 8-Caramel
+LINEAGE : GW_E02 : 2 : Centiwing-0.2, BigSpider-0.33, BigSpider-0.5, Cyan-0
+LINEAGE : GW_E02 : 7 : NONE-1.0, NONE-0.25, Caramel-0
+GW_C06 : 3-Centipede, 4-Salamander-{PreCycle}, 4-BigSpider-{Night}-2
+LINEAGE : GW_C06 : 3 : Centipede-0.25, Mimic-0.5, SpitterSpider-0
+LINEAGE : GW_C06 : 4 : Centipede-{0.4}-0.4, Centipede-{0.7}-0.7, Centipede-{1.0}-1.0, RedCentipede-0
+GW_A10 : 3-SeaLeech-7, 3-TentaclePlant-{Night}
+GW_A08 : 2-SeaLeech-2-{Night}, 2-Eel, 3-SeaLeech-{Night}-2
+
+GW_C02 : 2-Centiwing-2, 2-Centiwing-{Night}, 3-Small Centipede-{AlternateForm}-2, 5-TentaclePlant-{PreCycle}, 6-Strawberry-2
+LINEAGE : GW_C02 : 2 : NONE-1.0, NONE-0.1, Centiwing-{0.2}-0.3, Cyanwing-{Night}-0
+LINEAGE : GW_C02 : 4 : Scavenger-{PreCycle,Seed:2837}-0.2, Elite-{PreCycle,Seed:2837}-0
+GW_B03 : 4-SeaLeech-4, 5-InfantAquapede, 6-InfantAquapede-{PreCycle}, 7-Bro-{PreCycle}
+GW_A04 : 3-Small Centipede, 3-Centipede
+GW_D01 : 3-Centiwing, 4-Centiwing-{0.8}, 4-Small Centipede-{AlternateForm,Night}, 5-TentaclePlant-{Night}, 6-Yellow-{Ignorecycle}-2, 9-Salamander-{Ignorecycle}, 9-Salamander-{PreCycle} 
+LINEAGE : GW_D01 : 4 : Centiwing-{0.2}-0.2, Cyanwing-{Night}-0
+LINEAGE : GW_D01 : 6 : Yellow-{Ignorecycle}-0.1, IcyBlue-0
+GW_B04 : 3-TentaclePlant-{Night}, 4-SeaLeech-7, 5-Eel-{PreCycle}
+GW_C01 : 4-Salamander-{Ignorecycle}, 6-Mimic-{16}
+LINEAGE : GW_C01 : 2 : NONE-1.0, NONE-1.0, NONE-0.33, Mimic-{12}-0
+LINEAGE : GW_C01 : 3 : Mimic-{14}-1.0, NONE-1.0, NONE-0.33, TentaclePlant-0
+GW_B01 : 3-Salamander, 3-Salamander-{PreCycle,Ignorecycle}, 4-TentaclePlant-{Night}, 5-InfantAquapede, 6-InfantAquapede

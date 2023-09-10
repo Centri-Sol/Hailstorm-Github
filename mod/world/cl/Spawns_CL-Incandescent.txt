@@ -1,0 +1,77 @@
+OFFSCREEN : 0-Vulture-2, 0-KingVulture, 0-KingVulture-{Night}, 0-KingVulture-2-{PreCycle}, 0-Scavenger-42, 0-Elite-2, 0-MirosBird-2
+LINEAGE : OFFSCREEN_CL : 0 : Scavenger-{Night}-1.0, Elite-{Night}-0
+
+CL_HALL : 3-Spider-15, 7-BigSpider, 8-BigSpider, 9-SpitterSpider
+CL_CURVE : 2-BigSpider, 3-Mouse-4
+CL_scavshop : 2-Strawberry, 3-Cyan-{Night}
+CL_OVERHEAD : 7-Mimic-{30}
+CL_LEDGE : 4-TentaclePlant-{PreCycle}, 6-MotherSpider
+CL_A17 : 3-BigSpider, 4-Spider-20
+LINEAGE : CL_A17 : 5 : BigSpider-0.1, NONE-0.1, MotherSpider-0
+CL_A16 : 2-BigSpider-{PreCycle}, 3-MotherSpider, 4-BigSpider-{Night}
+CL_C09 : 2-Strawberry, 3-Spider-25, 4-BigSpider-2-{Night}
+LINEAGE : CL_C09 : 5 : Spider-0.33, MotherSpider-0.2, SpitterSpider-0
+CL_B17 : 2-SpitterSpider, 3-Spider-10, 4-Spider-10, 5-MotherSpider-{Night}
+CL_C07 : 4-Mouse-7, 5-Mimic-{16}, 6-White
+CL_A15 : 3-Spider-20, 4-BigSpider-{Night}
+CL_A11 : 4-Mouse-3
+CL_A12 : 3-BigSpider, 3-White-{PreCycle}, 4-BigSpider-{Night}
+LINEAGE : CL_A12 : 3 : NONE-0.1, BigSpider-0
+LINEAGE : CL_A12 : 4 : NONE-1.0, NONE-1.0, NONE-0.1, BigSpider-0.2, MotherSpider-0
+CL_bncrumble01 : 4-Mouse-8
+LINEAGE : CL_A25 : 2 : White-0.3, IcyBlue-0.5, MotherSpider-0.6, SpitterSpider-0.2, Cyanwing-0
+CL_D01 : 2-Centiwing-3
+LINEAGE : CL_D01 : 2 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.1, Freezer-0
+LINEAGE : CL_D01 : 3 : White-1.0, NONE-1.0, Strawberry-0.5, IcyBlue-0.25, Caramel-0
+LINEAGE : CL_V03 : 7 : IcyBlue-0.33, Cyan-{Ignorecycle}-0
+CL_A10 : 3-Centiwing-2
+CL_C21 : 2-Yellow-{Ignorecycle}-2, 3-Yellow-{Night}-2, 4-Yellow-2
+CL_D12 : 3-Mouse-8
+CL_C20 : 3-MotherSpider-{Night}
+CL_B24 : 2-BigSpider, 4-Eel
+CL_A33 : 4-Centipede-3, 4-Small Centipede, 4-Red Centipede
+CL_C03 : 3-Mimic-{7}
+CL_D13INCAN : 3-Spider-18
+CL_LSCOREACCESS : 6-BigSpider-2
+LINEAGE : CL_LSCOREACCESS : 5 : TentaclePlant-{Night}-1.0, TentaclePlant-1.0, IcyBlue-0
+CL_LCLPIPE : 4-RedCentipede, 6-Mouse-6
+CL_D04 : 4-Tube-3
+CL_C14 : 2-Eel-{Ignorecycle}, 4-Bro-{PreCycle}
+CL_C12 : 3-BigSpider, 4-TentaclePlant-{Night}, 6-Snail-2-{PreCycle}
+LINEAGE : CL_C12 : 6 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.2, Snail-0
+CL_C13 : 3-Cyan-{Ignorecycle}, 4-Tube-3
+CL_A42 : 4-Mouse-9
+CL_B26 : 3-SpitterSpider, 5-BigSpider
+CL_V01 : 3-BigSpider, 4-Eel-{Ignorecycle}, 5-Aquapede, 6-InfantAquapede, 6-InfantAquapede-{Night}
+CL_A24 : 2-Spider-20
+LINEAGE : CL_A24 : 3 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.25, BigSpider-0
+CL_B11 : 5-Spider-20, 6-BigSpider-{Winter}
+CL_B06 : 3-Mouse-3, 4-Spider-25, 5-BigSpider
+LINEAGE : CL_B06 : 4 : BigSpider-0.25, NONE-0.25, MotherSpider-0
+
+CL_E02 : 2-Cyan-{Ignorecycle}, 3-Yellow-3, 3-Yellow-{Ignorecycle}-2, 3-Yellow-{Night}
+
+CL_D08 : 2-Freezer
+CL_A05 : 2-BigSpider, 3-Mouse-4
+CL_D06 : 3-Centiwing
+CL_E03 : 3-Small Centipede-{AlternateForm}-2, 4-Centiwing, 4-Cyanwing-{Night}
+CL_E04 : 3-BigSpider, 3-SpitterSpider, 6-MotherSpider
+CL_A04 : 2-Spider-10, 3-Spider-10
+CL_D02 : 2-White
+LINEAGE : CL_D02 : 2 : NONE-1.0, NONE-0.75, NONE-0.5, White-0
+
+CL_A06 : 5-Strawberry
+CL_LCFILTERS : 2-BigSpider-{PreCycle}-12, 3-BigSpider-{Night}, 4-Spider-15, 7-Spider-10, 8-Spider-{PreCycle}-10, 9-MotherSpider-{Night}, 10-Spider-10, 11-Spider-10, 12-SpitterSpider
+LINEAGE : CL_LCFILTERS : 12 : Spider-1.0, BigSpider-0.5, MotherSpider-0
+CL_C08 : 3-BigSpider, 3-BigSpider-{PreCycle}, 4-Aquapede-{0.6}-2
+CL_A08 : 5-IcyBlue
+CL_A45 : 3-BigSpider
+CL_B30 : 4-BigSpider
+CL_LC02 : 4-Spider-15
+CL_B05 : 4-IcyBlue
+CL_D15 : 2-White-2, 3-TentaclePlant-{PreCycle}
+CL_D16 : 3-TentaclePlant-{PreCycle}
+CL_B02 : 2-Mouse-6
+
+CL_E01 : 6-Tube, 7-Tube, 8-Tube
+CL_B27 : 2-Tube-2
