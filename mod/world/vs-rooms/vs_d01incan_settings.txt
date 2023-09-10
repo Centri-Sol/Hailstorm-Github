@@ -1,0 +1,16 @@
+Template: VS_SettingsTemplate_Surface
+DangerType: Blizzard
+CeilingDrips: 0
+WaveSpeed: 0.5319224
+WaveLength: 0.7340388
+WaveAmplitude: 0.04999999
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.2717391
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: WaterDepth-0.08695652-20-20, 
+PlacedObjects: FirecrackerPlant><696.7824><2393.947><207.0001~163~5~8, FirecrackerPlant><749.6706><2399.934><154.0001~89~5~8, DeadSeedCob><-54.97333><2880.802><, DeadSeedCob><40.20001><2904.999><, SnowSource><493.1558><2536.625><Radial~1279~763~409~166.6025~0.8043478~1, SnowSource><-140.5191><2751.699><Radial~544~-451~-32~-96.39752~0.8043478~0.7065217, FirecrackerPlant><648.1795><2392.162><255.9999~234~5~8, DandelionPeach><-213.968><2443.948><0~0~50~50, DandelionPeach><853.757><2900.8><52~36~15~24, DandelionPeach><1037.088><2871.133><-136~-86~15~24, LillyPuck><435.3311><388.6429><-233~-309~6~9, LillyPuck><520.4305><436.9376><-64~-358~6~9, 
+FadePalette: 20, 0.1847826, 0.3043478, 0.4347826, 0.5869565
+WetTerrain: OFF

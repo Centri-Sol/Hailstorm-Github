@@ -1,0 +1,20 @@
+Template: VS_SettingsTemplate_Sewer
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.2608696
+BkgDroneVolume: 0
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 0
+Effects: Coldness-1-20-20, 
+PlacedObjects: GlowWeed><1451.552><302.7809><9~300~4~6, GlowWeed><658.552><132.7796><232~-162~4~6, GlowWeed><2214.362><348.9158><-194~264~4~6, GlowWeed><2385.229><370.5511><-115~242~4~6, BigJellyFish><3361.292><322.6956><45~0, GlowWeed><3382.749><171.8><-194~-193~4~6, BigJellyFish><638.6925><311.8084><56~0, 
+AmbientSounds: SPOT><SO_WAT-Splashes.ogg><561.8896><523.0832><0.4347826><1><649.8896><342.0832><-187.3553><-37.35535><0><0.6108697, SPOT><SO_WAT-OpenFlow.ogg><732.3994><526.383><0.4673913><1><654.3994><448.383><-94.35535><-150.3553><0><1, SPOT><SO_WAT-Splashes.ogg><576.9225><414.0656><0.3478261><1><3386.922><344.0656><-155.3553><-116.3553><0><0.4260871, SPOT><SO_WAT-RunningWater.ogg><742.4022><412.9245><0.4347826><1.293478><3412.402><434.9245><-89.35535><-122.3553><0><0.3173914, 
+FadePalette: 10, 0.6956522, 0.6956522, 0.7173913, 0.7282609
+WetTerrain: OFF

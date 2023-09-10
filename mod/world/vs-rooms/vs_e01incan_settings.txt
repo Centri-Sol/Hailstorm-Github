@@ -1,0 +1,19 @@
+Template: VS_SettingsTemplate_Sewer
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Grime: 0.1630435
+RandomItemDensity: 0.375
+RandomItemSpearChance: 0.25
+Palette: 0
+EffectColorA: 11
+Effects: Coldness-1-21-81, 
+PlacedObjects: JellyFish><1246.416><535.6342><19.125~66.13336~8~12, JellyFish><978.624><534.7245><34.70831~67.5556~8~12, LightSource><1784.805><78.63286><0.507246~EffectColor1~-433.4999~228.7112~-127.0834~-121.0419~0~1~None~0.2001807~0, LightSource><437.9036><151.2056><0.2069749~EffectColor1~177.0833~216.6222~-5.958313~-204.953~0~1~None~0~0, GlowWeed><2553.739><319.8246><74.37506~277.3333~3~5, GlowWeed><2691.869><395.2273><191.25~203.3777~3~5, GlowWeed><2316.515><358.8942><58.08331~238.9333~3~5, LightSource><1053.69><159.5944><0.2069742~EffectColor1~-231.625~298.4~-148.3333~-197.1308~0~1~None~0~0, LightSource><235.2267><97.41228><0.2069746~EffectColor1~-88.54169~116.3556~-119.2917~-146.6419~0~1~None~0~0, LightSource><3285.303><128.3123><0.2069742~EffectColor1~171.4166~309.0667~50~86.60254~0~0~None~0~0, GlowWeed><1902.378><130.8415><10~-173~3~5, GlowWeed><2184.473><127.6932><-19~-170~3~5, BubbleGrass><1780.894><639.8075><131.75~-539.7333~4~9, BubbleGrass><1732.297><652.7839><181.3334~-625.0667~4~9, BlueToken><2661.446><421.5576><11~47~253~52~1~InfantAquapede~White|Yellow|Red|Rivulet|Artificer|Saint|Spear|Gourmand~0~0~0~0, 
+FadePalette: 17, 0.8586956, 0.8478261, 0.8260869, 0.8152174, 0.7934783
+WetTerrain: OFF

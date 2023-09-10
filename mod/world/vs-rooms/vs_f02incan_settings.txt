@@ -1,0 +1,13 @@
+Template: VS_SettingsTemplate_Filter
+DangerType: Rain
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 2.670219E-25
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Effects: HeatWave-0.2065217-20-20, 
+FadePalette: 21, 0.5217391, 0.5217391, 0.5326087, 0.4673913, 0.4565217, 0.4456522
+WetTerrain: OFF

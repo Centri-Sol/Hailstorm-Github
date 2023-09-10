@@ -1,0 +1,19 @@
+Template: VS_SettingsTemplate_Filter
+DangerType: Rain
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.51
+WaveLength: 1
+WaveAmplitude: 0.0001
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.2173913
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+Palette: 20
+Effects: Darkness-0.173913-20-20, Coldness-1-21-78, 
+PlacedObjects: LightSource><243.3716><1498.403><0.3695652~Environment~289~-290~-454~-152.3975~1~1~None~0~0, LightSource><660.692><894.9414><0.1630435~Environment~-650~388~-848~43.60254~1~1~None~0~0, LightBeam><486.2><812.0038><-542~747~27~743~531~99~-669~352~0.4326087~0.1521739~0~1~None~0~0, LightSource><362.8957><1325.043><0.1413043~Environment~1798~-1362~-551~-272.3975~1~0~None~0~0, LightSource><1223.166><386.3618><0.5543478~Environment~514~-245~50~86.60254~1~0~None~0~0, DeadTokenStalk><1384.444><1174.2><-22~58, DeadTokenStalk><1236.036><1197.447><16~42, DeadTokenStalk><1338.056><1204.058><-22~33, BlueToken><1304.396><1145.137><29~92~591~237~1~EelLizard~White|Yellow|Red|Artificer|Spear|Gourmand~0~0~0~0, SnowSource><208.9057><1430.176><Radial~174~-361~67~-173.3975~0.6086956~1, LocalBlizzard><229.9937><1515.3><299~-330~234~-193.3975~0.75~0.5~0.6739131, BigJellyFish><1121.754><218.5204><0~175.0889, 
+AmbientSounds: SPOT><AM_ENV-NatWind.ogg><862.1575><453.3733><0.423913><1><311.1575><1514.373><-84.35535><-303.3553><0><1, SPOT><AM_WIN-SubWnd.ogg><685.6711><605.6035><0.5><1><980.6938><758.5236><-397.3553><-266.3553><0><1, 
+FadePalette: 21, 0.9891304, 0.9347826, 0.8586956, 0.8043478, 0.7391304
+WetTerrain: OFF
