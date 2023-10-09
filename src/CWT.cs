@@ -14,13 +14,13 @@ namespace Hailstorm;
 
 public class CWT
 {
-    public static ConditionalWeakTable<Player, HailstormSlugcats> PlayerData = new();
+    public static ConditionalWeakTable<Player, HSSlugs> PlayerData = new();
     public static ConditionalWeakTable<Creature, CreatureInfo> CreatureData = new();
     public static ConditionalWeakTable<AbstractCreature, AbsCtrInfo> AbsCtrData = new();
 }
 
 
-public class HailstormSlugcats // Stores a boatload of information for individual players.
+public class HSSlugs // Stores a boatload of information for individual players.
 {
     public readonly bool isIncan;
     public static SlugcatStats.Name Incandescent = new ("Incandescent", false);
@@ -46,9 +46,9 @@ public class HailstormSlugcats // Stores a boatload of information for individua
     public int fireFuel;
     public int waterGlow;
 
-    public int wetness;
-    public bool inWater;
-    public int lanternDryTimer;
+    public int soak;
+    public int maxSoak = 7200;
+    public bool bubbleHeat;
     public int impactCooldown;
 
     public int tailflameSprite;
@@ -67,11 +67,13 @@ public class HailstormSlugcats // Stores a boatload of information for individua
     public int waistbandSprite;
     public Vector2 lastWaistbandPos;
 
-    public bool readyToMoveOn;
+    public bool readyToAccept;
 
     public bool longJumpReady;
     public bool longJumping;
     public bool highJump;
+
+    public int singeFlipTimer;
 
     public bool inArena;
     public bool currentCampaignBeforeRiv;
@@ -83,7 +85,7 @@ public class HailstormSlugcats // Stores a boatload of information for individua
     public bool successfulCraft;
 
     // Creates a specific instance of IncanPlayer. This stores all values that are important to the Incandescent.
-    public HailstormSlugcats(Player self)
+    public HSSlugs(Player self)
     {
 
         incanRef =
@@ -163,50 +165,12 @@ public class HailstormSlugcats // Stores a boatload of information for individua
 
 public class LizardInfo
 {
-    public bool isIncanCampaign;
-    public bool isFreezerOrIcyBlue;
-    public bool isHailstormLiz;
-
-    public int iceBreath;
-    public Vector2 breathDir;
-
-    public int abilityTimer;
-    public int abilityCooldown;
-    public BodyChunk aimChunk;
-    public bool abilityUsed;
-    public float giveUpChance;
-
-    public int armorGraphic;
-    public LightSource freezerAura;
-    public float auraRadius;
-
-    public float packPower;
-    public bool nearAFreezer;
-    public int packPowerUpdateTimer;
+    public bool Gordito;
+    public bool bounceLungeUsed;
 
     public LizardInfo(Lizard liz)
-    {       
-
-        isIncanCampaign =
-            liz.room is not null &&
-            liz.room.game.IsStorySession &&
-            liz.room.game.StoryCharacter == HailstormSlugcats.Incandescent;
-
-        isFreezerOrIcyBlue =
-            liz is not null &&
-            (liz.Template.type == HailstormEnums.Freezer || liz.Template.type == HailstormEnums.IcyBlue);
-
-        isHailstormLiz =
-            liz is not null &&
-            (liz.Template.type == HailstormEnums.Freezer || liz.Template.type == HailstormEnums.IcyBlue || liz.Template.type == HailstormEnums.GorditoGreenie);
-
-        if (liz is not null && (liz.Template.type == HailstormEnums.Freezer || liz.Template.type == HailstormEnums.IcyBlue))
-        {
-            if (liz.Template.type == HailstormEnums.Freezer && abilityCooldown == 0)
-            {
-                abilityCooldown = Random.Range(320, 480);
-            }
-        }
+    {
+        Gordito = liz.Template.type == HailstormEnums.GorditoGreenie;
     }
 }
 
@@ -229,7 +193,7 @@ public class CentiInfo
         isIncanCampaign =
             cnt?.room is not null &&
             cnt.room.game.IsStorySession &&
-            cnt.room.game.StoryCharacter == HailstormSlugcats.Incandescent;
+            cnt.room.game.StoryCharacter == HSSlugs.Incandescent;
 
         Cyanwing =
             cnt is not null &&
@@ -256,27 +220,6 @@ public class CentiInfo
 
     }
 }
-public class ChillipedeScaleInfo
-{
-    public int[] ScaleRefreeze;
-    public Color scaleColor;
-    public Color accentColor;
-    public List<int[]> ScaleSprites;
-    public int StartOfNewSprites;
-    public int mistTimer = 160;
-    public ChillipedeScaleInfo(Centipede.CentipedeState cntState)
-    {
-        ScaleRefreeze = new int[cntState.shells.Length];
-        ScaleSprites = new();
-        Random.State state = Random.state;
-        Random.InitState(cntState.creature.ID.RandomSeed);
-        for (int b = 0; b < cntState.shells.Length; b++)
-        {
-            ScaleSprites.Add(new int[2] { Random.Range(0, 3), Random.Range(0, 3) });
-        }
-        Random.state = state;
-    }
-}
 
 //-----------------------------------------
 
@@ -300,7 +243,7 @@ public class CreatureInfo
         isIncanCampaign =
             ctr.room is not null &&
             ctr.room.game.IsStorySession &&
-            ctr.room.game.StoryCharacter == HailstormSlugcats.Incandescent;
+            ctr.room.game.StoryCharacter == HSSlugs.Incandescent;
 
     }
 }
@@ -310,37 +253,29 @@ public class AbsCtrInfo
     public bool isIncanCampaign;
 
     public bool LateBlizzardRoamer;
+    public bool HailstormAvoider;
     public bool FogRoamer;
+    public bool FogAvoider;
+    public bool ErraticWindRoamer;
+    public bool ErraticWindAvoider;
+    public bool HasHSCustomFlag;
 
-    public bool[] spikeBroken;
+    public bool destinationLocked;
+
     public int functionTimer;
-
-    public bool isFreezerOrIcyBlue;
 
     public List<AbstractCreature> ctrList;
 
     public List<Debuff> debuffs;
-
-    public float[] scaleHP;
 
     public AbsCtrInfo(AbstractCreature absCtr)
     {
         isIncanCampaign =
             absCtr?.world?.game is not null &&
             absCtr.world.game.IsStorySession &&
-            absCtr.world.game.StoryCharacter == HailstormSlugcats.Incandescent;
+            absCtr.world.game.StoryCharacter == HSSlugs.Incandescent;
 
-        isFreezerOrIcyBlue =
-            absCtr is not null && (absCtr.creatureTemplate.type == HailstormEnums.Freezer || absCtr.creatureTemplate.type == HailstormEnums.IcyBlue);
-
-        if (isFreezerOrIcyBlue)
-        {
-            if (spikeBroken is null)
-            {
-                spikeBroken = new bool[3];
-            }
-        }
-        else if (absCtr is not null)
+        if (absCtr is not null)
         {
             if (ctrList is null && (
                 absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
@@ -358,7 +293,7 @@ public class AbsCtrInfo
         if (debuffs is null) debuffs = new();
 
 
-        if (target is Player self && CWT.PlayerData.TryGetValue(self, out HailstormSlugcats hS))
+        if (target is Player self && CWT.PlayerData.TryGetValue(self, out HSSlugs hS))
         {
             if (hS.isIncan)
             {
@@ -372,10 +307,14 @@ public class AbsCtrInfo
         }
         else if (target is Creature ctr)
         {
-            debuffDuration = (int)(debuffDuration / ctr.Template.damageRestistances[HailstormEnums.HeatDamage.index, 0]);
+            debuffDuration = (int)(debuffDuration / ctr.Template.damageRestistances[HailstormEnums.Heat.index, 0]);
             if (ctr is Centipede cnt)
             {
                 debuffDuration = (int)(debuffDuration * Mathf.Lerp(1.3f, 0.1f, Mathf.Pow((cnt.AquaCenti ? cnt.size / 2 : cnt.size), 0.5f)));
+            }
+            if (ctr.Template.type == HailstormEnums.Freezer)
+            {
+                debuffDuration = (int)(debuffDuration * 0.8f);
             }
         }
 

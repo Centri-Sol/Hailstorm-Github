@@ -1,12 +1,11 @@
-﻿using Fisobs.Creatures;
-using Fisobs.Core;
+﻿using Fisobs.Core;
+using Fisobs.Creatures;
 using Fisobs.Sandbox;
 using MoreSlugcats;
 using UnityEngine;
 using System.Collections.Generic;
 using DevInterface;
 using RWCustom;
-using System.Security.Cryptography;
 
 namespace Hailstorm;
 
@@ -21,8 +20,8 @@ sealed class InfantAquapedeCritob : Critob
     internal InfantAquapedeCritob() : base(HailstormEnums.InfantAquapede)
     {
         Icon = new SimpleIcon("Kill_InfantAquapede", InfantAquapedeColor);
-        LoadedPerformanceCost = 4f;
-        SandboxPerformanceCost = new(0.2f, 0.2f);
+        LoadedPerformanceCost = 10f;
+        SandboxPerformanceCost = new(0.6f, 0.4f);
         RegisterUnlock(KillScore.Configurable(2), HailstormEnums.InfantAquapedeUnlock);
     }
 
@@ -46,9 +45,9 @@ sealed class InfantAquapedeCritob : Critob
         }
     }
 
-    public override Color DevtoolsMapColor(AbstractCreature acrit) => InfantAquapedeColor;
+    public override Color DevtoolsMapColor(AbstractCreature absCnt) => InfantAquapedeColor;
 
-    public override string DevtoolsMapName(AbstractCreature acrit) => "bA";
+    public override string DevtoolsMapName(AbstractCreature absCnt) => "bA";
 
     public override IEnumerable<string> WorldFileAliases() => new[] { "infantaquapede", "InfantAquapede" };
 
@@ -61,7 +60,7 @@ sealed class InfantAquapedeCritob : Critob
 
     public override CreatureTemplate CreateTemplate()
     {
-        CreatureTemplate cf = new CreatureFormula(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, Type, "BabyAquapede")
+        CreatureTemplate temp = new CreatureFormula(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, Type, "BabyAquapede")
         {
             TileResistances = new()
             {
@@ -98,31 +97,32 @@ sealed class InfantAquapedeCritob : Critob
             HasAI = true,
             Pathing = PreBakedPathing.Ancestral(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti),
         }.IntoTemplate();
-        cf.meatPoints = 3;
-        cf.visualRadius = 1400;
-        cf.waterVision = 2f;
-        cf.stowFoodInDen = true;
-        cf.throughSurfaceVision = 0.5f;
-        cf.movementBasedVision = 0.95f;
-        cf.dangerousToPlayer = 0.3f;
-        cf.communityInfluence = 0.4f;
-        cf.bodySize = 0.4f;
-        cf.BlizzardAdapted = true;
-        cf.BlizzardWanderer = true;
-        cf.waterRelationship = CreatureTemplate.WaterRelationship.WaterOnly;
-        cf.lungCapacity = 9900f;
-        cf.canSwim = true;
-        cf.jumpAction = "Swap Heads";
-        cf.pickupAction = "Grab/Shock";
-        cf.throwAction = "Release";
-        return cf;
+        temp.meatPoints = 3;
+        temp.visualRadius = 1400;
+        temp.waterVision = 2f;
+        temp.stowFoodInDen = true;
+        temp.throughSurfaceVision = 0.5f;
+        temp.movementBasedVision = 0.95f;
+        temp.dangerousToPlayer = 0.3f;
+        temp.communityInfluence = 0.4f;
+        temp.bodySize = 0.4f;
+        temp.BlizzardAdapted = true;
+        temp.BlizzardWanderer = true;
+        temp.waterRelationship = CreatureTemplate.WaterRelationship.WaterOnly;
+        temp.lungCapacity = 9900f;
+        temp.canSwim = true;
+        temp.jumpAction = "Swap Heads";
+        temp.pickupAction = "Grab/Shock";
+        temp.throwAction = "Release";
+        temp.shortcutSegments = 2;
+        return temp;
     }
 
     public override void EstablishRelationships()
     {
         Relationships s = new(HailstormEnums.InfantAquapede);
 
-        // "IgnoredBy" makes the given creatures ignore this one.
+        // "IgnoredBy" makes the given creatures ignore this one. Who would have gueeeessed
         s.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.5f);
         s.IsInPack(HailstormEnums.InfantAquapede, 0.85f);
 
@@ -152,11 +152,11 @@ sealed class InfantAquapedeCritob : Critob
         s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 1);
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new CentipedeAI(acrit, acrit.world);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absCnt) => new CentipedeAI(absCnt, absCnt.world);
 
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new Centipede(acrit, acrit.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absCnt) => new Centipede(absCnt, absCnt.world);
 
-    public override CreatureState CreateState(AbstractCreature acrit) => new HealthState(acrit);
+    public override CreatureState CreateState(AbstractCreature absCnt) => new HealthState(absCnt);
 
     public override void LoadResources(RainWorld rainWorld)
     {
@@ -175,14 +175,14 @@ sealed class IcyBlueCritob : Critob
     internal IcyBlueCritob() : base(HailstormEnums.IcyBlue)
     {
         Icon = new SimpleIcon("Kill_Icy_Blue_Lizard", IcyBlueColor);
-        LoadedPerformanceCost = 9f;
-        SandboxPerformanceCost = new(0.36f, 0.36f);
+        LoadedPerformanceCost = 50f;
+        SandboxPerformanceCost = new(0.6f, 0.6f);
         RegisterUnlock(KillScore.Configurable(10), HailstormEnums.IcyBlueUnlock);
     }
 
-    public override Color DevtoolsMapColor(AbstractCreature acrit) => IcyBlueColor;
+    public override Color DevtoolsMapColor(AbstractCreature absIcy) => IcyBlueColor;
 
-    public override string DevtoolsMapName(AbstractCreature acrit) => "Icy";
+    public override string DevtoolsMapName(AbstractCreature absIcy) => "Icy";
 
     public override IEnumerable<string> WorldFileAliases() => new[] { "icy", "icyblue", "icybluelizard", "Icy", "IcyBlue", "IcyBlueLizard" };
 
@@ -293,13 +293,15 @@ sealed class IcyBlueCritob : Critob
 
         s.Ignores(HailstormEnums.Chillipede);
 
+        s.IgnoredBy(HailstormEnums.Chillipede);
+
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new LizardAI(acrit, acrit.world);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absIcy) => new LizardAI(absIcy, absIcy.world);
 
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new Lizard(acrit, acrit.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absIcy) => new Lizard(absIcy, absIcy.world);
 
-    public override CreatureState CreateState(AbstractCreature acrit) => new LizardState(acrit);
+    public override CreatureState CreateState(AbstractCreature absIcy) => new ColdLizState(absIcy);
 
     public override void LoadResources(RainWorld rainWorld) { }
 
@@ -315,11 +317,11 @@ sealed class FreezerCritob : Critob
 
     public Color FreezerColor = new (129f/255f, 200f/255f, 236f/255f);
 
-    internal FreezerCritob() : base(HailstormEnums.Freezer)
+    internal FreezerCritob() : base(HailstormEnums.Freezer) // You put your new creature's enum here
     {
-        Icon = new SimpleIcon("Kill_Freezer_Lizard", FreezerColor);
-        LoadedPerformanceCost = 10f;
-        SandboxPerformanceCost = new(0.4f, 0.4f);
+        Icon = new SimpleIcon("Kill_Freezer_Lizard", FreezerColor); // Your creature type's in-game icon and icon color. You can either use a pre-existing sprite for this or make a custom one.
+        LoadedPerformanceCost = 50f; // idk how to gauge what number to set for these performance costs
+        SandboxPerformanceCost = new(0.7f, 0.7f);
         RegisterUnlock(KillScore.Configurable(25), HailstormEnums.FreezerUnlock);
     }
 
@@ -349,27 +351,27 @@ sealed class FreezerCritob : Critob
         }
     }
 
-    public override Color DevtoolsMapColor(AbstractCreature acrit) => FreezerColor;
+    public override string DevtoolsMapName(AbstractCreature absFrz) => "Frz";
+    public override Color DevtoolsMapColor(AbstractCreature absFrz) => FreezerColor;
 
-    public override string DevtoolsMapName(AbstractCreature acrit) => "Frz";
 
+    // The names you set here are what you use when setting creature spawns. You only need to set up 1; I don't really know why I did 6.
     public override IEnumerable<string> WorldFileAliases() => new[] { "frz", "freezer", "freezerlizard", "Frz", "Freezer", "FreezerLizard" };
-
     public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[] 
     { 
         RoomAttractivenessPanel.Category.Lizards,
         RoomAttractivenessPanel.Category.LikesOutside
     };
 
+    // Creates your actual creature template. This works differently with Lizards than it does with other creatures; you'll need to make a hook to LizardBreeds.BreedTemplate to do the rest of this.
     public override CreatureTemplate CreateTemplate() => LizardBreeds.BreedTemplate(HailstormEnums.Freezer, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
 
-    // This method sets this creature's relationships with other creatures.
-    // I explain what I can, but if some relationship types don't have an explanation, that means I don't know what they do.
     public override void EstablishRelationships()
     {
         Relationships s = new (HailstormEnums.Freezer);
 
         // "HasDynamicRelationship" allows other creatures to have a changing relationship with this one.
+        // Not sure if this can just be slapped on to any creature without needing to specifically code interactions for it, but it works just fine for Lizards with Slugcats.
         s.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 0.5f);
 
         // "Fears" makes this creature actively avoid the listed creatures.
@@ -451,6 +453,7 @@ sealed class FreezerCritob : Critob
         s.Eats(CreatureTemplate.Type.EggBug, 1);
         s.Eats(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1.1f);
 
+        // I don't think this has any default interactions or anything. Without adding code, this may just act like Ignores.
         s.IsInPack(CreatureTemplate.Type.BlueLizard, 0.66f);
         s.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.75f);
         s.IsInPack(HailstormEnums.IcyBlue, 1);
@@ -463,32 +466,165 @@ sealed class FreezerCritob : Critob
 
         s.IgnoredBy(CreatureTemplate.Type.PoleMimic);
         s.IgnoredBy(CreatureTemplate.Type.TentaclePlant);
+        s.IgnoredBy(HailstormEnums.Chillipede);
 
+        // I think this makes the creature avoid
         s.UncomfortableAround(CreatureTemplate.Type.TentaclePlant, 0.4f);
         s.UncomfortableAround(CreatureTemplate.Type.Snail, 0.4f);
 
         // "IntimidatedBy" makes this creature less willing to attack the given creatures.
         s.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.Inspector, 0.5f);
 
-        // If multiple relationship types are set for the same creature, the lowest one will overwrite the rest.
+        // If multiple relationship types are set with the same creature, the lowest one will overwrite the rest.
         // Here, the Freezer is set to eat all lizard types, BUUUUUUT four lizards are set as its pack afterwards, so it WON'T horribly maul those guys.
-        // This all gets overridden by relationships that you set in the code. There's a catch, though: UpdateDynamicRelationship methods only work if the other creature is alive. THESE relationships always take effect.
+        // You can override all of this by hooking DynamicRelationship-related methods in AI code. There's a catch, though: UpdateDynamicRelationship methods only work if the other creature is alive. THESE relationships always take effect.
         // Do what you will with that info.
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new LizardAI(acrit, acrit.world);
-
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new Lizard(acrit, acrit.world);
-
-    public override CreatureState CreateState(AbstractCreature acrit) => new LizardState(acrit);
+    // Creates your physical creature in-game, and assign it an AI type and a State type.
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absFrz) => new LizardAI(absFrz, absFrz.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absFrz) => new Lizard(absFrz, absFrz.world);
+    public override CreatureState CreateState(AbstractCreature absFrz) => new ColdLizState(absFrz);
 
     public override void LoadResources(RainWorld rainWorld)
     { 
     }
 
     #nullable enable
+    // I think this gives the game a backup creature to use if Arena Mode tries to spawn your creature while it's not unlocked yet.
     public override CreatureTemplate.Type? ArenaFallback() => HailstormEnums.IcyBlue;
     #nullable disable
+}
+
+//----------------------------------------------------------------------------------
+
+sealed class PeachSpiderCritob : Critob
+{
+
+    public Color PeachSpiderColor = Custom.HSL2RGB(209 / 360f, 0.9f, 0.75f);
+
+    internal PeachSpiderCritob() : base(HailstormEnums.PeachSpider)
+    {
+        Icon = new SimpleIcon("Kill_Peach_Spider", PeachSpiderColor);
+        LoadedPerformanceCost = 40f;
+        SandboxPerformanceCost = new(0.6f, 0.6f);
+        RegisterUnlock(KillScore.Configurable(2), HailstormEnums.PeachSpiderUnlock);
+    }
+
+    public override int ExpeditionScore() => 2;
+
+    public override Color DevtoolsMapColor(AbstractCreature acrit) => PeachSpiderColor;
+
+    public override string DevtoolsMapName(AbstractCreature acrit) => "Pch";
+
+    public override IEnumerable<string> WorldFileAliases()
+    {
+        return new[] { "peach", "peachspider", "Peach", "PeachSpider" };
+    }
+
+    public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction()
+    {
+        return new[] { RoomAttractivenessPanel.Category.LikesOutside };
+    }
+
+    public override CreatureTemplate CreateTemplate()
+    {
+        CreatureTemplate cf = new CreatureFormula(CreatureTemplate.Type.BigSpider, Type, "Peach Spider")
+        {
+            TileResistances = new()
+            {
+                OffScreen = new(1f, PathCost.Legality.Allowed),
+                Floor = new(1f, PathCost.Legality.Allowed),
+                Corridor = new(1f, PathCost.Legality.Allowed),
+                Climb = new(1.5f, PathCost.Legality.Allowed),
+                Wall = new(3f, PathCost.Legality.Allowed),
+                Ceiling = new(3f, PathCost.Legality.Allowed)
+            },
+            ConnectionResistances = new()
+            {
+                Standard = new(1f, PathCost.Legality.Allowed),
+                OpenDiagonal = new(3f, PathCost.Legality.Allowed),
+                ReachOverGap = new(3f, PathCost.Legality.Allowed),
+                ReachUp = new(2f, PathCost.Legality.Allowed),
+                ReachDown = new(2f, PathCost.Legality.Allowed),
+                SemiDiagonalReach = new(2f, PathCost.Legality.Allowed),
+                DropToFloor = new(10f, PathCost.Legality.Allowed),
+                DropToWater = new(10f, PathCost.Legality.Allowed),
+                DropToClimb = new(10f, PathCost.Legality.Allowed),
+                ShortCut = new(1.5f, PathCost.Legality.Allowed),
+                NPCTransportation = new(3f, PathCost.Legality.Allowed),
+                OffScreenMovement = new(1f, PathCost.Legality.Allowed),
+                BetweenRooms = new(5f, PathCost.Legality.Allowed),
+                Slope = new(1.5f, PathCost.Legality.Allowed),
+                CeilingSlope = new(1.5f, PathCost.Legality.Allowed)
+            },
+            DefaultRelationship = new(CreatureTemplate.Relationship.Type.Ignores, 1f),
+            DamageResistances = new() { Base = 0.6f },
+            StunResistances = new() { Base = 2 },
+            HasAI = true,
+            Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.BigSpider),
+        }.IntoTemplate();
+        cf.canSwim = true;
+        cf.meatPoints = 2;
+        cf.visualRadius = 1200;
+        cf.waterRelationship = CreatureTemplate.WaterRelationship.AirAndSurface;
+        cf.waterPathingResistance = 4f;
+        cf.instantDeathDamageLimit = 1f;
+        cf.grasps = 1;
+        cf.shortcutSegments = 2;
+        cf.requireAImap = true;
+        cf.offScreenSpeed = 0.5f;
+        cf.abstractedLaziness = 50;
+        cf.stowFoodInDen = true;
+        cf.dangerousToPlayer = 0.25f;
+        cf.communityInfluence = 0.05f;
+        cf.bodySize = 0.6f;
+        cf.interestInOtherAncestorsCatches = 0f;
+        cf.interestInOtherCreaturesCatches = 2f;
+        cf.usesNPCTransportation = true;
+        cf.BlizzardAdapted = true;
+        cf.BlizzardWanderer = true;
+        cf.jumpAction = "Pounce";
+        cf.pickupAction = "Grab";
+        cf.throwAction = "Release";
+        cf.shortcutSegments = 1;
+        return cf;
+    }
+
+    public override void EstablishRelationships()
+    {
+        Relationships s = new(HailstormEnums.PeachSpider);
+
+        s.Fears(CreatureTemplate.Type.BigSpider, 0.5f);
+        s.Fears(CreatureTemplate.Type.SpitterSpider, 1);
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 1);
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
+
+        s.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.4f);
+        s.EatenBy(CreatureTemplate.Type.Spider, 0.5f);
+        s.EatenBy(CreatureTemplate.Type.BigSpider, 0.5f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.6f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
+
+        s.Eats(CreatureTemplate.Type.Spider, 0.7f);
+
+        s.Ignores(HailstormEnums.PeachSpider);
+
+    }
+
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new BigSpiderAI(acrit, acrit.world);
+
+    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new BigSpider(acrit, acrit.world);
+
+    public override CreatureState CreateState(AbstractCreature acrit) => new HealthState(acrit);
+
+    public override void LoadResources(RainWorld rainWorld)
+    {
+    }
+
+#nullable enable
+    public override CreatureTemplate.Type? ArenaFallback() => CreatureTemplate.Type.BigSpider;
+#nullable disable
 }
 
 //----------------------------------------------------------------------------------
@@ -501,8 +637,8 @@ sealed class CyanwingCritob : Critob
     internal CyanwingCritob() : base(HailstormEnums.Cyanwing)
     {
         Icon = new SimpleIcon("Kill_Cyanwing", CyanwingColor);
-        LoadedPerformanceCost = 10f;
-        SandboxPerformanceCost = new(0.4f, 0.4f);
+        LoadedPerformanceCost = 15f;
+        SandboxPerformanceCost = new(1.15f, 0.75f);
         RegisterUnlock(KillScore.Configurable(25), HailstormEnums.CyanwingUnlock);
     }
 
@@ -591,6 +727,7 @@ sealed class CyanwingCritob : Critob
         cf.jumpAction = "Swap Heads";
         cf.pickupAction = "Grab/Shock";
         cf.throwAction = "Release";
+        cf.shortcutSegments = 5;
         return cf;
     }
 
@@ -690,8 +827,8 @@ sealed class GorditoGreenieCritob : Critob
     internal GorditoGreenieCritob() : base(HailstormEnums.GorditoGreenie)
     {
         Icon = new SimpleIcon("Kill_Gordito_Greenie_Lizard", GorditoGreenieColor);
-        LoadedPerformanceCost = 10f;
-        SandboxPerformanceCost = new(0.4f, 0.4f);
+        LoadedPerformanceCost = 50f;
+        SandboxPerformanceCost = new(0.7f, 0.6f);
         RegisterUnlock(KillScore.Configurable(25), HailstormEnums.GorditoGreenieUnlock);
     }
 
@@ -826,6 +963,7 @@ sealed class GorditoGreenieCritob : Critob
         s.Eats(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 1);
         s.Eats(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
         s.Eats(HailstormEnums.Chillipede, 1);
+        s.Ignores(HailstormEnums.PeachSpider);
 
     }
 
@@ -854,18 +992,18 @@ sealed class LuminescipedeCritob : Critob
     internal LuminescipedeCritob() : base(HailstormEnums.Luminescipede)
     {
         Icon = new SimpleIcon("Kill_Luminescipede", LuminescipedeColor);
-        LoadedPerformanceCost = 2f;
-        SandboxPerformanceCost = new(0.2f, 0.2f);
-        RegisterUnlock(KillScore.Configurable(2), HailstormEnums.LuminsecipedeUnlock);
+        LoadedPerformanceCost = 10f;
+        SandboxPerformanceCost = new(0.4f, 0.6f);
+        RegisterUnlock(KillScore.Configurable(1), HailstormEnums.LuminsecipedeUnlock);
     }
 
-    public override int ExpeditionScore() => 2;
+    public override int ExpeditionScore() => 1;
 
     public override Color DevtoolsMapColor(AbstractCreature absSpd) => LuminescipedeColor;
 
-    public override string DevtoolsMapName(AbstractCreature absSpd) => "spd";
+    public override string DevtoolsMapName(AbstractCreature absSpd) => "lmn";
 
-    public override IEnumerable<string> WorldFileAliases() => new[] { "luminescipede", "Luminescipede" };
+    public override IEnumerable<string> WorldFileAliases() => new[] { "lumin", "Lumin", "luminescipede", "Luminescipede" };
 
     public override CreatureTemplate CreateTemplate()
     {
@@ -878,13 +1016,13 @@ sealed class LuminescipedeCritob : Critob
                 Climb = new(1f, PathCost.Legality.Allowed),
                 Wall = new(1f, PathCost.Legality.Allowed),
                 Ceiling = new(1f, PathCost.Legality.Allowed),
-                OffScreen = new(1f, PathCost.Legality.Allowed)
+                OffScreen = new(1f, PathCost.Legality.Allowed),
             },
             ConnectionResistances = new()
             {
                 Standard = new(1, PathCost.Legality.Allowed),
                 OpenDiagonal = new(2, PathCost.Legality.Allowed),
-                NPCTransportation = new(10, PathCost.Legality.Allowed),
+                NPCTransportation = new(7, PathCost.Legality.Allowed),
                 OffScreenMovement = new(1, PathCost.Legality.Allowed),
                 BetweenRooms = new(4, PathCost.Legality.Allowed),
                 Slope = new(1.6f, PathCost.Legality.Allowed),
@@ -905,7 +1043,6 @@ sealed class LuminescipedeCritob : Critob
         cf.meatPoints = 1;
         cf.grasps = 1;
         cf.visualRadius = 900;
-        cf.movementBasedVision = 0.25f;
         cf.dangerousToPlayer = 0.25f;
         cf.communityID = CreatureCommunities.CommunityID.None;
         cf.bodySize = 0.2f;
@@ -915,6 +1052,8 @@ sealed class LuminescipedeCritob : Critob
         cf.BlizzardWanderer = true;
         cf.usesCreatureHoles = true;
         cf.usesNPCTransportation = true;
+        cf.shortcutSegments = 2;
+        cf.stowFoodInDen = true;
         return cf;
     }
 
@@ -922,12 +1061,13 @@ sealed class LuminescipedeCritob : Critob
     {
         Relationships s = new(HailstormEnums.Luminescipede);
 
+        s.Eats(HailstormEnums.PeachSpider, 0.75f);
         s.Eats(HailstormEnums.IcyBlue, 0.70f);
+        s.Eats(CreatureTemplate.Type.Centiwing, 0.4f);
         s.Eats(HailstormEnums.Freezer, 0.35f);
         s.Eats(CreatureTemplate.Type.Spider, 0.20f);
         s.Eats(CreatureTemplate.Type.BigSpider, 0.10f);
         s.Eats(CreatureTemplate.Type.SpitterSpider, 0.05f);
-        s.Eats(CreatureTemplate.Type.Centiwing, 0.4f);
 
 
         s.EatenBy(CreatureTemplate.Type.LizardTemplate, 0.5f);
@@ -956,7 +1096,7 @@ sealed class LuminescipedeCritob : Critob
 
     public override Creature CreateRealizedCreature(AbstractCreature absSpd) => new Luminescipede(absSpd, absSpd.world);
 
-    public override CreatureState CreateState(AbstractCreature absSpd) => new HealthState(absSpd);
+    public override CreatureState CreateState(AbstractCreature absSpd) => new GlowSpiderState(absSpd);
 
     public override void LoadResources(RainWorld rainWorld)
     {
@@ -977,12 +1117,12 @@ sealed class ChillipedeCritob : Critob
     internal ChillipedeCritob() : base(HailstormEnums.Chillipede)
     {
         Icon = new SimpleIcon("Kill_Chillipede", ChillipedeColor);
-        LoadedPerformanceCost = 4f;
-        SandboxPerformanceCost = new(0.2f, 0.2f);
-        RegisterUnlock(KillScore.Configurable(8), HailstormEnums.ChillipedeUnlock);
+        LoadedPerformanceCost = 15f;
+        SandboxPerformanceCost = new(0.9f, 0.75f);
+        RegisterUnlock(KillScore.Configurable(12), HailstormEnums.ChillipedeUnlock);
     }
 
-    public override int ExpeditionScore() => 8;
+    public override int ExpeditionScore() => 12;
 
     public override Color DevtoolsMapColor(AbstractCreature absCnt) => ChillipedeColor;
 
@@ -1021,14 +1161,14 @@ sealed class ChillipedeCritob : Critob
                 Slope = new(1.5f, PathCost.Legality.Allowed),
                 DropToFloor = new(5f, PathCost.Legality.Allowed),
                 DropToClimb = new(5f, PathCost.Legality.Allowed),
-                ShortCut = new(1f, PathCost.Legality.Allowed),
+                ShortCut = new(1f, PathCost.Legality.Unallowed),
                 ReachUp = new(1.1f, PathCost.Legality.Allowed),
                 ReachDown = new(1.1f, PathCost.Legality.Allowed),
                 CeilingSlope = new(2f, PathCost.Legality.Allowed)
             },
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Eats, 1),
-            DamageResistances = new() { Base = 1, Electric = 5 },
-            StunResistances = new() { Base = 5, Electric = 5 },
+            DamageResistances = new() { Base = 3, Electric = 1 },
+            StunResistances = new() { Base = 5, Electric = 0.5f },
             HasAI = true,
             Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.Centipede),
         }.IntoTemplate();
@@ -1041,6 +1181,7 @@ sealed class ChillipedeCritob : Critob
         cf.dangerousToPlayer = 0.45f;
         cf.communityInfluence = 0.1f;
         cf.bodySize = 2;
+        cf.usesCreatureHoles = false;
         cf.BlizzardAdapted = true;
         cf.BlizzardWanderer = true;
         cf.waterRelationship = CreatureTemplate.WaterRelationship.AirOnly;
@@ -1048,6 +1189,7 @@ sealed class ChillipedeCritob : Critob
         cf.jumpAction = "Swap Heads";
         cf.pickupAction = "Grab/Freeze";
         cf.throwAction = "Release";
+        cf.shortcutSegments = 3;
         return cf;
     }
 
@@ -1062,7 +1204,6 @@ sealed class ChillipedeCritob : Critob
         s.Eats(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 0.4f);
         s.Eats(CreatureTemplate.Type.SmallCentipede, 0.4f);
         s.Eats(CreatureTemplate.Type.Centipede, 0.4f);
-        s.Eats(CreatureTemplate.Type.RedCentipede, 0.4f);
         s.Eats(CreatureTemplate.Type.Centiwing, 0.4f);
         s.Eats(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.4f);
         s.Eats(HailstormEnums.InfantAquapede, 0.4f);
@@ -1084,6 +1225,9 @@ sealed class ChillipedeCritob : Critob
 
         s.Intimidates(CreatureTemplate.Type.BigSpider, 0.5f);
 
+        s.Fears(CreatureTemplate.Type.RedCentipede, 1);
+        s.Fears(HailstormEnums.Cyanwing, 1);
+
         s.FearedBy(CreatureTemplate.Type.Spider, 0.5f);
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.4f);
 
@@ -1099,7 +1243,7 @@ sealed class ChillipedeCritob : Critob
 
     public override Creature CreateRealizedCreature(AbstractCreature absCnt) => new Centipede(absCnt, absCnt.world);
 
-    public override CreatureState CreateState(AbstractCreature absCnt) => new Centipede.CentipedeState(absCnt);
+    public override CreatureState CreateState(AbstractCreature absCnt) => new ChillipedeState(absCnt);
 
     public override void LoadResources(RainWorld rainWorld)
     {

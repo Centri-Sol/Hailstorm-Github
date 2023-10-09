@@ -3,7 +3,6 @@ using UnityEngine;
 using BepInEx;
 using BepInEx.Logging;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 using Fisobs.Core;
 using DevInterface;
 using Color = UnityEngine.Color;
@@ -21,7 +20,6 @@ public class Plugin : BaseUnityPlugin
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-
     // Add hooks.
     public void OnEnable()
     {
@@ -33,6 +31,7 @@ public class Plugin : BaseUnityPlugin
         Content.Register(new InfantAquapedeCritob());
         Content.Register(new IcyBlueCritob());
         Content.Register(new FreezerCritob());
+        Content.Register(new PeachSpiderCritob());
         Content.Register(new GorditoGreenieCritob());
         Content.Register(new CyanwingCritob());
         Content.Register(new LuminescipedeCritob());
@@ -54,26 +53,33 @@ public class Plugin : BaseUnityPlugin
             Futile.atlasManager.LoadAtlas("atlases/icons");
             Futile.atlasManager.LoadAtlas("atlases/coloredIcons");
             Futile.atlasManager.LoadAtlas("atlases/incandescent/sadExpressions");
-            Futile.atlasManager.LoadAtlas("atlases/incandescent/cheekfluff");
-            Futile.atlasManager.LoadAtlas("atlases/incandescent/waistband");
-            Futile.atlasManager.LoadAtlas("atlases/incandescent/tailflame");
+            Futile.atlasManager.LoadAtlas("atlases/incandescent/incanCheekfluff");
+            Futile.atlasManager.LoadAtlas("atlases/incandescent/incanWaistband");
+            Futile.atlasManager.LoadAtlas("atlases/incandescent/incanTailflame");
             Futile.atlasManager.LoadAtlas("atlases/creatures/iceCrystals");
             Futile.atlasManager.LoadAtlas("atlases/creatures/armorIceSpikes");
             Futile.atlasManager.LoadAtlas("atlases/creatures/freezer");
             Futile.atlasManager.LoadAtlas("atlases/creatures/cyanwing");
             Futile.atlasManager.LoadAtlas("atlases/creatures/luminescipede");
             Futile.atlasManager.LoadAtlas("atlases/creatures/chillipede");
+
             IncanFeatures.Hooks();
             IncanCrafting.Hooks();
             IncanVisuals.Hooks();
-            StoryChanges.Hooks();
+
+            WorldChanges.Hooks();
+            Weather.Hooks();
             Dialogue.Hooks();
-            GeneralCreatureChanges.Hooks();
+
+            OtherCreatureChanges.Hooks();
             HailstormLizards.Hooks();
             HailstormCentis.Hooks();
             HailstormSpiders.Hooks();
+
             ObjectChanges.Hooks();
+
             JollyCoopFixes.Hooks();
+
             MachineConnector.SetRegisteredOI("theincandescent", new HSRemix());
 
             Debug.Log($"Incan's up and runnin'!");
@@ -97,14 +103,17 @@ public class Plugin : BaseUnityPlugin
 
                 // Creatures
                 if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.InfantAquapedeUnlock))
-                    MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.InfantAquapedeUnlock);
+                    MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.InfantAquapedeUnlock);              
+
+                if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.IcyBlueUnlock))
+                    MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.IcyBlueUnlock);
 
                 if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.FreezerUnlock))
                     MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.FreezerUnlock);
 
-                if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.IcyBlueUnlock))
-                    MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.IcyBlueUnlock);
-                
+                if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.PeachSpiderUnlock))
+                    MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.PeachSpiderUnlock);
+
                 if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.GorditoGreenieUnlock))
                     MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.GorditoGreenieUnlock);
                 

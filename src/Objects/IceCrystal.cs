@@ -243,7 +243,7 @@ public class IceCrystal : Weapon
         if (thrownBy is Player thrower)
         {
             firstChunk.pos.y -= 3;
-            if (thrower.SlugCatClass == HailstormSlugcats.Incandescent)
+            if (thrower.SlugCatClass == HSSlugs.Incandescent)
             {
                 if (!MMF.cfgUpwardsSpearThrow.Value || setRotation.Value.y != 1f || thrower.bodyMode == Player.BodyModeIndex.ZeroG)
                 {
@@ -358,7 +358,7 @@ public class IceCrystal : Weapon
 
             if (victim is not Player || victim.SpearStick(this, Mathf.Lerp(0.55f, 0.62f, Random.value), target.chunk, target.onAppendagePos, firstChunk.vel))
             {
-                float ColdRes = victim.Template.damageRestistances[HailstormEnums.ColdDamage.index, 0];
+                float ColdRes = victim.Template.damageRestistances[HailstormEnums.Cold.index, 0];
 
                 if (victim.Template.type == MoreSlugcatsEnums.CreatureTemplateType.FireBug && !victim.dead) victim.Die();
 
@@ -371,7 +371,7 @@ public class IceCrystal : Weapon
                 }
 
                 // Sets final damage and Hypothermia gain.
-                if (victim is Player && CWT.PlayerData.TryGetValue(victim as Player, out HailstormSlugcats hS))
+                if (victim is Player && CWT.PlayerData.TryGetValue(victim as Player, out HSSlugs hS))
                 {
                     Damage *= hS.ColdDMGmult;
                     cI.chillTimer += (int)(Chill * hS.ColdDMGmult);
@@ -384,7 +384,7 @@ public class IceCrystal : Weapon
                 /* Deals damage and stun. 
                  * The Violence function can't actually deal non-whole-number damage to Slugcats, although it still stuns them just fine.
                  * To remedy this, permanentDamageTracking was made to act as effective health for players, which must be adjusted manually as seen below. */
-                victim.Violence(firstChunk, firstChunk.vel * firstChunk.mass * 2f, target.chunk, target.onAppendagePos, HailstormEnums.ColdDamage, Damage, 40 * Damage);               
+                victim.Violence(firstChunk, firstChunk.vel * firstChunk.mass * 2f, target.chunk, target.onAppendagePos, HailstormEnums.Cold, Damage, 40 * Damage);               
                 if (victim is Player self)
                 {
                     self.playerState.permanentDamageTracking += Damage / self.Template.baseDamageResistance;

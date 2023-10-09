@@ -5,6 +5,9 @@ using RWCustom;
 using MoreSlugcats;
 using MonoMod.Cil;
 using Mono.Cecil.Cil;
+using Mono.Cecil;
+using System.Net;
+
 namespace Hailstorm;
 
 public class IncanFeatures
@@ -29,7 +32,9 @@ public class IncanFeatures
         On.Player.UpdateAnimation += IncanSwimming;
         //On.Player.TerrainImpact += TerrainImpact;
 
+        GlowweedEdibleUnderwater();
         On.Player.ObjectEaten += IncanFoodEffects;
+        On.Player.CanEatMeat += INCANNOSTOPEATINGSLUGCATS;
         On.Player.Update += HailstormPlayerUpdate;
         //On.Player.UpdateAnimation += RollAnimations;
 
@@ -40,10 +45,29 @@ public class IncanFeatures
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
+    private static bool IsIncanStory(RainWorldGame RWG)
+    {
+        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+    }
+
+    //----------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
+
     public static void PlayerCWT(On.Player.orig_ctor orig, Player self, AbstractCreature abstractCreature, World world)
     {
         orig(self, abstractCreature, world);
-        CWT.PlayerData.Add(self, new HailstormSlugcats(self));
+        CWT.PlayerData.Add(self, new HSSlugs(self));
+    }
+    public static bool INCANNOSTOPEATINGSLUGCATS(On.Player.orig_CanEatMeat orig, Player self, Creature ctr)
+    {
+        if (CWT.PlayerData.TryGetValue(self, out HSSlugs player) && player.isIncan)
+        {
+            if (ctr.Template.type == CreatureTemplate.Type.Slugcat || ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC)
+            {
+                return false;
+            }
+        }
+        return orig(self, ctr);
     }
 
     //----------------------------------------------------------------------------------
@@ -52,7 +76,7 @@ public class IncanFeatures
     public static void IncanSpearThrows(On.Player.orig_ThrownSpear orig, Player self, Spear spr)
     {
         orig(self, spr);
-        if (CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) && player.isIncan)
+        if (CWT.PlayerData.TryGetValue(self, out HSSlugs player) && player.isIncan)
         {
             spr.spearDamageBonus *= HSRemix.IncanSpearDamageMultiplier.Value;
             if (MMF.cfgUpwardsSpearThrow.Value && spr.setRotation.Value.y == 1f && self.bodyMode != Player.BodyModeIndex.ZeroG)
@@ -60,7 +84,7 @@ public class IncanFeatures
                 spr.spearDamageBonus *= 1.25f; // Negates the slight damage penalty that upthrows normally have
                 if (spr?.room is not null)
                 {
-                    spr.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, spr.firstChunk.pos, 0.75f, Random.Range(1.75f, 2f));
+                    spr.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, spr.firstChunk.pos, 0.8f, 2f);
                     spr.room.AddObject(new Explosion.ExplosionLight(spr.firstChunk.pos, 280f, 1f, 7, player.FireColor));
                     spr.room.AddObject(new FireSpikes(spr.room, spr.firstChunk.pos, 14, 15f, 9f, 5f, 90f, player.FireColor, self.ShortCutColor()));
                 }
@@ -88,12 +112,13 @@ public class IncanFeatures
     public static void IncanJumpBoosts(On.Player.orig_Jump orig, Player self)
     {
         orig(self);
-        if (CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) && player.isIncan)
+        if (CWT.PlayerData.TryGetValue(self, out HSSlugs player) && player.isIncan)
         {
             if (self.animation == Player.AnimationIndex.Flip)
             {
                 self.mainBodyChunk.vel.x *= self.Malnourished? 2f : 2.5f;
                 self.mainBodyChunk.vel.y *= self.Malnourished? 1.44f : 1.66f;
+                self.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, self.mainBodyChunk.pos, self.flipFromSlide ? 1f : 0.6f, 1.5f);
             }
             else if (!player.longJumpReady && !player.longJumping)
             {
@@ -106,7 +131,7 @@ public class IncanFeatures
     public static void IncanOtherMobility(On.Player.orig_UpdateBodyMode orig, Player self)
     {
         orig(self);
-        if (!CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) || !player.isIncan) return;
+        if (!CWT.PlayerData.TryGetValue(self, out HSSlugs player) || !player.isIncan) return;
 
         bool starving = self.Malnourished;
         if (self.animation == Player.AnimationIndex.RocketJump)
@@ -146,7 +171,7 @@ public class IncanFeatures
         if (self.superLaunchJump >= 19)
         {
             player.longJumpReady = true;
-            if (self.input[0].y < 0 && player.readyToMoveOn)
+            if (self.input[0].y < 0 && player.readyToAccept)
             {
                 player.highJump = true;
                 self.killSuperLaunchJumpCounter = 15;
@@ -166,7 +191,7 @@ public class IncanFeatures
                 self.bodyChunks[1].vel.x *= starving ? 1.36f : 1.48f;
                 self.bodyChunks[0].vel.y *= starving ? 1.16f : 1.25f;
             }
-            else if (player.readyToMoveOn)
+            else if (player.readyToAccept)
             {
                 player.highJump = false;
                 self.bodyChunks[0].vel.x *= 0;
@@ -202,7 +227,7 @@ public class IncanFeatures
             canBoost = true;
         }
         orig(self);
-        if (CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) && player.isIncan)
+        if (CWT.PlayerData.TryGetValue(self, out HSSlugs player) && player.isIncan)
         {
             if (canBoost && self.waterJumpDelay > 0 && self.animation == Player.AnimationIndex.DeepSwim)
             {
@@ -300,12 +325,62 @@ public class IncanFeatures
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
+    public static void GlowweedEdibleUnderwater()
+    {
+
+        IL.Player.GrabUpdate += IL =>
+        {
+            ILLabel? label = null;
+            ILCursor c = new(IL);
+            if (c.TryGotoNext(
+                MoveType.After,
+                x => x.MatchLdarg(0),
+                x => x.MatchCall<Creature>("get_mainBodyChunk"),
+                x => x.MatchCallvirt<BodyChunk>("get_submersion"),
+                x => x.MatchLdcR4(0.5f),
+                x => x.MatchBlt(out label)))
+            {
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate((Player self) =>
+                {
+
+                    if (IsIncanStory(self?.room?.game) && self.grasps is not null)
+                    {
+                        if (self.grasps[0]?.grabbed is not null && self.grasps[0].grabbed is GlowWeed)
+                        {
+                            return true;
+                        }
+                        else if ((self.grasps[0]?.grabbed is null || self.grasps[0].grabbed is not IPlayerEdible) && self.grasps[1]?.grabbed is not null && self.grasps[1].grabbed is GlowWeed)
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+
+                });
+                c.Emit(OpCodes.Brtrue, label);
+            }
+            else Plugin.logger.LogError("[Hailstorm] An IL hook for eating Glowweed underwater broke! Report this, would ya?");
+        };
+
+    }
+
     // This allows certain foods to temporarily buff the Incandescent's glow.
     // The actual buffing is done near the bottom of the HailstormPlayerUpdate method.
     public static void IncanFoodEffects(On.Player.orig_ObjectEaten orig, Player self, IPlayerEdible food)
     {
         orig(self, food);
-        if (!CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) || !player.isIncan)
+        if (!CWT.PlayerData.TryGetValue(self, out HSSlugs player))
+        {
+            return;
+        }
+
+        if (IsIncanStory(self.room?.game) && food is GlowWeed && self.airInLungs < 1)
+        {
+            self.airInLungs = Mathf.Min(1, self.airInLungs + (2 * self.slugcatStats.lungsFac));
+        }
+
+        if (!player.isIncan)
         {
             return;
         }
@@ -330,7 +405,7 @@ public class IncanFeatures
         }
         else if (food is SwollenWaterNut)
         {
-            player.wetness += 600;
+            player.soak += 1800;
             self.room.PlaySound(SoundID.Medium_Object_Into_Water_Slow, self.bodyChunks[1].pos, 0.9f, Random.Range(1.4f, 1.6f));
             self.room.PlaySound(SoundID.Firecracker_Burn, self.bodyChunks[1].pos, 0.75f, Random.Range(1.75f, 2f));
         }
@@ -349,8 +424,16 @@ public class IncanFeatures
             }
             else if (food is SlimeMold SM)
             {
-                fuel = (SM.big) ? 2400 : 1200;
-                player.wetness -= (SM.big) ? 800 : 400;
+                if (SM.big)
+                {
+                    fuel = 2400;
+                    player.soak -= 2400;
+                }
+                else
+                {
+                    fuel = 1200;
+                    player.soak -= 1200;
+                }
             }
             else if (food is LillyPuck)
             {
@@ -382,7 +465,7 @@ public class IncanFeatures
 
         #region Tutorial Text
 
-        if (Dialogue.IsRWGIncan(self?.room?.game) && !self.room.game.rainWorld.ExpeditionMode && self.room.game.GetStorySession.saveState.cycleNumber <= 2 && self.room.game.cameras[0]?.hud?.textPrompt is not null &&
+        if (Dialogue.IsIncanStory(self?.room?.game) && !self.room.game.rainWorld.ExpeditionMode && self.room.game.GetStorySession.saveState.cycleNumber <= 2 && self.room.game.cameras[0]?.hud?.textPrompt is not null &&
             ((self.room.world.rainCycle.maxPreTimer > 0 && self.room.world.rainCycle.preTimer == self.room.world.rainCycle.maxPreTimer - 360) || (self.room.world.rainCycle.maxPreTimer <= 0 && self.room.world.rainCycle.timer == 360)) &&
             (self.playerState.playerNumber == 0 || self.playerState.playerNumber == -1))
         {
@@ -444,7 +527,7 @@ public class IncanFeatures
                     {
                         stomachHeat += 0.0007f;
                     }
-                    if (stomachHeat != 0 && self.SlugCatClass == HailstormSlugcats.Incandescent)
+                    if (stomachHeat != 0 && self.SlugCatClass == HSSlugs.Incandescent)
                     {
                         stomachHeat /= 3;
                     }
@@ -485,7 +568,7 @@ public class IncanFeatures
 
         //--------------------------------------------------------------------------------------------------
 
-        if (CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) && player.isIncan)
+        if (CWT.PlayerData.TryGetValue(self, out HSSlugs player) && player.isIncan)
         { // All features from this point on are exclusive to the Incandescent.
 
             #region Fire Stats
@@ -497,6 +580,29 @@ public class IncanFeatures
             */
 
             // These two timers are used in the FoodEffects method, just above this one.
+
+            if (self.animation == Player.AnimationIndex.Flip && !self.flipFromSlide && player.singeFlipTimer < 15)
+            {
+                player.singeFlipTimer++;
+                if (player.singeFlipTimer < 2 && selfGraphics.tail is not null)
+                {
+                    //Vector2 distance = self.bodyChunks[1].pos - selfGraphics.tail[selfGraphics.tail.Length - 1].pos;
+                    //selfGraphics.tail[selfGraphics.tail.Length - 1].vel -= distance * 3f;
+                }
+                if (player.singeFlipTimer > 3)
+                {
+                    FlipSingeCollisionCheck(self, player);
+                }
+            }
+            else if (self.animation != Player.AnimationIndex.Flip && player.singeFlipTimer != 0)
+            {
+                player.singeFlipTimer = 0;
+            }
+
+            if (player.readyToAccept && self.animation == Player.AnimationIndex.Roll)
+            {
+                FlipSingeCollisionCheck(self, player);
+            }
 
             if (player.craftingDelayCounter < 115 && self.craftingObject && self.swallowAndRegurgitateCounter > 60)
             {
@@ -533,23 +639,30 @@ public class IncanFeatures
             }
 
 
-            if (player.wetness < 2400 && self.Submersion > 0.5f) // Gradually builds up a debuff on the Incandescent while they are in water.
+            if (player.soak < player.maxSoak && self.Submersion > 0.5f) // Gradually builds up a debuff on the Incandescent while they are in water.
             {
-                player.wetness += player.waterGlow > 0 ?
-                    (self.Submersion >= 1 ? 3 : 1) :
-                    (self.Submersion >= 1 ? 6 : 3);
-            }
-            else if (player.wetness > 0 && self.Submersion < 0.1f) // Gets rid of the debuff when outside of water, though at a much slower rate.
-            {
-                player.wetness--;
-                if (player.lanternDryTimer >= 4)
+                int soak = self.Submersion >= 1 ? 18 : 9;
+                if (player.waterGlow > 0)
                 {
-                    player.lanternDryTimer = 0;
-                    player.wetness--;
-                } //  ^ Lanterns can dry you out a little faster. lanternDryTimer is handled in a completely separate file: 'CreatureChanges.cs'.
+                    soak /= 3;
+                }
+                if (player.bubbleHeat)
+                {
+                    soak /= 3;
+                }
+                player.soak += soak;
+            }
+            else if (player.soak > 0 && self.Submersion < 0.1f) // Gets rid of the debuff when outside of water, though at a much slower rate.
+            {
+                player.soak -= 3;
             }
 
-            player.wetness = Mathf.Clamp(player.wetness, 0, 2400); // Prevents wetness from going below 0 or over 2400.
+            if (player.bubbleHeat)
+            {
+                player.bubbleHeat = false;
+            }
+
+            player.soak = Mathf.Clamp(player.soak, 0, player.maxSoak); // Prevents wetness from going below 0 or over 2400.
             #endregion
 
             //-------------------------------------------------
@@ -567,10 +680,10 @@ public class IncanFeatures
                     (self.isSlugpup ? 0.17f : 0.20f) :
                     (self.isSlugpup ? 0.66f : 0.75f);
 
-                if (player.wetness > 0)
+                if (player.soak > 0)
                 {
                     player.hypothermiaResistance -=
-                        (arenaPenalties ? 0.40f : 0.75f) * Mathf.InverseLerp(0, 2400, player.wetness);
+                        (arenaPenalties ? 0.40f : 0.75f) * Mathf.InverseLerp(0, 7200, player.soak);
                 }
                 if (self.Malnourished)
                 {
@@ -591,21 +704,30 @@ public class IncanFeatures
             if (arenaPenalties)
             {
                 // In Arena, the Incandescent's mobility will gradually drain their warmth during use, instead of only when you hit something.
+                float drain = 0;
                 if (anim == Player.AnimationIndex.BellySlide || anim == Player.AnimationIndex.Flip)
                 {
-                    self.Hypothermia -=
-                        player.inArena ? -0.006f : -0.002f;
+                    drain += 0.006f;
                 }
                 if (anim == Player.AnimationIndex.Roll || anim == Player.AnimationIndex.RocketJump)
                 {
-                    self.Hypothermia -=
-                        player.inArena? -0.0036f : -0.0012f;
+                    drain += 0.0036f;
                 }
                 if (player.longJumpReady && self.superLaunchJump == 0) // Well, long-jumps just drain a bunch of warmth instantly.
                 {
-                    self.Hypothermia -=
-                        player.inArena? -0.15f : -0.0375f;
-                }        
+                    drain += 0.15f;
+                }
+
+                if (!player.inArena)
+                {
+                    drain /= 3f;
+                }
+                if (self.room?.blizzardGraphics is not null)
+                {
+                    drain /= 3f;
+                }
+
+                self.Hypothermia += drain;
             }
 
             if (self.room is not null)
@@ -652,11 +774,9 @@ public class IncanFeatures
             float glowMult = self.glowing? 1.5f : 1f;
             float ageMult = self.isSlugpup? 0.8f : 1f;
             float coldMult = Mathf.InverseLerp(1, 0, self.Hypothermia/2);
-            float wetMult = Mathf.InverseLerp(7200, 0, player.wetness);
+            float wetMult = Mathf.InverseLerp(player.maxSoak * 3, 0, player.soak);
             float starveMult = self.Malnourished? 0.8f : 1f;
             float fuelMult = Mathf.Lerp(1, 1.5f, Mathf.InverseLerp(0, 2400, player.fireFuel));
-
-            Color glowColor = Color.Lerp(player.FireColor, Color.white, glowMult - 1.2f); // ...Aaand the color, too.
 
             Vector2 glowPos =
                 selfGraphics.tail is not null && selfGraphics.tail.Length > 0 ?
@@ -665,7 +785,7 @@ public class IncanFeatures
 
             if (player.incanLight is null && !self.dead)
             {
-                player.incanLight = new LightSource(glowPos, false, glowColor, self);
+                player.incanLight = new LightSource(glowPos, false, player.FireColor, self);
                 player.incanLight.affectedByPaletteDarkness = 0;
                 player.incanLight.requireUpKeep = true;
                 player.incanLight.setAlpha = new float?(1);
@@ -677,15 +797,12 @@ public class IncanFeatures
                 player.incanLight.stayAlive = true;
                 player.incanLight.setPos = new Vector2?(glowPos);
                 player.incanLight.setRad = new float?(200 * player.flicker[0, 0] * glowMult * ageMult * coldMult * wetMult * starveMult * fuelMult);
-                player.incanLight.color = glowColor;
+                player.incanLight.color = player.FireColor;
                 if (self.dead && self.Hypothermia > 1.9f)
                 {
                     player.incanLight.Destroy();
                 }
-                if (player.incanLight.slatedForDeletetion ||
-                    player.incanLight.room != self.room ||
-                    (player.waterGlow > 0 && !player.incanLight.submersible) ||
-                    (player.waterGlow <= 0 && player.incanLight.submersible))
+                if (player.incanLight.slatedForDeletetion || player.incanLight.room != self.room)
                 {
                     player.incanLight = null;
                 }
@@ -719,13 +836,13 @@ public class IncanFeatures
                     self.Submersion > 0;
 
                 player.smallEmberTimer +=
-                    (player.wetness > 0 && self.Submersion > 0.5f) ?
-                    Mathf.Lerp(0.05f, 0.5f, Mathf.InverseLerp(0, 2400, player.wetness)) :
+                    (player.soak > 0 && self.Submersion <= 0.5f) ?
+                    Mathf.Lerp(0.05f, 0.5f, Mathf.InverseLerp(0, player.maxSoak, player.soak)) :
                     (makeBigEmbers ? 0.25f : 0.17f) * (self.Malnourished ? 0.7f : 1) * (self.bodyMode == Player.BodyModeIndex.Swimming? 0.7f : 1);
 
                 if (player.smallEmberTimer >= 1)
                 {
-                    if (player.wetness > 0 && self.Submersion <= 0.5f)
+                    if (player.soak > 0 && self.Submersion <= 0.5f)
                     {
                         BodyChunk dripChunk = self.bodyChunks[Random.Range(0, self.bodyChunks.Length - 1)];
                         self.room.AddObject(new WaterDrip(dripChunk.pos + (Custom.RNV() * dripChunk.rad * Random.value), default, false));
@@ -791,7 +908,8 @@ public class IncanFeatures
                         fireSmokeParticle.effectColor = player.FireColor;
                         fireSmokeParticle.colorA = self.ShortCutColor();
                         fireSmokeParticle.rad *=
-                            (self.flipFromSlide ? 2.25f : self.animation == Player.AnimationIndex.RocketJump || self.animation == Player.AnimationIndex.BellySlide ? 1.75f : 1.25f) * wetMult * fuelMult;
+                            (self.animation == Player.AnimationIndex.Flip ? 2.25f :
+                            self.animation == Player.AnimationIndex.RocketJump || self.animation == Player.AnimationIndex.BellySlide ? 1.75f : 1.25f) * wetMult * fuelMult;
                     }
                     else if (!makeBigEmbers)
                     {
@@ -1091,7 +1209,7 @@ public class IncanFeatures
         //
         #region Incandescent Collision
 
-        if (!CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) || !player.isIncan)
+        if (!CWT.PlayerData.TryGetValue(self, out HSSlugs player) || !player.isIncan)
         {
             return;
         }
@@ -1103,30 +1221,45 @@ public class IncanFeatures
         float DMG;
         float STUN;
         float HEATLOSS;
+        int BURNTIME = 0;
 
-        if (self.animation == Player.AnimationIndex.BellySlide || (self.animation == Player.AnimationIndex.Flip && !self.flipFromSlide))
+        if (self.animation == Player.AnimationIndex.BellySlide)
         {
-            DMG = 0.5f;
+            DMG = 0.50f;
             STUN = 20f;
-            HEATLOSS = self.animation == Player.AnimationIndex.Flip? 0.12f : 0.06f;
+            HEATLOSS = 0.06f;
         }
-        else if (player.longJumping)
+        else if (self.animation == Player.AnimationIndex.Flip && !self.flipFromSlide)
+        {
+            DMG = 0.50f;
+            STUN = 20f;
+            HEATLOSS = 0.075f;
+        }
+        else if(player.longJumping)
         {
             DMG = 0.75f;
             STUN = 40f;
             HEATLOSS = 0.12f;
         }
-        else if (self.animation == Player.AnimationIndex.Roll || self.animation == Player.AnimationIndex.RocketJump)
+        else if (self.animation == Player.AnimationIndex.RocketJump)
         {
-            DMG = 1.25f;
-            STUN = 60f;
+            DMG = 1.00f;
+            STUN = 75f;
             HEATLOSS = 0.16f;
+        }
+        else if (self.animation == Player.AnimationIndex.Roll)
+        {
+            DMG = 0.75f;
+            STUN = 60f;
+            HEATLOSS = 0.20f;
+            BURNTIME = 500; // +0.50 DMG; 1.25 total
         }
         else if (self.animation == Player.AnimationIndex.Flip && self.flipFromSlide)
         {
-            DMG = 2.25f;
+            DMG = 2f;
             STUN = 120f;
             HEATLOSS = 0.24f;
+            BURNTIME = 500; // +0.50 DMG; 2.50 total
         }
         else return;
 
@@ -1154,6 +1287,18 @@ public class IncanFeatures
             STUN *= multiplier;
             HEATLOSS *= multiplier;
         }
+        if (player.readyToAccept)
+        {
+            if (BURNTIME > 0)
+            {
+                BURNTIME += BURNTIME / 2;
+            }
+            else
+            {
+                DMG += 0.25f;
+            }
+            STUN += 20;
+        }
 
         #endregion
 
@@ -1177,30 +1322,28 @@ public class IncanFeatures
             self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
             target.SetKillTag(self.abstractCreature);
 
-            Creature.DamageType dmgType;
-            if (self.animation == Player.AnimationIndex.Roll || self.animation == Player.AnimationIndex.Flip)
+            Creature.DamageType DMGTYPE;
+            if (BURNTIME > 0)
             {
-                dmgType = HailstormEnums.HeatDamage;
+                DMGTYPE = HailstormEnums.Heat;
 
                 self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 35f, player.FireColor, self.ShortCutColor()));
                 self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 45f, player.FireColor, self.ShortCutColor()));
 
-                if (!player.readyToMoveOn && target.SpearStick(null, DMG, target.bodyChunks[otherChunk], null, self.mainBodyChunk.vel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out AbsCtrInfo aI))
+                if (target.SpearStick(null, DMG, target.bodyChunks[otherChunk], null, self.mainBodyChunk.vel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out AbsCtrInfo aI))
                 {
-                    aI.AddBurn(self.abstractCreature, target, otherChunk, 600, player.FireColor, self.ShortCutColor());
+                    aI.AddBurn(self.abstractCreature, target, otherChunk, BURNTIME, player.FireColor, self.ShortCutColor());
                 }
 
                 if (RainWorld.ShowLogs)
-                    Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: " + DMG + " | Stun: " + STUN / 40f + "s");
+                    Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: " + DMG + " | Burn Time: " + BURNTIME / 40f + "s | Stun: " + STUN / 40f + "s");
             }
             else
             {
-                dmgType = Creature.DamageType.Blunt;
+                DMGTYPE = Creature.DamageType.Blunt;
 
                 self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10, 20f, 20f, player.FireColor, self.ShortCutColor()));
                 self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10, 20f, 30f, player.FireColor, self.ShortCutColor()));
-
-                if (player.readyToMoveOn) DMG += 0.25f;
 
                 if (RainWorld.ShowLogs)
                     Debug.Log("Player " + (self.playerState.playerNumber + 1) + " BONKED something! | Damage: " + DMG + " | Stun: " + STUN / 40f + "s | Incoming speed: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Distance: " + (self.lastGroundY - self.firstChunk.pos.y));
@@ -1213,9 +1356,8 @@ public class IncanFeatures
             for (int f = 0; f < 10; f++)
             {
                 Vector2 vel =
-                    dmgType == Creature.DamageType.Blunt ?
-                    Custom.DegToVec(Custom.VecToDeg(self.mainBodyChunk.vel) + Random.Range(-15, 15)) :
-                    Custom.RNV() * Random.Range(8f, 10f);
+                    DMGTYPE == Creature.DamageType.Blunt ?
+                    Custom.DegToVec(Custom.VecToDeg(self.mainBodyChunk.vel) + Random.Range(-15, 15)) : Custom.RNV() * Random.Range(8f, 12f);
 
                 if (player.incanLight is not null && self.room.ViewedByAnyCamera(self.bodyChunks[1].pos, 300f) && player.fireSmoke.AddParticle(Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), vel, 40) is Smoke.FireSmoke.FireSmokeParticle bonkFireSmoke)
                 {
@@ -1228,23 +1370,13 @@ public class IncanFeatures
 
 
             // Damages target. Quick note: Slugcats don't have actual HP without the DLC. As long as attacks don't deal at least 1 damage to them, they're effectively invincible.
-            target.Violence(self.mainBodyChunk, new Vector2?(self.mainBodyChunk.vel), target.bodyChunks[otherChunk], null, dmgType, DMG, STUN);
+            target.Violence(self.mainBodyChunk, new Vector2?(self.mainBodyChunk.vel), target.bodyChunks[otherChunk], null, DMGTYPE, DMG, STUN);
             if (target is Player plr) // WITH the DLC, though, that's not an issue. You've just gotta make sure to address Slugcat HP separately from Violence, since it... wasn't integrated directly into Violence, for some reason.
             {
                 plr.playerState.permanentDamageTracking += DMG;
                 if (plr.playerState.permanentDamageTracking >= 1)
                 {
                     plr.Die();
-                }
-            }
-            if (self.animation == Player.AnimationIndex.Flip && !self.flipFromSlide && target is Lizard liz && (liz.Template.type != CreatureTemplate.Type.RedLizard || liz.Template.type != MoreSlugcatsEnums.CreatureTemplateType.TrainLizard))
-            {
-                if (self.animation == Player.AnimationIndex.Flip && !self.flipFromSlide)
-                {
-                    liz.turnedByRockCounter =
-                        (liz.Template.type == HailstormEnums.Freezer) ? 75 :
-                        (liz.Template.type == CreatureTemplate.Type.GreenLizard || liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard) ? 25 : 50;
-
                 }
             }
             if (notAFly && player.longJumping)
@@ -1297,6 +1429,120 @@ public class IncanFeatures
         }
 
         #endregion
+    }
+    public static void FlipSingeCollisionCheck(Player self, HSSlugs player)
+    {
+        if (self?.room is null || !player.isIncan) return;
+        PlayerGraphics selfGraphics = self.graphicsModule as PlayerGraphics;
+        TailSegment tailEnd = selfGraphics.tail[selfGraphics.tail.Length - 1];
+        bool powerFlameWheel = player.readyToAccept && self.animation == Player.AnimationIndex.Roll;
+
+        foreach (AbstractCreature absCtr in self.room.abstractRoom.creatures)
+        {
+            if (absCtr?.realizedCreature is null || absCtr.realizedCreature == self)
+            {
+                continue;
+            }
+            Creature target = absCtr.realizedCreature;
+            bool smallCreature = target.abstractCreature.creatureTemplate.smallCreature;
+            if (target.dead ||
+                target.bodyChunks.Length < 1 ||
+                (powerFlameWheel && !smallCreature) || (!player.readyToAccept && smallCreature) ||
+                (ModManager.CoopAvailable && target is Player && !Custom.rainWorld.options.friendlyFire) ||
+                target.abstractCreature.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC ||
+                !CWT.CreatureData.TryGetValue(target, out CreatureInfo cI) ||
+                !(cI.impactCooldown == 0 || player.impactCooldown == 0))
+            {
+                continue;
+            }
+            if (self.grasps is not null)
+            {
+                bool grabbedByPlayer = false;
+                for (int g = 0; g < self.grasps.Length; g++)
+                {
+                    if (self.grasps[g]?.grabbed is not null && self.grasps[g]?.grabbed == target)
+                    {
+                        grabbedByPlayer = true;
+                        break;
+                    }
+                }
+                if (grabbedByPlayer) continue;
+
+            }
+
+            foreach (BodyChunk chunk in target.bodyChunks)
+            {
+                if (!Custom.DistLess(tailEnd.pos, chunk.pos, tailEnd.rad + chunk.rad + 40f)) continue;
+
+                cI.impactCooldown = 20;
+                player.impactCooldown = 20;
+
+                Vector2 hitVel = Custom.DirVec(tailEnd.pos, chunk.pos) * 2f;
+                target.SetKillTag(self.abstractCreature);
+                target.Violence(self.mainBodyChunk, new Vector2?(hitVel), chunk, null, HailstormEnums.Heat, 0.25f, 60);
+                if (target is Player plr)
+                {
+                    plr.playerState.permanentDamageTracking += 0.25f;
+                    if (plr.playerState.permanentDamageTracking >= 1)
+                    {
+                        plr.Die();
+                    }
+                }
+                if (target is Lizard liz && liz.Template.type != CreatureTemplate.Type.RedLizard && liz.Template.type != MoreSlugcatsEnums.CreatureTemplateType.TrainLizard)
+                {
+                    liz.turnedByRockCounter =
+                        (liz.Template.type == HailstormEnums.Freezer ||
+                        liz.Template.type == CreatureTemplate.Type.GreenLizard ||
+                        liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard) ? 20 : 40;
+                    liz.turnedByRockDirection = (int)Mathf.Sign(chunk.pos.x - tailEnd.pos.x);
+                }
+                if (target.SpearStick(null, 0.25f, chunk, null, hitVel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out AbsCtrInfo aI))
+                {
+                    aI.AddBurn(self.abstractCreature, target, chunk.index, 250, player.FireColor, self.ShortCutColor());
+                }
+
+                self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 35f, player.FireColor, self.ShortCutColor()));
+                self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 45f, player.FireColor, self.ShortCutColor()));
+                self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk.pos, 1.2f, 1);
+                if (target.State is HealthState targetHP && targetHP.ClampedHealth == 0f || target.State.dead)
+                {
+                    self.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, self.DangerPos, 0.75f, Random.Range(1.75f, 2));
+                    self.room.PlaySound(SoundID.Rock_Hit_Creature, self.mainBodyChunk.pos, 1.7f, 1f);
+                }
+                else
+                {
+                    self.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, self.DangerPos, 1f, Random.Range(1.75f, 2));
+                }
+
+                if (RainWorld.ShowLogs)
+                    Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: 0.25 | Burn Time: 12.5s | Stun: 1.25s");
+
+                float drain = 0.06f;
+                if (player.inArena)
+                {
+                    drain *= 2f;
+                }
+                self.Hypothermia += drain;
+                target.Hypothermia -= drain * 0.75f;
+
+                if (player.fireSmoke is null)
+                {
+                    player.fireSmoke = new HailstormFireSmokeCreator(self.room);
+                }
+                for (int f = 0; f < 10; f++)
+                {
+                    if (player.incanLight is not null && self.room.ViewedByAnyCamera(self.bodyChunks[1].pos, 300f) && player.fireSmoke.AddParticle(Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Custom.RNV() * Random.Range(8f, 12f), 40) is Smoke.FireSmoke.FireSmokeParticle bonkFireSmoke)
+                    {
+                        bonkFireSmoke.colorFadeTime = 35;
+                        bonkFireSmoke.effectColor = player.FireColor;
+                        bonkFireSmoke.colorA = self.ShortCutColor();
+                        bonkFireSmoke.rad *= 5f * Mathf.InverseLerp(0, 400, player.incanLight.rad);
+                    }
+                }
+
+                break;
+            }
+        }
     }
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------

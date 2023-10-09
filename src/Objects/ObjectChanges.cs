@@ -28,7 +28,8 @@ internal class ObjectChanges
         // Bubblegrass
         On.BubbleGrass.Update += HeatyGrass;
 
-        // Slime Mold
+        // Food
+        On.MoreSlugcats.GlowWeed.BitByPlayer += QuickerGlowweedEating;
         On.SlimeMold.ctor += BIGMold;
         On.SaveState.AbstractPhysicalObjectFromString += AbstractSlimeMoldData;
 
@@ -37,6 +38,7 @@ internal class ObjectChanges
         On.Spear.Update += SpearUpdate;
 
         // Electric Spears
+        On.MoreSlugcats.ElectricSpear.CheckElectricCreature += ChillipedeAintElectric;
         On.AbstractSpear.ctor_World_Spear_WorldCoordinate_EntityID_bool_bool += ElectriSpearExtraCharge;
         On.MoreSlugcats.ElectricSpear.Recharge += ElectriSpearExtraRecharge;
         ElectriSpearElectrocutionReplacement();
@@ -58,9 +60,9 @@ internal class ObjectChanges
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-    public static bool IsRWGIncan(RainWorldGame RWG)
+    public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HailstormSlugcats.Incandescent);
+        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
     }
 
     //--------------------------------------------
@@ -85,7 +87,7 @@ internal class ObjectChanges
             c.Emit(OpCodes.Ldarg_0);
             c.EmitDelegate((Player self) =>
             {
-                return IsRWGIncan(self?.room?.game) && AddQuarterBip(self);
+                return IsIncanStory(self?.room?.game) && AddQuarterBip(self);
             });
             c.Emit(OpCodes.Brfalse_S, label);
             c.Emit(OpCodes.Ret);
@@ -130,67 +132,31 @@ internal class ObjectChanges
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-    public static void HeatyGrass(On.BubbleGrass.orig_Update orig, BubbleGrass grs, bool eu)
+    #region Food
+    public static void QuickerGlowweedEating(On.MoreSlugcats.GlowWeed.orig_BitByPlayer orig, GlowWeed glw, Creature.Grasp grasp, bool eu)
     {
-        orig(grs, eu);
-        if (IsRWGIncan(grs?.room?.game) && grs.firstChunk.submersion > 0.9f && grs.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+        if (IsIncanStory(glw?.room?.game) && glw.bites == 3)
         {
-            bool flag = true;
-            if (grs.grabbedBy.Count > 0 && grs.grabbedBy[0].grabber is Player plr && plr.animation == Player.AnimationIndex.SurfaceSwim && plr.airInLungs > 0.5f)
-            {
-                flag = false;
-            }
-            if (flag && Random.value < Mathf.InverseLerp(0f, 0.3f, grs.oxygen))
-            {
-                Bubble bubble = new(grs.firstChunk.pos + Custom.RNV() * Random.value * 4f, Custom.RNV() * Mathf.Lerp(6f, 16f, Random.value) * Mathf.InverseLerp(0f, 0.45f, grs.oxygen), bottomBubble: false, fakeWaterBubble: false);
-                grs.room.AddObject(bubble);
-                bubble.age = 600 - Random.Range(20, Random.Range(30, 80));
-                for (int i = 0; i < grs.room.abstractRoom.creatures.Count; i++)
-                {
-                    Creature ctr = grs.room.abstractRoom.creatures[i].realizedCreature;
-                    if (ctr is null)
-                    {
-                        continue;
-                    }
-                    if (Custom.DistLess(grs.firstChunk.pos, ctr.mainBodyChunk.pos, 40f))
-                    {
-                        ctr.HypothermiaExposure = Mathf.Min(0.3f, ctr.HypothermiaExposure);
-                        if (ctr.Hypothermia >= 0.0005f)
-                        {
-                            ctr.Hypothermia -= 0.0005f;
-                        }
-                        if (ctr is Player self && CWT.PlayerData.TryGetValue(self, out HailstormSlugcats hS) && hS.isIncan)
-                        {
-                            hS.wetness -= self.Submersion >= 1 ? 6 : 3;
-                        }
-                    }
-                }
-            }
+            glw.bites--;
         }
+        orig(glw, grasp, eu);
     }
 
-    //-----------------------------------------
-
-    public static void BIGMold(On.SlimeMold.orig_ctor orig, SlimeMold slm, AbstractPhysicalObject absObj)
+    public static void BIGMold(On.SlimeMold.orig_ctor orig, SlimeMold slm, AbstractPhysicalObject absSlm)
     {
-        orig(slm, absObj);
-        if (IsRWGIncan(absObj?.world?.game) && slm?.AbstrConsumable is not null)
+        orig(slm, absSlm);
+        if (IsIncanStory(absSlm?.world?.game) && slm?.AbstrConsumable is not null)
         {
-            Debug.Log("Mold size check");
             if (slm.AbstrConsumable is AbstractSlimeMold ASM)
             {
-                Debug.Log("Is ASM");
                 slm.big = ASM.big;
-                if (ASM.big) Debug.Log("ENLARGE");
             }
-            else if (!slm.AbstrConsumable.isConsumed && absObj.Room.realizedRoom is not null)
+            else if (!slm.AbstrConsumable.isConsumed && absSlm.Room.realizedRoom is not null)
             {
-                Debug.Log("heeblebeeble");
-                for (int s = 0; s < absObj.Room.realizedRoom.roomSettings.placedObjects.Count; s++)
+                for (int s = 0; s < absSlm.Room.realizedRoom.roomSettings.placedObjects.Count; s++)
                 {
-                    if (absObj.Room.realizedRoom.roomSettings.placedObjects[s].type == PlacedObject.Type.CosmeticSlimeMold2 && Custom.DistLess(absObj.Room.realizedRoom.MiddleOfTile(absObj.pos), absObj.Room.realizedRoom.roomSettings.placedObjects[s].pos, 50))
+                    if (absSlm.Room.realizedRoom.roomSettings.placedObjects[s].type == PlacedObject.Type.CosmeticSlimeMold2 && Custom.DistLess(absSlm.Room.realizedRoom.MiddleOfTile(absSlm.pos), absSlm.Room.realizedRoom.roomSettings.placedObjects[s].pos, 50))
                     {
-                        Debug.Log("NEAR BIG MOLD PATCH; ENLARGE");
                         slm.big = true;
                         slm.AbstrConsumable.unrecognizedAttributes = new string[1] { "big" };
                         break;
@@ -235,10 +201,9 @@ internal class ObjectChanges
             */
         }
     }
-
     public static AbstractPhysicalObject AbstractSlimeMoldData(On.SaveState.orig_AbstractPhysicalObjectFromString orig, World world, string objString)
     {
-        if (IsRWGIncan(world?.game))
+        if (IsIncanStory(world?.game))
         {
             try
             {
@@ -264,6 +229,48 @@ internal class ObjectChanges
             }
         }
         return orig(world, objString);
+    }
+    #endregion
+
+    //-----------------------------------------
+
+    public static void HeatyGrass(On.BubbleGrass.orig_Update orig, BubbleGrass grs, bool eu)
+    {
+        orig(grs, eu);
+        if (IsIncanStory(grs?.room?.game) && grs.firstChunk.submersion > 0.9f && grs.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+        {
+            bool flag = true;
+            if (grs.grabbedBy.Count > 0 && grs.grabbedBy[0].grabber is Player plr && plr.animation == Player.AnimationIndex.SurfaceSwim && plr.airInLungs > 0.5f)
+            {
+                flag = false;
+            }
+            if (flag && Random.value < Mathf.InverseLerp(0f, 0.3f, grs.oxygen))
+            {
+                Bubble bubble = new(grs.firstChunk.pos + Custom.RNV() * Random.value * 4f, Custom.RNV() * Mathf.Lerp(6f, 16f, Random.value) * Mathf.InverseLerp(0f, 0.45f, grs.oxygen), bottomBubble: false, fakeWaterBubble: false);
+                grs.room.AddObject(bubble);
+                bubble.age = 600 - Random.Range(20, Random.Range(30, 80));
+                for (int i = 0; i < grs.room.abstractRoom.creatures.Count; i++)
+                {
+                    Creature ctr = grs.room.abstractRoom.creatures[i].realizedCreature;
+                    if (ctr is null)
+                    {
+                        continue;
+                    }
+                    if (Custom.DistLess(grs.firstChunk.pos, ctr.mainBodyChunk.pos, 40f))
+                    {
+                        ctr.HypothermiaExposure = Mathf.Min(0.3f, ctr.HypothermiaExposure);
+                        if (ctr.Hypothermia >= 0.0005f)
+                        {
+                            ctr.Hypothermia -= 0.0005f;
+                        }
+                        if (ctr is Player self && CWT.PlayerData.TryGetValue(self, out HSSlugs hS) && hS.isIncan)
+                        {
+                            hS.bubbleHeat = true;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     //-----------------------------------------
@@ -311,9 +318,9 @@ internal class ObjectChanges
                         if (upDel is null) return;
 
                         if (upDel is FreezerMist mist && Custom.DistLess(absBrnSpr.spearTipPos, mist.pos, mist.rad + 100f)) absBrnSpr.chill += 0.005f;
-                        else if (upDel is Lizard coldLizzy && HailstormLizards.LizardData.TryGetValue(coldLizzy, out LizardInfo lI) && lI.freezerAura is not null)
+                        else if (upDel is Lizard coldLizzy && coldLizzy.LizardState is ColdLizState lS && lS.chillAura is not null)
                         {
-                            absBrnSpr.chill += 0.04f * Mathf.InverseLerp(lI.freezerAura.rad, lI.freezerAura.rad - 120f, Custom.Dist(absBrnSpr.spearTipPos, coldLizzy.DangerPos));
+                            absBrnSpr.chill += 0.04f * Mathf.InverseLerp(lS.chillAura.rad, lS.chillAura.rad - 120f, Custom.Dist(absBrnSpr.spearTipPos, coldLizzy.DangerPos));
                         }
                     }
                 }
@@ -410,17 +417,25 @@ internal class ObjectChanges
     //-----------------------------------------
 
     // Electric Spears
+    public static bool ChillipedeAintElectric(On.MoreSlugcats.ElectricSpear.orig_CheckElectricCreature orig, ElectricSpear elcSpr, Creature target)
+    {
+        if (target is not null && target.Template.type == HailstormEnums.Chillipede)
+        {
+            return false;
+        }
+        return orig(elcSpr, target);
+    }
     public static void ElectriSpearExtraCharge(On.AbstractSpear.orig_ctor_World_Spear_WorldCoordinate_EntityID_bool_bool orig, AbstractSpear absSpr, World world, Spear spr, WorldCoordinate pos, EntityID ID, bool explosive, bool electric)
     {
         orig(absSpr, world, spr, pos, ID, explosive, electric);
-        if (IsRWGIncan(world?.game) && electric)
+        if (IsIncanStory(world?.game) && electric)
         {
             absSpr.electricCharge = 5;
         }
     }
     public static void ElectriSpearExtraRecharge(On.MoreSlugcats.ElectricSpear.orig_Recharge orig, ElectricSpear eSpr)
     {
-        if (IsRWGIncan(eSpr?.room?.game) && eSpr.abstractSpear.electricCharge == 0)
+        if (IsIncanStory(eSpr?.room?.game) && eSpr.abstractSpear.electricCharge == 0)
         {
             eSpr.abstractSpear.electricCharge = 5;
             eSpr.room.PlaySound(SoundID.Jelly_Fish_Tentacle_Stun, eSpr.firstChunk.pos);
@@ -441,7 +456,7 @@ internal class ObjectChanges
             c.Emit(OpCodes.Ldarg_1);
             c.EmitDelegate((ElectricSpear eSpr, PhysicalObject obj) =>
             {
-                return IsRWGIncan(eSpr?.room?.game);
+                return IsIncanStory(eSpr?.room?.game);
             });
             c.Emit(OpCodes.Brfalse_S, label);
             c.Emit(OpCodes.Ret);
@@ -450,7 +465,7 @@ internal class ObjectChanges
     }
     public static void WeakerElectricSpearStun(On.Spear.orig_LodgeInCreature orig, Spear spr, SharedPhysics.CollisionResult result, bool eu)
     {
-        if (IsRWGIncan(spr?.room?.game) && spr is ElectricSpear eSpr && result.obj is not null && result.obj is Creature target)
+        if (IsIncanStory(spr?.room?.game) && spr is ElectricSpear eSpr && result.obj is not null && result.obj is Creature target)
         {
             BodyChunk hitChunk = result.chunk;
             bool ElectricTarget = eSpr.CheckElectricCreature(target);
@@ -574,8 +589,16 @@ internal class ObjectChanges
         absBrnSpr.currentColor = absBrnSpr.heat > 0 ?
             Color.Lerp(Color.Lerp(spr.color, absBrnSpr.fireFadeColor, Mathf.Lerp(0.5f, 0.95f, absBrnSpr.heat)), absBrnSpr.spearColor, absBrnSpr.heat) : spr.color;
 
-        sLeaser.sprites[0].color =
-                (spr.blink > 0 && Random.value < 0.5f) ? spr.blinkColor : absBrnSpr.currentColor;
+        if (spr.blink > 0 && Random.value < 0.5f)
+        {
+            sLeaser.sprites[0].color = spr.blinkColor;
+            sLeaser.sprites[1].color = spr.blinkColor;
+        }
+        else
+        {
+            sLeaser.sprites[0].color = absBrnSpr.currentColor;
+            sLeaser.sprites[1].color = spr.color;
+        }
 
         Vector2 val = Vector2.Lerp(spr.firstChunk.lastPos, spr.firstChunk.pos, timeStacker);
         if (spr.vibrate > 0)
@@ -598,18 +621,18 @@ internal class ObjectChanges
 
         if (spr.bugSpear || spr.abstractSpear is AbstractBurnSpear)
         {
-            if (target is Player && CWT.PlayerData.TryGetValue(target as Player, out HailstormSlugcats hS))
+            if (target is Player && CWT.PlayerData.TryGetValue(target as Player, out HSSlugs hS))
             {
                 spr.spearDamageBonus *= hS.HeatDMGmult;
                 cI.heatTimer = (int)(20 * hS.HeatDMGmult);
             }
-            else if (target.Template.damageRestistances[HailstormEnums.HeatDamage.index, 0] is float heatRes && heatRes != 1)
+            else if (target.Template.damageRestistances[HailstormEnums.Heat.index, 0] is float heatRes && heatRes != 1)
             {
                 spr.spearDamageBonus /= heatRes;
                 cI.heatTimer = (int)(20 / heatRes);
             }
         }
-        else if (IsRWGIncan(spr?.room?.game) && spr is ElectricSpear)
+        else if (IsIncanStory(spr?.room?.game) && spr is ElectricSpear)
         {
             spr.spearDamageBonus *= 0.75f;
         }
@@ -643,7 +666,7 @@ internal class ObjectChanges
 
     public static void WeakerJellyfishStun(On.JellyFish.orig_Collide orig, JellyFish jelly, PhysicalObject obj, int myChunk, int otherChunk)
     {
-        if (IsRWGIncan(jelly?.room?.game) && obj is Creature target && target != jelly.thrownBy && jelly.Electric)
+        if (IsIncanStory(jelly?.room?.game) && obj is Creature target && target != jelly.thrownBy && jelly.Electric)
         {
             if (target is not BigEel && target is not Centipede && target is not BigJellyFish && target is not Inspector)
             {
@@ -675,25 +698,14 @@ internal class ObjectChanges
 
         for (int i = 0; i < flr.room.abstractRoom.creatures.Count; i++)
         {
-            AbstractCreature absCtr = flr.room.abstractRoom.creatures[i];
-            if (absCtr.realizedCreature is null ||
-                (!Custom.DistLess(flr.firstChunk.pos, absCtr.realizedCreature.mainBodyChunk.pos, flr.LightIntensity * 800f) && (!Custom.DistLess(flr.firstChunk.pos, absCtr.realizedCreature.mainBodyChunk.pos, flr.LightIntensity * 2000f) || !flr.room.VisualContact(flr.firstChunk.pos, absCtr.realizedCreature.mainBodyChunk.pos))))
+            Creature ctr = flr.room.abstractRoom.creatures[i].realizedCreature;
+            if (ctr?.State is null || (!Custom.DistLess(flr.firstChunk.pos, ctr.mainBodyChunk.pos, flr.LightIntensity * 800f) && (!Custom.DistLess(flr.firstChunk.pos, ctr.mainBodyChunk.pos, flr.LightIntensity * 2000f) || !flr.room.VisualContact(flr.firstChunk.pos, ctr.mainBodyChunk.pos))))
             {
                 continue;
             }
-            if (absCtr.realizedCreature is Luminescipede lmn && !lmn.overloaded)
+            if (ctr.State is GlowSpiderState gs && gs.juice < gs.MaxJuice)
             {
-                if (!lmn.charged || (lmn.dead && lmn.juice < 1))
-                {
-                    lmn.juice += 0.01f;
-                }
-                else if (!lmn.dead)
-                {
-                    absCtr.realizedCreature.firstChunk.vel += Custom.DegToVec(Random.value * 360f) * Random.value;
-                    absCtr.realizedCreature.Stun((int)Mathf.Lerp(0, 240, lmn.juice));
-                    lmn.overloaded = true;
-                    lmn.flicker = false;
-                }
+                gs.juice += 0.025f;
             }
         }
     }

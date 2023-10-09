@@ -14,6 +14,9 @@ public static class HailstormEnums
     [AllowNull] public static CreatureTemplate.Type Freezer = new("FreezerLizard", true);
     [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID FreezerUnlock = new("FreezerLizard", true);
 
+    [AllowNull] public static CreatureTemplate.Type PeachSpider = new("PeachSpider", true);
+    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID PeachSpiderUnlock = new("PeachSpider", true);
+
     [AllowNull] public static CreatureTemplate.Type Cyanwing = new("Cyanwing", true);
     [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID CyanwingUnlock = new("Cyanwing", true);
 
@@ -40,8 +43,8 @@ public static class HailstormEnums
     [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID BurnSpearUnlock = new("BurnSpear", true);
 
 
-    public static Creature.DamageType ColdDamage = new("HailstormCold", true);
-    public static Creature.DamageType HeatDamage = new("HailstormHeat", true);
+    public static Creature.DamageType Cold = new("HailstormCold", true);
+    public static Creature.DamageType Heat = new("HailstormHeat", true);
 
 
     public static void UnregisterValues()
@@ -80,7 +83,17 @@ public static class HailstormEnums
             FreezerUnlock = null;
         }
 
-        
+        if (PeachSpider is not null)
+        {
+            PeachSpider.Unregister();
+            PeachSpider = null;
+        }
+        if (PeachSpiderUnlock is not null)
+        {
+            PeachSpiderUnlock.Unregister();
+            PeachSpiderUnlock = null;
+        }
+
         if (Cyanwing is not null)
         {
             Cyanwing.Unregister();

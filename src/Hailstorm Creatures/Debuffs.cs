@@ -68,7 +68,7 @@ public class Burn : Debuff
 
             victim.room.PlaySound(SoundID.Firecracker_Burn, victim.bodyChunks[chunk.Value].pos, 0.3f, Random.Range(0.3f, 0.4f));
 
-            if (victim is Player self && CWT.PlayerData.TryGetValue(self, out HailstormSlugcats hS))
+            if (victim is Player self && CWT.PlayerData.TryGetValue(self, out HSSlugs hS))
             {
                 self.playerState.permanentDamageTracking += 0.04f * hS.HeatDMGmult;
                 if (self.playerState.permanentDamageTracking >= 1) self.Die();
@@ -76,7 +76,7 @@ public class Burn : Debuff
             }
             else if (victim.State is HealthState HP)
             {
-                float BurnRes = victim.Template.damageRestistances[HailstormEnums.HeatDamage.index, 0];
+                float BurnRes = victim.Template.damageRestistances[HailstormEnums.Heat.index, 0];
                 HP.health -= 0.035f / Mathf.Lerp(victim.Template.baseDamageResistance, 1f, 0.25f) / BurnRes;
                 if (victim.Hypothermia > 0.001f) victim.Hypothermia -= 0.1f / Mathf.Lerp(BurnRes, 1, 0.5f);
             }
@@ -100,19 +100,25 @@ public class Burn : Debuff
             {
                 duration--;
             }
-            else brnSpr.heat -= 0.00015f;
+            else brnSpr.heat -= 0.00005f;
 
             if (setKillTag && brnSpr.realizedObject is not null && brnSpr.realizedObject is Spear kSpr && kSpr.thrownBy is not null && kSpr.thrownBy.abstractCreature != victim.killTag)
             {
-                victim.killTag = kSpr.thrownBy.abstractCreature;
+                victim.SetKillTag(kSpr.thrownBy.abstractCreature);
                 victim.killTagCounter = (int)duration + 160;
             }
         }
-        else if (setKillTag && source is AbstractCreature absCtr && absCtr != victim.killTag)
+        else if (setKillTag && source is AbstractCreature killTag && (killTag != victim.killTag || victim.killTagCounter < duration + 159))
         {
-            victim.SetKillTag(absCtr);
+            victim.SetKillTag(killTag);
             victim.killTagCounter = Mathf.Max(victim.killTagCounter, (int)duration + 160);
         }
+
+        if (victim.State is GlowSpiderState gs && gs.juice < gs.MaxJuice)
+        {
+            gs.juice += 0.004f;
+        }
+
     }
 
     public override void DebuffVisuals(Creature victim, bool eu)
@@ -210,5 +216,19 @@ public class Burn : Debuff
             }
         }
 
+    }
+
+    public static bool IsCreatureBurning(Creature ctr)
+    {
+        if (ctr?.abstractCreature is null) return false;
+
+        if (CWT.AbsCtrData.TryGetValue(ctr.abstractCreature, out AbsCtrInfo aI) && aI.debuffs is not null && aI.debuffs.Count > 0)
+        {
+            foreach (Debuff debuff in aI.debuffs)
+            {
+                if (debuff is Burn) return true;
+            }
+        }
+        return false;
     }
 }

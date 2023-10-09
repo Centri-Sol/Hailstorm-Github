@@ -12,10 +12,53 @@ using Color = UnityEngine.Color;
 using MonoMod.RuntimeDetour;
 using System;
 using static System.Reflection.BindingFlags;
+using Fisobs.Creatures;
 
 namespace Hailstorm;
 
-sealed class HailstormLizards
+//------------------------------------------------------------------------
+
+public class ColdLizState : LizardState
+{
+    public bool IcyBlue;
+    public bool Freezer;
+
+    public bool[] crystals;
+    public bool armored;
+    public int crystalSprite;
+
+    public int spitWindup;
+    public BodyChunk spitAimChunk;
+    public bool spitUsed;
+    public float spitGiveUpChance;
+    public int spitCooldown;
+
+    public int iceBreath;
+    public Vector2 breathDir;
+
+    public float chillAuraRad;
+    public LightSource chillAura;
+
+    public float PackPower;
+    public bool NearAFreezer;
+    public int PackUpdateTimer;
+
+    public ColdLizState(AbstractCreature absCtr) : base(absCtr)
+    {
+        IcyBlue = absCtr.creatureTemplate.type == HailstormEnums.IcyBlue;
+        Freezer = absCtr.creatureTemplate.type == HailstormEnums.Freezer;
+        crystals = new bool[3] { true, true, true };
+        armored = !crystals.All(intact => !intact);
+        if (Freezer && spitCooldown == 0)
+        {
+            spitCooldown = Random.Range(320, 480);
+        }
+    }
+}
+
+//------------------------------------------------------------------------
+
+internal class HailstormLizards
 {
     public static ConditionalWeakTable<Lizard, LizardInfo> LizardData = new();
 
@@ -42,11 +85,13 @@ sealed class HailstormLizards
         On.Lizard.EnterAnimation += GorditoEnterAnimation;
         On.Lizard.Collide += GorditoGreenieCollision;
         On.Lizard.TerrainImpact += GorditoGreenieGroundImpact;
-        On.Lizard.Stun += GorditoGreenieStunNegation;
+        On.Lizard.Stun += HailstormLizStun;
 
         On.LizardAI.IUseARelationshipTracker_UpdateDynamicRelationship += LizardAITweaks;
         On.LizardAI.ctor += ColdLizardAIConstructor;
         On.LizardAI.Update += ColdLizardAIUpdate;
+        On.LizardAI.LizardSpitTracker.Update += NoRedSpitForIncan;
+        ErraticWindCyanNojump();
 
         On.LizardGraphics.GenerateIvars += ColdLizardTailsWillAlwaysBeColored;
         On.LizardGraphics.ctor += HailstormLizardGraphics;
@@ -57,8 +102,17 @@ sealed class HailstormLizards
         On.LizardGraphics.BodyColor += ColdLizardBodyColors2;
         On.LizardGraphics.DynamicBodyColor += ColdLizardBodyColors3;
         IcyCosmetics.Init();
-        new Hook(typeof(LizardGraphics).GetMethod("get_SalamanderColor", Public | NonPublic | Instance), (Func<LizardGraphics, Color> orig, LizardGraphics lG) => !(GeneralCreatureChanges.IsRWGIncan(lG?.lizard?.room?.game) && lG.lizard.abstractCreature.Winterized) ? orig(lG) : Color.Lerp((lG.blackSalamander ? new Color(0.25f, 0.25f, 0.25f) : new Color(0.75f, 0.75f, 0.75f)), lG.effectColor, 0.08f));
+        new Hook(typeof(LizardGraphics).GetMethod("get_SalamanderColor", Public | NonPublic | Instance), (Func<LizardGraphics, Color> orig, LizardGraphics lG) => !(OtherCreatureChanges.IsIncanStory(lG?.lizard?.room?.game) && lG.lizard.abstractCreature.Winterized) ? orig(lG) : Color.Lerp((lG.blackSalamander ? new Color(0.25f, 0.25f, 0.25f) : new Color(0.75f, 0.75f, 0.75f)), lG.effectColor, 0.08f));
        
+    }
+
+    //----------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
+
+    private static bool IsIncanStory(RainWorldGame RWG)
+    {
+        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
     //----------------------------------------------------------------------------------
@@ -280,10 +334,10 @@ sealed class HailstormLizards
             frzTemp.damageRestistances[Creature.DamageType.Bite.index, 0] = 6; // Divides incoming bite damage by 6.
             frzTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = 2.25f; // Divides incoming electric damage by 2.25.
             frzTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = 0.80f;
-            frzTemp.damageRestistances[HailstormEnums.ColdDamage.index, 0] = 3.50f;
-            frzTemp.damageRestistances[HailstormEnums.ColdDamage.index, 1] = 1.20f;
-            frzTemp.damageRestistances[HailstormEnums.HeatDamage.index, 0] = 0.50f;
-            frzTemp.damageRestistances[HailstormEnums.HeatDamage.index, 1] = 0.50f;
+            frzTemp.damageRestistances[HailstormEnums.Cold.index, 0] = 3.50f;
+            frzTemp.damageRestistances[HailstormEnums.Cold.index, 1] = 1.50f;
+            frzTemp.damageRestistances[HailstormEnums.Heat.index, 0] = 0.50f;
+            frzTemp.damageRestistances[HailstormEnums.Heat.index, 1] = 0.75f;
             frzTemp.wormGrassImmune = true; // Determines whether Wormgrass will try to eat this lizard or not.
 
             frzStats.bodyMass = 2.8f; // Weight.
@@ -369,6 +423,7 @@ sealed class HailstormLizards
             frzTemp.usesCreatureHoles = true;
             frzTemp.usesNPCTransportation = true;
             frzTemp.usesRegionTransportation = true;
+            frzTemp.shortcutSegments = 4;
             frzStats.shakePrey = 100;
 
             frzTemp.pathingPreferencesConnections[1] = new PathCost(1, PathCost.Legality.Allowed);
@@ -420,10 +475,10 @@ sealed class HailstormLizards
             icyBlueTemp.baseStunResistance = 2.4f;
             icyBlueTemp.damageRestistances[Creature.DamageType.Bite.index, 0] = 5.5f;
             icyBlueTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = Mathf.Lerp(1.5f, frzTemp.damageRestistances[(int)Creature.DamageType.Explosion, 0], sizeFac);
-            icyBlueTemp.damageRestistances[HailstormEnums.ColdDamage.index, 0] = 1.50f;
-            icyBlueTemp.damageRestistances[HailstormEnums.ColdDamage.index, 1] = 1.00f;
-            icyBlueTemp.damageRestistances[HailstormEnums.HeatDamage.index, 0] = 0.75f;
-            icyBlueTemp.damageRestistances[HailstormEnums.HeatDamage.index, 1] = 0.75f;
+            icyBlueTemp.damageRestistances[HailstormEnums.Cold.index, 0] = 1.50f;
+            icyBlueTemp.damageRestistances[HailstormEnums.Cold.index, 1] = 1.00f;
+            icyBlueTemp.damageRestistances[HailstormEnums.Heat.index, 0] = 0.75f;
+            icyBlueTemp.damageRestistances[HailstormEnums.Heat.index, 1] = 0.75f;
 
             icyBlueStats.bodyMass = 1.5f;
             icyBlueStats.bodySizeFac = 0.9f * sizeMult;
@@ -508,6 +563,7 @@ sealed class HailstormLizards
             icyBlueTemp.usesCreatureHoles = true;
             icyBlueTemp.usesNPCTransportation = true;
             icyBlueTemp.usesRegionTransportation = false;
+            icyBlueTemp.shortcutSegments = 3;
             frzStats.shakePrey = 100;
 
             return icyBlueTemp;
@@ -516,6 +572,7 @@ sealed class HailstormLizards
         {
             CreatureTemplate gorditoTemp = orig(CreatureTemplate.Type.GreenLizard, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
             LizardBreedParams gorditoStats = (gorditoTemp.breedParameters as LizardBreedParams)!;
+
 
             // Check LizardBreeds in the game's files if you want to compare to other lizards' stats.
             gorditoTemp.type = type;
@@ -625,6 +682,7 @@ sealed class HailstormLizards
             gorditoTemp.BlizzardWanderer = true;
             gorditoTemp.preBakedPathingAncestor = StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.GreenLizard);
             gorditoTemp.usesNPCTransportation = false;
+            gorditoTemp.shortcutSegments = 5;
 
             gorditoTemp.pathingPreferencesConnections[13] = new PathCost(10, PathCost.Legality.Unallowed);
             gorditoTemp.pathingPreferencesConnections[14] = new PathCost(10, PathCost.Legality.Unallowed);
@@ -636,10 +694,10 @@ sealed class HailstormLizards
         if (type == CreatureTemplate.Type.Salamander)
         {
             CreatureTemplate lotl = orig(CreatureTemplate.Type.Salamander, lizardAncestor, pinkTemplate, null, null);
-            lotl.damageRestistances[HailstormEnums.ColdDamage.index, 0] = 1.25f;
-            lotl.damageRestistances[HailstormEnums.ColdDamage.index, 1] = 1.5f;
-            lotl.damageRestistances[HailstormEnums.HeatDamage.index, 0] = 1.25f;
-            lotl.damageRestistances[HailstormEnums.HeatDamage.index, 1] = 1.5f;
+            lotl.damageRestistances[HailstormEnums.Cold.index, 0] = 1.25f;
+            lotl.damageRestistances[HailstormEnums.Cold.index, 1] = 1.5f;
+            lotl.damageRestistances[HailstormEnums.Heat.index, 0] = 1.25f;
+            lotl.damageRestistances[HailstormEnums.Heat.index, 1] = 1.5f;
             return lotl;
         }
 
@@ -650,10 +708,10 @@ sealed class HailstormLizards
         if (type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
         {
             CreatureTemplate eel = orig(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, lizardAncestor, salamanderTemplate);
-            eel.damageRestistances[HailstormEnums.ColdDamage.index, 0] = 1.25f;
-            eel.damageRestistances[HailstormEnums.ColdDamage.index, 1] = 1.5f;
-            eel.damageRestistances[HailstormEnums.HeatDamage.index, 0] = 1.25f;
-            eel.damageRestistances[HailstormEnums.HeatDamage.index, 1] = 1.5f;
+            eel.damageRestistances[HailstormEnums.Cold.index, 0] = 1.25f;
+            eel.damageRestistances[HailstormEnums.Cold.index, 1] = 1.5f;
+            eel.damageRestistances[HailstormEnums.Heat.index, 0] = 1.25f;
+            eel.damageRestistances[HailstormEnums.Heat.index, 1] = 1.5f;
             return eel;
         }
 
@@ -668,121 +726,125 @@ sealed class HailstormLizards
 
         if (liz is not null && LizardData.TryGetValue(liz, out LizardInfo lI))
         {
-            if (liz.Template.type == HailstormEnums.Freezer)
+            if (liz.LizardState is ColdLizState lS)
             {
-                Random.State state = Random.state;
-                Random.InitState(absLiz.ID.RandomSeed);
-                liz.effectColor = Custom.HSL2RGB(Custom.WrappedRandomVariation(220f / 360f, 40 / 360f, 0.15f), 0.55f, Custom.ClampedRandomVariation(0.75f, 0.05f, 0.2f));
-                lI.armorGraphic = Random.Range(0, 6);
-                lI.auraRadius = 150;
-                Random.state = state;
-
-            }
-            else if (liz.Template.type == HailstormEnums.IcyBlue)
-            {
-                Random.State state = Random.state;
-                Random.InitState(absLiz.ID.RandomSeed);
-
-                LizardBreedParams icyBlueStats = liz.lizardParams;
-                LizardBreedParams frzStats = freezerTemplate.breedParameters as LizardBreedParams;
-
-                float sizeMult = Random.Range(1, 1.2f);
-                float sizeFac = Mathf.InverseLerp(0.9f, 1.3f, sizeMult);
-                bool menacing = sizeMult > 1.15f;
-
-                liz.LizardState.meatLeft =
-                    sizeMult > 1.15f ? 8 :
-                    sizeMult > 1.10f ? 7 :
-                    sizeMult > 1.05f ? 6 : 5;
-
-                icyBlueStats.tamingDifficulty =
-                    sizeMult > 1.15f ? 8.00f :
-                    sizeMult > 1.10f ? 6.75f :
-                    sizeMult > 1.05f ? 5.50f : 4.25f;
-
-                icyBlueStats.bodyMass = sizeMult + 0.4f;
-                if (liz.bodyChunks is not null)
+                lS.spitWindup = 0;
+                if (lS.Freezer)
                 {
-                    for (int b = 0; b < liz.bodyChunks.Length; b++)
-                    {
-                        liz.bodyChunks[b].mass = icyBlueStats.bodyMass / 3f;
-                    }
+                    Random.State state = Random.state;
+                    Random.InitState(absLiz.ID.RandomSeed);
+                    liz.effectColor = Custom.HSL2RGB(Custom.WrappedRandomVariation(220f / 360f, 40 / 360f, 0.15f), 0.55f, Custom.ClampedRandomVariation(0.75f, 0.05f, 0.2f));
+                    lS.crystalSprite = Random.Range(0, 6);
+                    lS.chillAuraRad = 150;
+                    Random.state = state;
+
                 }
+                else if (lS.IcyBlue)
+                {
+                    Random.State state = Random.state;
+                    Random.InitState(absLiz.ID.RandomSeed);
 
-                icyBlueStats.bodySizeFac = Mathf.Lerp(0.8f, 1.1f, Mathf.InverseLerp(1, 1.2f, sizeMult));
-                icyBlueStats.bodyRadFac = 1 / Mathf.Pow(sizeMult, 2);
-                icyBlueStats.bodyStiffnes = Mathf.Lerp(0, frzStats.bodyStiffnes, sizeFac);
-                icyBlueStats.floorLeverage = Mathf.Lerp(1, frzStats.floorLeverage, sizeFac);
-                icyBlueStats.maxMusclePower = Mathf.Lerp(2, frzStats.maxMusclePower, sizeFac);
-                icyBlueStats.wiggleSpeed = Mathf.Lerp(1, frzStats.wiggleSpeed, sizeFac);
-                icyBlueStats.wiggleDelay = (int)Mathf.Lerp(15, frzStats.wiggleDelay, sizeFac);
-                icyBlueStats.swimSpeed = Mathf.Lerp(0.35f, frzStats.swimSpeed, sizeFac);
-                icyBlueStats.idleCounterSubtractWhenCloseToIdlePos = 0;
-                icyBlueStats.danger = Mathf.Lerp(0.4f, frzStats.danger, sizeFac);
-                icyBlueStats.aggressionCurveExponent = Mathf.Lerp(0.925f, frzStats.aggressionCurveExponent, sizeFac);
+                    LizardBreedParams icyBlueStats = liz.lizardParams;
+                    LizardBreedParams frzStats = freezerTemplate.breedParameters as LizardBreedParams;
 
-                icyBlueStats.baseSpeed =
-                    menacing ? 3.6f : Mathf.Lerp(3.2f, 3.6f, Mathf.InverseLerp(1, 1.2f, sizeMult));
+                    float sizeMult = Random.Range(1, 1.2f);
+                    float sizeFac = Mathf.InverseLerp(0.9f, 1.3f, sizeMult);
+                    bool menacing = sizeMult > 1.15f;
 
-                icyBlueStats.biteRadBonus = Mathf.Lerp(0, frzStats.biteRadBonus, sizeFac);
-                icyBlueStats.biteHomingSpeed = Mathf.Lerp(1.4f, frzStats.biteHomingSpeed, sizeFac);
-                icyBlueStats.biteChance = Mathf.Lerp(0.4f, frzStats.biteChance, sizeFac);
-                icyBlueStats.attemptBiteRadius = Mathf.Lerp(90f, frzStats.attemptBiteRadius, sizeFac);
-                icyBlueStats.getFreeBiteChance = Mathf.Lerp(0.5f, frzStats.getFreeBiteChance, sizeFac);
-                icyBlueStats.biteDamage = Mathf.Lerp(0.7f, frzStats.biteDamage, sizeFac);
-                icyBlueStats.biteDominance = Mathf.Lerp(0.1f, frzStats.biteDominance, sizeFac);
+                    liz.LizardState.meatLeft =
+                        sizeMult > 1.15f ? 8 :
+                        sizeMult > 1.10f ? 7 :
+                        sizeMult > 1.05f ? 6 : 5;
 
-                icyBlueStats.canExitLoungeWarmUp = true;
-                icyBlueStats.canExitLounge = false;
-                icyBlueStats.preLoungeCrouch = (int)Mathf.Lerp(35, frzStats.preLoungeCrouch, sizeFac);
-                icyBlueStats.preLoungeCrouchMovement = Mathf.Lerp(-0.3f, frzStats.preLoungeCrouchMovement, sizeFac);
-                icyBlueStats.loungeSpeed =
-                    menacing ? 3 : Mathf.Lerp(2.5f, frzStats.loungeSpeed, sizeFac);
-                icyBlueStats.loungeJumpyness = Mathf.Lerp(1, frzStats.loungeJumpyness, sizeFac);
-                icyBlueStats.loungeDelay = (int)Mathf.Lerp(310, frzStats.loungeDelay, sizeFac);
-                icyBlueStats.postLoungeStun = (int)Mathf.Lerp(20, frzStats.postLoungeStun, sizeFac);
-                icyBlueStats.loungeTendensy =
-                    menacing ? 0.9f : Mathf.Lerp(0.4f, frzStats.loungeTendensy, sizeFac);
+                    icyBlueStats.tamingDifficulty =
+                        sizeMult > 1.15f ? 8.00f :
+                        sizeMult > 1.10f ? 6.75f :
+                        sizeMult > 1.05f ? 5.50f : 4.25f;
 
-                icyBlueStats.perfectVisionAngle = Mathf.Lerp(0.8888f, frzStats.perfectVisionAngle, sizeFac);
-                icyBlueStats.periferalVisionAngle = Mathf.Lerp(0.0833f, frzStats.periferalVisionAngle, sizeFac);
+                    icyBlueStats.bodyMass = sizeMult + 0.4f;
+                    if (liz.bodyChunks is not null)
+                    {
+                        for (int b = 0; b < liz.bodyChunks.Length; b++)
+                        {
+                            liz.bodyChunks[b].mass = icyBlueStats.bodyMass / 3f;
+                        }
+                    }
 
-                icyBlueStats.limbSize = Mathf.Lerp(0.9f, frzStats.limbSize, sizeFac);
-                icyBlueStats.limbThickness = Mathf.Lerp(1, frzStats.limbThickness, sizeFac);
-                icyBlueStats.stepLength = Mathf.Lerp(0.4f, frzStats.stepLength, sizeFac);
-                icyBlueStats.liftFeet = Mathf.Lerp(0, frzStats.liftFeet, sizeFac);
-                icyBlueStats.feetDown = Mathf.Lerp(0, frzStats.feetDown, sizeFac);
-                icyBlueStats.noGripSpeed = Mathf.Lerp(0.2f, frzStats.noGripSpeed, sizeFac);
-                icyBlueStats.limbSpeed = Mathf.Lerp(6, frzStats.limbSpeed, sizeFac);
-                icyBlueStats.limbQuickness = Mathf.Lerp(0.6f, frzStats.limbQuickness, sizeFac);
-                icyBlueStats.walkBob = Mathf.Lerp(0.4f, frzStats.walkBob, sizeFac);
-                icyBlueStats.regainFootingCounter = (int)Mathf.Lerp(4, frzStats.regainFootingCounter, sizeFac);
+                    icyBlueStats.bodySizeFac = Mathf.Lerp(0.8f, 1.1f, Mathf.InverseLerp(1, 1.2f, sizeMult));
+                    icyBlueStats.bodyRadFac = 1 / Mathf.Pow(sizeMult, 2);
+                    icyBlueStats.bodyStiffnes = Mathf.Lerp(0, frzStats.bodyStiffnes, sizeFac);
+                    icyBlueStats.floorLeverage = Mathf.Lerp(1, frzStats.floorLeverage, sizeFac);
+                    icyBlueStats.maxMusclePower = Mathf.Lerp(2, frzStats.maxMusclePower, sizeFac);
+                    icyBlueStats.wiggleSpeed = Mathf.Lerp(1, frzStats.wiggleSpeed, sizeFac);
+                    icyBlueStats.wiggleDelay = (int)Mathf.Lerp(15, frzStats.wiggleDelay, sizeFac);
+                    icyBlueStats.swimSpeed = Mathf.Lerp(0.35f, frzStats.swimSpeed, sizeFac);
+                    icyBlueStats.idleCounterSubtractWhenCloseToIdlePos = 0;
+                    icyBlueStats.danger = Mathf.Lerp(0.4f, frzStats.danger, sizeFac);
+                    icyBlueStats.aggressionCurveExponent = Mathf.Lerp(0.925f, frzStats.aggressionCurveExponent, sizeFac);
 
-                icyBlueStats.tailColorationStart = Mathf.Lerp(0.2f, 0.75f, Mathf.InverseLerp(1, 1.2f, sizeMult));
-                icyBlueStats.tailColorationExponent = 0.5f;
+                    icyBlueStats.baseSpeed =
+                        menacing ? 3.6f : Mathf.Lerp(3.2f, 3.6f, Mathf.InverseLerp(1, 1.2f, sizeMult));
 
-                icyBlueStats.headShieldAngle = Mathf.Lerp(108, frzStats.headShieldAngle, sizeFac);
-                icyBlueStats.headSize = Mathf.Lerp(0.9f, 1, sizeFac);
-                icyBlueStats.neckStiffness = Mathf.Lerp(0, frzStats.neckStiffness, sizeFac);
-                icyBlueStats.framesBetweenLookFocusChange = (int)Mathf.Lerp(20, frzStats.framesBetweenLookFocusChange, sizeFac);
+                    icyBlueStats.biteRadBonus = Mathf.Lerp(0, frzStats.biteRadBonus, sizeFac);
+                    icyBlueStats.biteHomingSpeed = Mathf.Lerp(1.4f, frzStats.biteHomingSpeed, sizeFac);
+                    icyBlueStats.biteChance = Mathf.Lerp(0.4f, frzStats.biteChance, sizeFac);
+                    icyBlueStats.attemptBiteRadius = Mathf.Lerp(90f, frzStats.attemptBiteRadius, sizeFac);
+                    icyBlueStats.getFreeBiteChance = Mathf.Lerp(0.5f, frzStats.getFreeBiteChance, sizeFac);
+                    icyBlueStats.biteDamage = Mathf.Lerp(0.7f, frzStats.biteDamage, sizeFac);
+                    icyBlueStats.biteDominance = Mathf.Lerp(0.1f, frzStats.biteDominance, sizeFac);
 
-                icyBlueStats.terrainSpeeds[3] = new(1f, 0.9f, 0.8f, 1f);
-                icyBlueStats.terrainSpeeds[4] = new(0.9f, 0.9f, 0.9f, 1f);
-                icyBlueStats.terrainSpeeds[5] = new(0.7f, 1f, 1f, 1f);
+                    icyBlueStats.canExitLoungeWarmUp = true;
+                    icyBlueStats.canExitLounge = false;
+                    icyBlueStats.preLoungeCrouch = (int)Mathf.Lerp(35, frzStats.preLoungeCrouch, sizeFac);
+                    icyBlueStats.preLoungeCrouchMovement = Mathf.Lerp(-0.3f, frzStats.preLoungeCrouchMovement, sizeFac);
+                    icyBlueStats.loungeSpeed =
+                        menacing ? 3 : Mathf.Lerp(2.5f, frzStats.loungeSpeed, sizeFac);
+                    icyBlueStats.loungeJumpyness = Mathf.Lerp(1, frzStats.loungeJumpyness, sizeFac);
+                    icyBlueStats.loungeDelay = (int)Mathf.Lerp(310, frzStats.loungeDelay, sizeFac);
+                    icyBlueStats.postLoungeStun = (int)Mathf.Lerp(20, frzStats.postLoungeStun, sizeFac);
+                    icyBlueStats.loungeTendensy =
+                        menacing ? 0.9f : Mathf.Lerp(0.4f, frzStats.loungeTendensy, sizeFac);
 
-                icyBlueStats.tongueChance = Mathf.Lerp(0.2f, 0, Mathf.InverseLerp(1, 1.2f, sizeMult));
+                    icyBlueStats.perfectVisionAngle = Mathf.Lerp(0.8888f, frzStats.perfectVisionAngle, sizeFac);
+                    icyBlueStats.periferalVisionAngle = Mathf.Lerp(0.0833f, frzStats.periferalVisionAngle, sizeFac);
 
-                liz.effectColor =
-                    Custom.HSL2RGB(
-                        Custom.WrappedRandomVariation(220 / 360f, 40 / 360f, 0.66f), // hue
-                        Mathf.Lerp(0.7f, 0.45f, Mathf.InverseLerp(1, 1.2f, sizeMult)), // saturation
-                        Mathf.Lerp(0.6f, 0.8f, Mathf.InverseLerp(1, 1.2f, sizeMult))); // lightness
+                    icyBlueStats.limbSize = Mathf.Lerp(0.9f, frzStats.limbSize, sizeFac);
+                    icyBlueStats.limbThickness = Mathf.Lerp(1, frzStats.limbThickness, sizeFac);
+                    icyBlueStats.stepLength = Mathf.Lerp(0.4f, frzStats.stepLength, sizeFac);
+                    icyBlueStats.liftFeet = Mathf.Lerp(0, frzStats.liftFeet, sizeFac);
+                    icyBlueStats.feetDown = Mathf.Lerp(0, frzStats.feetDown, sizeFac);
+                    icyBlueStats.noGripSpeed = Mathf.Lerp(0.2f, frzStats.noGripSpeed, sizeFac);
+                    icyBlueStats.limbSpeed = Mathf.Lerp(6, frzStats.limbSpeed, sizeFac);
+                    icyBlueStats.limbQuickness = Mathf.Lerp(0.6f, frzStats.limbQuickness, sizeFac);
+                    icyBlueStats.walkBob = Mathf.Lerp(0.4f, frzStats.walkBob, sizeFac);
+                    icyBlueStats.regainFootingCounter = (int)Mathf.Lerp(4, frzStats.regainFootingCounter, sizeFac);
 
-                lI.armorGraphic = Random.Range(0, 6);
-                lI.auraRadius = 30 + (90 * Mathf.InverseLerp(1, 1.2f, sizeMult));
-                Random.state = state;
+                    icyBlueStats.tailColorationStart = Mathf.Lerp(0.2f, 0.75f, Mathf.InverseLerp(1, 1.2f, sizeMult));
+                    icyBlueStats.tailColorationExponent = 0.5f;
+
+                    icyBlueStats.headShieldAngle = Mathf.Lerp(108, frzStats.headShieldAngle, sizeFac);
+                    icyBlueStats.headSize = Mathf.Lerp(0.9f, 1, sizeFac);
+                    icyBlueStats.neckStiffness = Mathf.Lerp(0, frzStats.neckStiffness, sizeFac);
+                    icyBlueStats.framesBetweenLookFocusChange = (int)Mathf.Lerp(20, frzStats.framesBetweenLookFocusChange, sizeFac);
+
+                    icyBlueStats.terrainSpeeds[3] = new(1f, 0.9f, 0.8f, 1f);
+                    icyBlueStats.terrainSpeeds[4] = new(0.9f, 0.9f, 0.9f, 1f);
+                    icyBlueStats.terrainSpeeds[5] = new(0.7f, 1f, 1f, 1f);
+
+                    icyBlueStats.tongueChance = Mathf.Lerp(0.2f, 0, Mathf.InverseLerp(1, 1.2f, sizeMult));
+
+                    liz.effectColor =
+                        Custom.HSL2RGB(
+                            Custom.WrappedRandomVariation(220 / 360f, 40 / 360f, 0.66f), // hue
+                            Mathf.Lerp(0.7f, 0.45f, Mathf.InverseLerp(1, 1.2f, sizeMult)), // saturation
+                            Mathf.Lerp(0.6f, 0.8f, Mathf.InverseLerp(1, 1.2f, sizeMult))); // lightness
+
+                    lS.crystalSprite = Random.Range(0, 6);
+                    lS.chillAuraRad = 30 + (90 * Mathf.InverseLerp(1, 1.2f, sizeMult));
+                    Random.state = state;
+                }
             }
-            else if (liz.Template.type == HailstormEnums.GorditoGreenie)
+            else if (lI.Gordito)
             {
                 Random.State state = Random.state;
                 Random.InitState(absLiz.ID.RandomSeed);
@@ -795,20 +857,29 @@ sealed class HailstormLizards
                 liz.bodyChunkConnections[1].distance *= 0.66f;
 
             }
-            else if (liz.Template.type == CreatureTemplate.Type.YellowLizard && (GeneralCreatureChanges.IsRWGIncan(world?.game) || HSRemix.YellowLizardColorsEverywhere.Value is true))
+            else if (liz.Template.type == CreatureTemplate.Type.YellowLizard && (OtherCreatureChanges.IsIncanStory(world?.game) || HSRemix.YellowLizardColorsEverywhere.Value is true))
             {
+                Random.State state = Random.state;
+                Random.InitState(absLiz.ID.RandomSeed);
                 float hue =
                     absLiz.Winterized && Random.value < 0.01 ? Custom.WrappedRandomVariation(200 / 360f, 40 / 360f, 0.66f) :
                     Random.value < 0.6f ? Custom.WrappedRandomVariation(36 / 360f, 18 / 360f, 0.66f) :
                     Custom.WrappedRandomVariation(44 / 360f, 36 / 360f, 0.66f);
 
                 liz.effectColor = Custom.HSL2RGB(hue, 1, Custom.ClampedRandomVariation(0.5f, 0.15f, 0.1f));
+                Random.state = state;
             }
-            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && (GeneralCreatureChanges.IsRWGIncan(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(absLiz, out AbsCtrInfo aI))
+            else if (liz.Template.type == CreatureTemplate.Type.RedLizard && OtherCreatureChanges.IsIncanStory(world?.game))
             {
                 Random.State state = Random.state;
                 Random.InitState(absLiz.ID.RandomSeed);
-
+                liz.effectColor = Custom.HSL2RGB(Custom.ClampedRandomVariation(340 / 360f, 20 / 360f, 0.25f), Random.Range(0.7f, 0.8f), 0.4f);
+                Random.state = state;
+            }
+            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && (OtherCreatureChanges.IsIncanStory(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(absLiz, out AbsCtrInfo aI))
+            {
+                Random.State state = Random.state;
+                Random.InitState(absLiz.ID.RandomSeed);
                 float winterHue = Custom.WrappedRandomVariation(195 / 360f, 65 / 360f, 0.5f);
                 liz.effectColor =
                     absLiz.Winterized && world.region is not null && world.region.name != "CC" ? Custom.HSL2RGB(winterHue, Random.Range(0.6f, 1) - Mathf.InverseLerp(13 / 24f, 13 / 12f, winterHue), Custom.ClampedRandomVariation((Random.value < 0.08f ? 0.3f : 0.7f), 0.05f, 0.2f)) : // Winter colors
@@ -816,19 +887,21 @@ sealed class HailstormLizards
                     Custom.HSL2RGB(Custom.WrappedRandomVariation(130 / 360f, 65 / 360f, 0.8f), Random.Range(0.7f, 1), Custom.ClampedRandomVariation(0.25f, 0.15f, 0.33f)); // Default colors
 
                 aI.functionTimer = Random.Range(0, 101);
-
                 Random.state = state;
             }
-            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard && (GeneralCreatureChanges.IsRWGIncan(world?.game) || HSRemix.StrawberryLizardColorsEverywhere.Value is true))
+            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard && (OtherCreatureChanges.IsIncanStory(world?.game) || HSRemix.StrawberryLizardColorsEverywhere.Value is true))
             {
+                Random.State state = Random.state;
+                Random.InitState(absLiz.ID.RandomSeed);
                 float hue =
                     Random.value < 0.05f ?
                     Custom.WrappedRandomVariation(30 / 360f, 20 / 360f, 0.33f) :
                     Custom.WrappedRandomVariation(-10 / 360f, 35 / 360f, 0.25f);
 
                 liz.effectColor = Custom.HSL2RGB(hue, Custom.ClampedRandomVariation(0.525f, 0.1f, 0.2f), Custom.ClampedRandomVariation(0.83f, 0.05f, 0.25f));
+                Random.state = state;
             }
-            else if (GeneralCreatureChanges.IsRWGIncan(world?.game))
+            else if (OtherCreatureChanges.IsIncanStory(world?.game))
             {
                 if (absLiz.Winterized)
                 {
@@ -855,21 +928,15 @@ sealed class HailstormLizards
                     {
                         Random.State state = Random.state;
                         Random.InitState(absLiz.ID.RandomSeed);
-
                         liz.effectColor = Custom.HSL2RGB(Custom.WrappedRandomVariation(0.65f, 0.2f, 0.6f), 0.9f, Custom.ClampedRandomVariation(0.6f, 0.15f, 0.2f));
-
                         Random.state = state;
                     }
                     else if (liz.Template.type == CreatureTemplate.Type.CyanLizard)
                     {
                         Random.State state = Random.state;
                         Random.InitState(absLiz.ID.RandomSeed);
-
-                        float hue =
-                            Custom.WrappedRandomVariation(210/360f, 50/360f, 0.6f);
-
+                        float hue = Custom.WrappedRandomVariation(210/360f, 50/360f, 0.6f);
                         liz.effectColor = Custom.HSL2RGB(hue, 1f, Custom.ClampedRandomVariation(hue, 0.2f, 0.3f));
-
                         Random.state = state;
                     }
                 }
@@ -933,14 +1000,13 @@ sealed class HailstormLizards
     }
     public static bool ColdLizardArmorSpearDeflect(On.Lizard.orig_SpearStick orig, Lizard liz, Weapon source, float dmg, BodyChunk chunk, PhysicalObject.Appendage.Pos onAppendagePos, Vector2 direction)
     {
-        if (source is IceCrystal) return true;
-
-        if (CWT.AbsCtrData.TryGetValue(liz.abstractCreature, out AbsCtrInfo aBI) && aBI.isFreezerOrIcyBlue)
+        if (source is IceCrystal)
         {
-            if (aBI.functionTimer < 2 && (chunk.index == 1 || chunk.index == 2))
-            {
-                return false;
-            }
+            return true;
+        }
+        if (liz.LizardState is ColdLizState lS && lS.armored && (chunk.index == 1 || chunk.index == 2))
+        {
+            return false;
         }
         return orig(liz, source, dmg, chunk, onAppendagePos, direction);
     }
@@ -948,7 +1014,7 @@ sealed class HailstormLizards
     {
         if (liz?.room is not null && hitChunk is not null)
         {
-            if (GeneralCreatureChanges.IsRWGIncan(liz.room.game))
+            if (OtherCreatureChanges.IsIncanStory(liz.room.game))
             {
                 if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
                 {
@@ -996,7 +1062,7 @@ sealed class HailstormLizards
                 dmg *= 7.5f; // This, for sure, ends in a net 0.75x damage, though.
             }
 
-            if ((source?.owner is not null || dmgType == Creature.DamageType.Explosion) && LizardData.TryGetValue(liz, out LizardInfo lI) && lI.isFreezerOrIcyBlue && CWT.AbsCtrData.TryGetValue(liz.abstractCreature, out AbsCtrInfo aBI))
+            if (liz.LizardState is ColdLizState lS && (source?.owner is not null || dmgType == Creature.DamageType.Explosion) && LizardData.TryGetValue(liz, out LizardInfo lI))
             {
                 bool protectedFrom =
                     source?.owner is not null &&
@@ -1007,11 +1073,11 @@ sealed class HailstormLizards
 
                 if (hitChunk.index == 0 && directionAndMomentum.HasValue && liz.HitInMouth(directionAndMomentum.Value))
                 {
-                    lI.iceBreath = (int)(dmg * (liz.dead ? 8 : 24));
-                    lI.breathDir = -directionAndMomentum.Value;
+                    lS.iceBreath = (int)(dmg * (liz.dead ? 8 : 24));
+                    lS.breathDir = -directionAndMomentum.Value;
                     dmg *= 0.8f; // 1.5x damage -> 1.2x damage
                 }
-                else if (aBI.spikeBroken is not null && !aBI.spikeBroken.All(broken => broken) && hitChunk.index > 0 && !protectedFrom && (dmg >= 0.25f || (source?.owner is not null && source.owner is StowawayBug))) // Allows the back armor of Freezer Lizards to block damage and nullify stun.
+                else if (lS.crystals is not null && !lS.crystals.All(intact => !intact) && hitChunk.index > 0 && !protectedFrom && (dmg >= 0.25f || (source?.owner is not null && source.owner is StowawayBug))) // Allows the back armor of Freezer Lizards to block damage and nullify stun.
                 {
                     // Armor damage
                     int breakAmount = (int)Mathf.Max(dmg, 1);
@@ -1045,26 +1111,27 @@ sealed class HailstormLizards
                             break;
                         }
                     }
+
                     LizardGraphics lGraphics = liz.graphicsModule as LizardGraphics;
-                    if (lGraphics == null)
+                    if (lGraphics is null)
                     {
                         return;
                     }     
 
-                    if (liz.Template.type == HailstormEnums.Freezer)
+                    if (lS.Freezer)
                     {
                         Color lizColor2 = SecondaryFreezerColor(lGraphics);
 
-                        for (int i = Random.Range(0, aBI.spikeBroken.Length - 1); breakAmount > 0 && !aBI.spikeBroken.All(broken => broken);)
+                        for (int i = Random.Range(0, lS.crystals.Length - 1); breakAmount > 0 && !lS.crystals.All(intact => !intact);)
                         {
-                            if (!aBI.spikeBroken[i])
+                            if (lS.crystals[i])
                             {
-                                aBI.spikeBroken[i] = true;
+                                lS.crystals[i] = false;
                                 breakAmount--;
                                 if (Random.value < 0.075f && !(source?.owner is not null && source.owner is Spear spr && spr.bugSpear))
                                 {
                                     Vector2 crystalPos = hitChunk.pos + new Vector2(0, 10);
-                                    ArmorIceSpikes.DropCrystals(liz, crystalPos, lI.armorGraphic);
+                                    ArmorIceSpikes.DropCrystals(liz, crystalPos, lS.crystalSprite);
                                 }
                                 else
                                 {
@@ -1086,7 +1153,7 @@ sealed class HailstormLizards
                             }
                             if (breakAmount > 0)
                             {
-                                if (i == aBI.spikeBroken.Length - 1)
+                                if (i == lS.crystals.Length - 1)
                                 {
                                     i -= i;
                                 }
@@ -1094,16 +1161,16 @@ sealed class HailstormLizards
                             }
                         }
                     }
-                    else if (liz.Template.type == HailstormEnums.IcyBlue)
+                    else if (lS.IcyBlue)
                     {
                         liz.room.PlaySound(SoundID.Coral_Circuit_Break, hitChunk.pos, 1.25f, 1.5f);
 
                         Color lizColor2 = SecondaryIcyBlueColor(lGraphics);
 
-                        for (int i = 0; i < aBI.spikeBroken.Length; i++)
+                        for (int i = 0; i < lS.crystals.Length; i++)
                         {
-                            if (aBI.spikeBroken[i]) continue;
-                            aBI.spikeBroken[i] = true;
+                            if (!lS.crystals[i]) continue;
+                            lS.crystals[i] = false;
 
                             for (int j = 0; j < 6; j++)
                             {
@@ -1128,11 +1195,17 @@ sealed class HailstormLizards
     public static void HailstormLizardUpdate(On.Lizard.orig_Update orig, Lizard liz, bool eu)
     {
         orig(liz, eu);
-        if (liz?.room is null || liz.slatedForDeletetion || !LizardData.TryGetValue(liz, out LizardInfo lI) || !lI.isHailstormLiz || !CWT.AbsCtrData.TryGetValue(liz.abstractCreature, out AbsCtrInfo aBI))
+        if (liz?.room is null || liz.slatedForDeletetion || !LizardData.TryGetValue(liz, out LizardInfo lI))
         {
             return;
         }
-        if (liz.Template.type == HailstormEnums.GorditoGreenie)
+
+        if (!(lI.Gordito || liz.LizardState is ColdLizState))
+        {
+            return;
+        }
+
+        if (lI.Gordito)
         {
             if (liz.animation == Lizard.Animation.Lounge && liz.timeInAnimation > 10 && Mathf.Abs(liz.mainBodyChunk.vel.x) < 3)
             {
@@ -1142,14 +1215,14 @@ sealed class HailstormLizards
 
                 liz.mainBodyChunk.vel.x += 3 * Mathf.Sign(signFloat);
             }
-            if (liz.animation != Lizard.Animation.Lounge && lI.abilityUsed)
+            if (liz.animation != Lizard.Animation.Lounge && lI.bounceLungeUsed)
             {
-                lI.abilityUsed = false;
+                lI.bounceLungeUsed = false;
             }
         }
-        else if (lI.isFreezerOrIcyBlue)
+        else if (liz.LizardState is ColdLizState lS)
         {
-            if (liz.HypothermiaExposure > 0 || liz.Hypothermia > 0)
+            if (liz.HypothermiaExposure > 0.1f || liz.Hypothermia > 0.1f)
             {
                 liz.HypothermiaExposure = 0;
                 liz.Hypothermia = 0;                
@@ -1159,7 +1232,7 @@ sealed class HailstormLizards
                 foreach (AbstractCreature absCtr in liz.room.abstractRoom.creatures)
                 {
                     Creature ctr = absCtr.realizedCreature;
-                    if (ctr is null || ctr is Player || ctr == liz || ctr.grasps is null)
+                    if (ctr is null || ctr is Player || ctr == liz || ctr.grasps is null || ctr.Template.type == HailstormEnums.Chillipede)
                     {
                         continue; // Stops the code for the current AbstractCreature, and continues on to the next one.
                     }
@@ -1178,111 +1251,110 @@ sealed class HailstormLizards
                             ctr.Stun((int)Mathf.Lerp(0, 400, Mathf.InverseLerp(1.2f, 1.7f, liz.TotalMass)));
                         }
                         // ^ Stuns leeches and spiders epically if the lizard is grabbed by them. Stun time varies WILDLY with Icy Blue Lizards, but is always max with Freezers.                                
-                        else if ((liz.Template.type == HailstormEnums.Freezer && grasp.chunkGrabbed == 0) || ((grasp.chunkGrabbed == 1 || grasp.chunkGrabbed == 2) && aBI.functionTimer < 2))
+                        else if ((liz.Template.type == HailstormEnums.Freezer && grasp.chunkGrabbed == 0) || ((grasp.chunkGrabbed == 1 || grasp.chunkGrabbed == 2) && lS.armored))
                         {
                             if (liz.Template.type == HailstormEnums.Freezer && grasp.chunkGrabbed == 0)
                             {
                                 liz.room.PlaySound(SoundID.Lizard_Jaws_Bite_Do_Damage, liz.bodyChunks[0].pos, 1.25f, 1);
                             }
-                            ctr.Violence(liz.bodyChunks[0], -liz.bodyChunks[0].vel, ctr.firstChunk, null, HailstormEnums.ColdDamage, 0.15f, 25);
+                            ctr.Violence(liz.bodyChunks[0], -liz.bodyChunks[0].vel, ctr.firstChunk, null, HailstormEnums.Cold, 0.15f, 25);
                             grasp.Release();
                         } // ^ Briefly stuns grabber and makes them let go if they toucha da lizor's armor.    
                     }
                 }
             }
 
-            if (aBI.spikeBroken is not null && aBI.spikeBroken.All(broken => broken) && aBI.functionTimer < 2)
+            if (lS.crystals is not null && lS.crystals.All(intact => !intact) && lS.armored)
             {
-                aBI.functionTimer++;
+                lS.armored = false;
             }
 
-            if (liz.grasps is not null && liz.grasps[0]?.grabbed is not null && liz.grasps[0].grabbed is Creature Ctr && Ctr is not Player && Ctr.State is HealthState hs)
+            if (liz.grasps is not null && liz.grasps[0]?.grabbed is not null && liz.grasps[0].grabbed is Creature grabbed && grabbed is not Player && grabbed.Template.type != HailstormEnums.Chillipede && grabbed.State is HealthState hs)
             {
-                float frostbite = (liz.Template.type == HailstormEnums.Freezer ? 0.0045f : 0.002f) / Ctr.Template.baseDamageResistance;
-                if (Ctr is Centipede cnt)
+                float frostbite = (lS.Freezer ? 0.0045f : 0.002f) / grabbed.Template.baseDamageResistance;
+                if (grabbed is Centipede cnt)
                 {
                     frostbite *= Mathf.Lerp(1.3f, 0.1f, Mathf.Pow((cnt.AquaCenti? cnt.size/2 : cnt.size), 0.5f));
                 }
                 hs.health -= frostbite;
 
-                if (Ctr.killTag is null)
+                if (grabbed.killTag is null)
                 {
-                    Ctr.SetKillTag(liz.abstractCreature);
+                    grabbed.SetKillTag(liz.abstractCreature);
                 }
             }
 
-            if (lI.auraRadius > 75)
+            if (lS.chillAuraRad > 75)
             {
-                if (lI.freezerAura is null)
+                if (lS.chillAura is null)
                 {
-                    lI.freezerAura = new LightSource(liz.mainBodyChunk.pos, false, liz.effectColor, liz);
-                    lI.freezerAura.affectedByPaletteDarkness = 0.2f;
-                    liz.room.AddObject(lI.freezerAura);
+                    lS.chillAura = new LightSource(liz.mainBodyChunk.pos, false, liz.effectColor, liz);
+                    lS.chillAura.affectedByPaletteDarkness = 0.2f;
+                    lS.chillAura.requireUpKeep = true;
+                    liz.room.AddObject(lS.chillAura);
                 }
                 else
                 {
-                    lI.freezerAura.requireUpKeep = false;
-                    lI.freezerAura.stayAlive = true;
-                    lI.freezerAura.setPos = liz.mainBodyChunk.pos;
-                    lI.freezerAura.setRad = lI.auraRadius;
-                    lI.freezerAura.setAlpha = 0.75f;
-                    if (lI.freezerAura.slatedForDeletetion || lI.freezerAura.room != liz.room)
+                    lS.chillAura.stayAlive = true;
+                    lS.chillAura.setPos = liz.mainBodyChunk.pos;
+                    lS.chillAura.setRad = lS.chillAuraRad;
+                    if (lS.chillAura.slatedForDeletetion || lS.chillAura.room != liz.room)
                     {
-                        lI.freezerAura = null;
+                        lS.chillAura = null;
                     }
                 }
             }
                    
 
-            if (liz.Template.type == HailstormEnums.IcyBlue)
+            if (lS.IcyBlue)
             {
                 if (liz.tongue?.attached is not null && liz.tongue.attached.owner is Creature && liz.loungeDelay > 1)
                 {
                     liz.loungeDelay--;
                 }
             }
-            else if (liz.Template.type == HailstormEnums.Freezer)
+            else if (lS.Freezer)
             {
-                if (lI.abilityCooldown > 0)
+                if (lS.spitCooldown > 0)
                 {
-                    lI.abilityCooldown--;
+                    lS.spitCooldown--;
                 }
 
                 try
                 {
-                    if (lI.abilityCooldown == 0)
+                    if (lS.spitCooldown == 0)
                     {
                         Tracker.CreatureRepresentation mostAttractivePrey = liz.AI.preyTracker.MostAttractivePrey;
-                        if (mostAttractivePrey is not null && WantsToSpit(liz, mostAttractivePrey) && lI.iceBreath == 0 && (mostAttractivePrey.VisualContact || mostAttractivePrey.TicksSinceSeen < 12 || lI.abilityTimer >= 80))
+                        if (mostAttractivePrey is not null && WantsToSpit(liz, mostAttractivePrey) && lS.iceBreath == 0 && (mostAttractivePrey.VisualContact || mostAttractivePrey.TicksSinceSeen < 12 || lS.spitWindup >= 80))
                         {
-                            ItsSpittinTime(liz, lI, mostAttractivePrey);
+                            ItsSpittinTime(liz, lS, mostAttractivePrey);
                         }
-                        else if (lI.abilityTimer != 0)
+                        else if (lS.spitWindup != 0)
                         {
-                            if (Random.value < lI.giveUpChance)
+                            if (Random.value < lS.spitGiveUpChance)
                             {
-                                lI.giveUpChance = 0;
-                                lI.abilityCooldown = Random.Range(280, 360);
+                                lS.spitGiveUpChance = 0;
+                                lS.spitCooldown = Random.Range(280, 360);
                             }
                             else
                             {
-                                lI.giveUpChance += 0.15f;
+                                lS.spitGiveUpChance += 0.15f;
                             }
-                            lI.abilityTimer = 0;
-                            lI.aimChunk = null;
+                            lS.spitWindup = 0;
+                            lS.spitAimChunk = null;
                         }
                     }
                 }
                 catch (Exception e)
                 {
-                    Debug.Log("Freezer Lizard spit AI is bugging out; please report this: " + e);
+                    Debug.Log("[Hailstorm] Freezer Lizard spit AI is bugging out; please report this: " + e);
                 }
 
                 try
                 {
-                    if (lI.iceBreath > 0)
+                    if (lS.iceBreath > 0)
                     {
-                        lI.iceBreath--;
+                        lS.iceBreath--;
                         InsectCoordinator smallInsects = null;
                         if (liz.room is not null)
                         {
@@ -1300,9 +1372,9 @@ sealed class HailstormLizards
                         Vector2 finalBreathDir = Custom.DegToVec(breathDir + Random.Range(-15, 15));
 
                         float breathSize =
-                            (liz.dead ? 0.1f : 0.15f) * Mathf.Lerp(1, 2.5f, Mathf.InverseLerp(0, 60, lI.iceBreath));
+                            (liz.dead ? 0.1f : 0.15f) * Mathf.Lerp(1, 2.5f, Mathf.InverseLerp(0, 60, lS.iceBreath));
 
-                        if (lI.iceBreath % 2 != 1)
+                        if (lS.iceBreath % 2 != 1)
                         {
                             liz.room.AddObject(new FreezerMist(liz.DangerPos, finalBreathDir * (liz.dead ? Random.Range(15f, 19f) : Random.Range(18f, 23f)), liz.effectColor, SecondaryFreezerColor(liz.graphicsModule as LizardGraphics), breathSize, liz.abstractCreature, smallInsects, true));
                         }                        
@@ -1310,7 +1382,7 @@ sealed class HailstormLizards
                 }
                 catch (Exception e) 
                 {
-                    Debug.Log("Freezer Lizard ice breath is screwing up???? Report this, please:" + e);
+                    Debug.Log("[Hailstorm] Freezer Lizard ice breath is screwing up???? Report this, please:" + e);
                 }                          
             }                
    
@@ -1340,7 +1412,7 @@ sealed class HailstormLizards
             {
                 if (Random.value < 0.25f)
                 {
-                    lI.abilityUsed = true;
+                    lI.bounceLungeUsed = true;
                     foreach (BodyChunk chunk in liz.bodyChunks)
                     {
                         chunk.vel.y += 15;
@@ -1419,7 +1491,7 @@ sealed class HailstormLizards
         {
             foreach (BodyChunk chunk in liz.bodyChunks)
             {
-                if (direction.x != 0 && lI.abilityUsed) // Bounces liz off of walls during its extra-bouncy lunges
+                if (direction.x != 0 && lI.bounceLungeUsed) // Bounces liz off of walls during its extra-bouncy lunges
                 {
                     float pitch = Random.Range(0.1f, 0.5f);
                     liz.room.PlaySound(SoundID.Rock_Hit_Wall, chunk, false, 1 + pitch, pitch);
@@ -1441,7 +1513,7 @@ sealed class HailstormLizards
                     liz.room.PlaySound(SoundID.Rock_Hit_Wall, chunk, false, 1 + pitch, pitch);
 
                     chunk.vel.y *= -1.4f;
-                    if (chunk.vel.y > (lI.abilityUsed ? 3 : 10))
+                    if (chunk.vel.y > (lI.bounceLungeUsed ? 3 : 10))
                     {
                         chunk.vel.y = 15;
                     }
@@ -1451,7 +1523,7 @@ sealed class HailstormLizards
         orig(liz, myChunk, direction, speed, firstContact);
     }
 
-    public static void GorditoGreenieStunNegation(On.Lizard.orig_Stun orig, Lizard liz, int stun)
+    public static void HailstormLizStun(On.Lizard.orig_Stun orig, Lizard liz, int stun)
     {
         if (liz.Template.type == HailstormEnums.GorditoGreenie)
         {
@@ -1514,30 +1586,30 @@ sealed class HailstormLizards
         return false;
     }
 
-    public static void ItsSpittinTime(Lizard liz, LizardInfo lI, Tracker.CreatureRepresentation mostAttractivePrey)
+    public static void ItsSpittinTime(Lizard liz, ColdLizState lS, Tracker.CreatureRepresentation mostAttractivePrey)
     {
-        if (mostAttractivePrey.representedCreature.realizedCreature?.bodyChunks is not null && lI.aimChunk is null)
+        if (mostAttractivePrey.representedCreature.realizedCreature?.bodyChunks is not null && lS.spitAimChunk is null)
         {
-            lI.aimChunk = mostAttractivePrey.representedCreature.realizedCreature.bodyChunks[Random.Range(0, mostAttractivePrey.representedCreature.realizedCreature.bodyChunks.Length - 1)];
+            lS.spitAimChunk = mostAttractivePrey.representedCreature.realizedCreature.bodyChunks[Random.Range(0, mostAttractivePrey.representedCreature.realizedCreature.bodyChunks.Length - 1)];
         }
-        lI.abilityTimer++;
-        liz.bodyWiggleCounter = lI.abilityTimer / 2;
+        lS.spitWindup++;
+        liz.bodyWiggleCounter = lS.spitWindup / 2;
         (liz.graphicsModule as LizardGraphics).head.vel +=
-            Custom.RNV() * ((lI.abilityTimer < 80)?
-            Mathf.InverseLerp(0, 80, lI.abilityTimer) :
-            Mathf.InverseLerp(100, 80, lI.abilityTimer));    
+            Custom.RNV() * ((lS.spitWindup < 80)?
+            Mathf.InverseLerp(0, 80, lS.spitWindup) :
+            Mathf.InverseLerp(100, 80, lS.spitWindup));    
         
         liz.JawOpen =
-            (lI.abilityTimer < 80) ?
-            Mathf.InverseLerp(75, 80, lI.abilityTimer) :
-            Mathf.InverseLerp(105, 90, lI.abilityTimer);
+            (lS.spitWindup < 80) ?
+            Mathf.InverseLerp(75, 80, lS.spitWindup) :
+            Mathf.InverseLerp(105, 90, lS.spitWindup);
 
         liz.AI.runSpeed = Mathf.Lerp(liz.AI.runSpeed, 0.5f, 0.05f);        
 
-        if (lI.abilityTimer == 80 && lI.aimChunk is not null)
+        if (lS.spitWindup == 80 && lS.spitAimChunk is not null)
         {            
             Vector2 val1 = liz.bodyChunks[0].pos + Custom.DirVec(liz.bodyChunks[1].pos, liz.bodyChunks[0].pos) * 10f;
-            Vector2 val2 = Custom.DirVec(val1, lI.aimChunk.pos);
+            Vector2 val2 = Custom.DirVec(val1, lS.spitAimChunk.pos);
             if (Vector2.Dot(val2, Custom.DirVec(liz.bodyChunks[1].pos, liz.bodyChunks[0].pos)) > 0.3f || liz.safariControlled)
             {
                 liz.room.PlaySound(SoundID.Red_Lizard_Spit, val1, 1.5f, 1.25f);
@@ -1546,20 +1618,20 @@ sealed class HailstormLizards
                 liz.bodyChunks[1].pos -= val2 * 4f;
                 liz.bodyChunks[2].vel -= val2 * 2f;
                 liz.bodyChunks[1].vel -= val2 * 1f;
-                lI.abilityUsed = true;
+                lS.spitUsed = true;
             }
         }
-        else if (lI.abilityTimer >= 80 && !lI.abilityUsed)
+        else if (lS.spitWindup >= 80 && !lS.spitUsed)
         {
-            lI.abilityTimer = 0;
-            lI.aimChunk = null;
+            lS.spitWindup = 0;
+            lS.spitAimChunk = null;
         }
-        else if (lI.abilityTimer >= 110)
+        else if (lS.spitWindup >= 110)
         {
-            lI.abilityUsed = false;                  
-            lI.abilityCooldown = Random.Range(1400, 1800);
-            lI.abilityTimer = 0;
-            lI.aimChunk = null;
+            lS.spitUsed = false;
+            lS.spitCooldown = Random.Range(1400, 1800);
+            lS.spitWindup = 0;
+            lS.spitAimChunk = null;
         }
     }
 
@@ -1619,7 +1691,7 @@ sealed class HailstormLizards
         Creature ctr = dynamRelat.trackerRep.representedCreature.realizedCreature;
 
 
-        if (GeneralCreatureChanges.IsRWGIncan(lizAI.lizard.room.game))
+        if (OtherCreatureChanges.IsIncanStory(lizAI.lizard.room.game))
         {
             if ((lizType == CreatureTemplate.Type.Salamander || lizType == MoreSlugcatsEnums.CreatureTemplateType.EelLizard) &&
                 (otherCtrType == CreatureTemplate.Type.Leech || otherCtrType == CreatureTemplate.Type.SeaLeech || otherCtrType == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech))
@@ -1664,7 +1736,7 @@ sealed class HailstormLizards
             }
         }
 
-        if (LizardData.TryGetValue(lizAI.lizard, out LizardInfo lI) && lI.isFreezerOrIcyBlue)
+        if (lizAI.lizard.LizardState is ColdLizState lS)
         {
             bool Scissorbird =
                 ctr is MirosBird ||
@@ -1676,13 +1748,13 @@ sealed class HailstormLizards
                 otherCtrType == HailstormEnums.IcyBlue ||
                 otherCtrType == HailstormEnums.Freezer;
 
-            if (lizType == HailstormEnums.IcyBlue)
+            if (lS.IcyBlue)
             {
                 if (ctr is Lizard && !packMember) // Eats other lizards if they're dead, otherwise fighting them to kill.
                 {
                     if (otherCtrType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard)
                     {
-                        return lI.packPower >= 0.6f ?
+                        return lS.PackPower >= 0.6f ?
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, 1) :
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.5f);
                     }
@@ -1697,9 +1769,9 @@ sealed class HailstormLizards
                                 yellowCount += 0.1f;
                             }
                         }
-                        return lI.packPower >= yellowCount || lI.nearAFreezer ?
+                        return lS.PackPower >= yellowCount || lS.NearAFreezer ?
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, 0.75f) :
-                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, Mathf.Min(1, yellowCount - lI.packPower));
+                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, Mathf.Min(1, yellowCount - lS.PackPower));
                     }
 
                     if (otherCtrType == CreatureTemplate.Type.GreenLizard ||
@@ -1710,9 +1782,9 @@ sealed class HailstormLizards
 
                         bool cyanLiz = otherCtrType == CreatureTemplate.Type.CyanLizard;
 
-                        return lI.packPower >= (cyanLiz ? 0.25f : 0.5f) ?
-                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Min(1, lI.packPower * (cyanLiz ? 2 : 1))) :
-                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.StayOutOfWay, Mathf.Min(1, lI.packPower * (cyanLiz ? 1 : 2)));
+                        return lS.PackPower >= (cyanLiz ? 0.25f : 0.5f) ?
+                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Min(1, lS.PackPower * (cyanLiz ? 2 : 1))) :
+                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.StayOutOfWay, Mathf.Min(1, lS.PackPower * (cyanLiz ? 1 : 2)));
                     }
                 }
 
@@ -1721,22 +1793,22 @@ sealed class HailstormLizards
                     if (ctr.dead)
                     {
                         return
-                            lI.nearAFreezer ? 
+                            lS.NearAFreezer ? 
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.StayOutOfWay, 0.6f) :
-                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, Mathf.Lerp(0.2f, 1, lI.packPower));
+                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, Mathf.Lerp(0.2f, 1, lS.PackPower));
                     }
-                    return lI.packPower >= 0.7f && lI.nearAFreezer ?
-                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, lI.packPower) :
+                    return lS.PackPower >= 0.7f && lS.NearAFreezer ?
+                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, lS.PackPower) :
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 1);
                 }
 
                 if (ctr is Vulture || ctr is MirosBird) // Attacks and kills both vultures and Miros birds, then eats them.
                 {
                     float threshold = Scissorbird ? 1 : 0.5f;
-                    if (lI.nearAFreezer) threshold -= 0.2f;
-                    return lI.packPower >= threshold ?
-                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, lI.packPower) :
-                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, Mathf.InverseLerp(1, (Scissorbird ? 0.8f : 0.4f), lI.packPower));
+                    if (lS.NearAFreezer) threshold -= 0.2f;
+                    return lS.PackPower >= threshold ?
+                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, lS.PackPower) :
+                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, Mathf.InverseLerp(1, (Scissorbird ? 0.8f : 0.4f), lS.PackPower));
                 }
 
                 if (ctr is Scavenger && ctr?.room is not null)
@@ -1750,21 +1822,21 @@ sealed class HailstormLizards
                                 scv2.Elite || scv2.King ? 0.3f : 0.1f;
                         }
                     }
-                    if (lI.packPower < scavPackPower)
+                    if (lS.PackPower < scavPackPower)
                     {
                         return new CreatureTemplate.Relationship
-                            (CreatureTemplate.Relationship.Type.Afraid, Mathf.Min(1, scavPackPower - lI.packPower));
+                            (CreatureTemplate.Relationship.Type.Afraid, Mathf.Min(1, scavPackPower - lS.PackPower));
                     }
                 }
 
                 if (ctr is Player && lizAI.LikeOfPlayer(dynamRelat.trackerRep) < 0.5f)
                 {
                     return new CreatureTemplate.Relationship
-                            (CreatureTemplate.Relationship.Type.Eats, lI.packPower > 0.1f ? 1 : Mathf.InverseLerp(0, 600, dynamRelat.trackerRep.age));
+                            (CreatureTemplate.Relationship.Type.Eats, lS.PackPower > 0.1f ? 1 : Mathf.InverseLerp(0, 600, dynamRelat.trackerRep.age));
                 }
 
             }
-            if (lizType == HailstormEnums.Freezer)
+            if (lS.Freezer)
             {
 
                 if (ctr is Spider && otherCtrType != HailstormEnums.Luminescipede)
@@ -1777,12 +1849,12 @@ sealed class HailstormLizards
                 {
                     if (otherCtrType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard)
                     {
-                        return lI.packPower >= 0.6f?
+                        return lS.PackPower >= 0.6f?
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, 1) :
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.5f);
                     }
                     return !ctr.State.dead ?
-                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(otherCtrType == CreatureTemplate.Type.RedLizard ? 0.75f : 0.5f, 1, Mathf.InverseLerp(0.2f, 1, lI.packPower))) :
+                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(otherCtrType == CreatureTemplate.Type.RedLizard ? 0.75f : 0.5f, 1, Mathf.InverseLerp(0.2f, 1, lS.PackPower))) :
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.5f);
                 }
 
@@ -1803,51 +1875,49 @@ sealed class HailstormLizards
                         return new CreatureTemplate.Relationship
                             (CreatureTemplate.Relationship.Type.Eats, 1);
                     }
-                    return lI.packPower >= 0.7f || !Custom.DistLess(lizAI.lizard.DangerPos, cnt.DangerPos, 350) ?
+                    return lS.PackPower >= 0.7f || !Custom.DistLess(lizAI.lizard.DangerPos, cnt.DangerPos, 350) ?
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Max(0.5f, Mathf.InverseLerp(350, 50, Custom.Dist(lizAI.lizard.DangerPos, cnt.DangerPos)))) :
                         new CreatureTemplate.Relationship (CreatureTemplate.Relationship.Type.Afraid, 1);
                 }
 
                 if (ctr is Vulture || ctr is MirosBird) // Attacks and kills both vultures and Miros birds, then eats them.
                 {
-                    return new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(Scissorbird ? 0.8f : 0.6f, 1, Mathf.InverseLerp(0.2f, 1, lI.packPower)));
+                    return new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(Scissorbird ? 0.8f : 0.6f, 1, Mathf.InverseLerp(0.2f, 1, lS.PackPower)));
                 }
             }
         }
 
-        if (ctr is Lizard icy &&
-            (icy.Template.type == HailstormEnums.IcyBlue || icy.Template.type == HailstormEnums.Freezer) &&
-            LizardData.TryGetValue(icy, out LizardInfo Icy))
+        if (ctr is Lizard icy && icy.LizardState is ColdLizState LS)
         {
             if (lizType == CreatureTemplate.Type.CyanLizard && icy.Template.type == HailstormEnums.IcyBlue)
             {
-                return (Icy.nearAFreezer || Icy.packPower >= 0.5f) ?
-                    new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, Icy.nearAFreezer ? 1 : Mathf.Lerp(0.25f, 1, Mathf.InverseLerp(0.5f, 1, lI.packPower))) :
-                    new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.5f, 0.25f, Mathf.InverseLerp(0, 0.5f, lI.packPower)));
+                return (LS.NearAFreezer || LS.PackPower >= 0.5f) ?
+                    new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, LS.NearAFreezer ? 1 : Mathf.Lerp(0.25f, 1, Mathf.InverseLerp(0.5f, 1, LS.PackPower))) :
+                    new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.5f, 0.25f, Mathf.InverseLerp(0, 0.5f, LS.PackPower)));
             }
             if (lizType == CreatureTemplate.Type.GreenLizard || lizType == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard || lizType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard)
             {
-                if (lizType == CreatureTemplate.Type.GreenLizard && otherCtrType == HailstormEnums.IcyBlue && icy.dead && !Icy.nearAFreezer)
+                if (lizType == CreatureTemplate.Type.GreenLizard && otherCtrType == HailstormEnums.IcyBlue && icy.dead && !LS.NearAFreezer)
                 {
                     return new CreatureTemplate.Relationship
                         (CreatureTemplate.Relationship.Type.Eats, 0.25f);
                 }
-                if (Icy.packPower >= 0.9f && (otherCtrType == HailstormEnums.Freezer || Icy.nearAFreezer))
+                if (LS.PackPower >= 0.9f && (otherCtrType == HailstormEnums.Freezer || LS.NearAFreezer))
                 {
                     return new CreatureTemplate.Relationship
                         (CreatureTemplate.Relationship.Type.Afraid, 1);
                 }
                 return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0, 0.9f, lI.packPower)));
+                    (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0, 0.9f, LS.PackPower)));
             }
-            if (lizType == CreatureTemplate.Type.RedLizard && otherCtrType == HailstormEnums.IcyBlue && Icy.packPower >= 0.5f)
+            if (lizType == CreatureTemplate.Type.RedLizard && otherCtrType == HailstormEnums.IcyBlue && LS.PackPower >= 0.5f)
             {
                 return new CreatureTemplate.Relationship
-                        (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0.5f, 1, lI.packPower)));
+                        (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0.5f, 1, LS.PackPower)));
             }
         }
 
-        if (dynamRelat is not null && GeneralCreatureChanges.IsRWGIncan(lizAI.lizard.room.game) &&
+        if (dynamRelat is not null && OtherCreatureChanges.IsIncanStory(lizAI.lizard.room.game) &&
             lizType != HailstormEnums.Freezer &&
             lizType != HailstormEnums.IcyBlue &&
             lizType != CreatureTemplate.Type.BlueLizard &&
@@ -1877,16 +1947,16 @@ sealed class HailstormLizards
     public static void ColdLizardAIConstructor(On.LizardAI.orig_ctor orig, LizardAI liz, AbstractCreature absCtr, World world)
     {
         orig(liz, absCtr, world);
-        if (liz.lizard is not null && LizardData.TryGetValue(liz.lizard, out LizardInfo lI) && lI.isFreezerOrIcyBlue)
+        if (liz.lizard is not null && liz.lizard.LizardState is ColdLizState lS)
         {
-            if (liz.lizard.Template.type == HailstormEnums.IcyBlue)
+            if (lS.IcyBlue)
             {
                 liz.pathFinder.stepsPerFrame = 20;
                 liz.preyTracker.giveUpOnUnreachablePrey = 1100;
                 liz.stuckTracker.minStuckCounter = 40;
                 liz.stuckTracker.maxStuckCounter = 80;
             }
-            else if (liz.lizard.Template.type == HailstormEnums.Freezer)
+            else if (lS.Freezer)
             {
                 liz.pathFinder.stepsPerFrame = 20;
                 liz.preyTracker.giveUpOnUnreachablePrey = 1800;
@@ -1899,54 +1969,66 @@ sealed class HailstormLizards
     public static void ColdLizardAIUpdate(On.LizardAI.orig_Update orig, LizardAI lizAI)
     {
         orig(lizAI);
-        if (lizAI.lizard?.room is not null && LizardData.TryGetValue(lizAI.lizard, out LizardInfo lI))
+        if (lizAI.lizard?.room is not null && LizardData.TryGetValue(lizAI.lizard, out _))
         {
-            if (lI.isFreezerOrIcyBlue)
+            Lizard liz = lizAI.lizard;
+
+            if (liz.LizardState is ColdLizState lS)
             {
+                lS.PackUpdateTimer++;
 
-                lI.packPowerUpdateTimer++;
-
-                if (lI.packPowerUpdateTimer > 80)
+                if (lS.PackUpdateTimer > 80)
                 {
-                    lI.packPower = 0;
-                    lI.packPowerUpdateTimer = 0;
-                    lI.nearAFreezer = false;
-                    foreach (AbstractCreature absCtr in lizAI.lizard.room.abstractRoom.creatures)
+                    lS.PackUpdateTimer = 0;
+                    lS.PackPower = 0;
+                    lS.NearAFreezer = false;
+                    foreach (AbstractCreature absCtr in liz.room.abstractRoom.creatures)
                     {
-                        if (absCtr.realizedCreature is not null && absCtr.realizedCreature is Lizard liz && !liz.dead && Custom.DistLess(lizAI.lizard.DangerPos, liz.DangerPos, 1250) &&
-                            (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard || liz.Template.type == HailstormEnums.IcyBlue || liz.Template.type == HailstormEnums.Freezer))
+                        if (absCtr.realizedCreature is not null && absCtr.realizedCreature is Lizard otherLiz && !otherLiz.dead && Custom.DistLess(liz.DangerPos, otherLiz.DangerPos, 1250) &&
+                            (otherLiz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard || otherLiz.Template.type == HailstormEnums.IcyBlue || otherLiz.Template.type == HailstormEnums.Freezer))
                         {
-                            if (lI.packPower < 1)
+                            if (lS.PackPower < 1)
                             {
-                                lI.packPower +=
-                                    liz.Template.type == HailstormEnums.Freezer ? 0.2f :
-                                    liz.Template.type == HailstormEnums.IcyBlue ? 0.1f : 0.05f;
+                                lS.PackPower +=
+                                    otherLiz.Template.type == HailstormEnums.Freezer ? 0.2f :
+                                    otherLiz.Template.type == HailstormEnums.IcyBlue ? 0.1f : 0.05f;
                             }
 
-                            if (liz.Template.type == HailstormEnums.Freezer && !lI.nearAFreezer)
+                            if (otherLiz.Template.type == HailstormEnums.Freezer && !lS.NearAFreezer)
                             {
-                                lI.nearAFreezer = true;
+                                lS.NearAFreezer = true;
                                 if (lizAI.creature.abstractAI.followCreature is null && lizAI.preyTracker.MostAttractivePrey is null)
                                 {
-                                    lizAI.creature.abstractAI.followCreature = liz.abstractCreature;
+                                    lizAI.creature.abstractAI.followCreature = otherLiz.abstractCreature;
                                 }
                             }
                         }
                     }
-                    if (lI.packPower > 1)
+                    if (lS.PackPower > 1)
                     {
-                        lI.packPower = 1;
+                        lS.PackPower = 1;
                     }
                 }
 
-                if (lizAI.lizard.Template.type == HailstormEnums.Freezer)
+                if (lS.Freezer)
                 {
                     lizAI.noiseTracker.hearingSkill = 1.5f;
                 }
+
             }
-            else if (GeneralCreatureChanges.IsRWGIncan(lizAI.lizard.room.game))
+            else if (OtherCreatureChanges.IsIncanStory(liz.room.game))
             {
-                if (lizAI.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard && lizAI.redSpitAI is not null)
+                if (Weather.ErraticWindCycle && liz.lizardParams.bodyMass < 1.6f && Weather.ExtremeWindIntervals[Weather.WindInterval])
+                {
+                    if (lizAI.denFinder.GetDenPosition().HasValue && lizAI.creature.abstractAI.destination != lizAI.denFinder.GetDenPosition().Value)
+                    {
+                        lizAI.creature.abstractAI.SetDestination(lizAI.denFinder.GetDenPosition().Value);
+                        Weather.LockDestination(lizAI);
+                    }
+                    lizAI.runSpeed = Mathf.Lerp(lizAI.runSpeed, 1f, 0.1f);
+                }
+
+                if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard && lizAI.redSpitAI is not null)
                 {
                     if (lizAI.redSpitAI.delay == 11)
                     {
@@ -1967,7 +2049,58 @@ sealed class HailstormLizards
                     }
                 }
             }
+
+            if ((liz.LizardState is ColdLizState || liz.Template.type == CreatureTemplate.Type.WhiteLizard) &&
+                Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval] && liz.room.blizzardGraphics is not null)
+            {
+                float exposure = (
+                        liz.room.blizzardGraphics.GetBlizzardPixel((int)liz.bodyChunks[0].pos.x, (int)liz.bodyChunks[0].pos.y).g +
+                        liz.room.blizzardGraphics.GetBlizzardPixel((int)liz.bodyChunks[liz.bodyChunks.Length - 1].pos.x, (int)liz.bodyChunks[liz.bodyChunks.Length - 1].pos.y).g) / 2f;
+
+                if (exposure >= 0.5f)
+                {
+                    lizAI.runSpeed = Mathf.Lerp(lizAI.runSpeed, 0.25f, exposure / 30f);
+                }
+            }
         }
+    }
+
+    public static void NoRedSpitForIncan(On.LizardAI.LizardSpitTracker.orig_Update orig, LizardAI.LizardSpitTracker lst)
+    {
+        orig(lst);
+        if (IsIncanStory(lst?.lizardAI?.lizard?.room?.game) && lst.lizardAI.lizard.Template.type == CreatureTemplate.Type.RedLizard)
+        {
+            if (lst.spitting)
+            {
+                lst.spitting = false;
+            }
+            if (lst.spitFromPos != lst.AI.creature.pos)
+            {
+                lst.spitFromPos = lst.AI.creature.pos;
+            }
+        }
+    }
+
+    public static void ErraticWindCyanNojump()
+    {
+        IL.LizardJumpModule.RunningUpdate += IL =>
+        {
+            ILCursor c = new(IL);
+            ILLabel label = null;
+            if (c.TryGotoNext(
+                MoveType.After,
+                x => x.MatchLdarg(0),
+                x => x.MatchLdfld<LizardJumpModule>(nameof(LizardJumpModule.lizard)),
+                x => x.MatchCallvirt<Creature>("get_safariControlled"),
+                x => x.MatchBrtrue(out label)))
+            {
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate((LizardJumpModule ljm) => !(Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval]));
+                c.Emit(OpCodes.Brfalse, label);
+            }
+            else
+                Plugin.logger.LogError("[Hailstorm] BEEP BOOP! SOMETHING WITH CYAN LIZARDS AND ERRATIC WIND CYCLES BROKE! REPORT THIS!");
+        };
     }
 
     #endregion
@@ -2075,7 +2208,7 @@ sealed class HailstormLizards
 
                 Random.state = state;
             }
-            else if (GeneralCreatureChanges.IsRWGIncan(lG.lizard.room?.game) && lG.lizard.abstractCreature.Winterized)
+            else if (OtherCreatureChanges.IsIncanStory(lG.lizard.room?.game) && lG.lizard.abstractCreature.Winterized)
             {
                 if (lG.lizard.Template.type == CreatureTemplate.Type.Salamander || lG.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
                 {
@@ -2129,11 +2262,12 @@ sealed class HailstormLizards
     public static void ColdLizardSpriteReplacements(On.LizardGraphics.orig_DrawSprites orig, LizardGraphics liz, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(liz, sLeaser, rCam, timeStacker, camPos);
-        if (liz is not null && LizardData.TryGetValue(liz.lizard, out LizardInfo lI) && lI.isHailstormLiz)
+        if (liz is null) return;
+
+        if (liz.lizard.LizardState is ColdLizState lS)
         {
             int RNG = liz.lizard.abstractCreature.ID.RandomSeed;
-
-            if (liz.lizard.Template.type == HailstormEnums.IcyBlue)
+            if (lS.IcyBlue)
             {
                 sLeaser.sprites[liz.SpriteHeadStart].color = IcyBlueHeadColor(liz, timeStacker, SecondaryIcyBlueColor(liz));
                 sLeaser.sprites[liz.SpriteHeadStart + 3].color = IcyBlueHeadColor(liz, timeStacker, liz.effectColor);
@@ -2142,7 +2276,7 @@ sealed class HailstormLizards
                 {
                     float headAngleNumber = Mathf.Lerp(liz.lastHeadDepthRotation, liz.headDepthRotation, timeStacker);
                     int headAngle = 3 - (int)(Mathf.Abs(headAngleNumber) * 3.9f);
-                    sLeaser.sprites[liz.SpriteHeadStart + 4].element = Futile.atlasManager.GetElementWithName("FreezerEyes" + 0/*liz.headGraphics[4]*/ + "." + headAngle);
+                    sLeaser.sprites[liz.SpriteHeadStart + 4].element = Futile.atlasManager.GetElementWithName("FreezerEyes0." + headAngle);
                 }
 
                 int colorSpacing = (int)Mathf.Lerp(-0.25f, 0, Mathf.InverseLerp(1.4f, 1.6f, liz.lizard.TotalMass));
@@ -2151,11 +2285,11 @@ sealed class HailstormLizards
                     for (int i = 0; i < tail?.verticeColors?.Length; i++)
                     {
                         tail.verticeColors[i] =
-                            Color.Lerp(sLeaser.sprites[liz.SpriteBodyCirclesStart].color, sLeaser.sprites[(RNG % 5 == 0)? liz.SpriteHeadStart : liz.SpriteHeadStart + 3].color, colorSpacing + Mathf.InverseLerp(2, 6, i));
+                            Color.Lerp(sLeaser.sprites[liz.SpriteBodyCirclesStart].color, sLeaser.sprites[(RNG % 5 == 0) ? liz.SpriteHeadStart : liz.SpriteHeadStart + 3].color, colorSpacing + Mathf.InverseLerp(2, 6, i));
                     }
                 }
             }
-            else if (liz.lizard.Template.type == HailstormEnums.Freezer)
+            else if (lS.Freezer)
             {
                 // Visuals-related variables
                 float headAngleNumber = Mathf.Lerp(liz.lastHeadDepthRotation, liz.headDepthRotation, timeStacker);
@@ -2166,29 +2300,29 @@ sealed class HailstormLizards
 
                 /* Sprite Replacements */
                 // Jaw
-                sLeaser.sprites[liz.SpriteHeadStart].element = Futile.atlasManager.GetElementWithName("FreezerJaw" + 0/*liz.headGraphics[0]*/ + "." + headAngle);
+                sLeaser.sprites[liz.SpriteHeadStart].element = Futile.atlasManager.GetElementWithName("FreezerJaw0." + headAngle);
                 sLeaser.sprites[liz.SpriteHeadStart].color = FreezerHeadColor(liz, timeStacker, SecondaryFreezerColor(liz));
 
                 // Lower Teeth 
-                sLeaser.sprites[liz.SpriteHeadStart + 1].element = Futile.atlasManager.GetElementWithName("FreezerLowerTeeth" + 0/*liz.headGraphics[1]*/ + "." + headAngle);
+                sLeaser.sprites[liz.SpriteHeadStart + 1].element = Futile.atlasManager.GetElementWithName("FreezerLowerTeeth0." + headAngle);
 
                 // Upper Teeth
-                sLeaser.sprites[liz.SpriteHeadStart + 2].element = Futile.atlasManager.GetElementWithName("FreezerUpperTeeth" + 0/*liz.headGraphics[2]*/ + "." + headAngle);
+                sLeaser.sprites[liz.SpriteHeadStart + 2].element = Futile.atlasManager.GetElementWithName("FreezerUpperTeeth0." + headAngle);
 
                 // Head 
-                sLeaser.sprites[liz.SpriteHeadStart + 3].element = Futile.atlasManager.GetElementWithName("FreezerHead" + 0/*liz.headGraphics[3]*/ + "." + headAngle);
+                sLeaser.sprites[liz.SpriteHeadStart + 3].element = Futile.atlasManager.GetElementWithName("FreezerHead0." + headAngle);
                 sLeaser.sprites[liz.SpriteHeadStart + 3].color = FreezerHeadColor(liz, timeStacker, liz.effectColor);
 
                 // Eyes
-                sLeaser.sprites[liz.SpriteHeadStart + 4].element = Futile.atlasManager.GetElementWithName("FreezerEyes" + 0/*liz.headGraphics[4]*/ + "." + headAngle);
+                sLeaser.sprites[liz.SpriteHeadStart + 4].element = Futile.atlasManager.GetElementWithName("FreezerEyes0." + headAngle);
 
                 // Leg recoloring               
                 for (int l = liz.SpriteLimbsColorStart; l < liz.SpriteLimbsColorEnd; l++)
                 {
                     sLeaser.sprites[l].color =
-                        (RNG % 5 == 0)? sLeaser.sprites[liz.SpriteHeadStart + 3].color :
-                        (RNG % 4 == 0)? sLeaser.sprites[liz.SpriteHeadStart].color :
-                        (RNG % 3 == 0? SecondaryFreezerColor(liz) : liz.effectColor);
+                        (RNG % 5 == 0) ? sLeaser.sprites[liz.SpriteHeadStart + 3].color :
+                        (RNG % 4 == 0) ? sLeaser.sprites[liz.SpriteHeadStart].color :
+                        (RNG % 3 == 0 ? SecondaryFreezerColor(liz) : liz.effectColor);
                 }
 
                 /* Tail recoloring */
@@ -2197,16 +2331,16 @@ sealed class HailstormLizards
                     for (int i = 0; i < tail?.verticeColors?.Length; i++)
                     {
                         tail.verticeColors[i] =
-                            Color.Lerp(sLeaser.sprites[liz.SpriteBodyCirclesStart].color, sLeaser.sprites[(RNG % 5 == 0)? liz.SpriteHeadStart : liz.SpriteHeadStart + 3].color, Mathf.InverseLerp(2, 6, i));
+                            Color.Lerp(sLeaser.sprites[liz.SpriteBodyCirclesStart].color, sLeaser.sprites[(RNG % 5 == 0) ? liz.SpriteHeadStart : liz.SpriteHeadStart + 3].color, Mathf.InverseLerp(2, 6, i));
                     }
                 }
             }
-            else if (liz.lizard.Template.type == HailstormEnums.GorditoGreenie)
+        }
+        else if (LizardData.TryGetValue(liz.lizard, out LizardInfo lI) && lI.Gordito)
+        {
+            for (int b = liz.SpriteBodyCirclesStart; b < liz.SpriteBodyCirclesEnd; b++)
             {
-                for (int b = liz.SpriteBodyCirclesStart; b < liz.SpriteBodyCirclesEnd; b++)
-                {
-                    sLeaser.sprites[b].scale /= 2f;
-                }
+                sLeaser.sprites[b].scale /= 2f;
             }
         }
     }

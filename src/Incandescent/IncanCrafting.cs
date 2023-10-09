@@ -50,7 +50,7 @@ public class IncanCrafting
                 x => x.MatchCall(out _)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((bool flag, Player self) => flag || self.SlugCatClass == HailstormSlugcats.Incandescent);
+                c.EmitDelegate((bool flag, Player self) => flag || self.SlugCatClass == HSSlugs.Incandescent);
             }
             else
                 Plugin.logger.LogError("BurnSpearCrafting IL hook isn't working, so Burn Spears can only be made if you're holding another item. You should report this if you're seeing this.");
@@ -58,13 +58,13 @@ public class IncanCrafting
     }
     public static bool IncanItemCraftingCheck(On.Player.orig_GraspsCanBeCrafted orig, Player self)
     {
-        if (self is not null && CWT.PlayerData.TryGetValue(self, out HailstormSlugcats hS) && hS.isIncan)// && hS.readyToMoveOn)
+        if (self is not null && CWT.PlayerData.TryGetValue(self, out HSSlugs hS) && hS.isIncan)// && hS.readyToMoveOn)
         {
             return AreItemsUsableForCrafting(self, hS) is not null;
         }
         return orig(self);
     }
-    public static AbstractObjectType AreItemsUsableForCrafting(Player self, HailstormSlugcats hS)
+    public static AbstractObjectType AreItemsUsableForCrafting(Player self, HSSlugs hS)
     {
         if (hS.isIncan)
         {
@@ -115,7 +115,7 @@ public class IncanCrafting
     }
     public static void IncanItemCreation(On.Player.orig_SpitUpCraftedObject orig, Player self)
     {
-        if (self?.room is null || !CWT.PlayerData.TryGetValue(self, out HailstormSlugcats hS) || !hS.isIncan)// || !hS.readyToMoveOn)
+        if (self?.room is null || !CWT.PlayerData.TryGetValue(self, out HSSlugs hS) || !hS.isIncan)// || !hS.readyToMoveOn)
         {
             orig(self);
             return;
@@ -164,7 +164,7 @@ public class IncanCrafting
 
     //-----------------------------------------
 
-    public static void MakeBurnSpear(Player self, HailstormSlugcats hS, int spearGrasp)
+    public static void MakeBurnSpear(Player self, HSSlugs hS, int spearGrasp)
     {
         if (spearGrasp == -1) return;
 
@@ -252,7 +252,7 @@ public class IncanCrafting
             Debug.Log("Incan didn't have the resources required to make this spear...");
         }
     }
-    public static void SpearCrafting(Player self, HailstormSlugcats hS, int spearGrasp, int otherGrasp)
+    public static void SpearCrafting(Player self, HSSlugs hS, int spearGrasp, int otherGrasp)
     {
         if (spearGrasp == -1) return;
 
@@ -317,7 +317,7 @@ public class IncanCrafting
         }
     }
 
-    public static void CraftingFailed(Player self, int stunTime, HailstormSlugcats hS)
+    public static void CraftingFailed(Player self, int stunTime, HSSlugs hS)
     {
         self.Stun((int)(stunTime * (1 + self.playerState.permanentDamageTracking)));
         self.room.PlaySound(SoundID.Firecracker_Disintegrate, self.firstChunk, false, 0.8f, Random.Range(0.5f, 0.6f));

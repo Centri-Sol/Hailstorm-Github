@@ -39,7 +39,7 @@ public class IcyCosmetics
     {
         orig(bubble, sLeaser, rCam, timeStacker, camPos);
         LizardGraphics liz = bubble.lizardGraphics;
-        if (HailstormLizards.LizardData.TryGetValue(liz.owner as Lizard, out LizardInfo lI) && lI.isFreezerOrIcyBlue)
+        if (liz.lizard.LizardState is ColdLizState lS)
         {
             Color.RGBToHSV(liz.lizard.effectColor, out float h, out float s, out float v);
             h *= (h * 1.2272f > 0.75f) ? 0.7728f : 1.2272f;
@@ -56,12 +56,12 @@ public class IcyCosmetics
             }
             sLeaser.sprites[0].element = Futile.atlasManager.GetElementWithName("Snowflake" + Random.Range(0, 1) + "." + spriteNum);
 
-            if (liz.lizard.Template.type == HailstormEnums.Freezer)
+            if (lS.Freezer)
             {
                 sLeaser.sprites[0].color = Color.Lerp(HailstormLizards.FreezerHeadColor(liz, timeStacker, bubbleColor), Color.white, 1f - Mathf.Clamp(Mathf.Lerp(bubble.lastLife, bubble.life, timeStacker) * 2f, 0f, 1f));
                 sLeaser.sprites[0].scale = 0.85f + Random.Range(0.01f, 0.50f);
             }
-            else if (liz.lizard.Template.type == HailstormEnums.IcyBlue)
+            else if (lS.IcyBlue)
             {
                 Color hBHC = HailstormLizards.IcyBlueHeadColor(liz, timeStacker, bubbleColor);
                 sLeaser.sprites[0].color = Color.Lerp(hBHC, hBHC * 1.25f, 1f - Mathf.Clamp(Mathf.Lerp(bubble.lastLife, bubble.life, timeStacker) * 2f, 0f, 1f));
@@ -132,7 +132,7 @@ public class IcyCosmetics
     public static void SwimmyLizShortBodyScales(On.LizardCosmetics.ShortBodyScales.orig_DrawSprites orig, ShortBodyScales SBS, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(SBS, sLeaser, rCam, timeStacker, camPos);
-        if (GeneralCreatureChanges.IsRWGIncan(SBS?.lGraphics?.lizard?.room?.game) && SBS.lGraphics.lizard.abstractCreature.Winterized && (SBS.lGraphics.lizard.Template.type == CreatureTemplate.Type.Salamander || SBS.lGraphics.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard))
+        if (OtherCreatureChanges.IsIncanStory(SBS?.lGraphics?.lizard?.room?.game) && SBS.lGraphics.lizard.abstractCreature.Winterized && (SBS.lGraphics.lizard.Template.type == CreatureTemplate.Type.Salamander || SBS.lGraphics.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard))
         {
             for (int num = SBS.startSprite + SBS.scalesPositions.Length - 1; num >= SBS.startSprite; num--)
             {
@@ -188,7 +188,7 @@ public class IcyCosmetics
     public static void GorditoGreenieSnow(On.LizardCosmetics.SnowAccumulation.orig_DrawSprites orig, SnowAccumulation snow, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(snow, sLeaser, rCam, timeStacker, camPos);
-        if (GeneralCreatureChanges.IsRWGIncan(snow?.lGraphics?.lizard?.room?.game) && snow.lGraphics.lizard.Template.type == CreatureTemplate.Type.GreenLizard && snow.lGraphics.lizard.abstractCreature.Winterized)
+        if (OtherCreatureChanges.IsIncanStory(snow?.lGraphics?.lizard?.room?.game) && snow.lGraphics.lizard.Template.type == CreatureTemplate.Type.GreenLizard && snow.lGraphics.lizard.abstractCreature.Winterized)
         {
             for (int i = 0; i < snow.numberOfSprites; i++)
             {
@@ -289,9 +289,9 @@ public class ArmorIceSpikes : Template
         backSpikes = 3;
         scaleX = 1;
 
-        if (liz.Template.type == HailstormEnums.Freezer && HailstormLizards.LizardData.TryGetValue(liz, out LizardInfo lI))
+        if (liz.LizardState is ColdLizState lS && lS.Freezer)
         {
-            graphic = lI.armorGraphic;
+            graphic = lS.crystalSprite;
         }
         numberOfSprites = (dualColored > 0) ? backSpikes * 2 : backSpikes;
         endSprite = this.startSprite + backSpikes - 1;
@@ -353,27 +353,27 @@ public class ArmorIceSpikes : Template
             }
         }   
         
-        if (liz is not null && CWT.AbsCtrData.TryGetValue(liz.abstractCreature, out AbsCtrInfo aBI) && aBI.spikeBroken is not null)
+        if (liz is not null && liz.LizardState is ColdLizState lS)
         {
-            for (int i = 0; i < aBI.spikeBroken.Length; i++)
+            for (int c = 0; c < lS.crystals.Length; c++)
             {
-                sLeaser.sprites[startSprite + i].isVisible = !aBI.spikeBroken[i];
+                sLeaser.sprites[startSprite + c].isVisible = lS.crystals[c];
                 if (dualColored > 0)
                 {
-                    sLeaser.sprites[startSprite + i + backSpikes].isVisible = !aBI.spikeBroken[i];
+                    sLeaser.sprites[startSprite + c + backSpikes].isVisible = lS.crystals[c];
                 }
 
-                if (liz.Template.type == HailstormEnums.Freezer && !aBI.spikeBroken.All(broken => broken) && liz.State.dead)
+                if (lS.Freezer && !lS.crystals.All(intact => !intact) && liz.State.dead)
                 {
-                    aBI.functionTimer = 2;
+                    lS.armored = false;
                     if (liz.slatedForDeletetion)
                     {
                         break;
                     }
-                    else if (!aBI.spikeBroken[i])
+                    else if (lS.crystals[c])
                     {
-                        Vector2 crystalPos = sLeaser.sprites[startSprite + i].GetPosition() + camPos;
-                        aBI.spikeBroken[i] = true;
+                        lS.crystals[c] = false;
+                        Vector2 crystalPos = sLeaser.sprites[startSprite + c].GetPosition() + camPos;
                         DropCrystals(liz, crystalPos, graphic);
                     }
                 }

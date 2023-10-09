@@ -43,11 +43,11 @@ public class IncanVisuals
     public static void Ctor(On.PlayerGraphics.orig_ctor orig, PlayerGraphics self, PhysicalObject ow)
     {
         orig.Invoke(self, ow);
-        if (!CWT.PlayerData.TryGetValue(self.player, out HailstormSlugcats player) || !player.isIncan) return;
+        if (!CWT.PlayerData.TryGetValue(self.player, out HSSlugs player) || !player.isIncan) return;
 
-        if (StoryChanges.AllEchoesMet && !player.readyToMoveOn)
+        if (WorldChanges.AllEchoesMet && !player.readyToAccept)
         {
-            player.readyToMoveOn = true;
+            player.readyToAccept = true;
         }
 
         if (self.RenderAsPup) // Tail segments for if you're playing as a slugpup.
@@ -74,7 +74,7 @@ public class IncanVisuals
     public static void InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(self, sLeaser, rCam);
-        if (!CWT.PlayerData.TryGetValue(self.player, out HailstormSlugcats player) || !player.isIncan) return;
+        if (!CWT.PlayerData.TryGetValue(self.player, out HSSlugs player) || !player.isIncan) return;
 
         player.cheekFluffSprite = sLeaser.sprites.Length;
         player.waistbandSprite = player.cheekFluffSprite + 1;
@@ -82,9 +82,9 @@ public class IncanVisuals
 
         Array.Resize(ref sLeaser.sprites, sLeaser.sprites.Length + 3);
 
-        sLeaser.sprites[player.cheekFluffSprite] = new FSprite("cheekfluffHeadA0", true);
-        sLeaser.sprites[player.waistbandSprite] = new FSprite("waistband", true);
-        sLeaser.sprites[player.tailflameSprite] = new FSprite("tailflame", true);
+        sLeaser.sprites[player.cheekFluffSprite] = new FSprite("incanCheekfluffHeadA0", true);
+        sLeaser.sprites[player.waistbandSprite] = new FSprite("incanWaistband", true);
+        sLeaser.sprites[player.tailflameSprite] = new FSprite("incanTailflame", true);
 
 
         self.AddToContainer(sLeaser, rCam, null);
@@ -94,7 +94,7 @@ public class IncanVisuals
     public static void DrawNewSprites(On.PlayerGraphics.orig_DrawSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(self, sLeaser, rCam, timeStacker, camPos);
-        if (!CWT.PlayerData.TryGetValue(self.player, out HailstormSlugcats player) || !player.isIncan) return;
+        if (!CWT.PlayerData.TryGetValue(self.player, out HSSlugs player) || !player.isIncan) return;
 
         if (self.lightSource is not null && self.lightSource.alpha != 0)
         {
@@ -107,7 +107,7 @@ public class IncanVisuals
         FSprite faceSprites = sLeaser.sprites[9];
         string headSpriteNames = sLeaser.sprites[3].element.name;
         FSprite bodySprites = sLeaser.sprites[1];
-        Color waistbandColor = player.WaistbandColor.Equals(Color.clear) ? Color.black : player.WaistbandColor;
+        Color waistbandColor = player.WaistbandColor == Color.clear ? new Color(0.1f, 0.1f, 0.1f) : player.WaistbandColor;
 
         // List of Slugcat sprites:
         /* 0 - BodyA                    Body
@@ -126,7 +126,7 @@ public class IncanVisuals
          */
 
         // Sad head and faces.
-        if (!headSprites.element.name.Contains("incanSad") && (!player.readyToMoveOn || player.readyToMoveOn && incSad))
+        if (!headSprites.element.name.Contains("incanSad") && (!player.readyToAccept || player.readyToAccept && incSad))
         {
             if (headSprites.element.name.StartsWith("HeadC"))
             {
@@ -203,7 +203,7 @@ public class IncanVisuals
                     break;
             }
 
-            Vector2 cheekFluffPos = new Vector2(sLeaser.sprites[3].x + cheekFluffOffsetX, sLeaser.sprites[3].y + cheekFluffOffsetY);
+            Vector2 cheekFluffPos = new (sLeaser.sprites[3].x + cheekFluffOffsetX, sLeaser.sprites[3].y + cheekFluffOffsetY);
 
             sLeaser.sprites[player.cheekFluffSprite].scaleX = sLeaser.sprites[3].scaleX;
             sLeaser.sprites[player.cheekFluffSprite].scaleY = 1f;
@@ -212,9 +212,9 @@ public class IncanVisuals
             sLeaser.sprites[player.cheekFluffSprite].y = cheekFluffPos.y;
             sLeaser.sprites[player.cheekFluffSprite].color = player.FireColor;
 
-            if (headSpriteNames.StartsWith("HeadA")) sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("cheekfluff" + headSpriteNames);
+            if (headSpriteNames.StartsWith("HeadA")) sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("incanCheekfluff" + headSpriteNames);
 
-            else if (headSpriteNames.StartsWith("HeadC")) sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("cheekfluff" + headSpriteNames);
+            else if (headSpriteNames.StartsWith("HeadC")) sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("incanCheekfluff" + headSpriteNames);
 
             player.lastCheekfluffPos = new Vector2(sLeaser.sprites[player.cheekFluffSprite].x, sLeaser.sprites[player.cheekFluffSprite].y);
         }
@@ -226,14 +226,14 @@ public class IncanVisuals
             var waistbandOffsetX = 0f;
             var waistbandOffsetY = -1f;
 
-            var waistbandPos = new Vector2(sLeaser.sprites[1].x + waistbandOffsetX, sLeaser.sprites[1].y + waistbandOffsetY);
+            Vector2 waistbandPos = new (sLeaser.sprites[1].x + waistbandOffsetX, sLeaser.sprites[1].y + waistbandOffsetY);
 
             sLeaser.sprites[player.waistbandSprite].scaleX = sLeaser.sprites[1].scaleX;
             sLeaser.sprites[player.waistbandSprite].scaleY = 1f;
             sLeaser.sprites[player.waistbandSprite].rotation = sLeaser.sprites[1].rotation;
             sLeaser.sprites[player.waistbandSprite].x = waistbandPos.x;
             sLeaser.sprites[player.waistbandSprite].y = waistbandPos.y;
-            sLeaser.sprites[player.waistbandSprite].element = Futile.atlasManager.GetElementWithName("waistband");
+            sLeaser.sprites[player.waistbandSprite].element = Futile.atlasManager.GetElementWithName("incanWaistband");
             sLeaser.sprites[player.waistbandSprite].color = waistbandColor;
 
             player.lastWaistbandPos = new Vector2(sLeaser.sprites[1].x, sLeaser.sprites[1].y);
@@ -248,14 +248,14 @@ public class IncanVisuals
             Vector2 tailflamePos = new (Mathf.Lerp(self.tail[3].pos.x, self.tail[2].pos.x, 0.2f) - tailflameOffsetX,
                                             Mathf.Lerp(self.tail[3].pos.y, self.tail[2].pos.y, 0.2f) - tailflameOffsetY);
             Vector2 tailAngle = (self.tail[3].pos - self.tail[2].pos).normalized;
-            int rotationSide = (tailAngle.x > 0)? 1 : -1;
+            int rotationSide = (tailAngle.x > 0) ? 1 : -1;
 
-            sLeaser.sprites[player.tailflameSprite].scaleX = rotationSide * (player.inWater ? 0f : 1f) * (incan.isSlugpup ? 0.8f : 1f);
-            sLeaser.sprites[player.tailflameSprite].scaleY = 1f * (incan.isSlugpup ? 0.8f : 1f);
+            sLeaser.sprites[player.tailflameSprite].scaleX = rotationSide * (incan.isSlugpup ? 0.7f : 1f);
+            sLeaser.sprites[player.tailflameSprite].scaleY = (incan.animation == Player.AnimationIndex.Roll ? -1 : 1) * (incan.isSlugpup ? 0.7f : 1f);
             sLeaser.sprites[player.tailflameSprite].rotation = Mathf.Rad2Deg * (float)-Math.Atan(tailAngle.y / tailAngle.x);
             sLeaser.sprites[player.tailflameSprite].x = tailflamePos.x;
             sLeaser.sprites[player.tailflameSprite].y = tailflamePos.y;
-            sLeaser.sprites[player.tailflameSprite].element = Futile.atlasManager.GetElementWithName("tailflame");
+            sLeaser.sprites[player.tailflameSprite].element = Futile.atlasManager.GetElementWithName("incanTailflame");
             sLeaser.sprites[player.tailflameSprite].color = player.FireColor;
 
             player.lastTailflamePos = tailflamePos;
@@ -274,15 +274,16 @@ public class IncanVisuals
     public static void SpriteLayering(On.PlayerGraphics.orig_AddToContainer orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContainer)
     {
         orig(self, sLeaser, rCam, newContainer);
-        if (!CWT.PlayerData.TryGetValue(self.player, out HailstormSlugcats player) || !player.isIncan) return;
+        if (!CWT.PlayerData.TryGetValue(self.player, out HSSlugs player) || !player.isIncan) return;
 
         if (sLeaser.sprites.Length > player.cheekFluffSprite + 1)
         {
-            var foregroundContainer = rCam.ReturnFContainer("Foreground");
-            var midgroundContainer = rCam.ReturnFContainer("Midground");
+            FContainer foregroundContainer = rCam.ReturnFContainer("Foreground");
+            FContainer midgroundContainer = rCam.ReturnFContainer("Midground");
 
             /* Any new sprites you create for your Slugcat seem to default to the Foreground layer, making them show... in front of the ground.
-             * These lines take your sprites out of the foreground and into the midground, with the rest of Slugcat's sprites. */
+             * This code takes your sprites out of the foreground and into the midground, with the rest of Slugcat's sprites.
+             * Why are the sprites called CHILDREN? I have NO idea. */
             foregroundContainer.RemoveChild(sLeaser.sprites[player.cheekFluffSprite]);
             foregroundContainer.RemoveChild(sLeaser.sprites[player.waistbandSprite]);
             foregroundContainer.RemoveChild(sLeaser.sprites[player.tailflameSprite]);
@@ -291,6 +292,7 @@ public class IncanVisuals
             midgroundContainer.AddChild(sLeaser.sprites[player.tailflameSprite]);
 
             /* These lines change how your Slugcat's sprites are layered over each other. The order of these lines is really important, so pay attention to it. */
+            /*
             sLeaser.sprites[2].MoveBehindOtherNode(sLeaser.sprites[1]);
             sLeaser.sprites[player.waistbandSprite].MoveToBack();
             sLeaser.sprites[player.waistbandSprite].MoveInFrontOfOtherNode(sLeaser.sprites[0]);
@@ -299,6 +301,7 @@ public class IncanVisuals
             sLeaser.sprites[player.waistbandSprite].MoveInFrontOfOtherNode(sLeaser.sprites[4]);
             sLeaser.sprites[player.tailflameSprite].MoveToBack();
             sLeaser.sprites[player.tailflameSprite].MoveInFrontOfOtherNode(sLeaser.sprites[2]);
+            */
         }
     }
 
@@ -307,7 +310,7 @@ public class IncanVisuals
     public static void ApplyPalette(On.PlayerGraphics.orig_ApplyPalette orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(self, sLeaser, rCam, palette);
-        if (!CWT.PlayerData.TryGetValue(self.player, out HailstormSlugcats player) || !player.isIncan) return;
+        if (!CWT.PlayerData.TryGetValue(self.player, out HSSlugs player) || !player.isIncan) return;
         if (self.player.room?.game?.IsArenaSession == null) return;
 
         SetupColors(self.player);
@@ -336,7 +339,7 @@ public class IncanVisuals
     {
         //if (ModManager.CoopAvailable && self.IsJollyPlayer) return;
         // Loads default colors from this Slugcat's SlugBase .json file.
-        if (!CWT.PlayerData.TryGetValue(self, out HailstormSlugcats player) || !SlugBaseCharacter.TryGet(HailstormSlugcats.Incandescent, out player.Incan))
+        if (!CWT.PlayerData.TryGetValue(self, out HSSlugs player) || !SlugBaseCharacter.TryGet(HSSlugs.Incandescent, out player.Incan))
         {
             return;
         }
@@ -368,7 +371,7 @@ public class IncanVisuals
     }
     public static Color HypothermiaColorBlendbutforFirebecausetheNormalHypothermiaColorBlenddoesntlookGoodonIt(PlayerGraphics self, Color oldCol)
     {
-        if (!CWT.PlayerData.TryGetValue(self.owner as Player, out HailstormSlugcats player) || !player.isIncan) return new Color(0f, 0f, 0f);
+        if (!CWT.PlayerData.TryGetValue(self.owner as Player, out HSSlugs player) || !player.isIncan) return new Color(0f, 0f, 0f);
 
         Player inc = self.owner as Player;
         Color inbetween = Color.Lerp(oldCol * 0.7f, inc.ShortCutColor(), 0.7f);
@@ -402,21 +405,24 @@ public class IncanVisuals
 
     }
 
-    // I haven't done anything with this yet. This SHOULD let me mess with animations for the Incandescent's tail, which will be useful for me eventually.
+    // Makes the Incandescent's tail spin around her when she rolls.
     public static void RollAnimationUpdate(On.PlayerGraphics.orig_Update orig, PlayerGraphics self)
     {
         orig(self);
-        if (!CWT.PlayerData.TryGetValue(self.owner as Player, out HailstormSlugcats player) || !player.isIncan) return;
+        if (!CWT.PlayerData.TryGetValue(self.owner as Player, out HSSlugs player) || !player.isIncan) return;
 
-        Player inc = self.owner as Player;
-        if (inc.animation == Player.AnimationIndex.Roll)
+        if (self.player.animation == Player.AnimationIndex.Roll)
         {
-            float strength = 6f;
-            Vector2 direction = Custom.DirVec(inc.bodyChunks[0].pos, inc.bodyChunks[1].pos);
-            for (int j = 0; j < self.tail.Length; j++)
+            for (int i = 1; i < self.tail.Length; i++)
             {
-                self.tail[j].vel += direction * strength;
-                strength /= 1.7f;
+                float startVel = Custom.VecToDeg(Custom.DirVec(self.tail[i].pos, self.tail[i - 1].pos));
+                startVel += 45f * -self.player.flipDirection;
+                self.tail[i].vel = Custom.DegToVec(startVel) * 15f;
+                if (self.player.bodyChunks[0].pos.y >= self.player.bodyChunks[1].pos.y)
+                {
+                    self.tail[i].vel.x *= 2.20f;
+                    self.tail[i].vel.y *= 0.25f;
+                }
             }
         }
     }

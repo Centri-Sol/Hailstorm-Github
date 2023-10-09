@@ -14,7 +14,7 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
     public Vector2 lastPos;
     public Vector2 vel;
 
-    public Lizard lizard;
+    public Lizard liz;
     public BodyChunk stickChunk;
 
     private float massLeft;
@@ -37,24 +37,24 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
         return 1 + s;
     }
 
-    public FreezerSpit(Vector2 pos, Vector2 vel, Lizard lizard)
+    public FreezerSpit(Vector2 startPos, Vector2 startVel, Lizard lizard)
     {
         gravity = 0.7f;
-        lastPos = pos;
-        this.vel = vel * 0.85f;
-        this.pos = pos + vel;
-        this.lizard = lizard;
-        if (this.lizard != null && HailstormLizards.LizardData.TryGetValue(lizard, out LizardInfo lI))
+        lastPos = startPos;
+        vel = startVel * 0.85f;
+        pos = startPos + startVel;
+        liz = lizard;
+        if (lizard is not null && lizard.LizardState is ColdLizState lS)
         {
-            myAimChunk = lI.aimChunk;
+            myAimChunk = lS.spitAimChunk;
         }
         massLeft = 1f;        
         slime = new Vector2[(int)Mathf.Lerp(8f, 15f, Random.value), 4];
         for (int i = 0; i < slime.GetLength(0); i++)
         {
-            slime[i, 0] = pos + Custom.RNV() * 4f * Random.value;
+            slime[i, 0] = startPos + Custom.RNV() * 4f * Random.value;
             slime[i, 1] = slime[i, 0];
-            slime[i, 2] = vel + Custom.RNV() * 4f * Random.value;
+            slime[i, 2] = startVel + Custom.RNV() * 4f * Random.value;
             int num = -1;
             num = ((i != 0 && !(Random.value < 0.3f)) ? ((!(Random.value < 0.7f)) ? Random.Range(0, slime.GetLength(0)) : (i - 1)) : (-1));
             slime[i, 3] = new Vector2((float)num, Mathf.Lerp(3f, 8f, Random.value));
@@ -99,9 +99,9 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
                 reference8 += val3 * (slime[i, 3].y * massLeft - num2) * 0.5f;
             }
         }
-        bool flag = false;
+        bool collision = false;
 
-        if (!flag)
+        if (!collision)
         {
             SharedPhysics.TerrainCollisionData cd = scratchTerrainCollisionData.Set(pos, lastPos, vel, Rad, new IntVector2(0, 0), goThroughFloors: true);
             cd = SharedPhysics.VerticalCollision(room, cd);
@@ -113,17 +113,18 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
             {
                 vel.x = Mathf.Abs(vel.x) * 0.2f * -cd.contactPoint.x;
                 vel.y *= 0.8f;
-                flag = true;
+                collision = true;
             }
             if (cd.contactPoint.y != 0)
             {
                 vel.y = Mathf.Abs(vel.y) * 0.2f * -cd.contactPoint.y;
                 vel.x *= 0.8f;
-                flag = true;
+                collision = true;
             }
         }
+        /*
         SharedPhysics.CollisionResult collisionResult = SharedPhysics.TraceProjectileAgainstBodyChunks(null, room, lastPos, ref pos, Rad, 1, lizard, hitAppendages: false);
-        if (collisionResult.chunk != null)
+        if (collisionResult.chunk is not null)
         {
             pos = collisionResult.collisionPoint;
             stickChunk = collisionResult.chunk;
@@ -131,17 +132,18 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
             if (stickChunk.owner is not Creature)
             {
                 stickChunk.vel += vel * 0.6f / Mathf.Max(1f, stickChunk.mass);
-                flag = true;
+                collision = true;
             }
             Explode();
         }
-        if (flag)
+        */
+        if (collision)
         {
             myAimChunk = null;
             if (massLeft == 1f)
             {
                 massLeft = 0.5f;
-                if (stickChunk == null)
+                if (stickChunk is null)
                 {
                     Explode();
                 }
@@ -189,12 +191,12 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
         }
         for (int j = 0; j < 60; j++)
         {
-            room.AddObject(new FreezerMist(lastPos, (Custom.RNV() * Random.value * 10f), lizard.effectColor, lizEffectColor2, 1, lizard.abstractCreature, smallInsects, true));
+            room.AddObject(new FreezerMist(lastPos, (Custom.RNV() * Random.value * 10f), liz.effectColor, lizEffectColor2, 1, liz.abstractCreature, smallInsects, true));
             if (j < 12)
             {
                 room.AddObject(j % 2 == 1 ? // Creates snowflakes on odd numbers, and "ice shards" on even ones.
-                        new HailstormSnowflake(lastPos, Custom.RNV() * Random.value * 16f, lizard.effectColor, lizEffectColor2) :
-                        new PuffBallSkin(lastPos, Custom.RNV() * Random.value * 16f, lizard.effectColor, lizEffectColor2));
+                        new HailstormSnowflake(lastPos, Custom.RNV() * Random.value * 16f, liz.effectColor, lizEffectColor2) :
+                        new PuffBallSkin(lastPos, Custom.RNV() * Random.value * 16f, liz.effectColor, lizEffectColor2));
             }
         }
         room.AddObject(new FreezerMistVisionObscurer(lastPos));
@@ -266,17 +268,17 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
     Color lizEffectColor2;
     public void ApplyPalette(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
-        lizEffectColor2 = HailstormLizards.SecondaryFreezerColor(lizard.graphicsModule as LizardGraphics);
+        lizEffectColor2 = HailstormLizards.SecondaryFreezerColor(liz.graphicsModule as LizardGraphics);
         
-        if (lizard.abstractCreature.creatureTemplate.type == HailstormEnums.Freezer)
+        if (liz.abstractCreature.creatureTemplate.type == HailstormEnums.Freezer)
         {
-            sLeaser.sprites[DotSprite].color = lizard.effectColor;
+            sLeaser.sprites[DotSprite].color = liz.effectColor;
             sLeaser.sprites[JaggedSprite].color = lizEffectColor2;
         }
 
         for (int i = 0; i < slime.GetLength(0); i++)
         {
-            sLeaser.sprites[SlimeSprite(i)].color = lizard.effectColor;
+            sLeaser.sprites[SlimeSprite(i)].color = liz.effectColor;
         }
     }
 
@@ -388,11 +390,11 @@ public class FreezerMist : CosmeticSprite
         {
             foreach (AbstractCreature absCtr in room.abstractRoom.creatures)
             {
-                if (absCtr?.realizedCreature is not null && absCtr.creatureTemplate.type == HailstormEnums.Chillipede && killTag.creatureTemplate.type != absCtr.creatureTemplate.type && absCtr.realizedCreature is Centipede cnt && cnt.CentiState is not null && HailstormCentis.ChillipedeScales.TryGetValue(cnt.CentiState, out ChillipedeScaleInfo csI) && csI.ScaleRefreeze is not null)
+                if (absCtr?.realizedCreature is not null && killTag.creatureTemplate.type != absCtr.creatureTemplate.type && absCtr.realizedCreature is Centipede cnt && cnt.CentiState is not null && cnt.CentiState is ChillipedeState cS && cS.ScaleRegenTime is not null)
                 {
-                    for (int s = 0; s < csI.ScaleRefreeze.Length; s++)
+                    for (int s = 0; s < cS.ScaleRegenTime.Length; s++)
                     {
-                        if (csI.ScaleRefreeze[s] > 0 && Random.value < 0.3f) csI.ScaleRefreeze[s]--;
+                        if (cS.ScaleRegenTime[s] > 0 && Random.value < 0.3f) cS.ScaleRegenTime[s]--;
                     }
                 }
                 if (absCtr.creatureTemplate.type == HailstormEnums.IcyBlue || absCtr.creatureTemplate.type == HailstormEnums.Freezer || absCtr.creatureTemplate.type == HailstormEnums.Chillipede || killTag == absCtr || absCtr.realizedCreature is null) continue;
