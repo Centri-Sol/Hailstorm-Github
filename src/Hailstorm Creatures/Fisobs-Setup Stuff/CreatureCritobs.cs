@@ -168,6 +168,163 @@ sealed class InfantAquapedeCritob : Critob
 }
 
 //----------------------------------------------------------------------------------
+/*
+sealed class RavenCritob : Critob
+{
+
+    public Color RavenColor = Custom.HSL2RGB(240 / 360f, 1, 0.63f);
+
+    internal RavenCritob() : base(HailstormEnums.InfantAquapede)
+    {
+        Icon = new SimpleIcon("Kill_Raven", RavenColor);
+        LoadedPerformanceCost = 10f;
+        SandboxPerformanceCost = new(0.6f, 0.4f);
+        RegisterUnlock(KillScore.Configurable(2), HailstormEnums.InfantAquapedeUnlock);
+    }
+
+    public override int ExpeditionScore() => 2;
+
+    public override void ConnectionIsAllowed(AImap map, MovementConnection connection, ref bool? allow)
+    {
+        if (connection.type == MovementConnection.MovementType.ShortCut)
+        {
+            if (connection.startCoord.TileDefined && map.room.shortcutData(connection.StartTile).shortCutType == ShortcutData.Type.Normal)
+                allow = true;
+            if (connection.destinationCoord.TileDefined && map.room.shortcutData(connection.DestTile).shortCutType == ShortcutData.Type.Normal)
+                allow = true;
+        }
+        else if (connection.type == MovementConnection.MovementType.BigCreatureShortCutSqueeze)
+        {
+            if (map.room.GetTile(connection.startCoord).Terrain == Room.Tile.TerrainType.ShortcutEntrance && map.room.shortcutData(connection.StartTile).shortCutType == ShortcutData.Type.Normal)
+                allow = true;
+            if (map.room.GetTile(connection.destinationCoord).Terrain == Room.Tile.TerrainType.ShortcutEntrance && map.room.shortcutData(connection.DestTile).shortCutType == ShortcutData.Type.Normal)
+                allow = true;
+        }
+    }
+
+    public override Color DevtoolsMapColor(AbstractCreature absCnt) => RavenColor;
+
+    public override string DevtoolsMapName(AbstractCreature absCnt) => "Rvn";
+
+    public override IEnumerable<string> WorldFileAliases() => new[] { "raven", "Raven" };
+
+    public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[]
+    {
+        RoomAttractivenessPanel.Category.Swimming,
+        RoomAttractivenessPanel.Category.LikesWater,
+        RoomAttractivenessPanel.Category.LikesInside
+    };
+
+    public override CreatureTemplate CreateTemplate()
+    {
+        CreatureTemplate temp = new CreatureFormula(CreatureTemplate.Type.Vulture, Type, "Raven")
+        {
+            TileResistances = new()
+            {
+                Air = new(1f, PathCost.Legality.Allowed),
+                OffScreen = new(1f, PathCost.Legality.Allowed),
+                Floor = new(1f, PathCost.Legality.Allowed),
+                Corridor = new(1f, PathCost.Legality.Allowed),
+                Climb = new(1f, PathCost.Legality.Allowed),
+                Wall = new(1f, PathCost.Legality.Allowed),
+                Ceiling = new(1f, PathCost.Legality.Allowed)
+            },
+            ConnectionResistances = new()
+            {
+                Standard = new(1f, PathCost.Legality.Allowed),
+                OpenDiagonal = new(3f, PathCost.Legality.Allowed),
+                ReachOverGap = new(3f, PathCost.Legality.Allowed),
+                DoubleReachUp = new(2f, PathCost.Legality.Allowed),
+                SemiDiagonalReach = new(2f, PathCost.Legality.Allowed),
+                NPCTransportation = new(15f, PathCost.Legality.Allowed),
+                OffScreenMovement = new(1f, PathCost.Legality.Allowed),
+                BetweenRooms = new(10f, PathCost.Legality.Allowed),
+                Slope = new(1.5f, PathCost.Legality.Allowed),
+                DropToFloor = new(5f, PathCost.Legality.Allowed),
+                DropToWater = new(1f, PathCost.Legality.Allowed),
+                DropToClimb = new(5f, PathCost.Legality.Allowed),
+                ShortCut = new(1f, PathCost.Legality.Allowed),
+                ReachUp = new(1.1f, PathCost.Legality.Allowed),
+                ReachDown = new(1.1f, PathCost.Legality.Allowed),
+                CeilingSlope = new(2f, PathCost.Legality.Allowed)
+            },
+            DefaultRelationship = new(CreatureTemplate.Relationship.Type.Ignores, 1f),
+            DamageResistances = new() { Base = 1, Electric = 100 },
+            StunResistances = new() { Base = 1, Electric = 100 },
+            HasAI = true,
+            Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.Vulture),
+        }.IntoTemplate();
+        temp.meatPoints = 3;
+        temp.visualRadius = 1400;
+        temp.waterVision = 2f;
+        temp.stowFoodInDen = true;
+        temp.throughSurfaceVision = 0.5f;
+        temp.movementBasedVision = 0.95f;
+        temp.dangerousToPlayer = 0.3f;
+        temp.communityInfluence = 0.4f;
+        temp.bodySize = 0.4f;
+        temp.BlizzardAdapted = true;
+        temp.BlizzardWanderer = true;
+        temp.waterRelationship = CreatureTemplate.WaterRelationship.WaterOnly;
+        temp.lungCapacity = 9900f;
+        temp.canSwim = true;
+        temp.jumpAction = "Swap Heads";
+        temp.pickupAction = "Grab/Shock";
+        temp.throwAction = "Release";
+        temp.shortcutSegments = 2;
+        return temp;
+    }
+
+    public override void EstablishRelationships()
+    {
+        Relationships s = new(HailstormEnums.InfantAquapede);
+
+        // "IgnoredBy" makes the given creatures ignore this one. Who would have gueeeessed
+        s.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.5f);
+        s.IsInPack(HailstormEnums.InfantAquapede, 0.85f);
+
+        s.Ignores(HailstormEnums.Cyanwing);
+
+        s.FearedBy(CreatureTemplate.Type.Leech, 1);
+        s.FearedBy(CreatureTemplate.Type.SeaLeech, 1);
+        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 1);
+        s.FearedBy(CreatureTemplate.Type.Hazer, 1);
+
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0.33f);
+        s.Fears(HailstormEnums.GorditoGreenie, 0.33f);
+        s.Fears(HailstormEnums.Chillipede, 0.33f);
+        s.Fears(CreatureTemplate.Type.Slugcat, 0.5f);
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 0.5f);
+        s.Fears(CreatureTemplate.Type.Salamander, 0.66f);
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 1);
+
+
+        s.MakesUncomfortable(CreatureTemplate.Type.Salamander, 0.6f);
+
+        s.UncomfortableAround(CreatureTemplate.Type.Salamander, 0.6f);
+
+        s.IntimidatedBy(CreatureTemplate.Type.Snail, 1);
+
+        s.EatenBy(CreatureTemplate.Type.JetFish, 0.2f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 1);
+    }
+
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absVul) => new VultureAI(absVul, absVul.world);
+
+    public override Creature CreateRealizedCreature(AbstractCreature absVul) => new Vulture(absVul, absVul.world);
+
+    public override CreatureState CreateState(AbstractCreature absVul) => new Vulture.VultureState(absVul);
+
+    public override void LoadResources(RainWorld rainWorld)
+    {
+    }
+
+#nullable enable
+    public override CreatureTemplate.Type? ArenaFallback() => CreatureTemplate.Type.Vulture;
+#nullable disable
+}
+*/
+//----------------------------------------------------------------------------------
 
 sealed class IcyBlueCritob : Critob
 {
@@ -179,6 +336,8 @@ sealed class IcyBlueCritob : Critob
         SandboxPerformanceCost = new(0.6f, 0.6f);
         RegisterUnlock(KillScore.Configurable(10), HailstormEnums.IcyBlueUnlock);
     }
+
+    public override int ExpeditionScore() => 10;
 
     public override Color DevtoolsMapColor(AbstractCreature absIcy) => IcyBlueColor;
 
@@ -324,6 +483,8 @@ sealed class FreezerCritob : Critob
         SandboxPerformanceCost = new(0.7f, 0.7f);
         RegisterUnlock(KillScore.Configurable(25), HailstormEnums.FreezerUnlock);
     }
+
+    public override int ExpeditionScore() => 25;
 
     public override void ConnectionIsAllowed(AImap map, MovementConnection connection, ref bool? allow)
     {
@@ -513,9 +674,9 @@ sealed class PeachSpiderCritob : Critob
 
     public override int ExpeditionScore() => 2;
 
-    public override Color DevtoolsMapColor(AbstractCreature acrit) => PeachSpiderColor;
+    public override Color DevtoolsMapColor(AbstractCreature absSpd) => PeachSpiderColor;
 
-    public override string DevtoolsMapName(AbstractCreature acrit) => "Pch";
+    public override string DevtoolsMapName(AbstractCreature absSpd) => "Pch";
 
     public override IEnumerable<string> WorldFileAliases()
     {
@@ -533,28 +694,28 @@ sealed class PeachSpiderCritob : Critob
         {
             TileResistances = new()
             {
-                OffScreen = new(1f, PathCost.Legality.Allowed),
-                Floor = new(1f, PathCost.Legality.Allowed),
-                Corridor = new(1f, PathCost.Legality.Allowed),
-                Climb = new(1.5f, PathCost.Legality.Allowed),
-                Wall = new(3f, PathCost.Legality.Allowed),
-                Ceiling = new(3f, PathCost.Legality.Allowed)
+                Floor = new(1, PathCost.Legality.Allowed),
+                Corridor = new(1, PathCost.Legality.Allowed),
+                Climb = new(2, PathCost.Legality.Allowed),
+                Wall = new(3, PathCost.Legality.Allowed),
+                Ceiling = new(4, PathCost.Legality.Allowed),
+                OffScreen = new(1, PathCost.Legality.Allowed)
             },
             ConnectionResistances = new()
             {
                 Standard = new(1f, PathCost.Legality.Allowed),
-                OpenDiagonal = new(3f, PathCost.Legality.Allowed),
-                ReachOverGap = new(3f, PathCost.Legality.Allowed),
-                ReachUp = new(2f, PathCost.Legality.Allowed),
-                ReachDown = new(2f, PathCost.Legality.Allowed),
-                SemiDiagonalReach = new(2f, PathCost.Legality.Allowed),
-                DropToFloor = new(10f, PathCost.Legality.Allowed),
-                DropToWater = new(10f, PathCost.Legality.Allowed),
-                DropToClimb = new(10f, PathCost.Legality.Allowed),
-                ShortCut = new(1.5f, PathCost.Legality.Allowed),
-                NPCTransportation = new(3f, PathCost.Legality.Allowed),
-                OffScreenMovement = new(1f, PathCost.Legality.Allowed),
-                BetweenRooms = new(5f, PathCost.Legality.Allowed),
+                OpenDiagonal = new(3, PathCost.Legality.Allowed),
+                ReachOverGap = new(3, PathCost.Legality.Allowed),
+                ReachUp = new(2, PathCost.Legality.Allowed),
+                ReachDown = new(2, PathCost.Legality.Allowed),
+                SemiDiagonalReach = new(2, PathCost.Legality.Allowed),
+                DropToFloor = new(10, PathCost.Legality.Allowed),
+                DropToWater = new(10, PathCost.Legality.Allowed),
+                DropToClimb = new(5, PathCost.Legality.Allowed),
+                ShortCut = new(2, PathCost.Legality.Allowed),
+                NPCTransportation = new(2, PathCost.Legality.Allowed),
+                OffScreenMovement = new(1, PathCost.Legality.Allowed),
+                BetweenRooms = new(5, PathCost.Legality.Allowed),
                 Slope = new(1.5f, PathCost.Legality.Allowed),
                 CeilingSlope = new(1.5f, PathCost.Legality.Allowed)
             },
@@ -599,6 +760,7 @@ sealed class PeachSpiderCritob : Critob
         s.Fears(CreatureTemplate.Type.SpitterSpider, 1);
         s.Fears(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 1);
         s.Fears(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
+        s.Fears(HailstormEnums.Luminescipede, 1);
 
         s.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.4f);
         s.EatenBy(CreatureTemplate.Type.Spider, 0.5f);
@@ -612,11 +774,11 @@ sealed class PeachSpiderCritob : Critob
 
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new BigSpiderAI(acrit, acrit.world);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absSpd) => new BigSpiderAI(absSpd, absSpd.world);
 
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new BigSpider(acrit, acrit.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absSpd) => new BigSpider(absSpd, absSpd.world);
 
-    public override CreatureState CreateState(AbstractCreature acrit) => new HealthState(acrit);
+    public override CreatureState CreateState(AbstractCreature absSpd) => new HealthState(absSpd);
 
     public override void LoadResources(RainWorld rainWorld)
     {
@@ -662,9 +824,9 @@ sealed class CyanwingCritob : Critob
         }
     }
 
-    public override Color DevtoolsMapColor(AbstractCreature acrit) => CyanwingColor;
+    public override Color DevtoolsMapColor(AbstractCreature absCnt) => CyanwingColor;
 
-    public override string DevtoolsMapName(AbstractCreature acrit) => "CW";
+    public override string DevtoolsMapName(AbstractCreature absCnt) => "CW";
 
     public override IEnumerable<string> WorldFileAliases() => new[] { "cyanwing", "cyancentiwing", "Cyanwing", "CyanCentiwing" };
 
@@ -802,11 +964,11 @@ sealed class CyanwingCritob : Critob
         s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new CentipedeAI(acrit, acrit.world);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absCnt) => new CentipedeAI(absCnt, absCnt.world);
 
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new Centipede(acrit, acrit.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absCnt) => new Centipede(absCnt, absCnt.world);
 
-    public override CreatureState CreateState(AbstractCreature acrit) => new Centipede.CentipedeState(acrit);
+    public override CreatureState CreateState(AbstractCreature absCnt) => new Centipede.CentipedeState(absCnt);
 
     public override void LoadResources(RainWorld rainWorld)
     {
@@ -832,9 +994,11 @@ sealed class GorditoGreenieCritob : Critob
         RegisterUnlock(KillScore.Configurable(25), HailstormEnums.GorditoGreenieUnlock);
     }
 
-    public override Color DevtoolsMapColor(AbstractCreature acrit) => GorditoGreenieColor;
+    public override int ExpeditionScore() => 25;
 
-    public override string DevtoolsMapName(AbstractCreature acrit) => "GG";
+    public override Color DevtoolsMapColor(AbstractCreature absLiz) => GorditoGreenieColor;
+
+    public override string DevtoolsMapName(AbstractCreature absLiz) => "GG";
 
     public override IEnumerable<string> WorldFileAliases() => new[] { "gordito", "gorditogreenie", "Gordito", "GorditoGreenie" };
 
@@ -844,7 +1008,25 @@ sealed class GorditoGreenieCritob : Critob
         RoomAttractivenessPanel.Category.LikesOutside
     };
 
-    public override CreatureTemplate CreateTemplate() => LizardBreeds.BreedTemplate(HailstormEnums.GorditoGreenie, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
+    public override CreatureTemplate CreateTemplate()
+    {
+        CreatureTemplate gorditoTemp = LizardBreeds.BreedTemplate(HailstormEnums.GorditoGreenie, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
+        CreatureTemplate dummyTemp = new CreatureFormula(CreatureTemplate.Type.GreenLizard, Type, "not a real template!!! i'm using this to set the Gordito's Connection Resistances!")
+        {
+            ConnectionResistances = new()
+            {
+                ShortCut = new(1, PathCost.Legality.Unallowed),
+                BetweenRooms = new(1, PathCost.Legality.Unallowed),
+                NPCTransportation = new(1, PathCost.Legality.Unallowed),
+                RegionTransportation = new(1, PathCost.Legality.Unallowed),
+                BigCreatureShortCutSqueeze = new(100, PathCost.Legality.Allowed),
+                LizardTurn = new(80, PathCost.Legality.Allowed),
+                DropToFloor = new(20, PathCost.Legality.Allowed),
+            },
+        }.IntoTemplate();
+        gorditoTemp.pathingPreferencesConnections = dummyTemp.pathingPreferencesConnections;
+        return gorditoTemp;
+    }
 
     // This method sets this creature's relationships with other creatures.
     // I explain what I can, but if some relationship types don't have an explanation, that means I don't know what they do.
@@ -967,11 +1149,9 @@ sealed class GorditoGreenieCritob : Critob
 
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature acrit) => new LizardAI(acrit, acrit.world);
-
-    public override Creature CreateRealizedCreature(AbstractCreature acrit) => new Lizard(acrit, acrit.world);
-
-    public override CreatureState CreateState(AbstractCreature acrit) => new LizardState(acrit);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absLiz) => new LizardAI(absLiz, absLiz.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absLiz) => new Lizard(absLiz, absLiz.world);
+    public override CreatureState CreateState(AbstractCreature absLiz) => new LizardState(absLiz);
 
     public override void LoadResources(RainWorld rainWorld)
     {
@@ -994,109 +1174,168 @@ sealed class LuminescipedeCritob : Critob
         Icon = new SimpleIcon("Kill_Luminescipede", LuminescipedeColor);
         LoadedPerformanceCost = 10f;
         SandboxPerformanceCost = new(0.4f, 0.6f);
-        RegisterUnlock(KillScore.Configurable(1), HailstormEnums.LuminsecipedeUnlock);
+        RegisterUnlock(KillScore.Configurable(1), HailstormEnums.LuminescipedeUnlock);
     }
 
     public override int ExpeditionScore() => 1;
 
-    public override Color DevtoolsMapColor(AbstractCreature absSpd) => LuminescipedeColor;
+    public override Color DevtoolsMapColor(AbstractCreature absLmn) => LuminescipedeColor;
 
-    public override string DevtoolsMapName(AbstractCreature absSpd) => "lmn";
+    public override string DevtoolsMapName(AbstractCreature absLmn) => "lmn";
 
     public override IEnumerable<string> WorldFileAliases() => new[] { "lumin", "Lumin", "luminescipede", "Luminescipede" };
 
+    public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[] { RoomAttractivenessPanel.Category.All };
+
     public override CreatureTemplate CreateTemplate()
     {
-        CreatureTemplate cf = new CreatureFormula(CreatureTemplate.Type.Spider, Type, "Luminescipede")
+        CreatureTemplate cf = new CreatureFormula(null, Type, "Luminescipede")
         {
             TileResistances = new()
             {
-                Floor = new(1f, PathCost.Legality.Allowed),
-                Corridor = new(1f, PathCost.Legality.Allowed),
-                Climb = new(1f, PathCost.Legality.Allowed),
-                Wall = new(1f, PathCost.Legality.Allowed),
-                Ceiling = new(1f, PathCost.Legality.Allowed),
-                OffScreen = new(1f, PathCost.Legality.Allowed),
+                Floor = new(1, PathCost.Legality.Allowed),
+                Corridor = new(20, PathCost.Legality.Unwanted),
+                Climb = new(3, PathCost.Legality.Allowed),
+                Wall = new(2, PathCost.Legality.Allowed),
+                Ceiling = new(5, PathCost.Legality.Allowed),
+                OffScreen = new(1, PathCost.Legality.Allowed)
             },
             ConnectionResistances = new()
             {
                 Standard = new(1, PathCost.Legality.Allowed),
                 OpenDiagonal = new(2, PathCost.Legality.Allowed),
-                NPCTransportation = new(7, PathCost.Legality.Allowed),
+                NPCTransportation = new(10, PathCost.Legality.Allowed),
                 OffScreenMovement = new(1, PathCost.Legality.Allowed),
-                BetweenRooms = new(4, PathCost.Legality.Allowed),
-                Slope = new(1.6f, PathCost.Legality.Allowed),
-                CeilingSlope = new(1.6f, PathCost.Legality.Allowed),
-                DropToFloor = new(5f, PathCost.Legality.Allowed),
-                DropToClimb = new(5f, PathCost.Legality.Allowed),
-                ShortCut = new(0.2f, PathCost.Legality.Allowed)
+                BetweenRooms = new(1, PathCost.Legality.Allowed),
+                CeilingSlope = new(1, PathCost.Legality.Allowed),
+                DropToFloor = new(3, PathCost.Legality.Allowed),
+                DropToClimb = new(3, PathCost.Legality.Allowed),
+                DropToWater = new(10, PathCost.Legality.Allowed),
+                ShortCut = new(2, PathCost.Legality.Allowed),
+                Slope = new(1, PathCost.Legality.Allowed)
             },
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Eats, 1),
+            InstantDeathDamage = 1,
             DamageResistances = new() { Base = 1, Electric = 2, Blunt = 0.5f },
             StunResistances = new() { Base = 1, Electric = 2, Blunt = 0.5f },
-            HasAI = false,
-            Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.Spider),
+            Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.Snail),
+            HasAI = true
         }.IntoTemplate();
-        cf.smallCreature = false;
-        cf.quantified = true;
+        cf.bodySize = 0.75f;
+        cf.grasps = 1;
         cf.countsAsAKill = 2;
         cf.meatPoints = 1;
-        cf.grasps = 1;
-        cf.visualRadius = 900;
         cf.dangerousToPlayer = 0.25f;
         cf.communityID = CreatureCommunities.CommunityID.None;
-        cf.bodySize = 0.2f;
-        cf.instantDeathDamageLimit = 2;
+        cf.communityInfluence = 0.25f;
+        cf.canSwim = true;
+        cf.visualRadius = 900;
+        cf.throughSurfaceVision = 0.5f;
+        cf.waterVision = 0.5f;
+        cf.waterPathingResistance = 50f;
         cf.waterRelationship = CreatureTemplate.WaterRelationship.Amphibious;
-        cf.BlizzardAdapted = true;
-        cf.BlizzardWanderer = true;
+        cf.lungCapacity = 1200f;
         cf.usesCreatureHoles = true;
         cf.usesNPCTransportation = true;
-        cf.shortcutSegments = 2;
+        cf.requireAImap = true;
+        cf.doPreBakedPathing = false;
+        cf.offScreenSpeed = 0.75f;
+        cf.abstractedLaziness = 50;
+        cf.roamInRoomChance = 0.5f;
+        cf.roamBetweenRoomsChance = 0.5f;
+        cf.interestInOtherAncestorsCatches = 0;
+        cf.interestInOtherCreaturesCatches = 0.5f;
         cf.stowFoodInDen = true;
+        cf.BlizzardAdapted = true;
+        cf.BlizzardWanderer = true;
+        cf.shortcutSegments = 2;
+        cf.scaryness = 1.5f;
+        cf.pickupAction = "Grab | Hold - Swap Grasps";
+        cf.throwAction = "Release / Throw";
+        cf.jumpAction = "Camouflage";
+
         return cf;
     }
 
     public override void EstablishRelationships()
     {
         Relationships s = new(HailstormEnums.Luminescipede);
-
-        s.Eats(HailstormEnums.PeachSpider, 0.75f);
-        s.Eats(HailstormEnums.IcyBlue, 0.70f);
-        s.Eats(CreatureTemplate.Type.Centiwing, 0.4f);
-        s.Eats(HailstormEnums.Freezer, 0.35f);
-        s.Eats(CreatureTemplate.Type.Spider, 0.20f);
-        s.Eats(CreatureTemplate.Type.BigSpider, 0.10f);
-        s.Eats(CreatureTemplate.Type.SpitterSpider, 0.05f);
-
-
-        s.EatenBy(CreatureTemplate.Type.LizardTemplate, 0.5f);
-        s.EatenBy(CreatureTemplate.Type.GreenLizard, 0.3f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.3f);
-        s.EatenBy(HailstormEnums.Freezer, 0.6f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.9f);
-        s.EatenBy(HailstormEnums.GorditoGreenie, 1);
+        //--------------------
+        s.Eats(CreatureTemplate.Type.TubeWorm, 0.25f);
+        s.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.25f);
+        s.Eats(CreatureTemplate.Type.BigNeedleWorm, 0.25f);
+        s.Eats(CreatureTemplate.Type.TubeWorm, 0.25f);
+        s.Eats(CreatureTemplate.Type.JetFish, 0.50f);
+        s.Eats(CreatureTemplate.Type.CicadaA, 0.75f);
+        s.Eats(CreatureTemplate.Type.CicadaB, 0.75f);
+        s.Eats(CreatureTemplate.Type.Centiwing, 0.75f);
 
         s.EatenBy(CreatureTemplate.Type.Vulture, 0.1f);
         s.EatenBy(CreatureTemplate.Type.KingVulture, 0.15f);
         s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.2f);
         s.EatenBy(CreatureTemplate.Type.Spider, 0.3f);
-        s.EatenBy(CreatureTemplate.Type.BigSpider, 0.4f);
-        s.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.5f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.6f);
+        s.EatenBy(CreatureTemplate.Type.LizardTemplate, 0.5f);
+        s.EatenBy(CreatureTemplate.Type.GreenLizard, 0.3f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.3f);
+        s.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
+        s.EatenBy(HailstormEnums.Freezer, 0.6f);
+        s.EatenBy(CreatureTemplate.Type.BigSpider, 0.6f);
+        s.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.7f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.8f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.9f);
+        s.EatenBy(CreatureTemplate.Type.BlackLizard, 1);
+        s.EatenBy(CreatureTemplate.Type.BigEel, 1);
+        s.EatenBy(HailstormEnums.GorditoGreenie, 1);
+        //-----
+        s.Attacks(CreatureTemplate.Type.Leech, 0.2f);
+        s.Attacks(CreatureTemplate.Type.SeaLeech, 0.25f);
+        s.Attacks(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 0.33f);
+        s.Attacks(CreatureTemplate.Type.EggBug, 1);
+        s.Attacks(CreatureTemplate.Type.PoleMimic, 1);
+        s.Attacks(CreatureTemplate.Type.TentaclePlant, 1);
+        s.Attacks(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 1);
 
-
-
+        s.AttackedBy(CreatureTemplate.Type.WhiteLizard, 0.3f);
+        //-----
+        s.IntimidatedBy(CreatureTemplate.Type.Snail, 0.50f);
+        s.IntimidatedBy(HailstormEnums.Chillipede, 0.75f);
         s.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
+        //-----
+        s.Fears(CreatureTemplate.Type.MirosBird, 0.5f);
+        s.Fears(CreatureTemplate.Type.BigEel, 1);
+        s.Fears(CreatureTemplate.Type.BrotherLongLegs, 1);
+        s.Fears(CreatureTemplate.Type.DaddyLongLegs, 1);
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 1);
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy, 1);
+        s.Fears(CreatureTemplate.Type.RedLizard, 1);
+        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
+        s.Fears(HailstormEnums.GorditoGreenie, 1);
+        s.Fears(HailstormEnums.Freezer, 1);
 
+        s.FearedBy(CreatureTemplate.Type.SmallNeedleWorm, 0.25f);
+        s.FearedBy(HailstormEnums.InfantAquapede, 0.25f);
+        s.FearedBy(CreatureTemplate.Type.SmallCentipede, 0.5f);
+        s.FearedBy(CreatureTemplate.Type.Scavenger, 0.5f);
+        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 0.5f);
+        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.5f);
+        s.FearedBy(HailstormEnums.PeachSpider, 0.5f);
+        s.FearedBy(CreatureTemplate.Type.LanternMouse, 0.75f);
+        s.FearedBy(CreatureTemplate.Type.VultureGrub, 1);
+        s.FearedBy(CreatureTemplate.Type.Hazer, 1);
+
+        //-----
+        s.Ignores(CreatureTemplate.Type.Overseer);
+        s.Ignores(CreatureTemplate.Type.GarbageWorm);
+        s.Ignores(CreatureTemplate.Type.Deer);
+        s.Ignores(CreatureTemplate.Type.TempleGuard);
+        //-----
         s.IsInPack(HailstormEnums.Luminescipede, 1);
+        //s.IsInPack(HailstormEnums.StrobeLegs, 1);
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absSpd) => null;
-
-    public override Creature CreateRealizedCreature(AbstractCreature absSpd) => new Luminescipede(absSpd, absSpd.world);
-
-    public override CreatureState CreateState(AbstractCreature absSpd) => new GlowSpiderState(absSpd);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absLmn) => new LuminAI(absLmn, absLmn.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absLmn) => new LuminCreature(absLmn, absLmn.world);
+    public override CreatureState CreateState(AbstractCreature absLmn) => new GlowSpiderState(absLmn);
 
     public override void LoadResources(RainWorld rainWorld)
     {
@@ -1124,9 +1363,9 @@ sealed class ChillipedeCritob : Critob
 
     public override int ExpeditionScore() => 12;
 
-    public override Color DevtoolsMapColor(AbstractCreature absCnt) => ChillipedeColor;
+    public override Color DevtoolsMapColor(AbstractCreature absChl) => ChillipedeColor;
 
-    public override string DevtoolsMapName(AbstractCreature absCnt) => "chl";
+    public override string DevtoolsMapName(AbstractCreature absChl) => "chl";
 
     public override IEnumerable<string> WorldFileAliases() => new[] { "chillipede", "Chillipede" };
 
@@ -1141,30 +1380,32 @@ sealed class ChillipedeCritob : Critob
         {
             TileResistances = new()
             {
-                OffScreen = new(1f, PathCost.Legality.Allowed),
-                Floor = new(1f, PathCost.Legality.Allowed),
-                Corridor = new(1f, PathCost.Legality.Allowed),
-                Climb = new(1f, PathCost.Legality.Allowed),
-                Wall = new(1f, PathCost.Legality.Allowed),
-                Ceiling = new(1f, PathCost.Legality.Allowed)
+                OffScreen = new(2, PathCost.Legality.Allowed),
+                Floor = new(1, PathCost.Legality.Allowed),
+                Corridor = new(25, PathCost.Legality.Allowed),
+                Climb = new(1, PathCost.Legality.Allowed),
+                Wall = new(1, PathCost.Legality.Allowed),
+                Ceiling = new(1, PathCost.Legality.Allowed)
             },
             ConnectionResistances = new()
             {
-                Standard = new(1f, PathCost.Legality.Allowed),
-                OpenDiagonal = new(3f, PathCost.Legality.Allowed),
-                ReachOverGap = new(3f, PathCost.Legality.Allowed),
-                DoubleReachUp = new(2f, PathCost.Legality.Allowed),
-                SemiDiagonalReach = new(2f, PathCost.Legality.Allowed),
-                NPCTransportation = new(25f, PathCost.Legality.Allowed),
-                OffScreenMovement = new(1f, PathCost.Legality.Allowed),
-                BetweenRooms = new(10f, PathCost.Legality.Allowed),
-                Slope = new(1.5f, PathCost.Legality.Allowed),
-                DropToFloor = new(5f, PathCost.Legality.Allowed),
-                DropToClimb = new(5f, PathCost.Legality.Allowed),
-                ShortCut = new(1f, PathCost.Legality.Unallowed),
+                Standard = new(1, PathCost.Legality.Allowed),
+                ReachOverGap = new(3, PathCost.Legality.Allowed),
                 ReachUp = new(1.1f, PathCost.Legality.Allowed),
+                DoubleReachUp = new(3, PathCost.Legality.Allowed),
                 ReachDown = new(1.1f, PathCost.Legality.Allowed),
-                CeilingSlope = new(2f, PathCost.Legality.Allowed)
+                SemiDiagonalReach = new(2, PathCost.Legality.Allowed),
+                DropToFloor = new(10, PathCost.Legality.Allowed),
+                DropToClimb = new(7, PathCost.Legality.Allowed),
+                DropToWater = new(50, PathCost.Legality.Unwanted),
+                OpenDiagonal = new(3, PathCost.Legality.Allowed),
+                Slope = new(2, PathCost.Legality.Allowed),
+                CeilingSlope = new(2, PathCost.Legality.Allowed),
+                ShortCut = new(20, PathCost.Legality.Allowed),
+                NPCTransportation = new(50, PathCost.Legality.Allowed),
+                BigCreatureShortCutSqueeze = new(10, PathCost.Legality.Allowed),
+                BetweenRooms = new(10, PathCost.Legality.Allowed),
+                OffScreenMovement = new(1, PathCost.Legality.Allowed)
             },
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Eats, 1),
             DamageResistances = new() { Base = 3, Electric = 1 },
@@ -1173,7 +1414,7 @@ sealed class ChillipedeCritob : Critob
             Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.Centipede),
         }.IntoTemplate();
         cf.meatPoints = 6;
-        cf.visualRadius = 7500;
+        cf.visualRadius = 1500;
         cf.waterVision = 0.3f;
         cf.stowFoodInDen = true;
         cf.throughSurfaceVision = 0.5f;
@@ -1224,6 +1465,7 @@ sealed class ChillipedeCritob : Critob
         s.EatenBy(HailstormEnums.GorditoGreenie, 1);
 
         s.Intimidates(CreatureTemplate.Type.BigSpider, 0.5f);
+        s.Intimidates(HailstormEnums.Luminescipede, 0.75f);
 
         s.Fears(CreatureTemplate.Type.RedCentipede, 1);
         s.Fears(HailstormEnums.Cyanwing, 1);
@@ -1239,11 +1481,11 @@ sealed class ChillipedeCritob : Critob
 
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absCnt) => new CentipedeAI(absCnt, absCnt.world);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absChl) => new CentipedeAI(absChl, absChl.world);
 
-    public override Creature CreateRealizedCreature(AbstractCreature absCnt) => new Centipede(absCnt, absCnt.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absChl) => new Centipede(absChl, absChl.world);
 
-    public override CreatureState CreateState(AbstractCreature absCnt) => new ChillipedeState(absCnt);
+    public override CreatureState CreateState(AbstractCreature absChl) => new ChillipedeState(absChl);
 
     public override void LoadResources(RainWorld rainWorld)
     {

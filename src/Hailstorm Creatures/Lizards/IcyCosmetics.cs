@@ -204,12 +204,12 @@ public class IcyCosmetics
     {
         if (liz.whiteFlicker > 0 && (liz.whiteFlicker > 15 || liz.everySecondDraw))
         {
-            return new Color(1f, 1f, 1f);
+            return new Color(1, 1, 1);
         }
         float num = 1f - Mathf.Pow(0.5f + 0.5f * Mathf.Sin(Mathf.Lerp(liz.lastBlink, liz.blink, timeStacker) * 2f * Mathf.PI), 1.5f + liz.lizard.AI.excitement * 1.5f);
         if (liz.headColorSetter != 0f)
         {
-            num = Mathf.Lerp(num, (liz.headColorSetter > 0f) ? 1f : 0f, Mathf.Abs(liz.headColorSetter));
+            num = Mathf.Lerp(num, (liz.headColorSetter > 0f) ? 1 : 0, Mathf.Abs(liz.headColorSetter));
         }
         if (liz.flicker > 10)
         {
@@ -223,6 +223,10 @@ public class IcyCosmetics
             Vector3 e = Custom.RGB2HSL(scaleCol);
             float skew = aI.functionTimer / 1000f;
             scaleCol = Custom.HSL2RGB(e.x + skew, e.y + skew, e.z + skew);
+        }
+        if (liz.lizard.Template.type == CreatureTemplate.Type.Salamander)
+        {
+            scaleCol += new Color(0.1f, 0.1f, 0.1f);
         }
         return Color.Lerp(liz.HeadColor1, scaleCol, num);
     }

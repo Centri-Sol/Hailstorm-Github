@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Hailstorm;
 
@@ -26,14 +27,28 @@ public static class HailstormEnums
     //[AllowNull] public static CreatureTemplate.Type BezanBud = new("BezanBud", true);
     //[AllowNull] public static MultiplayerUnlocks.SandboxUnlockID BezanBudUnlock = new("BezanBud", true);
 
-    [AllowNull] public static CreatureTemplate.Type Luminescipede = new("Luminsecipede", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID LuminsecipedeUnlock = new("Luminsecipede", true);
+    [AllowNull] public static CreatureTemplate.Type Luminescipede = new("Luminescipede", true);
+    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID LuminescipedeUnlock = new("Luminescipede", true);
 
     //[AllowNull] public static CreatureTemplate.Type Strobelegs = new("Strobelegs", true);
     //[AllowNull] public static MultiplayerUnlocks.SandboxUnlockID StrobelegsUnlock = new("Strobelegs", true);
 
     [AllowNull] public static CreatureTemplate.Type Chillipede = new("Chillipede", true);
     [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID ChillipedeUnlock = new("Chillipede", true);
+
+    public readonly static List<CreatureTemplate.Type> HailstormCreatures = new()
+        {
+            InfantAquapede,
+            IcyBlue,
+            Freezer,
+            PeachSpider,
+            Cyanwing,
+            GorditoGreenie,
+            //BezanBud,
+            Luminescipede,
+            //Strobelegs,
+            Chillipede
+        };
 
 
     [AllowNull] public static AbstractPhysicalObject.AbstractObjectType IceCrystal = new ("IceCrystal", true);
@@ -134,10 +149,10 @@ public static class HailstormEnums
             Luminescipede.Unregister();
             Luminescipede = null;
         }
-        if (LuminsecipedeUnlock is not null)
+        if (LuminescipedeUnlock is not null)
         {
-            LuminsecipedeUnlock.Unregister();
-            LuminsecipedeUnlock = null;
+            LuminescipedeUnlock.Unregister();
+            LuminescipedeUnlock = null;
         }
         /*
         if (Strobelegs is not null)

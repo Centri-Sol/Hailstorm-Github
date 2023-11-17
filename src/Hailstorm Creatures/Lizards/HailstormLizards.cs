@@ -12,7 +12,6 @@ using Color = UnityEngine.Color;
 using MonoMod.RuntimeDetour;
 using System;
 using static System.Reflection.BindingFlags;
-using Fisobs.Creatures;
 
 namespace Hailstorm;
 
@@ -43,10 +42,10 @@ public class ColdLizState : LizardState
     public bool NearAFreezer;
     public int PackUpdateTimer;
 
-    public ColdLizState(AbstractCreature absCtr) : base(absCtr)
+    public ColdLizState(AbstractCreature absLiz) : base(absLiz)
     {
-        IcyBlue = absCtr.creatureTemplate.type == HailstormEnums.IcyBlue;
-        Freezer = absCtr.creatureTemplate.type == HailstormEnums.Freezer;
+        IcyBlue = absLiz.creatureTemplate.type == HailstormEnums.IcyBlue;
+        Freezer = absLiz.creatureTemplate.type == HailstormEnums.Freezer;
         crystals = new bool[3] { true, true, true };
         armored = !crystals.All(intact => !intact);
         if (Freezer && spitCooldown == 0)
@@ -60,15 +59,15 @@ public class ColdLizState : LizardState
 
 internal class HailstormLizards
 {
-    public static ConditionalWeakTable<Lizard, LizardInfo> LizardData = new();
 
+    public static ConditionalWeakTable<Lizard, LizardInfo> LizardData = new();
     public static CreatureTemplate freezerTemplate;
 
     public static void Hooks()
     {
-        OverseerILHook();
-        On.LizardLimb.ctor += ColdLizardLegSFX;
-        On.LizardVoice.GetMyVoiceTrigger += ColdLizardVoiceSFX;
+        //OverseerILHook();
+        On.LizardLimb.ctor += HailstormLizLegSFX;
+        On.LizardVoice.GetMyVoiceTrigger += HailstormLizVoiceSFX;
         On.LizardVoice.ctor += GorditoGreenieVoicePitch;
         On.LizardVoice.Update += GorditoGreenieVoiceVolume;
         On.LizardBreeds.BreedTemplate_Type_CreatureTemplate_CreatureTemplate_CreatureTemplate_CreatureTemplate += HailstormLizTemplates;
@@ -90,8 +89,8 @@ internal class HailstormLizards
         On.LizardAI.IUseARelationshipTracker_UpdateDynamicRelationship += LizardAITweaks;
         On.LizardAI.ctor += ColdLizardAIConstructor;
         On.LizardAI.Update += ColdLizardAIUpdate;
-        On.LizardAI.LizardSpitTracker.Update += NoRedSpitForIncan;
-        ErraticWindCyanNojump();
+        On.LizardAI.TravelPreference += HailstormLizTravelPrefs;
+        LizardAI_ILHooks();
 
         On.LizardGraphics.GenerateIvars += ColdLizardTailsWillAlwaysBeColored;
         On.LizardGraphics.ctor += HailstormLizardGraphics;
@@ -111,7 +110,7 @@ internal class HailstormLizards
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
@@ -183,7 +182,7 @@ internal class HailstormLizards
         };
     }
 
-    public static void ColdLizardLegSFX(On.LizardLimb.orig_ctor orig, LizardLimb lizLimb, GraphicsModule owner, BodyChunk connectionChunk, int num, float rad, float sfFric, float aFric, float huntSpeed, float quickness, LizardLimb otherLimbInPair)
+    public static void HailstormLizLegSFX(On.LizardLimb.orig_ctor orig, LizardLimb lizLimb, GraphicsModule owner, BodyChunk connectionChunk, int num, float rad, float sfFric, float aFric, float huntSpeed, float quickness, LizardLimb otherLimbInPair)
     {
         orig(lizLimb, owner, connectionChunk, num, rad, sfFric, aFric, huntSpeed, quickness, otherLimbInPair);
         if (owner is LizardGraphics liz)
@@ -205,7 +204,7 @@ internal class HailstormLizards
             }
         }
     }
-    public static SoundID ColdLizardVoiceSFX(On.LizardVoice.orig_GetMyVoiceTrigger orig, LizardVoice lizVoice)
+    public static SoundID HailstormLizVoiceSFX(On.LizardVoice.orig_GetMyVoiceTrigger orig, LizardVoice lizVoice)
     {
         SoundID res = orig(lizVoice);
 
@@ -299,15 +298,15 @@ internal class HailstormLizards
         }
     }
 
-    public static CreatureTemplate HailstormLizTemplates(On.LizardBreeds.orig_BreedTemplate_Type_CreatureTemplate_CreatureTemplate_CreatureTemplate_CreatureTemplate orig, CreatureTemplate.Type type, CreatureTemplate lizardAncestor, CreatureTemplate pinkTemplate, CreatureTemplate blueTemplate, CreatureTemplate greenTemplate)
+    public static CreatureTemplate HailstormLizTemplates(On.LizardBreeds.orig_BreedTemplate_Type_CreatureTemplate_CreatureTemplate_CreatureTemplate_CreatureTemplate orig, CreatureTemplate.Type lizardType, CreatureTemplate lizardAncestor, CreatureTemplate pinkTemplate, CreatureTemplate blueTemplate, CreatureTemplate greenTemplate)
     {
-        if (type == HailstormEnums.Freezer || type == HailstormEnums.IcyBlue)
+        if (lizardType == HailstormEnums.Freezer || lizardType == HailstormEnums.IcyBlue)
         {            
             CreatureTemplate frzTemp = orig(CreatureTemplate.Type.BlueLizard, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
             LizardBreedParams frzStats = (frzTemp.breedParameters as LizardBreedParams)!;
 
             // Check LizardBreeds in the game's files if you want to compare to other lizards' stats.
-            frzTemp.type = type;
+            frzTemp.type = lizardType;
 
             frzTemp.name = "Freezer Lizard"; // Internal lizard name.
 
@@ -328,12 +327,14 @@ internal class HailstormLizards
             frzStats.biteDamageChance = 0f; // Chance of killing the player on bite.
             frzStats.biteDominance = 0.7f;
 
-            frzTemp.baseStunResistance = 2.5f; // Stun times are divided by this amount.
-            frzTemp.baseDamageResistance = 4f; // Effective HP
+            frzTemp.baseDamageResistance = 4f; // This is HP.
+            frzTemp.baseStunResistance = 2.5f; // Stun times will be divided by this amount by default.
             frzTemp.instantDeathDamageLimit = 4f;
             frzTemp.damageRestistances[Creature.DamageType.Bite.index, 0] = 6; // Divides incoming bite damage by 6.
-            frzTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = 2.25f; // Divides incoming electric damage by 2.25.
-            frzTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = 0.80f;
+            frzTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = 2.25f; // Divides explosive damage by 2.25.
+            frzTemp.damageRestistances[Creature.DamageType.Explosion.index, 1] = 0.70f; // Divides explosive stun by 0.7.
+            frzTemp.damageRestistances[Creature.DamageType.Electric.index, 0] = 2f;
+            frzTemp.damageRestistances[Creature.DamageType.Electric.index, 1] = 2/3f;
             frzTemp.damageRestistances[HailstormEnums.Cold.index, 0] = 3.50f;
             frzTemp.damageRestistances[HailstormEnums.Cold.index, 1] = 1.50f;
             frzTemp.damageRestistances[HailstormEnums.Heat.index, 0] = 0.50f;
@@ -348,18 +349,19 @@ internal class HailstormLizards
             frzStats.maxMusclePower = 11f;
             frzStats.wiggleSpeed = 0.7f;
             frzStats.wiggleDelay = 20;
-            frzStats.swimSpeed = 0.5f; // How well the lizard can swim.
-            frzStats.idleCounterSubtractWhenCloseToIdlePos = 0;
             frzStats.danger = 0.8f; // How threatening the game considers this creature.
             frzStats.aggressionCurveExponent = 0.37f;
 
-            frzStats.baseSpeed = 4f; // Self-explanatory.
-            frzTemp.offScreenSpeed = 4f;
+            frzStats.idleCounterSubtractWhenCloseToIdlePos = 0;
+            frzStats.baseSpeed = 4f;
             frzStats.terrainSpeeds[1] = new(1f, 1f, 1.2f, 1.2f); // Ground movement.
             frzStats.terrainSpeeds[2] = new(0.9f, 1f, 1f, 1.1f); // Tunnel movement.
-            frzStats.terrainSpeeds[3] = new(1f, 0.85f, 0.7f, 1f); // Pole movement speeds.
+            frzStats.terrainSpeeds[3] = new(1f, 0.85f, 0.7f, 1f);// Pole movement speeds.
             frzStats.terrainSpeeds[4] = new(0.8f, 1f, 1f, 1.1f); // Background movement.
             frzStats.terrainSpeeds[5] = new(0.8f, 1f, 1f, 1.2f); // Ceiling movement.
+            frzStats.swimSpeed = 0.5f;
+            frzTemp.waterPathingResistance = 10f;
+            frzTemp.offScreenSpeed = 4f;
 
             frzStats.loungeTendensy = 0.95f; // LUNGE, not  l o u n g e. Determines how eager this lizard is to go for a lunge. 0 means "Never", and 1 means "Is 100 meters from your location and approaching rapidly".
             frzStats.findLoungeDirection = 1f; // 
@@ -379,8 +381,11 @@ internal class HailstormLizards
             frzTemp.visualRadius = 1750f; // How far the lizard can see.
             frzTemp.waterVision = 0.2f; // Vision in water.
             frzTemp.throughSurfaceVision = 0.5f; // How well the lizard can see through the surface of water.
-            frzStats.perfectVisionAngle = Mathf.Lerp(1f, -1f, 0.33f); // The angle that the lizard can see creatures perfectly within.
-            frzStats.periferalVisionAngle = Mathf.Lerp(1f, -1f, 0.75f); // The angle through which the lizard can see creatures at all.
+            frzStats.perfectVisionAngle = 0.33f; // Determines how wide the angle of perfect vision the lizard has.
+                                                 // - At -1, the lizard has perfect 360-degree vision
+                                                 // - At 0, the lizard has perfect vision for up to 90 degrees in either direction (180 total)
+                                                 // - At 1, the perfect vision angle is pretty much non-existent.
+            frzStats.periferalVisionAngle = -0.5f; // The angle through which the lizard can see creatures at all, even if not well. Functions similarly to perfectVisionAngle.
 
             frzStats.limbSize = 1.2f; // Length of limbs.
             frzStats.limbThickness = 1.35f; // Chonkiness of limbs.
@@ -411,7 +416,6 @@ internal class HailstormLizards
             frzStats.headGraphics = new int[5] { 0, 0, 0, 2, 0 }; // This might be important?
             frzStats.framesBetweenLookFocusChange = 70;
 
-            frzTemp.waterPathingResistance = 10f; // How much this lizard will try to avoid water.
             frzTemp.dangerousToPlayer = frzStats.danger;
             frzTemp.doPreBakedPathing = false;
             frzTemp.requireAImap = true;
@@ -425,6 +429,7 @@ internal class HailstormLizards
             frzTemp.usesRegionTransportation = true;
             frzTemp.shortcutSegments = 4;
             frzStats.shakePrey = 100;
+            frzTemp.roamBetweenRoomsChance = 0.1f;
 
             frzTemp.pathingPreferencesConnections[1] = new PathCost(1, PathCost.Legality.Allowed);
             frzTemp.pathingPreferencesConnections[2] = new PathCost(1, PathCost.Legality.Allowed);
@@ -444,9 +449,9 @@ internal class HailstormLizards
 
             freezerTemplate = frzTemp;
 
-            if (type == HailstormEnums.Freezer) return freezerTemplate;
+            if (lizardType == HailstormEnums.Freezer) return freezerTemplate;
         }
-        if (type == HailstormEnums.IcyBlue)
+        if (lizardType == HailstormEnums.IcyBlue)
         {
             CreatureTemplate icyBlueTemp = orig(CreatureTemplate.Type.BlueLizard, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
             LizardBreedParams icyBlueStats = (icyBlueTemp.breedParameters as LizardBreedParams)!;
@@ -454,7 +459,7 @@ internal class HailstormLizards
             CreatureTemplate frzTemp = freezerTemplate;
             LizardBreedParams frzStats = freezerTemplate.breedParameters as LizardBreedParams;
 
-            icyBlueTemp.type = type;
+            icyBlueTemp.type = lizardType;
 
             float sizeMult = 1.33f;
             float sizeFac = Mathf.InverseLerp(1f, 2f, sizeMult);
@@ -474,7 +479,10 @@ internal class HailstormLizards
             icyBlueTemp.baseDamageResistance = 3;
             icyBlueTemp.baseStunResistance = 2.4f;
             icyBlueTemp.damageRestistances[Creature.DamageType.Bite.index, 0] = 5.5f;
-            icyBlueTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = Mathf.Lerp(1.5f, frzTemp.damageRestistances[(int)Creature.DamageType.Explosion, 0], sizeFac);
+            icyBlueTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = 1.7f;
+            icyBlueTemp.damageRestistances[Creature.DamageType.Explosion.index, 1] = 0.7f;
+            icyBlueTemp.damageRestistances[Creature.DamageType.Electric.index, 0] = 2f;
+            icyBlueTemp.damageRestistances[Creature.DamageType.Electric.index, 1] = 2/3f;
             icyBlueTemp.damageRestistances[HailstormEnums.Cold.index, 0] = 1.50f;
             icyBlueTemp.damageRestistances[HailstormEnums.Cold.index, 1] = 1.00f;
             icyBlueTemp.damageRestistances[HailstormEnums.Heat.index, 0] = 0.75f;
@@ -564,134 +572,127 @@ internal class HailstormLizards
             icyBlueTemp.usesNPCTransportation = true;
             icyBlueTemp.usesRegionTransportation = false;
             icyBlueTemp.shortcutSegments = 3;
-            frzStats.shakePrey = 100;
+            icyBlueTemp.roamBetweenRoomsChance = 0.07f;
+            icyBlueStats.shakePrey = 100;
+
 
             return icyBlueTemp;
         }
-        if (type == HailstormEnums.GorditoGreenie)
+        if (lizardType == HailstormEnums.GorditoGreenie)
         {
             CreatureTemplate gorditoTemp = orig(CreatureTemplate.Type.GreenLizard, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
             LizardBreedParams gorditoStats = (gorditoTemp.breedParameters as LizardBreedParams)!;
 
-
-            // Check LizardBreeds in the game's files if you want to compare to other lizards' stats.
-            gorditoTemp.type = type;
-
-            gorditoTemp.name = "Gordito Greenie Lizard"; // Internal lizard name.
-
-            gorditoStats.standardColor = Custom.HSL2RGB(135 / 360f, 0.45f, 0.5f); // The lizard's base color.
-
-            gorditoTemp.meatPoints = 16;  // How many food pips a creature will give when eaten. Unfortunately can only be an Int, and not a Float.
-
-            gorditoStats.tamingDifficulty = 0; // How stubborn the lizard is to taming attempts. Higher numbers make them harder to tame.
-
-            gorditoStats.biteDelay = 20; // Delay between being ready to bite and actually biting.
-            gorditoStats.biteInFront = 40f;
-            gorditoStats.biteRadBonus = 0; // Bonus reach for the actual bite attack.
-            gorditoStats.biteHomingSpeed = 0.8f; // Head tracking speed while trying to go for a bite.
-            gorditoStats.biteChance = 0.5f; // Chance of going for a bite.
-            gorditoStats.attemptBiteRadius = 120f; // How far it'll try to bite you from.
-            gorditoStats.getFreeBiteChance = 1; // Chance of biting to escape a grasp.
-            gorditoStats.biteDamage = 5; // Damage done to other creatures.
-            gorditoStats.biteDamageChance = 1; // Chance of killing the player on bite.
-            gorditoStats.biteDominance = 1;
-
+            //----Basic Info----//
+            gorditoTemp.type = lizardType;
+            gorditoTemp.name = "Gordito Greenie Lizard";
+            gorditoTemp.meatPoints = 16;
+            gorditoStats.standardColor = new HSLColor(135 / 360f, 0.45f, 0.5f).rgb; // A desaturated minty green.
+            gorditoStats.tamingDifficulty = 0;
+            gorditoStats.tongue = false;
+            gorditoStats.aggressionCurveExponent = 0.1f;
+            gorditoStats.danger = 0.8f;
+            gorditoTemp.dangerousToPlayer = gorditoStats.danger;
+            //----HP and Resistances----//
             gorditoTemp.baseDamageResistance = 30; // Effective HP.
             gorditoTemp.instantDeathDamageLimit = gorditoTemp.baseDamageResistance;
-            gorditoTemp.damageRestistances[(int)Creature.DamageType.Bite, 0] = 10;
-            gorditoTemp.damageRestistances[(int)Creature.DamageType.Explosion, 0] = 4;
-            gorditoTemp.damageRestistances[(int)Creature.DamageType.Blunt, 0] = 3;
-            gorditoTemp.baseStunResistance = 100f; // Stun times are divided by this amount.
+            gorditoTemp.damageRestistances[Creature.DamageType.Bite.index, 0] = 10;
+            gorditoTemp.damageRestistances[Creature.DamageType.Explosion.index, 0] = 4;
+            gorditoTemp.damageRestistances[Creature.DamageType.Blunt.index, 0] = 3;
+            gorditoTemp.baseStunResistance = 100f;
+            gorditoTemp.BlizzardAdapted = true;
+            gorditoTemp.BlizzardWanderer = true;
             gorditoTemp.wormGrassImmune = true;
-
+            //----Vision----//
+            gorditoTemp.visualRadius = 1300f;
+            gorditoTemp.waterVision = 0.25f;
+            gorditoTemp.throughSurfaceVision = 1f;
+            gorditoStats.perfectVisionAngle = 0.7f;
+            gorditoStats.periferalVisionAngle = 0.1f;
+            //----Body----//
             gorditoTemp.bodySize = 3;
-            gorditoStats.bodyMass = 15f; // Weight.
-            gorditoStats.bodySizeFac = 1.8f; // Overall scale of the lizard's body chunks.
-            gorditoStats.bodyRadFac = 1f; //  W I D E N E S S
+            gorditoStats.bodyMass = 15f;
+            gorditoStats.bodySizeFac = 1.8f;
+            gorditoStats.bodyRadFac = 1f;
             gorditoStats.bodyStiffnes = 0.75f;
             gorditoStats.floorLeverage = 12f;
             gorditoStats.maxMusclePower = 24f;
             gorditoStats.wiggleSpeed = 0f;
             gorditoStats.wiggleDelay = 70;
-            gorditoStats.swimSpeed = 0.6f; // How well the lizard can swim.
+            //----Movement----//
             gorditoStats.idleCounterSubtractWhenCloseToIdlePos = 0;
-            gorditoStats.danger = 0.8f; // How threatening the game considers this creature.
-            gorditoStats.aggressionCurveExponent = 0.1f;
-
-            gorditoStats.baseSpeed = 4f; // Self-explanatory.
+            gorditoStats.baseSpeed = 4f;
+            gorditoStats.terrainSpeeds[1] = new(1f, 1f, 0.5f, 3f);
+            gorditoStats.terrainSpeeds[2] = new(0.9f, 1f, 1f, 1.1f);
+            gorditoStats.swimSpeed = 0.6f;
+            gorditoTemp.waterPathingResistance = 10f;
+            gorditoTemp.requireAImap = true;
+            gorditoTemp.doPreBakedPathing = false;
+            gorditoTemp.preBakedPathingAncestor = StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.GreenLizard);
             gorditoTemp.offScreenSpeed = 0.1f;
-            gorditoStats.terrainSpeeds[1] = new(1f, 1f, 0.5f, 3f); // Ground movement.
-            gorditoStats.terrainSpeeds[2] = new(0.9f, 1f, 1f, 1.1f); // Tunnel movement.
-
-            gorditoStats.loungeTendensy = 1; // LUNGE, not  l o u n g e. Determines how eager this lizard is to go for a lunge. 0 means "Never", and 1 means "Is 100 meters from your location and approaching rapidly".
-            gorditoStats.findLoungeDirection = 1f; // 
-            gorditoStats.preLoungeCrouch = 50; // Wind-up time for this lizard's lunge.
-            gorditoStats.preLoungeCrouchMovement = -0.33f; // Movement speed during lunge.
-            gorditoStats.loungeDistance = 510f; // How far the lizard is willing to lunge from.
-            gorditoStats.loungeSpeed = 1f; // Self-explanatory.
-            gorditoStats.loungeMaximumFrames = 120; // How long this lizard's lunge attack can last.
-            gorditoStats.loungePropulsionFrames = 20; // How long this lizard spends accelerating?
-            gorditoStats.loungeJumpyness = 2f; // How much they jump for their lunge.
-            gorditoStats.loungeDelay = 320; // Lunge cooldown.
-            gorditoStats.riskOfDoubleLoungeDelay = 0; // Chance of cooldown being doubled.
+            gorditoTemp.roamInRoomChance = 0.01f;
+            gorditoTemp.roamBetweenRoomsChance = -1;
+            gorditoTemp.usesNPCTransportation = false;
+            gorditoTemp.shortcutSegments = 6;
+            //----Bites----//
+            gorditoStats.biteDelay = 20;
+            gorditoStats.biteInFront = 40f;
+            gorditoStats.biteRadBonus = 0;
+            gorditoStats.biteHomingSpeed = 0.8f;
+            gorditoStats.biteChance = 0.5f;
+            gorditoStats.attemptBiteRadius = 120f;
+            gorditoStats.getFreeBiteChance = 1;
+            gorditoStats.biteDamage = 5;
+            gorditoStats.biteDamageChance = 1;
+            gorditoStats.biteDominance = 1;
+            //----Lunging---//
+            gorditoStats.loungeTendensy = 1;
+            gorditoStats.findLoungeDirection = 1f;
+            gorditoStats.preLoungeCrouch = 50;
+            gorditoStats.preLoungeCrouchMovement = -0.33f;
+            gorditoStats.loungeDistance = 510f;
+            gorditoStats.loungeSpeed = 1f;
+            gorditoStats.loungeMaximumFrames = 120;
+            gorditoStats.loungePropulsionFrames = 20;
+            gorditoStats.loungeJumpyness = 2f;
+            gorditoStats.loungeDelay = 320;
+            gorditoStats.riskOfDoubleLoungeDelay = 0;
             gorditoStats.postLoungeStun = 80;
-            gorditoStats.canExitLoungeWarmUp = false; // Determines whether this lizard can cancel out of winding up their lunge.
-            gorditoStats.canExitLounge = false; // Determines whether this lizard can cancel out of an actual lunge. This, uh, seems to pretty much negate postLoungeStun.
-
-            gorditoTemp.visualRadius = 1300f; // How far the lizard can see.
-            gorditoTemp.waterVision = 0.25f; // Vision in water.
-            gorditoTemp.throughSurfaceVision = 1f; // How well the lizard can see through the surface of water.
-            gorditoStats.perfectVisionAngle = Mathf.Lerp(1f, -1f, 0.2f); // The angle that the lizard can see creatures perfectly within.
-            gorditoStats.periferalVisionAngle = Mathf.Lerp(1f, -1f, 0.45f); // The angle through which the lizard can see creatures at all.
-
-            gorditoStats.limbSize = 0.5f; // Length of limbs.
-            gorditoStats.limbThickness = 2.5f; // Chonkiness of limbs.
+            gorditoStats.canExitLoungeWarmUp = false;
+            gorditoStats.canExitLounge = false;
+            //----Limbs----//
+            gorditoStats.limbSize = 0.5f;
+            gorditoStats.limbThickness = 2.5f;
             gorditoStats.stepLength = 0.8f;
-            gorditoStats.liftFeet = 1.2f; // How much lizards bring their feet up when crawling around.
-            gorditoStats.feetDown = 0.6f; // How much lizards bring their feet down when crawling around.
+            gorditoStats.liftFeet = 1.2f;
+            gorditoStats.feetDown = 0.6f;
             gorditoStats.noGripSpeed = 0;
             gorditoStats.limbSpeed = 2f;
             gorditoStats.limbQuickness = 0.2f;
             gorditoStats.limbGripDelay = 2;
             gorditoStats.legPairDisplacement = 1f;
-            gorditoStats.walkBob = 0.5f; // How bumpy a lizard's movement is.
+            gorditoStats.walkBob = 0.5f;
             gorditoStats.regainFootingCounter = 30;
-
+            //----Tail----//
             gorditoStats.tailSegments = 3;
             gorditoStats.tailStiffness = 400f;
             gorditoStats.tailStiffnessDecline = 0.05f;
-            gorditoStats.tailLengthFactor = 1; // How long each tail segment is.
+            gorditoStats.tailLengthFactor = 1;
             gorditoStats.tailColorationStart = 0.9f;
             gorditoStats.tailColorationExponent = 0.05f;
-
+            //----Head----//
             gorditoStats.headShieldAngle = 200f;
-            gorditoStats.headSize = 1.05f; // Scale of head sprites.
-            gorditoStats.neckStiffness = 1.2f; // How resistant the lizard's head is to turning.
-            gorditoStats.jawOpenAngle = 25f; // How wide this lizard will open their mouth.
-            gorditoStats.jawOpenLowerJawFac = 0.5f; // How much the lizard's bottom jaw turns when its mouth opens.
-            gorditoStats.jawOpenMoveJawsApart = 10f; // How far the lizard's bottom jaw lowers when its mouth opens.
+            gorditoStats.headSize = 1.05f;
+            gorditoStats.neckStiffness = 1.2f;
+            gorditoStats.jawOpenAngle = 25f;
+            gorditoStats.jawOpenLowerJawFac = 0.5f;
+            gorditoStats.jawOpenMoveJawsApart = 10f;
             gorditoStats.headGraphics = new int[5] { 1, 1, 1, 1, 1 };
             gorditoStats.framesBetweenLookFocusChange = 240;
 
-            gorditoTemp.waterPathingResistance = 10f; // How much this lizard will try to avoid water.
-            gorditoTemp.dangerousToPlayer = gorditoStats.danger;
-            gorditoTemp.doPreBakedPathing = false;
-            gorditoTemp.requireAImap = true;
-            gorditoStats.tongue = false;
-            gorditoTemp.BlizzardAdapted = true;
-            gorditoTemp.BlizzardWanderer = true;
-            gorditoTemp.preBakedPathingAncestor = StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.GreenLizard);
-            gorditoTemp.usesNPCTransportation = false;
-            gorditoTemp.shortcutSegments = 5;
-
-            gorditoTemp.pathingPreferencesConnections[13] = new PathCost(10, PathCost.Legality.Unallowed);
-            gorditoTemp.pathingPreferencesConnections[14] = new PathCost(10, PathCost.Legality.Unallowed);
-            gorditoTemp.pathingPreferencesConnections[15] = new PathCost(10, PathCost.Legality.Unallowed);
-            gorditoTemp.pathingPreferencesConnections[21] = new PathCost(10, PathCost.Legality.Unallowed);
-
             return gorditoTemp;
         }
-        if (type == CreatureTemplate.Type.Salamander)
+        if (lizardType == CreatureTemplate.Type.Salamander)
         {
             CreatureTemplate lotl = orig(CreatureTemplate.Type.Salamander, lizardAncestor, pinkTemplate, null, null);
             lotl.damageRestistances[HailstormEnums.Cold.index, 0] = 1.25f;
@@ -701,7 +702,7 @@ internal class HailstormLizards
             return lotl;
         }
 
-        return orig(type, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
+        return orig(lizardType, lizardAncestor, pinkTemplate, blueTemplate, greenTemplate);
     }
     public static CreatureTemplate EelTemperatureResistances(On.LizardBreeds.orig_BreedTemplate_Type_CreatureTemplate_CreatureTemplate orig, CreatureTemplate.Type type, CreatureTemplate lizardAncestor, CreatureTemplate salamanderTemplate)
     {
@@ -722,7 +723,10 @@ internal class HailstormLizards
     {
         orig(liz, absLiz, world);
 
-        LizardData.Add(liz, new LizardInfo(liz));
+        if (!LizardData.TryGetValue(liz, out _))
+        {
+            LizardData.Add(liz, new LizardInfo(liz));
+        }
 
         if (liz is not null && LizardData.TryGetValue(liz, out LizardInfo lI))
         {
@@ -1016,10 +1020,39 @@ internal class HailstormLizards
         {
             if (OtherCreatureChanges.IsIncanStory(liz.room.game))
             {
-                if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                if (liz.Template.type == CreatureTemplate.Type.Salamander)
                 {
-                    dmg *= 0.8f; // 1.25x HP
-                    bonusStun *= 0.6f;
+                    if (dmgType == Creature.DamageType.Electric)
+                    {
+                        dmg *= 1.5f;
+                        bonusStun *= 1.5f;
+                    }
+                }
+                else if(liz.Template.type == CreatureTemplate.Type.YellowLizard)
+                {
+                    if (dmgType == Creature.DamageType.Electric)
+                    {
+                        dmg /= 2f;
+                        bonusStun = 2f;
+                    }
+                }
+                else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+                {
+                    dmg *= 0.615384f; // Base HP: 1.6 -> 2.6
+                    if (dmgType == Creature.DamageType.Electric)
+                    {
+                        dmg /= 2f;
+                        bonusStun /= 2f;
+                    }
+                }
+                else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                {
+                    dmg *= 2/3f; // Base HP: 5 -> 7.5
+                    bonusStun *= 2/3f;
+                }
+                else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
+                {
+                    dmg *= 1.5f; // Base HP: 2.4 -> 1.6
                 }
             }
 
@@ -2028,24 +2061,16 @@ internal class HailstormLizards
                     lizAI.runSpeed = Mathf.Lerp(lizAI.runSpeed, 1f, 0.1f);
                 }
 
-                if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard && lizAI.redSpitAI is not null)
+                if (lizAI.redSpitAI is not null &&
+                    (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard || liz.Template.type == CreatureTemplate.Type.RedLizard))
                 {
-                    if (lizAI.redSpitAI.delay == 11)
-                    {
-                        lizAI.redSpitAI.delay += 8;
-                    }
-                    else if (lizAI.redSpitAI.delay == 12)
-                    {
-                        lizAI.redSpitAI.delay--;
-                    }
-
-                    if (lizAI.redSpitAI.randomCycle < -95)
-                    {
-                        lizAI.redSpitAI.randomCycle = Random.Range(460, 860);
-                    }
-                    if (lizAI.redSpitAI.spitting && lizAI.redSpitAI.randomCycle > 60)
+                    if (lizAI.redSpitAI.spitting)
                     {
                         lizAI.redSpitAI.spitting = false;
+                    }
+                    if (lizAI.redSpitAI.spitFromPos != lizAI.creature.pos)
+                    {
+                        lizAI.redSpitAI.spitFromPos = lizAI.creature.pos;
                     }
                 }
             }
@@ -2065,23 +2090,19 @@ internal class HailstormLizards
         }
     }
 
-    public static void NoRedSpitForIncan(On.LizardAI.LizardSpitTracker.orig_Update orig, LizardAI.LizardSpitTracker lst)
+    public static PathCost HailstormLizTravelPrefs(On.LizardAI.orig_TravelPreference orig, LizardAI lizAI, MovementConnection connection, PathCost cost)
     {
-        orig(lst);
-        if (IsIncanStory(lst?.lizardAI?.lizard?.room?.game) && lst.lizardAI.lizard.Template.type == CreatureTemplate.Type.RedLizard)
+        if (IsIncanStory(lizAI?.lizard?.room?.game) && (lizAI.lizard.Template.type == CreatureTemplate.Type.Salamander || lizAI.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard))
         {
-            if (lst.spitting)
+            if (!lizAI.lizard.room.GetTile(connection.destinationCoord).AnyWater)
             {
-                lst.spitting = false;
-            }
-            if (lst.spitFromPos != lst.AI.creature.pos)
-            {
-                lst.spitFromPos = lst.AI.creature.pos;
+                //cost.resistance -= 10f;
             }
         }
+        return orig(lizAI, connection, cost);
     }
 
-    public static void ErraticWindCyanNojump()
+    public static void LizardAI_ILHooks()
     {
         IL.LizardJumpModule.RunningUpdate += IL =>
         {

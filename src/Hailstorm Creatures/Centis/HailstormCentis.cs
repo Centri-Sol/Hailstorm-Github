@@ -72,7 +72,7 @@ internal class HailstormCentis
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
     }
 
     //-----------------------------------------
@@ -272,7 +272,11 @@ internal class HailstormCentis
             }
         }
 
-        CentiData.Add(cnt, new CentiInfo(cnt));
+        if (!CentiData.TryGetValue(cnt, out _))
+        {
+            CentiData.Add(cnt, new CentiInfo(cnt));
+        }
+        
     }
 
     //----------------------------------------------------------------------------------
