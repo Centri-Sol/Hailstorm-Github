@@ -13,6 +13,9 @@ using MonoMod.Cil;
 using Mono.Cecil.Cil;
 using System.Net.NetworkInformation;
 using System.Linq;
+using System.Drawing;
+using System.Runtime.ConstrainedExecution;
+using System.Text.RegularExpressions;
 
 namespace Hailstorm;
 
@@ -43,17 +46,22 @@ internal class HailstormCentis
         new Hook(typeof(Centipede).GetMethod("get_Small", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.abstractCreature.creatureTemplate.type == HailstormEnums.InfantAquapede || orig(cnt));
         new Hook(typeof(Centipede).GetMethod("get_AquaCenti", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.abstractCreature.creatureTemplate.type == HailstormEnums.InfantAquapede || orig(cnt));
         new Hook(typeof(Centipede).GetMethod("get_FoodPoints", Public | NonPublic | Instance), (Func<Centipede, int> orig, Centipede cnt) => cnt.abstractCreature.creatureTemplate.type == HailstormEnums.InfantAquapede ? 3 : orig(cnt));
+
         On.Centipede.ctor += WinterCentipedes;
-        On.Centipede.Update += CentiUpdate;
+
+        On.Centipede.Update += HailstormCentiUpdate;
         On.Centipede.UpdateGrasp += ChillipedeUpdateGrasp;
+        On.Centipede.Crawl += CyanwingCrawling;
+
         On.Centipede.Violence += DMGvsCentis;
         On.Centipede.Stun += CentiStun;
         On.Centipede.BitByPlayer += ConsumeChild;
         On.Centipede.Shock += ChillipedeZappage;
+        On.Centipede.Die += CyanwingSelfDestruct;
         ModifiedCentiStuff();
 
         // Centi AI
-        On.CentipedeAI.ctor += BabyCentiwingParentAssignment;
+        On.CentipedeAI.ctor += HailstormCentiwingAI;
         On.CentipedeAI.IUseARelationshipTracker_UpdateDynamicRelationship += CentiwingBravery;
         On.CentipedeAI.Update += CyanwingAggression;
 
@@ -272,7 +280,8 @@ internal class HailstormCentis
             }
         }
 
-        if (!CentiData.TryGetValue(cnt, out _))
+        if (!CentiData.TryGetValue(cnt, out _) &&
+            (IsIncanStory(world?.game) || type == HailstormEnums.InfantAquapede || type == HailstormEnums.Cyanwing || type == HailstormEnums.Chillipede))
         {
             CentiData.Add(cnt, new CentiInfo(cnt));
         }
@@ -283,201 +292,329 @@ internal class HailstormCentis
     //----------------------------------------------------------------------------------
 
     #region Main Centi Functions
-
-    public static void CentiUpdate(On.Centipede.orig_Update orig, Centipede cnt, bool eu)
+    //----Update----//
+    public static void HailstormCentiUpdate(On.Centipede.orig_Update orig, Centipede cnt, bool eu)
     {
-        orig(cnt, eu);
-        if (cnt?.room is not null &&
-            cnt.graphicsModule is not null &&
-            cnt.graphicsModule is CentipedeGraphics cg &&
-            CentiData.TryGetValue(cnt, out CentiInfo cI))
+        if (cnt is null || !CentiData.TryGetValue(cnt, out CentiInfo cI))
         {
-            if (cnt.AquaCenti && cnt.lungs < 0.005f)
+            orig(cnt, eu);
+            return;
+        }
+
+        if (cnt.shockCharge > 0 && !cnt.safariControlled)
+        {
+            cI.Charge = cnt.shockCharge;
+            PhysicalObject target = null;
+            if (cnt.grabbedBy.Count > 0 && !cnt.dead && cnt.Small)
             {
-                cnt.lungs = 1;
-            }
-
-            if (cI.BabyAquapede)
-            {
-                if (cnt.grabbedBy.Count > 0 && !cnt.dead)
+                cI.Charge += 1/60f;
+                if (cI.Charge >= 1 && cnt.grabbedBy[0].grabber is not null)
                 {
-                    cnt.shockCharge -= 0.25f / 60f;
-                }
-            }
-            else if (cnt.CentiState is ChillipedeState cS)
-            {
-                if (cnt.HypothermiaExposure > 0.1f || cnt.Hypothermia > 0.1f)
-                {
-                    cnt.HypothermiaExposure = 0;
-                    cnt.Hypothermia = 0;
-                }
-                if (cS.ScaleRegenTime.Length != cnt.bodyChunks.Length)
-                {
-                    Array.Resize(ref cS.ScaleRegenTime, cnt.bodyChunks.Length);
-                }
-                if (!cnt.dead || (Random.value < cnt.HypothermiaExposure && cnt.room.blizzardGraphics is not null))
-                {
-                    for (int s = 0; s < cS.ScaleRegenTime.Length; s++)
-                    {
-                        if (cS.ScaleRegenTime[s] != 0)
-                        {
-                            int regen =
-                                cnt.room.blizzardGraphics is null ? 1 :
-                                cnt.dead ? (Random.value < cnt.HypothermiaExposure * Mathf.Clamp(cnt.room.blizzardGraphics.SnowfallIntensity, 0.2f, 1) ? 2 : 1) :
-                                (int)Mathf.Max(1, Mathf.Lerp(1, 5, cnt.HypothermiaExposure) * Mathf.Clamp(cnt.room.blizzardGraphics.SnowfallIntensity, 0.2f, 1));
-
-                            cS.ScaleRegenTime[s] = Mathf.Max(0, cS.ScaleRegenTime[s] - regen);
-
-                            if (cS.ScaleStages[s] == 1 && cS.ScaleRegenTime[s] == 0)
-                            {
-                                cS.ScaleStages[s] = 0;
-                                for (int sn = 8; sn >= 0; sn--)
-                                {
-                                    cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor));
-                                }
-                            }
-                            else if (cS.ScaleRegenTime[s] > 0)
-                            {
-                                if (cS.ScaleStages[s] == 2 && cS.ScaleRegenTime[s] <= 2000)
-                                {
-                                    cS.ScaleStages[s] = 1;
-                                    for (int sn = 6; sn >= 0; sn--)
-                                    {
-                                        cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor));
-                                    }
-                                }
-                                else if (!cnt.CentiState.shells[s] && cS.ScaleRegenTime[s] > 2000 && cS.ScaleRegenTime[s] <= 4000)
-                                {
-                                    cS.ScaleStages[s] = 2;
-                                    cnt.CentiState.shells[s] = true;
-                                    for (int sn = 4; sn >= 0; sn--)
-                                    {
-                                        cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor));
-                                    }
-                                }
-                            }
-
-                            if (Random.value < 0.00225f)
-                            {
-                                cnt.room.AddObject(Random.value < 0.5f ?
-                                    new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 2f, cS.scaleColor, cS.accentColor) :
-                                    new PuffBallSkin(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 2f, cS.scaleColor, cS.accentColor));
-                            }
-                        }
-                        else
-                        {
-                            if (Random.value < 0.0015f) cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 4f, cS.scaleColor, cS.accentColor));
-                        }
-                    }
+                    target = cnt.grabbedBy[0].grabber;
                 }
             }
-            else if (cI.Cyanwing)
+            if (cI.Charge > 0)
             {
-                if (cnt.grabbedBy.Count > 0 && cnt.grabbedBy[0]?.grabbedChunk is not null && cnt.CentiState is not null && (cnt.CentiState.shells[cnt.grabbedBy[0].grabbedChunk.index] || cnt.shellJustFellOff == cnt.grabbedBy[0].grabbedChunk.index))
+                for (int g = 0; g < cnt.grasps.Length; g++)
                 {
-
-                    cnt.room.AddObject(new ZapCoil.ZapFlash(cnt.grabbedBy[0].grabbedChunk.pos, 1));
-                    cnt.room.PlaySound(SoundID.Jelly_Fish_Tentacle_Stun, cnt.grabbedBy[0].grabbedChunk.pos);
-                    if (cnt.dead)
+                    if (cnt.grasps[g]?.grabbed is null)
                     {
-                        if (cnt.CentiState.shells[cnt.grabbedBy[0].grabbedChunk.index])
-                        {
-                            cnt.CentiState.shells[cnt.grabbedBy[0].grabbedChunk.index] = false;
-                        }
-                        for (int j = 0; j < 2; j++)
-                        {
-                            Vector3 col =
-                                j == 0 ?
-                                new(cI.segmentHues[cnt.grabbedBy[0].grabbedChunk.index], cg.saturation, 0) :
-                                Custom.RGB2HSL(Color.Lerp(Color.Lerp(Custom.HSL2RGB(cI.segmentHues[cnt.grabbedBy[0].grabbedChunk.index], cg.saturation, 0.625f), cg.blackColor, 0.5f), new Color(0.4392f, 0.0745f, 0f), 0.25f));
-
-                            CyanwingShell cyanwingShell =
-                                j == 0 ?
-                                new(cnt, cnt.grabbedBy[0].grabbedChunk.pos, Custom.RNV() * Random.Range(3f, 9f), col.x, col.y, cnt.grabbedBy[0].grabbedChunk.rad * 0.15f, cnt.grabbedBy[0].grabbedChunk.rad * 0.13f, Random.value < 0.2f ? 200 : 130) :
-                                new(cnt, cnt.grabbedBy[0].grabbedChunk.pos, Custom.RNV() * Random.Range(5f, 15f), Custom.HSL2RGB(col.x, col.y, col.z), cnt.grabbedBy[0].grabbedChunk.rad * 0.15f, cnt.grabbedBy[0].grabbedChunk.rad * 0.13f, "CyanwingBackShell", Random.value < 0.2f ? 200 : 130);
-
-                            cnt.room.AddObject(cyanwingShell);
-                        }
+                        continue;
                     }
-
-                    Creature grabber = cnt.grabbedBy[0].grabber;
-                    grabber.LoseAllGrasps();
-                    grabber.Stun(Random.Range(40, 61));
-                    cnt.room.AddObject(new CreatureSpasmer(grabber, allowDead: true, grabber.stun));
-                }
-                if (cnt.shellJustFellOff != -1)
-                {
-                    cnt.shellJustFellOff = -1;
-                }
-
-                if (cnt.Glower is null)
-                {
-                    cnt.GlowerHead = cnt.HeadChunk;
-                    cnt.Glower = new LightSource(cnt.GlowerHead.pos, environmentalLight: false, Custom.HSL2RGB(cg.hue, cg.saturation, 0.625f), cnt);
-                    cnt.room.AddObject(cnt.Glower);
-                    cnt.Glower.alpha = 0;
-                    cnt.Glower.rad = 0;
-                    cnt.Glower.submersible = true;
-                }
-                else if (cnt.Glower is not null)
-                {
-                    if (cnt.GlowerHead == cnt.HeadChunk && !cnt.Stunned && cnt.shockCharge < 0.2f && cnt.Consious)
+                    BodyChunk otherChunk = cnt.bodyChunks[(g == 0) ? (cnt.bodyChunks.Length - 1) : 0];
+                    for (int i = 0; i < cnt.grasps[g].grabbed.bodyChunks.Length; i++)
                     {
-                        if (cnt.Glower.rad < 300f)
-                        {
-                            cnt.Glower.rad += 11f;
-                        }
-                        if (cnt.Glower.Alpha < 0.5f)
-                        {
-                            cnt.Glower.alpha += 0.2f;
-                        }
-                    }
-                    else
-                    {
-                        if (cnt.Glower.rad > 0f)
-                        {
-                            cnt.Glower.rad -= 5f;
-                        }
-                        if (cnt.Glower.Alpha > 0f)
-                        {
-                            cnt.Glower.alpha -= 0.05f;
-                        }
-                        if (cnt.Glower.Alpha <= 0f && cnt.Glower.rad <= 0f)
-                        {
-                            cnt.room.RemoveObject(cnt.Glower);
-                            cnt.Glower = null;
-                        }
-                    }
-                    if (cnt.Glower is not null)
-                    {
-                        cnt.Glower.pos = cnt.GlowerHead.pos;
-                    }
-                }
-
-                if (!cnt.dead &&
-                    cnt.CentiState is not null &&
-                    cI.segmentHues is not null &&
-                    cI.segmentGradientDirections is not null &&
-                    cI.segmentHues.Length == cI.segmentGradientDirections.Length)
-                {
-                    for (int s = 0; s < cnt.bodyChunks.Length; s++)
-                    {
-                        if (!cnt.CentiState.shells[s])
+                        PhysicalObject grabbed = cnt.grasps[g].grabbed;
+                        if (grabbed is null)
                         {
                             continue;
                         }
-
-                        if (cI.segmentHues[s] >= cg.hue + 50 / 360f)
+                        cI.Charge += 1/Mathf.Lerp(100f, 5f, cnt.size);
+                        if (cI.Charge >= 1)
                         {
-                            cI.segmentGradientDirections[s] = true;
+                            target = grabbed;
                         }
-                        else if (cI.segmentHues[s] <= cg.hue)
-                        {
-                            cI.segmentGradientDirections[s] = false;
-                        }
+                    }
+                }
+            }
+            if (target is not null)
+            {
+                cnt.shockCharge = 0; 
+                if (cI.Chillipede)
+                {
+                    Freeze(cnt, target);
+                }
+                else if (cI.Cyanwing)
+                {
+                    Vaporize(cnt, cI, target);
+                }
+                else
+                {
+                    Fry(cnt, target);
+                }
+            }
+        }
 
-                        cI.segmentHues[s] +=
-                            (cnt.Stunned ? 0.5f / 360f : 1 / 360f) * (cI.segmentGradientDirections[s] ? -1 : 1);
+        orig(cnt, eu);
+
+        if (cnt.room is null || cnt.graphicsModule is null || cnt.graphicsModule is not CentipedeGraphics cg)
+        {
+            return;
+        }
+
+        if (cnt.AquaCenti && cnt.lungs < 0.005f)
+        {
+            cnt.lungs = 1;
+        }
+
+        if (cI.BabyAquapede)
+        {
+            if (cnt.grabbedBy.Count > 0 && !cnt.dead)
+            {
+                cnt.shockCharge -= 0.2f / 60f;
+            }
+        }
+        else if (cnt.CentiState is ChillipedeState cS)
+        {
+            ChillipedeUpdate(cnt, cS);
+        }
+        else if (cI.Cyanwing)
+        {
+            CyanwingUpdate(cnt, cI, cg);
+        }
+        
+    }
+    public static void CyanwingUpdate(Centipede cnt, CentiInfo cI, CentipedeGraphics cg)
+    {
+        bool grabby = false;
+        for (int g = 0; g < cnt.grasps.Length; g++)
+        {
+            if (cnt.grasps[g] is not null)
+            {
+                grabby = true;
+                break;
+            }
+        }
+        if (!grabby || Random.value < 0.33f)
+        {
+            cnt.shockGiveUpCounter--;
+        }
+
+
+        if (cnt.grabbedBy.Count > 0 && cnt.grabbedBy[0]?.grabbedChunk is not null && cnt.CentiState is not null && (cnt.CentiState.shells[cnt.grabbedBy[0].grabbedChunk.index] || cnt.shellJustFellOff == cnt.grabbedBy[0].grabbedChunk.index))
+        {
+            cnt.room.AddObject(new ZapCoil.ZapFlash(cnt.grabbedBy[0].grabbedChunk.pos, 1));
+            cnt.room.PlaySound(SoundID.Jelly_Fish_Tentacle_Stun, cnt.grabbedBy[0].grabbedChunk.pos);
+            if (cnt.dead)
+            {
+                if (cnt.CentiState.shells[cnt.grabbedBy[0].grabbedChunk.index])
+                {
+                    cnt.CentiState.shells[cnt.grabbedBy[0].grabbedChunk.index] = false;
+                }
+                for (int j = 0; j < 2; j++)
+                {
+                    Color shellColor =
+                        j == 0 ?
+                        new HSLColor(cI.segmentHues[cnt.grabbedBy[0].grabbedChunk.index], cg.saturation, 0.5f).rgb :
+                        Color.Lerp(Color.Lerp(Custom.HSL2RGB(cI.segmentHues[cnt.grabbedBy[0].grabbedChunk.index], cg.saturation, 0.625f), cg.blackColor, 0.5f), new Color(0.4392f, 0.0745f, 0f), 0.25f);
+
+                    CyanwingShell cyanwingShell =
+                        j == 0 ?
+                        new(cnt, cnt.grabbedBy[0].grabbedChunk.pos, Custom.RNV() * Random.Range(3f,  9f), shellColor, cnt.grabbedBy[0].grabbedChunk.rad * 0.15f, cnt.grabbedBy[0].grabbedChunk.rad * 0.13f, Random.value < 0.2f ? 200 : 130) :
+                        new(cnt, cnt.grabbedBy[0].grabbedChunk.pos, Custom.RNV() * Random.Range(5f, 15f), shellColor, cnt.grabbedBy[0].grabbedChunk.rad * 0.15f, cnt.grabbedBy[0].grabbedChunk.rad * 0.13f, Random.value < 0.2f ? 200 : 130);
+
+                    cnt.room.AddObject(cyanwingShell);
+                }
+            }
+
+            Creature grabber = cnt.grabbedBy[0].grabber;
+            grabber.LoseAllGrasps();
+            grabber.Stun(Random.Range(40, 61));
+            cnt.room.AddObject(new CreatureSpasmer(grabber, allowDead: true, grabber.stun));
+        }
+        if (cnt.shellJustFellOff != -1)
+        {
+            cnt.shellJustFellOff = -1;
+        }
+
+        if (cnt.Glower is null)
+        {
+            cnt.GlowerHead = cnt.HeadChunk;
+            cnt.Glower = new LightSource(cnt.GlowerHead.pos, environmentalLight: false, Custom.HSL2RGB(cg.hue, cg.saturation, 0.625f), cnt);
+            cnt.room.AddObject(cnt.Glower);
+            cnt.Glower.alpha = 0;
+            cnt.Glower.rad = 0;
+            cnt.Glower.submersible = true;
+        }
+        else if (cnt.Glower is not null)
+        {
+            if (cnt.GlowerHead == cnt.HeadChunk && !cnt.Stunned && cnt.shockCharge < 0.2f && cnt.Consious)
+            {
+                if (cnt.Glower.rad < 300f)
+                {
+                    cnt.Glower.rad += 11f;
+                }
+                if (cnt.Glower.Alpha < 0.5f)
+                {
+                    cnt.Glower.alpha += 0.2f;
+                }
+            }
+            else
+            {
+                if (cnt.Glower.rad > 0f)
+                {
+                    cnt.Glower.rad -= 5f;
+                }
+                if (cnt.Glower.Alpha > 0f)
+                {
+                    cnt.Glower.alpha -= 0.05f;
+                }
+                if (cnt.Glower.Alpha <= 0f && cnt.Glower.rad <= 0f)
+                {
+                    cnt.room.RemoveObject(cnt.Glower);
+                    cnt.Glower = null;
+                }
+            }
+            if (cnt.Glower is not null)
+            {
+                cnt.Glower.pos = cnt.GlowerHead.pos;
+            }
+        }
+
+        if (Random.value < (cnt.dead ? 0.02f : Mathf.Lerp(0.06f, 0.03f, cnt.CentiState.ClampedHealth)))
+        {
+            GreenSparks.GreenSpark notgreenSpark =
+                new(cnt.bodyChunks[Random.Range(0, cnt.bodyChunks.Length)].pos)
+                { 
+                    col = cnt.ShortCutColor()
+                };
+            cnt.room.AddObject(notgreenSpark);
+        }
+
+        if (cnt.dead)
+        {
+            if (cI.SelfDestruct > 0)
+            {
+                cI.SelfDestruct++;
+                cI.SparkCounter++;
+                float sparkFac = cI.SelfDestruct < 210 ?
+                    Custom.LerpMap(cI.SelfDestruct,   0, 210, 60, 20) :
+                    Custom.LerpMap(cI.SelfDestruct, 210, 240,  5,  1);
+                if (cI.SparkCounter > sparkFac && Random.value < 0.33f)
+                {
+                    float boomFac = Mathf.Lerp(1, 1.33f, cI.SelfDestruct/240f);
+                    BodyChunk randomChunk = cnt.bodyChunks[Random.Range(0, cnt.bodyChunks.Length)];
+                    cnt.room.InGameNoise(new Noise.InGameNoise(randomChunk.pos, 6000f * boomFac, cnt, 4f));
+                    cnt.room.PlaySound(SoundID.Death_Lightning_Spark_Spontaneous, randomChunk.pos, 1, Random.Range(0.75f, 1.25f) * boomFac);
+                    cnt.room.AddObject(new CyanwingSpark(randomChunk.pos + (Custom.RNV() * Random.Range(5f, 10f)), 0.5f + (Random.value / 2f), cnt.ShortCutColor()));
+                    cnt.room.AddObject(new CyanwingSpark(randomChunk.pos + (Custom.RNV() * Random.Range(5f, 10f)), 0.5f + (Random.value / 2f), cnt.ShortCutColor()));
+                    cI.SparkCounter = 0;
+                }
+                if (cI.SelfDestruct > 240)
+                {
+                    cI.SelfDestruct = 0;
+                    CyanwingExplosion(cnt, cI);
+                }
+            }
+            return;
+        }
+
+        if (cnt.CentiState is not null &&
+            cI.segmentHues is not null &&
+            cI.segmentGradientDirections is not null &&
+            cI.segmentHues.Length == cI.segmentGradientDirections.Length)
+        {
+            for (int s = 0; s < cnt.bodyChunks.Length; s++)
+            {
+                if (!cnt.CentiState.shells[s])
+                {
+                    continue;
+                }
+
+                if (cI.segmentHues[s] >= cg.hue + 50 / 360f)
+                {
+                    cI.segmentGradientDirections[s] = true;
+                }
+                else if (cI.segmentHues[s] <= cg.hue)
+                {
+                    cI.segmentGradientDirections[s] = false;
+                }
+
+                cI.segmentHues[s] +=
+                    (cnt.Stunned ? 0.5f / 360f : 1 / 360f) * (cI.segmentGradientDirections[s] ? -1 : 1);
+
+                if (Random.value < Mathf.Lerp(0.05f, 0.01f ,cnt.CentiState.ClampedHealth))
+                {
+                    cnt.room.AddObject(new Spark(cnt.bodyChunks[s].pos, Custom.RNV() * Random.Range(16f, 24f), new HSLColor(cI.segmentHues[s], cg.saturation, 0.5f).rgb, null, 4, 50));
+                }
+            }
+        }
+    }
+    public static void ChillipedeUpdate(Centipede cnt, ChillipedeState cS)
+    {
+        if (cnt.HypothermiaExposure > 0.1f || cnt.Hypothermia > 0.1f)
+        {
+            cnt.HypothermiaExposure = 0;
+            cnt.Hypothermia = 0;
+        }
+        if (cS.ScaleRegenTime.Length != cnt.bodyChunks.Length)
+        {
+            Array.Resize(ref cS.ScaleRegenTime, cnt.bodyChunks.Length);
+        }
+        if (!cnt.dead || (Random.value < cnt.HypothermiaExposure && cnt.room.blizzardGraphics is not null))
+        {
+            for (int s = 0; s < cS.ScaleRegenTime.Length; s++)
+            {
+                if (cS.ScaleRegenTime[s] != 0)
+                {
+                    int regen =
+                        cnt.room.blizzardGraphics is null ? 1 :
+                        cnt.dead ? (Random.value < cnt.HypothermiaExposure * Mathf.Clamp(cnt.room.blizzardGraphics.SnowfallIntensity, 0.2f, 1) ? 2 : 1) :
+                        (int)Mathf.Max(1, Mathf.Lerp(1, 5, cnt.HypothermiaExposure) * Mathf.Clamp(cnt.room.blizzardGraphics.SnowfallIntensity, 0.2f, 1));
+
+                    cS.ScaleRegenTime[s] = Mathf.Max(0, cS.ScaleRegenTime[s] - regen);
+
+                    if (cS.ScaleStages[s] == 1 && cS.ScaleRegenTime[s] == 0)
+                    {
+                        cS.ScaleStages[s] = 0;
+                        for (int sn = 8; sn >= 0; sn--)
+                        {
+                            cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor));
+                        }
+                    }
+                    else if (cS.ScaleRegenTime[s] > 0)
+                    {
+                        if (cS.ScaleStages[s] == 2 && cS.ScaleRegenTime[s] <= 2000)
+                        {
+                            cS.ScaleStages[s] = 1;
+                            for (int sn = 6; sn >= 0; sn--)
+                            {
+                                cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor));
+                            }
+                        }
+                        else if (!cnt.CentiState.shells[s] && cS.ScaleRegenTime[s] > 2000 && cS.ScaleRegenTime[s] <= 4000)
+                        {
+                            cS.ScaleStages[s] = 2;
+                            cnt.CentiState.shells[s] = true;
+                            for (int sn = 4; sn >= 0; sn--)
+                            {
+                                cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor));
+                            }
+                        }
+                    }
+
+                    if (Random.value < 0.00225f)
+                    {
+                        cnt.room.AddObject(Random.value < 0.5f ?
+                            new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 2f, cS.scaleColor, cS.accentColor) :
+                            new PuffBallSkin(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 2f, cS.scaleColor, cS.accentColor));
+                    }
+                }
+                else
+                {
+                    if (Random.value < 0.0015f)
+                    {
+                        cnt.room.AddObject(new HailstormSnowflake(cnt.bodyChunks[s].pos, Custom.RNV() * Random.value * 4f, cS.scaleColor, cS.accentColor));
                     }
                 }
             }
@@ -493,6 +630,86 @@ internal class HailstormCentis
         BodyChunk otherHead = cnt.bodyChunks[(grasp == 0) ? cnt.bodyChunks.Length - 1 : 0];
         otherHead.vel.y += 0.5f;
     }
+    public static void CyanwingCrawling(On.Centipede.orig_Crawl orig, Centipede cnt)
+    {
+        if (cnt is null || cnt.Template.type != HailstormEnums.Cyanwing)
+        {
+            orig(cnt);
+            return;
+        }
+
+        int flyCounter = cnt.flyModeCounter;
+        bool wantToFly = cnt.wantToFly;
+        Vector2[] bodyChunkVels = new Vector2[cnt.bodyChunks.Length];
+        for (int b = 0; b < cnt.bodyChunks.Length; b++)
+        {
+            bodyChunkVels[b] = cnt.bodyChunks[b].vel;
+        }
+        orig(cnt);
+        cnt.flyModeCounter = flyCounter;
+        cnt.wantToFly = wantToFly;
+
+        int segmentsAppliedForceTo = 0;
+        for (int b = 0; b < cnt.bodyChunks.Length; b++)
+        {
+            BodyChunk chunk = cnt.bodyChunks[b];
+            chunk.vel = bodyChunkVels[b];
+            if (!cnt.AccessibleTile(cnt.room.GetTilePosition(chunk.pos)))
+            {
+                continue;
+            }
+            segmentsAppliedForceTo++;
+            chunk.vel *= 0.7f;
+            chunk.vel.y += cnt.gravity;
+            if (b > 0 && !cnt.AccessibleTile(cnt.room.GetTilePosition(cnt.bodyChunks[b - 1].pos)))
+            {
+                chunk.vel *= 0.3f;
+                chunk.vel.y += cnt.gravity;
+            }
+            if (b < cnt.bodyChunks.Length - 1 && !cnt.AccessibleTile(cnt.room.GetTilePosition(cnt.bodyChunks[b + 1].pos)))
+            {
+                chunk.vel *= 0.3f;
+                chunk.vel.y += cnt.gravity;
+            }
+            if (b <= 0 || b >= cnt.bodyChunks.Length - 1)
+            {
+                continue;
+            }
+            if (cnt.moving)
+            {
+                int bodyDirection = (!cnt.bodyDirection ? 1 : -1);
+                if (cnt.AccessibleTile(cnt.room.GetTilePosition(cnt.bodyChunks[b + bodyDirection].pos)))
+                {
+                    chunk.vel += Custom.DirVec(chunk.pos, cnt.bodyChunks[b + bodyDirection].pos) * 1.5f * Mathf.Lerp(0.5f, 1.5f, cnt.size);
+                }
+                chunk.vel -= Custom.DirVec(chunk.pos, cnt.bodyChunks[b + (bodyDirection * - 1)].pos) * 0.8f * Mathf.Lerp(0.7f, 1.3f, cnt.size);
+                continue;
+            }
+            Vector2 moveDir = chunk.pos - cnt.bodyChunks[b - 1].pos;
+            Vector2 moveAngle = moveDir.normalized;
+            moveDir = cnt.bodyChunks[b + 1].pos - chunk.pos;
+            Vector2 finalMoveDir = (moveAngle + moveDir.normalized) / 2f;
+            if (Mathf.Abs(finalMoveDir.x) > 0.5f)
+            {
+                chunk.vel.y -= (chunk.pos.y - (cnt.room.MiddleOfTile(chunk.pos).y + cnt.VerticalSitSurface(chunk.pos) * (10f - chunk.rad))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(cnt.size, 1.2f));
+            }
+            if (Mathf.Abs(finalMoveDir.y) > 0.5f)
+            {
+                chunk.vel.x -= (chunk.pos.x - (cnt.room.MiddleOfTile(chunk.pos).x + cnt.HorizontalSitSurface(chunk.pos) * (10f - chunk.rad))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(cnt.size, 1.2f));
+            }
+        }
+        if (segmentsAppliedForceTo > 0)
+        {
+            cnt.HeadChunk.vel += Custom.DirVec(cnt.HeadChunk.pos, cnt.moveToPos) * Custom.LerpMap(segmentsAppliedForceTo, 0f, cnt.bodyChunks.Length, 6f, 3f) * Mathf.Lerp(0.7f, 1.3f, cnt.size * 0.7f);
+        }
+        if (segmentsAppliedForceTo == 0)
+        {
+            cnt.flyModeCounter += 10;
+            cnt.wantToFly = true;
+        }
+    }
+
+    //----Centi Functions----//
     public static void DMGvsCentis(On.Centipede.orig_Violence orig, Centipede cnt, BodyChunk source, Vector2? dirAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos hitAppen, Creature.DamageType dmgType, float damage, float bonusStun)
     {
         if (CentiData.TryGetValue(cnt, out CentiInfo cI))
@@ -541,41 +758,45 @@ internal class HailstormCentis
                     }
                 }
             }
-            else if (cI.Cyanwing &&
-                damage >= 0.01f &&
-                hitChunk is not null &&
-                cnt.CentiState is not null &&
-                cnt.graphicsModule is not null &&
-                cnt.graphicsModule is CentipedeGraphics cg)
+            else if (cI.Cyanwing && hitChunk is not null && cnt.CentiState is not null)
             {
-                if (cnt.CentiState.shells[hitChunk.index] && cI.segmentHues is not null)
+                if (damage >= 0.5f && !cnt.CentiState.shells[hitChunk.index])
                 {
-                    damage *= 0.6f;
-                    cnt.CentiState.shells[hitChunk.index] = false;
-                    for (int j = 0; j < 2; j++)
-                    {
-                        Vector3 col =
-                            j == 0 ?
-                            new(cI.segmentHues[hitChunk.index], cg.saturation, 0) :
-                            Custom.RGB2HSL(Color.Lerp(Color.Lerp(Custom.HSL2RGB(cI.segmentHues[hitChunk.index], cg.saturation, 0.625f), cg.blackColor, 0.5f), new Color(0.4392f, 0.0745f, 0f), 0.25f));
-
-                        CyanwingShell cyanwingShell =
-                            j == 0 ?
-                            new(cnt, hitChunk.pos, Custom.RNV() * Random.Range(3f, 9f), col.x, col.y, hitChunk.rad * 0.15f, hitChunk.rad * 0.13f, Random.value < 0.2f ? 200 : 130) :
-                            new(cnt, hitChunk.pos, Custom.RNV() * Random.Range(5f, 15f), Custom.HSL2RGB(col.x, col.y, col.z), hitChunk.rad * 0.15f, hitChunk.rad * 0.13f, "CyanwingBackShell", Random.value < 0.2f ? 200 : 130);
-
-                        cnt.room.AddObject(cyanwingShell);
-                    }
+                    cnt.LoseAllGrasps();
                 }
-                if (cI.segmentGradientDirections is not null && Random.value < 0.33f)
+                if (damage >= 0.01f &&
+                    cnt.graphicsModule is not null &&
+                    cnt.graphicsModule is CentipedeGraphics cg)
                 {
-                    for (int s = 0; s < cnt.bodyChunks.Length; s++)
+                    if (cnt.CentiState.shells[hitChunk.index] && cI.segmentHues is not null)
                     {
-                        if (!cnt.CentiState.shells[s])
+                        damage *= 0.6f;
+                        cnt.CentiState.shells[hitChunk.index] = false;
+                        for (int j = 0; j < 2; j++)
                         {
-                            continue;
+                            Color shellColor =
+                                j == 0 ?
+                                new HSLColor(cI.segmentHues[hitChunk.index], cg.saturation, 0.5f).rgb :
+                                Color.Lerp(Color.Lerp(Custom.HSL2RGB(cI.segmentHues[hitChunk.index], cg.saturation, 0.625f), cg.blackColor, 0.5f), new Color(0.4392f, 0.0745f, 0f), 0.25f);
+
+                            CyanwingShell cyanwingShell =
+                                j == 0 ?
+                                new(cnt, hitChunk.pos, Custom.RNV() * Random.Range(3f, 9f), shellColor, hitChunk.rad * 0.15f, hitChunk.rad * 0.13f, Random.value < 0.2f ? 200 : 130) :
+                                new(cnt, hitChunk.pos, Custom.RNV() * Random.Range(5f, 15f), shellColor, hitChunk.rad * 0.15f, hitChunk.rad * 0.13f, Random.value < 0.2f ? 200 : 130);
+
+                            cnt.room.AddObject(cyanwingShell);
                         }
-                        cI.segmentGradientDirections[s] = !cI.segmentGradientDirections[s];
+                    }
+                    if (cI.segmentGradientDirections is not null && Random.value < 0.33f)
+                    {
+                        for (int s = 0; s < cnt.bodyChunks.Length; s++)
+                        {
+                            if (!cnt.CentiState.shells[s])
+                            {
+                                continue;
+                            }
+                            cI.segmentGradientDirections[s] = !cI.segmentGradientDirections[s];
+                        }
                     }
                 }
             }
@@ -657,17 +878,9 @@ internal class HailstormCentis
                     cnt.bodyChunks[b].mass *= 0.85f;
                 }
             }
-            if (!cnt.dead &&
-                cnt.abstractCreature.superSizeMe &&
-                cnt.Template.type == CreatureTemplate.Type.SmallCentipede &&
-                CWT.AbsCtrData.TryGetValue(cnt.abstractCreature, out AbsCtrInfo aI) &&
-                aI.ctrList is not null &&
-                aI.ctrList.Count > 0 &&
-                aI.ctrList[0]?.abstractAI is not null &&
-                aI.ctrList[0].creatureTemplate.type == HailstormEnums.Cyanwing &&
-                grasp?.grabber is not null)
+            if (!cnt.dead && cnt.Template.type == CreatureTemplate.Type.SmallCentipede && cnt.abstractCreature.superSizeMe && grasp?.grabber is not null)
             {
-                aI.ctrList[0].abstractAI.destination = cnt.abstractCreature.pos;
+                cnt.killTag = grasp.grabber.abstractCreature;
             }
         }
         orig(cnt, grasp, eu);
@@ -675,43 +888,41 @@ internal class HailstormCentis
     public static void ChillipedeZappage(On.Centipede.orig_Shock orig, Centipede cnt, PhysicalObject target)
     {
         orig(cnt, target);
-        if (cnt is not null && cnt.Template.type != HailstormEnums.Chillipede && target is not null && target is Centipede chl && chl.CentiState is ChillipedeState cS)
-        {
-            for (int chnk = 0; chnk < chl.CentiState.shells.Length; chnk++)
-            {
-                if (!chl.CentiState.shells[chnk]) continue;
-                chl.CentiState.shells[chnk] = false;
-                float volume =
-                    (cS.ScaleRegenTime[chnk] <= 0) ? 1.25f :
-                    (cS.ScaleRegenTime[chnk] <= 2000) ? 1f : 0.75f;
-                cS.ScaleRegenTime[chnk] = 6000;
-                chl.room.PlaySound(SoundID.Coral_Circuit_Break, chl.bodyChunks[chnk].pos, volume, 1.5f);
-                for (int j = 0; j < 18; j++)
-                {
-                    chl.room.AddObject(j % 3 == 1 ?
-                            new HailstormSnowflake(chl.bodyChunks[chnk].pos, Custom.RNV() * Random.Range(12f, 24f), cS.scaleColor, cS.accentColor) :
-                            new PuffBallSkin(chl.bodyChunks[chnk].pos, Custom.RNV() * Random.Range(12f, 24f), cS.scaleColor, cS.accentColor));
-                }
-            }
-        }
+        ShockChillipedeArmor(cnt, target);
     }
+    public static void CyanwingSelfDestruct(On.Centipede.orig_Die orig, Centipede cnt)
+    {
+        if (cnt is null || cnt.dead)
+        {
+            orig(cnt);
+            return;
+        }
+
+        if (CentiData.TryGetValue(cnt, out CentiInfo cI) && cI.Cyanwing)
+        {
+            cI.SelfDestruct++;
+        }
+
+        if (cnt.Template.type == CreatureTemplate.Type.SmallCentipede && cnt.abstractCreature.superSizeMe &&
+            CWT.AbsCtrData.TryGetValue(cnt.abstractCreature, out AbsCtrInfo aI) &&
+            aI.ctrList is not null && aI.ctrList.Count > 0 &&
+            aI.ctrList[0]?.abstractAI is not null &&
+            cnt.killTag is not null &&
+            aI.ctrList[0].state.socialMemory.GetOrInitiateRelationship(cnt.killTag.ID) is not null)
+        {
+            aI.ctrList[0].state.socialMemory.GetOrInitiateRelationship(cnt.killTag.ID).like = -1f;
+            aI.ctrList[0].state.socialMemory.GetOrInitiateRelationship(cnt.killTag.ID).tempLike = -1f;
+            aI.ctrList[0].abstractAI.followCreature = cnt.killTag;
+            Debug.Log("[Hailstorm] A Cyanwing's comin' after " + cnt.killTag.ToString() + "!");
+        }
+
+        orig(cnt);
+
+    }
+    
 
     public static void ModifiedCentiStuff()
     {
-        IL.Centipede.Crawl += IL =>
-        {
-            ILCursor c = new(IL);
-            ILLabel? label = IL.DefineLabel();
-            c.Emit(OpCodes.Ldarg_0);
-            c.EmitDelegate((Centipede cnt) =>
-            {
-                return CyanwingCrawling(cnt);
-            });
-            c.Emit(OpCodes.Brfalse_S, label);
-            c.Emit(OpCodes.Ret);
-            c.MarkLabel(label);
-        };
-
         IL.Centipede.Fly += IL =>
         {
             ILCursor c = new(IL);
@@ -724,101 +935,96 @@ internal class HailstormCentis
             c.Emit(OpCodes.Brfalse_S, label);
             c.Emit(OpCodes.Ret);
             c.MarkLabel(label);
-        };
-
-        IL.Centipede.Shock += IL =>
+        }; 
+        
+        IL.Centipede.Stun += IL =>
         {
             ILCursor c = new(IL);
-            ILLabel? label = IL.DefineLabel();
-            c.Emit(OpCodes.Ldarg_0);
-            c.Emit(OpCodes.Ldarg_1);
-            c.EmitDelegate((Centipede cnt, PhysicalObject shockObj) =>
-            {
-                return Freeze(cnt, shockObj);
-            });
-            c.Emit(OpCodes.Brfalse_S, label);
-            c.Emit(OpCodes.Ret);
-            c.MarkLabel(label);
-        };
-        /*
-        IL.Centipede.Update += IL =>
-        {
-            ILCursor c = new(IL);
-            ILLabel? label = null;
-            if (c.TryGotoNext(MoveType.After,
+            ILLabel label = null;
+            if (c.TryGotoNext(
                 x => x.MatchLdarg(0),
-                x => x.MatchLdflda<Creature>(nameof(Creature.enteringShortCut)),
-                x => x.Match(OpCodes.Call),
+                x => x.MatchCall<Centipede>("get_Centiwing"),
+                x => x.MatchBrfalse(out label)))
+            {
+                c = new(IL);
+                if (c.TryGotoNext(
+                    MoveType.Before,
+                    x => x.MatchCall(typeof(Random), "get_value"),
+                    x => x.MatchLdcR4(0.5f),
+                    x => x.MatchBlt(out _)))
+                {
+                    c.Emit(OpCodes.Ldarg_0);
+                    c.EmitDelegate((Centipede cnt) => cnt.Template.type != HailstormEnums.Cyanwing);
+                    c.Emit(OpCodes.Brfalse, label);
+                }
+                else
+                    Plugin.logger.LogError("[Hailstorm] A Cyanwing IL anti-stun hook (part 2) got totally beaned! Report this, would ya?");
+            }
+            else
+                Plugin.logger.LogError("[Hailstorm] A Cyanwing IL anti-stun hook (part 1) got totally beaned! Report this, would ya?");
+        };
+        
+        IL.CentipedeAI.Update += IL =>
+        {
+            ILCursor c = new(IL);
+            ILLabel label = null;
+            if (c.TryGotoNext(
+                MoveType.After,
+                x => x.MatchLdarg(0),
+                x => x.MatchLdfld<CentipedeAI>(nameof(CentipedeAI.centipede)),
+                x => x.MatchCallvirt<Centipede>("get_Red"),
                 x => x.MatchBrtrue(out label)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((Centipede cnt) => cnt.Template.type != HailstormEnums.Chillipede);
+                c.EmitDelegate((CentipedeAI cntAI) => cntAI.centipede.Template.type != HailstormEnums.Cyanwing);
                 c.Emit(OpCodes.Brfalse, label);
             }
-            else Plugin.logger.LogError("[Hailstorm] CHILLIPEDE HOOK NOT WORKING");
+            else
+                Plugin.logger.LogError("[Hailstorm] A Cyanwing IL hook for prey-tracking is busted! Tell me about it, please!");
         };
-        */
-    }
-    public static bool CyanwingCrawling(Centipede cnt)
-    {
-        if (cnt is null || cnt.Template.type != HailstormEnums.Cyanwing) return false;
 
-        int num = 0;
-        for (int i = 0; i < cnt.bodyChunks.Length; i++)
+        IL.Centipede.UpdateGrasp += IL =>
         {
-            if (!cnt.AccessibleTile(cnt.room.GetTilePosition(cnt.bodyChunks[i].pos)))
+            ILCursor c = new(IL);
+            ILLabel label = null;
+            if (c.TryGotoNext(
+                MoveType.After,
+                x => x.MatchLdarg(0),
+                x => x.MatchCall<Creature>("get_safariControlled"),
+                x => x.MatchBrtrue(out label)))
             {
-                continue;
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate((Centipede cnt) => cnt.Template.type != HailstormEnums.Cyanwing);
+                c.Emit(OpCodes.Brtrue, label);
             }
-            num++;
-            cnt.bodyChunks[i].vel *= 0.7f;
-            cnt.bodyChunks[i].vel.y += cnt.gravity;
-            if (i > 0 && !cnt.AccessibleTile(cnt.room.GetTilePosition(cnt.bodyChunks[i - 1].pos)))
-            {
-                cnt.bodyChunks[i].vel *= 0.3f;
-                cnt.bodyChunks[i].vel.y += cnt.gravity;
-            }
-            if (i < cnt.bodyChunks.Length - 1 && !cnt.AccessibleTile(cnt.room.GetTilePosition(cnt.bodyChunks[i + 1].pos)))
-            {
-                cnt.bodyChunks[i].vel *= 0.3f;
-                cnt.bodyChunks[i].vel.y += cnt.gravity;
-            }
-            if (i <= 0 || i >= cnt.bodyChunks.Length - 1)
-            {
-                continue;
-            }
-            if (cnt.moving)
-            {
-                if (cnt.AccessibleTile(cnt.room.GetTilePosition(cnt.bodyChunks[i + (!cnt.bodyDirection ? 1 : -1)].pos)))
-                {
-                    cnt.bodyChunks[i].vel += Custom.DirVec(cnt.bodyChunks[i].pos, cnt.bodyChunks[i + (!cnt.bodyDirection ? 1 : -1)].pos) * 1.5f * Mathf.Lerp(0.5f, 1.5f, cnt.size);
-                }
-                cnt.bodyChunks[i].vel -= Custom.DirVec(cnt.bodyChunks[i].pos, cnt.bodyChunks[i + (cnt.bodyDirection ? 1 : (-1))].pos) * 0.8f * Mathf.Lerp(0.7f, 1.3f, cnt.size);
-                continue;
-            }
-            Vector2 val = cnt.bodyChunks[i].pos - cnt.bodyChunks[i - 1].pos;
-            Vector2 normalized = val.normalized;
-            val = cnt.bodyChunks[i + 1].pos - cnt.bodyChunks[i].pos;
-            Vector2 val2 = (normalized + val.normalized) / 2f;
-            if (Mathf.Abs(val2.x) > 0.5f)
-            {
-                cnt.bodyChunks[i].vel.y -= (cnt.bodyChunks[i].pos.y - (cnt.room.MiddleOfTile(cnt.bodyChunks[i].pos).y + cnt.VerticalSitSurface(cnt.bodyChunks[i].pos) * (10f - cnt.bodyChunks[i].rad))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(cnt.size, 1.2f));
-            }
-            if (Mathf.Abs(val2.y) > 0.5f)
-            {
-                cnt.bodyChunks[i].vel.x -= (cnt.bodyChunks[i].pos.x - (cnt.room.MiddleOfTile(cnt.bodyChunks[i].pos).x + cnt.HorizontalSitSurface(cnt.bodyChunks[i].pos) * (10f - cnt.bodyChunks[i].rad))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(cnt.size, 1.2f));
-            }
-        }
-        if (num > 0 && !Custom.DistLess(cnt.HeadChunk.pos, cnt.moveToPos, 10f))
+            else
+                Plugin.logger.LogError("[Hailstorm] A Cyanwing grasp-related IL hook got totally beaned! Report this, would ya?");
+        };
+
+        IL.Centipede.Act += IL =>
         {
-            cnt.HeadChunk.vel += Custom.DirVec(cnt.HeadChunk.pos, cnt.moveToPos) * Custom.LerpMap(num, 0f, cnt.bodyChunks.Length, 6f, 3f) * Mathf.Lerp(0.7f, 1.3f, cnt.size * 0.7f);
-        }
-        if (num == 0)
-        {
-            cnt.flyModeCounter += 10;
-            cnt.wantToFly = true;
-        }
-        return true;
+            ILCursor c = new(IL);
+            ILLabel label = null;
+            if (c.TryGotoNext(
+                MoveType.After,
+                    x => x.MatchLdarg(0),
+                    x => x.MatchLdfld<Centipede>(nameof(Centipede.AI)),
+                    x => x.MatchCallvirt<ArtificialIntelligence>(nameof(ArtificialIntelligence.Update)))
+                &&
+                c.TryGotoNext(
+                MoveType.After,
+                    x => x.MatchLdarg(0),
+                    x => x.MatchLdfld<Centipede>(nameof(Centipede.flying)),
+                    x => x.MatchBrtrue(out label)))
+            {
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate((Centipede cnt) => cnt.Template.type == HailstormEnums.Cyanwing && cnt.AI.run > 0);
+                c.Emit(OpCodes.Brtrue, label);
+            }
+            else
+                Plugin.logger.LogError("[Hailstorm] A Cyanwing IL hook for their crawling stopped functioning! Tell me about this, would ya?");
+        };
+
     }
     public static bool CyanwingFlyingAndInfantAquapedeSwimming(Centipede cnt)
     {
@@ -870,10 +1076,14 @@ internal class HailstormCentis
         }
         return true;
     }
-    public static bool Freeze(Centipede cnt, PhysicalObject shockObj)
-    {
 
-        if (shockObj is null || cnt?.CentiState is null || cnt.CentiState is not ChillipedeState cS) return false;
+    //----    kill    ----//
+    public static void Freeze(Centipede cnt, PhysicalObject freezee)
+    {
+        if (freezee is null || cnt?.CentiState is null || cnt.CentiState is not ChillipedeState cS)
+        {
+            return;
+        }
 
         cnt.room.PlaySound(SoundID.Coral_Circuit_Break, cnt.mainBodyChunk.pos, 1.25f, 1.75f);
         cnt.room.PlaySound(SoundID.Coral_Circuit_Break, cnt.mainBodyChunk.pos, 1.25f, 1.00f);
@@ -904,80 +1114,573 @@ internal class HailstormCentis
             cnt.bodyChunks[j].pos += Custom.RNV() * 6f * Random.value;
         }
 
-        if (shockObj is Creature ctr)
+        if (freezee is not Creature ctr)
         {
-            bool immune =
-                ctr.Template.type == HailstormEnums.IcyBlue ||
-                ctr.Template.type == HailstormEnums.Freezer ||
-                ctr.Template.type == HailstormEnums.Chillipede ||
-                ctr.Template.type == HailstormEnums.GorditoGreenie;
+            return;
+        }
 
-            float coldVulnerability = ctr.abstractCreature.HypothermiaImmune ? 0.5f : 1;
-            if (!immune)
+        bool immune =
+            ctr.Template.type == HailstormEnums.IcyBlue ||
+            ctr.Template.type == HailstormEnums.Freezer ||
+            ctr.Template.type == HailstormEnums.Chillipede ||
+            ctr.Template.type == HailstormEnums.GorditoGreenie;
+
+        float ColdResistance = ctr.abstractCreature.HypothermiaImmune ? 4 : 1;
+        float ColdStunResistance = ColdResistance;
+        if (ctr is Player plr && CWT.PlayerData.TryGetValue(plr, out HSSlugs hS))
+        {
+            ColdResistance /= hS.ColdDMGmult;
+        }
+        else
+        {
+            if (ctr.Template.damageRestistances[HailstormEnums.Cold.index, 0] > 0)
             {
-                if (shockObj is Player plr && CWT.PlayerData.TryGetValue(plr, out HSSlugs hS))
+                ColdResistance *= ctr.Template.damageRestistances[HailstormEnums.Cold.index, 0];
+            }
+            if (ctr.Template.damageRestistances[HailstormEnums.Cold.index, 1] > 0)
+            {
+                ColdStunResistance *= ctr.Template.damageRestistances[HailstormEnums.Cold.index, 1];
+            }
+        }
+
+        if (ctr is Player inc && inc.SlugCatClass == HSSlugs.Incandescent)
+        {
+            inc.Die();
+            ctr.Hypothermia += 2f / ColdResistance;
+        }
+        else if (!immune && cnt.TotalMass > ctr.TotalMass / ColdResistance)
+        {
+            ctr.Die();
+            ctr.Hypothermia += 2f / ColdResistance;
+        }
+        else
+        {
+            ctr.Stun((int)(200 / ColdStunResistance));
+            ctr.LoseAllGrasps();
+            ctr.Hypothermia += 1f / ColdResistance;
+
+            cnt.Stun(immune ? 40 : 12);
+            cnt.shockGiveUpCounter = Math.Max(cnt.shockGiveUpCounter, 30);
+            cnt.AI.annoyingCollisions = immune ? 0 : Math.Min(cnt.AI.annoyingCollisions / 2, 150);
+        }
+
+        if (ctr.State is ColdLizState lS && !lS.crystals.All(intact => intact))
+        {
+            if (ctr.Template.type == HailstormEnums.IcyBlue)
+            {
+                for (int s = 0; s < lS.crystals.Length; s++)
                 {
-                    coldVulnerability *= hS.ColdDMGmult;
+                    lS.crystals[s] = true;
                 }
-                else if (ctr.Template.damageRestistances[HailstormEnums.Cold.index, 0] != 0)
+            }
+            else if (ctr.Template.type == HailstormEnums.Freezer)
+            {
+                for (int s = Random.Range(0, lS.crystals.Length); /**/ ; /**/ )
                 {
-                    coldVulnerability /= ctr.Template.damageRestistances[HailstormEnums.Cold.index, 0];
+                    if (lS.crystals[s])
+                    {
+                        lS.crystals[s] = true;
+                        break;
+                    }
+                    if (s >= lS.crystals.Length) s = 0;
+                    else s++;
+                }
+            }
+            lS.armored = true;
+        }
+
+        foreach (AbstractCreature absCtr in cnt.room.abstractRoom.creatures)
+        {
+            if (absCtr?.realizedCreature is null ||
+                absCtr.realizedCreature == ctr ||
+                absCtr.realizedCreature == cnt ||
+                !Custom.DistLess(cnt.HeadChunk.pos, absCtr.realizedCreature.DangerPos, 500))
+            {
+                continue;
+            }
+
+            Creature collateralChill = absCtr.realizedCreature;
+
+            immune =
+                collateralChill.Template.type == HailstormEnums.IcyBlue ||
+                collateralChill.Template.type == HailstormEnums.Freezer ||
+                collateralChill.Template.type == HailstormEnums.Chillipede ||
+                collateralChill.Template.type == HailstormEnums.GorditoGreenie;
+
+            ColdResistance = absCtr.HypothermiaImmune ? 4 : 1;
+            if (collateralChill is Player otherPlr && CWT.PlayerData.TryGetValue(otherPlr, out HSSlugs otherHS))
+            {
+                ColdResistance /= otherHS.ColdDMGmult;
+            }
+            else if (collateralChill.Template.damageRestistances[HailstormEnums.Cold.index, 0] > 0)
+            {
+                ColdResistance *= collateralChill.Template.damageRestistances[HailstormEnums.Cold.index, 0];
+            }
+            collateralChill.Hypothermia += 1f / ColdResistance * Mathf.InverseLerp(500, 50, Custom.Dist(cnt.HeadChunk.pos, collateralChill.DangerPos));
+        }
+
+    }
+    public static void Fry(Centipede cnt, PhysicalObject shockee)
+    {
+        cnt.room.PlaySound(SoundID.Centipede_Shock, cnt.mainBodyChunk.pos);
+        if (cnt.graphicsModule is not null)
+        {
+            (cnt.graphicsModule as CentipedeGraphics).lightFlash = 1f;
+            for (int i = 0; i < (int)Mathf.Lerp(4, 8, cnt.size); i++)
+            {
+                cnt.room.AddObject(new Spark(cnt.HeadChunk.pos, Custom.RNV() * Mathf.Lerp(4, 14, Random.value), new Color(0.7f, 0.7f, 1f), null, 8, 14));
+            }
+        }
+        for (int c = 0; c < cnt.bodyChunks.Length; c++)
+        {
+            cnt.bodyChunks[c].vel += Custom.RNV() * 6f * Random.value;
+            cnt.bodyChunks[c].pos += Custom.RNV() * 6f * Random.value;
+        }
+        for (int s = 0; s < shockee.bodyChunks.Length; s++)
+        {
+            shockee.bodyChunks[s].vel += Custom.RNV() * 6f * Random.value;
+            shockee.bodyChunks[s].pos += Custom.RNV() * 6f * Random.value;
+        }
+        if (cnt.AquaCenti)
+        {
+            if (shockee is Creature aquaCtr)
+            {
+                if (shockee is Player plr && plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Artificer)
+                {
+                    plr.PyroDeath();
+                }
+                else
+                {
+                    float dmg = 2f;
+                    int stun = 200;
+                    if (IsIncanStory(cnt.room.game))
+                    {
+                        if (aquaCtr.Template.type == CreatureTemplate.Type.YellowLizard ||
+                            aquaCtr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                        {
+                            dmg *= 2f;
+                            stun *= 5;
+                        }
+                        else if (aquaCtr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+                        {
+                            dmg *= 5f;
+                            stun *= 5;
+                        }
+                    }
+                    aquaCtr.Violence(cnt.mainBodyChunk, default, aquaCtr.mainBodyChunk, null, Creature.DamageType.Electric, dmg, stun);
+                    cnt.room.AddObject(new CreatureSpasmer(aquaCtr, false, aquaCtr.stun));
+                    aquaCtr.LoseAllGrasps();
+                }
+            }
+            if (shockee.Submersion > 0f)
+            {
+                cnt.room.AddObject(new UnderwaterShock(cnt.room, cnt, cnt.HeadChunk.pos, 14, Mathf.Lerp(50, 100, cnt.size), 1, cnt, new Color(0.7f, 0.7f, 1f)));
+            }
+            return;
+        }
+        if (shockee is Creature ctr)
+        {
+            float ElectricResistance = 1;
+            float ElecStunResistance = 1;
+            if (ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 0] > 0)
+            {
+                ElectricResistance *= ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 0];
+            }
+            if (ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 1] > 0)
+            {
+                ElecStunResistance *= ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 1];
+            }
+            if (IsIncanStory(cnt.room.game))
+            {
+                if (ctr.Template.type == CreatureTemplate.Type.YellowLizard ||
+                    ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                {
+                    ElectricResistance *= 2f;
+                    ElecStunResistance *= 2f;
+                }
+                else if (ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+                {
+                    ElectricResistance *= 5f;
+                    ElecStunResistance *= 5f;
                 }
             }
 
-            if (!immune && cnt.TotalMass > shockObj.TotalMass / coldVulnerability)
+            if (cnt.Small)
             {
-                if (shockObj is Player inc && inc.SlugCatClass == HSSlugs.Incandescent)
+                ctr.Stun((int)(120 / ElecStunResistance));
+                cnt.room.AddObject(new CreatureSpasmer(ctr, false, ctr.stun));
+                ctr.LoseAllGrasps();
+            }
+            else if (ctr.TotalMass > shockee.TotalMass * ElectricResistance)
+            {
+                if (shockee is Player plr && plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Artificer)
                 {
-                    inc.Die();
+                    plr.PyroDeath();
                 }
-                else ctr.Die();
+                else
+                {
+                    ctr.Die();
+                    cnt.room.AddObject(new CreatureSpasmer(ctr, true, (int)Mathf.Lerp(70, 120, cnt.size)));
+                }
             }
             else
             {
-                ctr.Stun((int)((immune ? 100 : 200) * Mathf.Lerp(coldVulnerability, 1, 0.5f)));
+                ctr.Stun((int)(Custom.LerpMap(shockee.TotalMass, 0f, cnt.TotalMass * 2f, 300f, 30f) / ElecStunResistance));
                 ctr.LoseAllGrasps();
-                cnt.Stun(immune ? 40 : 12);
+                cnt.room.AddObject(new CreatureSpasmer(ctr, false, ctr.stun));
+
+                cnt.Stun(6);
                 cnt.shockGiveUpCounter = Math.Max(cnt.shockGiveUpCounter, 30);
-                cnt.AI.annoyingCollisions = immune ? 0 : Math.Min(cnt.AI.annoyingCollisions / 2, 150);
+                cnt.AI.annoyingCollisions = Math.Min(cnt.AI.annoyingCollisions / 2, 150);
             }
+        }
+        if (shockee.Submersion > 0f)
+        {
+            cnt.room.AddObject(new UnderwaterShock(cnt.room, cnt, cnt.HeadChunk.pos, 14, Mathf.Lerp(ModManager.MMF ? 0f : 200f, 1200f, cnt.size), 0.2f + 1.9f * cnt.size, cnt, new Color(0.7f, 0.7f, 1f)));
+        }
+    }
+    public static void Vaporize(Centipede cnt, CentiInfo cI, PhysicalObject unfortunateMotherfucker)
+    {
+        if (unfortunateMotherfucker is null || cnt is null)
+        {
+            return;
+        }
+        cnt.room.PlaySound(SoundID.Centipede_Shock, cnt.mainBodyChunk.pos, 1.5f, 1);
+        cnt.room.PlaySound(SoundID.Zapper_Zap, cnt.mainBodyChunk.pos, 1.5f, Random.Range(1.5f, 2.5f));
+        cnt.room.PlaySound(SoundID.Death_Lightning_Spark_Object, cnt.mainBodyChunk.pos, 1.25f, 1);
+        cnt.room.InGameNoise(new Noise.InGameNoise(cnt.mainBodyChunk.pos, 12000f, cnt, 1f));
 
-            if (ctr.State is ColdLizState lS && !lS.crystals.All(intact => intact))
+        if (cnt.graphicsModule is not null)
+        {
+            (cnt.graphicsModule as CentipedeGraphics).lightFlash = 1f;
+            cnt.room.AddObject(new ColorableZapFlash(cnt.HeadChunk.pos, 10f, cnt.ShortCutColor()));
+            for (int s = 0; s < Random.Range(16, 21); s++)
             {
-                if (ctr.Template.type == HailstormEnums.IcyBlue)
-                {
-                    for (int s = 0; s < lS.crystals.Length; s++)
-                    {
-                        lS.crystals[s] = true;
-                    }
-                }
-                else if (ctr.Template.type == HailstormEnums.Freezer)
-                {
-                    for (int s = Random.Range(0, lS.crystals.Length); /**/ ; /**/ )
-                    {
-                        if (lS.crystals[s])
-                        {
-                            lS.crystals[s] = true;
-                            break;
-                        }
-                        if (s >= lS.crystals.Length) s = 0;
-                        else s++;
-                    }
-                }
-                lS.armored = true;
+                cnt.room.AddObject(new Spark(cnt.HeadChunk.pos, Custom.RNV() * Mathf.Lerp(10, 28, Random.value), cnt.ShortCutColor(), null, 8, 14));
             }
-
-            ctr.Hypothermia += 2f * coldVulnerability;
-            foreach (AbstractCreature absCtr in cnt.room.abstractRoom.creatures)
-            {
-                if (absCtr?.realizedCreature is null || absCtr == ctr.abstractCreature || !Custom.DistLess(cnt.HeadChunk.pos, absCtr.realizedCreature.DangerPos, 500)) continue;
-                float otherColdVul = absCtr.HypothermiaImmune ? 0.5f : 1;
-                ctr.Hypothermia += 1.25f * otherColdVul * Mathf.InverseLerp(500, 50, Custom.Dist(cnt.HeadChunk.pos, absCtr.realizedCreature.DangerPos));
-            }
-
+        }
+        for (int j = 0; j < cnt.bodyChunks.Length; j++)
+        {
+            cnt.bodyChunks[j].vel += Custom.RNV() * 10f * Random.value;
+            cnt.bodyChunks[j].pos += Custom.RNV() * 10f * Random.value;
         }
 
-        return true;
+        cI.vaporSmoke = new HailstormFireSmokeCreator(cnt.room);
+        for (int s = 0; s < 5 * unfortunateMotherfucker.bodyChunks.Length; s++)
+        {
+            BodyChunk smokeChunk = unfortunateMotherfucker.bodyChunks[Random.Range(0, unfortunateMotherfucker.bodyChunks.Length)];
+            if (cI.vaporSmoke.AddParticle(smokeChunk.pos, (Custom.RNV() * Random.Range(8f, 12f)) + new Vector2(0f, 30f), 200) is Smoke.FireSmoke.FireSmokeParticle vapor)
+            {
+                vapor.colorFadeTime = 100;
+                vapor.effectColor = cnt.ShortCutColor();
+                vapor.rad *= Mathf.Max(3f, smokeChunk.rad / 3f);
+            }
+        }
+        cI.vaporSmoke = null;
+
+        if (unfortunateMotherfucker is not Creature ctr)
+        {
+            return;
+        }
+
+        float ElectricResistance = 1;
+        float ElecStunResistance = 1;
+        if (ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 0] > 0)
+        {
+            ElectricResistance *= ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 0];
+        }
+        if (ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 1] > 0)
+        {
+            ElecStunResistance *= ctr.Template.damageRestistances[Creature.DamageType.Electric.index, 1];
+        }
+        if (IsIncanStory(cnt.room?.game))
+        {
+            if (ctr.Template.type == CreatureTemplate.Type.YellowLizard ||
+                ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+            {
+                ElectricResistance *= 2f;
+                ElecStunResistance *= 2f;
+            }
+            else if (ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+            {
+                ElectricResistance *= 5f;
+                ElecStunResistance *= 5f;
+            }
+        }
+
+        bool Vaporize = false;
+
+        if (ctr is Player plr && plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Artificer)
+        {
+            plr.PyroDeath();
+        }
+        else if (cnt.TotalMass > ctr.TotalMass * ElectricResistance)
+        {
+            ctr.Die();
+            if (HSRemix.CyanwingAtomization.Value && cnt.TotalMass/2f > ctr.TotalMass * ElectricResistance)
+            {
+                Vaporize = true;
+            }
+            else
+            {
+                int spasmTime = (int)(Custom.LerpMap(ctr.TotalMass, cnt.TotalMass, cnt.TotalMass / 2f, 240, 480) / ElecStunResistance);
+                cnt.room.AddObject(new CreatureSpasmer(ctr, true, spasmTime));
+                if (ctr.State is not null && ctr.State.meatLeft > 0)
+                {
+                    ctr.State.meatLeft = (int)(ctr.State.meatLeft * Mathf.InverseLerp(cnt.TotalMass / 2f, cnt.TotalMass, ctr.TotalMass));
+                }
+                ctr.Hypothermia -= 2f / ElectricResistance;
+            }
+        }
+        else
+        {
+            int spasmTime = (int)(Custom.LerpMap(ctr.TotalMass, cnt.TotalMass * 2f, cnt.TotalMass, 80, 240) / ElecStunResistance);
+            cnt.room.AddObject(new CreatureSpasmer(ctr, true, spasmTime));
+            ctr.Stun(spasmTime);
+            ctr.LoseAllGrasps();
+            ctr.Hypothermia -= 1 / ElectricResistance;
+
+            cnt.shockGiveUpCounter = Math.Max(cnt.shockGiveUpCounter, 30);
+            cnt.AI.annoyingCollisions = Math.Min(cnt.AI.annoyingCollisions / 2, 150);
+        }
+
+        ShockChillipedeArmor(cnt, ctr);
+
+        if (!Vaporize)
+        {
+            for (int k = 0; k < unfortunateMotherfucker.bodyChunks.Length; k++)
+            {
+                unfortunateMotherfucker.bodyChunks[k].vel += Custom.RNV() * 12f * Random.value;
+                unfortunateMotherfucker.bodyChunks[k].pos += Custom.RNV() * 12f * Random.value;
+            }
+        }
+
+        cnt.Stun(40);
+
+        if (ctr.Submersion > 0f)
+        {
+            cnt.room.AddObject(new UnderwaterShock(cnt.room, cnt, cnt.HeadChunk.pos, 20, 2000f * cnt.size, 3f * cnt.size, cnt, cnt.ShortCutColor()));
+        }
+
+        foreach (AbstractCreature absCtr in cnt.room.abstractRoom.creatures)
+        {
+            if (absCtr?.realizedCreature is null ||
+                absCtr.realizedCreature == ctr ||
+                absCtr.realizedCreature == cnt ||
+                !Custom.DistLess(cnt.HeadChunk.pos, absCtr.realizedCreature.DangerPos, 300))
+            {
+                continue;
+            }
+
+            Creature collateralZap = absCtr.realizedCreature;
+            ElectricResistance = 1;
+            ElecStunResistance = 1;
+            if (collateralZap.Template.damageRestistances[Creature.DamageType.Electric.index, 0] > 0)
+            {
+                ElectricResistance *= collateralZap.Template.damageRestistances[Creature.DamageType.Electric.index, 0];
+            }
+            if (collateralZap.Template.damageRestistances[Creature.DamageType.Electric.index, 1] > 0)
+            {
+                ElecStunResistance *= collateralZap.Template.damageRestistances[Creature.DamageType.Electric.index, 1];
+            }
+            if (IsIncanStory(cnt.room?.game))
+            {
+                if (collateralZap.Template.type == CreatureTemplate.Type.YellowLizard ||
+                    collateralZap.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                {
+                    ElectricResistance *= 2f;
+                    ElecStunResistance *= 2f;
+                }
+                else if (collateralZap.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+                {
+                    ElectricResistance *= 5f;
+                    ElecStunResistance *= 5f;
+                }
+            }
+            float distFac = Mathf.InverseLerp(300, 30, Custom.Dist(cnt.HeadChunk.pos, collateralZap.DangerPos));
+            collateralZap.Hypothermia -= distFac / ElectricResistance;
+            int spasmTime = (int)(Custom.LerpMap(collateralZap.TotalMass, cnt.TotalMass * 2f, cnt.TotalMass, 80, 240) * distFac / ElecStunResistance);
+            collateralZap.Stun(spasmTime);
+            cnt.room.AddObject(new CreatureSpasmer(collateralZap, true, spasmTime));
+
+            ShockChillipedeArmor(cnt, collateralZap);
+        }
+
+        if (Vaporize)
+        {
+            ctr.Destroy();
+        }
+        else for (int k = 0; k < unfortunateMotherfucker.bodyChunks.Length; k++)
+        {
+            unfortunateMotherfucker.bodyChunks[k].vel += Custom.RNV() * 12f * Random.value;
+            unfortunateMotherfucker.bodyChunks[k].pos += Custom.RNV() * 12f * Random.value;
+        }
+
+    }
+    public static void CyanwingExplosion(Centipede cnt, CentiInfo cI)
+    {
+        if (cnt is null)
+        {
+            return;
+        }
+
+        cnt.room.InGameNoise(new Noise.InGameNoise(cnt.mainBodyChunk.pos, 24000f, cnt, 4f));
+        cnt.room.PlaySound(SoundID.Bomb_Explode, cnt.mainBodyChunk.pos, 2f, 1.1f);
+        cnt.room.PlaySound(SoundID.Zapper_Zap, cnt.mainBodyChunk.pos, 2f, Random.Range(1.5f, 2.5f));
+        cnt.room.PlaySound(SoundID.Death_Lightning_Spark_Object, cnt.mainBodyChunk.pos, 2.5f, 1);
+        cnt.room.AddObject(new ColorableZapFlash(cnt.mainBodyChunk.pos, 50f, cnt.ShortCutColor()));
+        cnt.room.AddObject(new ShockWave(cnt.mainBodyChunk.pos, 600, 1.5f, 15));
+        cnt.room.AddObject(new Explosion(cnt.room, cnt, cnt.mainBodyChunk.pos, 1, 350, 10, 0, 0, 0, cnt, 0, 0, 0));
+
+        if (cnt.graphicsModule is not null)
+        {
+            (cnt.graphicsModule as CentipedeGraphics).lightFlash = 1f;
+        }
+
+        cI.vaporSmoke = new HailstormFireSmokeCreator(cnt.room);
+        bool WaterShock = false;
+        for (int b = 0; b < cnt.bodyChunks.Length; b++)
+        {
+            cnt.CentiState.shells[b] = false;
+            cnt.bodyChunks[b].vel += Custom.RNV() * 20f * Random.value;
+            cnt.bodyChunks[b].pos += Custom.RNV() * 20f * Random.value;
+            cnt.room.AddObject(new CyanwingSpark(cnt.bodyChunks[b].pos + (Custom.RNV() * Random.Range(5f, 10f)), 0.5f + (Random.value / 2f), cnt.ShortCutColor()));
+            if (cI.vaporSmoke.AddParticle(cnt.bodyChunks[b].pos, (Custom.RNV() * Random.Range(8f, 12f)) + new Vector2(0f, 30f), 200) is Smoke.FireSmoke.FireSmokeParticle vapor)
+            {
+                vapor.colorFadeTime = 100;
+                vapor.rad *= Mathf.Max(4f, cnt.bodyChunks[b].rad / 2f);
+            }
+
+            if (!WaterShock && cnt.bodyChunks[b].submersion > 0.33f)
+            {
+                WaterShock = true;
+                cnt.room.AddObject(new UnderwaterShock(cnt.room, cnt, cnt.bodyChunks[b].pos, 40, 3600f * cnt.size, 10f * cnt.size, cnt, cnt.ShortCutColor()));
+            }
+        }
+
+        foreach (AbstractCreature absCtr in cnt.room.abstractRoom.creatures)
+        {
+            if (absCtr?.realizedCreature is null ||
+                absCtr.realizedCreature == cnt ||
+                !Custom.DistLess(cnt.mainBodyChunk.pos, absCtr.realizedCreature.DangerPos, 350))
+            {
+                continue;
+            }
+
+            float RangeFac = Mathf.Max(0, 1f - (Custom.Dist(cnt.mainBodyChunk.pos, absCtr.realizedCreature.DangerPos) / 300f));
+            Creature UnfortunateMotherfucker = absCtr.realizedCreature;
+            float ElectricResistance = 1;
+            float ElecStunResistance = 1;
+            if (UnfortunateMotherfucker.Template.damageRestistances[Creature.DamageType.Electric.index, 0] > 0)
+            {
+                ElectricResistance *= UnfortunateMotherfucker.Template.damageRestistances[Creature.DamageType.Electric.index, 0];
+            }
+            if (UnfortunateMotherfucker.Template.damageRestistances[Creature.DamageType.Electric.index, 1] > 0)
+            {
+                ElecStunResistance *= UnfortunateMotherfucker.Template.damageRestistances[Creature.DamageType.Electric.index, 1];
+            }
+            if (IsIncanStory(cnt.room?.game))
+            {
+                if (UnfortunateMotherfucker.Template.type == CreatureTemplate.Type.YellowLizard ||
+                    UnfortunateMotherfucker.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                {
+                    ElectricResistance *= 2f;
+                    ElecStunResistance *= 2f;
+                }
+                else if (UnfortunateMotherfucker.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+                {
+                    ElectricResistance *= 5f;
+                    ElecStunResistance *= 5f;
+                }
+            }
+
+            for (int b = 0; b < UnfortunateMotherfucker.bodyChunks.Length; b++)
+            {
+                BodyChunk smokeChunk = UnfortunateMotherfucker.bodyChunks[b];
+                int smokeCount = Random.Range(2, 5);
+                for (int s = 0; s < smokeCount; s++)
+                {
+                    if (cI.vaporSmoke.AddParticle(smokeChunk.pos + (Custom.RNV() * Random.Range(8f, 12f)), (Custom.RNV() * Random.Range(8f, 12f)) + new Vector2(0f, 30f), 200) is Smoke.FireSmoke.FireSmokeParticle vapor)
+                    {
+                        vapor.colorFadeTime = 100;
+                        vapor.rad *= Mathf.Max(4f, smokeChunk.rad / 2f);
+                    }
+                }
+            }
+
+            bool Vaporize = false;
+            int spasmTime = (int)(Custom.LerpMap(UnfortunateMotherfucker.TotalMass / Mathf.Pow(RangeFac, 0.25f), cnt.TotalMass * 2f, cnt.TotalMass / 2f, 120, 480) / ElecStunResistance);
+
+            if (cnt.TotalMass * 1.5f * RangeFac > UnfortunateMotherfucker.TotalMass * ElectricResistance)
+            {
+                if (UnfortunateMotherfucker is Player plr && plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Artificer)
+                {
+                    plr.PyroDeath();
+                }
+                else UnfortunateMotherfucker.Die();
+
+                if (HSRemix.CyanwingAtomization.Value && cnt.TotalMass * 0.75f * RangeFac > UnfortunateMotherfucker.TotalMass * ElectricResistance)
+                {
+                    Vaporize = true;
+                }
+                else
+                {
+                    cnt.room.AddObject(new CreatureSpasmer(UnfortunateMotherfucker, true, spasmTime));
+                    if (UnfortunateMotherfucker.State is not null && UnfortunateMotherfucker.State.meatLeft > 0)
+                    {
+                        UnfortunateMotherfucker.State.meatLeft = (int)(UnfortunateMotherfucker.State.meatLeft * Mathf.InverseLerp(cnt.TotalMass / 2f, cnt.TotalMass, UnfortunateMotherfucker.TotalMass) * RangeFac);
+                    }
+                    UnfortunateMotherfucker.Hypothermia -= 2f / ElectricResistance * RangeFac;
+                }
+            }
+            else
+            {
+                cnt.room.AddObject(new CreatureSpasmer(UnfortunateMotherfucker, true, spasmTime));
+                UnfortunateMotherfucker.Stun(spasmTime);
+                UnfortunateMotherfucker.LoseAllGrasps();
+                UnfortunateMotherfucker.Hypothermia -= 1 / ElectricResistance * RangeFac;
+            }
+
+            ShockChillipedeArmor(cnt, UnfortunateMotherfucker);
+
+            cnt.room.PlaySound(SoundID.Centipede_Shock, cnt.mainBodyChunk.pos, 2f * RangeFac, 1);
+            cnt.room.PlaySound(SoundID.Death_Lightning_Spark_Object, cnt.mainBodyChunk.pos, 2f * RangeFac, 1);
+
+            if (Vaporize)
+            {
+                UnfortunateMotherfucker.Destroy();
+            }
+        }
+
+        cI.vaporSmoke = null;
+
+    }
+    public static void ShockChillipedeArmor(Centipede cnt, PhysicalObject target)
+    {
+        if (cnt is null || cnt.Template.type == HailstormEnums.Chillipede || target is null || target is not Centipede chl || chl.CentiState is not ChillipedeState cS)
+        {
+            return;
+        }
+
+        for (int s = 0; s < chl.CentiState.shells.Length; s++)
+        {
+            if (!chl.CentiState.shells[s])
+            {
+                continue;
+            }
+            chl.CentiState.shells[s] = false;
+            float volume =
+                (cS.ScaleRegenTime[s] <= 0) ? 1.25f :
+                (cS.ScaleRegenTime[s] <= 2000) ? 1f : 0.75f;
+            cS.ScaleRegenTime[s] = 6000;
+            chl.room.PlaySound(SoundID.Coral_Circuit_Break, chl.bodyChunks[s].pos, volume, 1.5f);
+            for (int j = 0; j < 18; j++)
+            {
+                chl.room.AddObject(j % 3 == 1 ?
+                        new HailstormSnowflake(chl.bodyChunks[s].pos, Custom.RNV() * Random.Range(12f, 24f), cS.scaleColor, cS.accentColor) :
+                        new PuffBallSkin(chl.bodyChunks[s].pos, Custom.RNV() * Random.Range(12f, 24f), cS.scaleColor, cS.accentColor));
+            }
+        }
     }
 
     #endregion
@@ -987,16 +1690,87 @@ internal class HailstormCentis
 
     #region Centi AI
 
-    public static void BabyCentiwingParentAssignment(On.CentipedeAI.orig_ctor orig, CentipedeAI cntAI, AbstractCreature absCnt, World world)
+    public static void HailstormCentiwingAI(On.CentipedeAI.orig_ctor orig, CentipedeAI cntAI, AbstractCreature absCnt, World world)
     {
         orig(cntAI, absCnt, world);
-        if (cntAI?.centipede is not null &&
-            absCnt.superSizeMe &&
-            absCnt.creatureTemplate.type == CreatureTemplate.Type.SmallCentipede &&
-            CWT.AbsCtrData.TryGetValue(absCnt, out AbsCtrInfo aI) &&
-            (aI.ctrList is null || aI.ctrList.Count < 1))
+        if (cntAI?.centipede is null)
+        {
+            return;
+        }
+
+        if (absCnt.creatureTemplate.type == HailstormEnums.Cyanwing)
+        {
+            cntAI.pathFinder.stepsPerFrame = 15;
+            cntAI.preyTracker.persistanceBias = 4f;
+            cntAI.preyTracker.sureToGetPreyDistance = 150f;
+            cntAI.preyTracker.sureToLosePreyDistance = 600f;
+            cntAI.utilityComparer.GetUtilityTracker(cntAI.preyTracker).weight = 1.5f;
+        }
+
+        if (absCnt.creatureTemplate.type == CreatureTemplate.Type.SmallCentipede && absCnt.superSizeMe &&
+            CWT.AbsCtrData.TryGetValue(absCnt, out AbsCtrInfo aI) && (aI.ctrList is null || aI.ctrList.Count < 1))
         {
             FindBabyCentiwingMother(absCnt, world, aI);
+        }
+    }
+    public static void CyanwingAggression(On.CentipedeAI.orig_Update orig, CentipedeAI cntAI)
+    {
+        if (cntAI?.centipede is null)
+        {
+            orig(cntAI);
+            return;
+        }
+        Centipede cnt = cntAI.centipede;
+
+        if (cnt.Template.type == HailstormEnums.Cyanwing)
+        {
+            float weight = (cntAI.preyTracker.MostAttractivePrey is not null) ? 0 : 0.1f;
+            cntAI.utilityComparer.GetUtilityTracker(cntAI.injuryTracker).weight = weight;
+        }
+
+        orig(cntAI);
+
+        if (cnt.Template.type == CreatureTemplate.Type.SmallCentipede && cntAI.creature.superSizeMe && CWT.AbsCtrData.TryGetValue(cntAI.creature, out AbsCtrInfo aI) && (aI.ctrList is null || aI.ctrList.Count < 1 || aI.ctrList[0].state.dead))
+        {
+            FindBabyCentiwingMother(cntAI.creature, cntAI.creature.world, aI);
+        }
+
+        if (cnt.Template.type == HailstormEnums.Cyanwing && cntAI.creature.abstractAI?.followCreature is not null)
+        {
+            cntAI.creature.abstractAI.AbstractBehavior(1);
+        }
+
+        if (cnt.CentiState is ChillipedeState cS && cntAI.preyTracker.MostAttractivePrey is not null)
+        {
+            if (cntAI.preyTracker.MostAttractivePrey.TicksSinceSeen >= 400 && cS.mistTimer < 160)
+            {
+                cS.mistTimer = 160;
+            }
+            else if (cntAI.preyTracker.MostAttractivePrey.TicksSinceSeen < 400)
+            {
+                if (cS.mistTimer > 0)
+                {
+                    cS.mistTimer -= (int)Mathf.Lerp(1, 3, Mathf.InverseLerp(0, cnt.CentiState.shells.Length, cnt.CentiState.shells.Count(intact => intact)));
+                    if (Burn.IsCreatureBurning(cnt))
+                    {
+                        cS.mistTimer--;
+                    }
+                }
+                else
+                {
+                    cS.mistTimer = 120;
+                    InsectCoordinator smallInsects = null;
+                    for (int i = 0; i < cnt.room.updateList.Count; i++)
+                    {
+                        if (cnt.room.updateList[i] is InsectCoordinator)
+                        {
+                            smallInsects = cnt.room.updateList[i] as InsectCoordinator;
+                            break;
+                        }
+                    }
+                    cnt.room.AddObject(new FreezerMist(cnt.bodyChunks[Random.Range(0, cnt.bodyChunks.Length - 1)].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor, 1f, cnt.abstractCreature, smallInsects, true));
+                }
+            }
         }
     }
     public static CreatureTemplate.Relationship CentiwingBravery(On.CentipedeAI.orig_IUseARelationshipTracker_UpdateDynamicRelationship orig, CentipedeAI cntAI, RelationshipTracker.DynamicRelationship dynamRelat)
@@ -1004,82 +1778,45 @@ internal class HailstormCentis
         if (cntAI?.centipede is not null && CentiData.TryGetValue(cntAI.centipede, out CentiInfo cI))
         {
             AbstractCreature absCtr = dynamRelat.trackerRep.representedCreature;
-            CreatureTemplate.Relationship result = cntAI.StaticRelationship(absCtr);
+            CreatureTemplate.Relationship defaultRelation = cntAI.StaticRelationship(absCtr);
             Centipede cnt = cntAI.centipede;
-            if (absCtr.realizedCreature is not null)
+            if (cnt.Centiwing && absCtr.realizedCreature is not null)
             {
-                if (result.type == CreatureTemplate.Relationship.Type.Eats && dynamRelat.trackerRep.representedCreature.realizedCreature.TotalMass < cnt.TotalMass)
+                if (defaultRelation.type == CreatureTemplate.Relationship.Type.Eats && dynamRelat.trackerRep.representedCreature.realizedCreature.TotalMass < cnt.TotalMass)
                 {
-                    if (cI.Cyanwing || (IsIncanStory(cntAI?.centipede?.room?.game) && cnt.Template.type == CreatureTemplate.Type.Centiwing))
+                    if (cI.Cyanwing)
                     {
-                        float num = Mathf.Pow(Mathf.InverseLerp(0f, cnt.TotalMass, dynamRelat.trackerRep.representedCreature.realizedCreature.TotalMass), 0.75f);
+                        if (cntAI.creature.abstractAI?.followCreature is not null && cntAI.creature.abstractAI.followCreature == absCtr)
+                        {
+                            return new CreatureTemplate.Relationship
+                                (CreatureTemplate.Relationship.Type.Eats, 1);
+                        }
+                        float intensity = Mathf.InverseLerp(0f, cnt.TotalMass, dynamRelat.trackerRep.representedCreature.realizedCreature.TotalMass * 1.2f);
+                        if (cnt.CentiState is not null)
+                        {
+                            intensity *= 2 - cnt.CentiState.health;
+                        }
+                        return new CreatureTemplate.Relationship
+                            (CreatureTemplate.Relationship.Type.Eats, intensity * defaultRelation.intensity);
+                    }
+                    if (IsIncanStory(cntAI?.centipede?.room?.game) && cnt.Template.type == CreatureTemplate.Type.Centiwing)
+                    {
+                        float massFac = Mathf.Pow(Mathf.InverseLerp(0f, cnt.TotalMass, dynamRelat.trackerRep.representedCreature.realizedCreature.TotalMass), 0.75f);
                         float courageThreshold = Mathf.Lerp(360, 100, Mathf.InverseLerp(0.4f, 1, cnt.size));
                         if (dynamRelat.trackerRep.age < Mathf.Lerp(360, 100, Mathf.InverseLerp(0.4f, 1, cnt.size)))
                         {
-                            num *= 1f - cntAI.OverChasm(dynamRelat.trackerRep.BestGuessForPosition().Tile);
-                            return new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, num * Mathf.InverseLerp(courageThreshold, 0f, dynamRelat.trackerRep.age));
+                            massFac *= 1f - cntAI.OverChasm(dynamRelat.trackerRep.BestGuessForPosition().Tile);
+                            return new CreatureTemplate.Relationship
+                                (CreatureTemplate.Relationship.Type.Afraid, massFac * Mathf.InverseLerp(courageThreshold, 0f, dynamRelat.trackerRep.age));
                         }
-                        num *= 1f - cntAI.OverChasm(dynamRelat.trackerRep.BestGuessForPosition().Tile);
-                        return new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, num * Mathf.InverseLerp(courageThreshold, courageThreshold * 2.66f, dynamRelat.trackerRep.age) * (cI.Cyanwing && cnt.CentiState is not null ? 2 - cnt.CentiState.health : 1));
+                        massFac *= 1f - cntAI.OverChasm(dynamRelat.trackerRep.BestGuessForPosition().Tile);
+                        return new CreatureTemplate.Relationship
+                            (CreatureTemplate.Relationship.Type.Eats, Mathf.InverseLerp(courageThreshold, courageThreshold * 2.66f, dynamRelat.trackerRep.age) * massFac);
                     }
                 }
             }
         }
         return orig(cntAI, dynamRelat);
-    }
-    public static void CyanwingAggression(On.CentipedeAI.orig_Update orig, CentipedeAI cntAI)
-    {
-        orig(cntAI);
-        if (cntAI?.centipede is not null)
-        {
-            Centipede cnt = cntAI.centipede;
-
-            if (cntAI.creature.superSizeMe && cntAI.creature.creatureTemplate.type == CreatureTemplate.Type.SmallCentipede && CWT.AbsCtrData.TryGetValue(cntAI.creature, out AbsCtrInfo aI) && (aI.ctrList is null || aI.ctrList.Count < 1 || aI.ctrList[0].state.dead))
-            {
-                FindBabyCentiwingMother(cntAI.creature, cntAI.creature.world, aI);
-            }
-
-            if (CentiData.TryGetValue(cntAI.centipede, out CentiInfo cI) && cI.Cyanwing)
-            {
-                if (cntAI.behavior == CentipedeAI.Behavior.Injured && cntAI.preyTracker.MostAttractivePrey is not null)
-                {
-                    cntAI.creature.abstractAI.SetDestination(cntAI.preyTracker.MostAttractivePrey.BestGuessForPosition());
-                }
-            }
-
-            if (cnt.CentiState is ChillipedeState cS && cntAI.preyTracker.MostAttractivePrey is not null)
-            {
-                if (cntAI.preyTracker.MostAttractivePrey.TicksSinceSeen >= 400 && cS.mistTimer < 160)
-                {
-                    cS.mistTimer = 160;
-                }
-                else if (cntAI.preyTracker.MostAttractivePrey.TicksSinceSeen < 400)
-                {
-                    if (cS.mistTimer > 0)
-                    {
-                        cS.mistTimer -= (int)Mathf.Lerp(1, 3, Mathf.InverseLerp(0, cnt.CentiState.shells.Length, cnt.CentiState.shells.Count(intact => intact)));
-                        if (Burn.IsCreatureBurning(cnt))
-                        {
-                            cS.mistTimer--;
-                        }
-                    }
-                    else
-                    {
-                        cS.mistTimer = 120;
-                        InsectCoordinator smallInsects = null;
-                        for (int i = 0; i < cnt.room.updateList.Count; i++)
-                        {
-                            if (cnt.room.updateList[i] is InsectCoordinator)
-                            {
-                                smallInsects = cnt.room.updateList[i] as InsectCoordinator;
-                                break;
-                            }
-                        }
-                        cnt.room.AddObject(new FreezerMist(cnt.bodyChunks[Random.Range(0, cnt.bodyChunks.Length - 1)].pos, Custom.RNV() * Random.value * 6f, cS.scaleColor, cS.accentColor, 1f, cnt.abstractCreature, smallInsects, true));
-                    }
-                }
-            }
-        }
     }
 
     //------------------------------------------
@@ -1569,20 +2306,16 @@ public class CyanwingShell : CosmeticSprite
 
     public float lastDarkness = -1f;
     public float darkness;
-    private float hue;
-    private float saturation;
 
-    private float scaleX;
-    private float scaleY;
+    private readonly float scaleX;
+    private readonly float scaleY;
 
     private SharedPhysics.TerrainCollisionData scratchTerrainCollisionData = new SharedPhysics.TerrainCollisionData();
 
     public int fuseTime;
 
-    public string overrideSprite;
-
-    public bool lavaImmune;
-    public Color? overrideColor;
+    public bool Gilded;
+    private Color scaleColor;
     private Color blackColor;
     private Color currentShellColor;
 
@@ -1609,15 +2342,13 @@ public class CyanwingShell : CosmeticSprite
         }
     }
 
-    public CyanwingShell(Centipede cnt, Vector2 pos, Vector2 vel, float hue, float saturation, float scaleX, float scaleY, int fuseTime)
+    public CyanwingShell(Centipede cnt, Vector2 pos, Vector2 vel, Color color, float scaleX, float scaleY, int fuseTime)
     {
         this.fuseTime = fuseTime;
         this.cnt = cnt;
         base.pos = pos + vel;
         lastPos = pos;
         base.vel = vel;
-        this.hue = hue;
-        this.saturation = saturation;
         this.scaleX = scaleX;
         this.scaleY = scaleY;
         rotation = Random.value * 360f;
@@ -1627,13 +2358,7 @@ public class CyanwingShell : CosmeticSprite
         lastZRotation = rotation;
         zRotVel = Mathf.Lerp(-1f, 1f, Random.value) * Custom.LerpMap(vel.magnitude, 0f, 18f, 2f, 16f);
         this.fuseTime = fuseTime;
-    }
-    public CyanwingShell(Centipede cnt, Vector2 pos, Vector2 vel, Color overrideColor, float scaleX, float scaleY, string overrideSprite, int fuseTime) : this (cnt, pos, vel, 0f, 0f, scaleX, scaleY, fuseTime)
-    {
-        this.fuseTime = fuseTime;
-        this.cnt = cnt;
-        this.overrideColor = overrideColor;
-        this.overrideSprite = overrideSprite;
+        scaleColor = color;
     }
 
     public override void Update(bool eu)
@@ -1719,7 +2444,7 @@ public class CyanwingShell : CosmeticSprite
         }
         if (shellLight is null && !slatedForDeletetion)
         {
-            shellLight = new LightSource(pos, false, overrideColor ?? currentShellColor, this)
+            shellLight = new LightSource(pos, false, currentShellColor, this)
             {
                 submersible = true,
                 affectedByPaletteDarkness = 0
@@ -1733,7 +2458,7 @@ public class CyanwingShell : CosmeticSprite
                 Mathf.InverseLerp((fuseTime % 30 > 15)? 30 : 0, 15, fuseTime % 30) :
                 Mathf.InverseLerp(30, 5, fuseTime);
 
-            shellLight.color = overrideColor ?? currentShellColor;
+            shellLight.color = currentShellColor;
             shellLight.setPos = new Vector2?(pos);
             shellLight.setRad = new float?(100 * Mathf.Lerp(0.5f, fuseTime > 30? 1.5f : 2.5f, radiusLerp));
             shellLight.setAlpha = new float?(1);
@@ -1755,55 +2480,47 @@ public class CyanwingShell : CosmeticSprite
     {
         if (this is null || slatedForDeletetion || room is null) return;
 
-        room.AddObject(new ZapCoil.ZapFlash(pos, 2.4f));
+        room.AddObject(new ColorableZapFlash(pos, 2.4f, scaleColor));
         room.PlaySound(SoundID.Zapper_Zap, pos, 0.8f, Random.Range(0.5f, 1.5f));
         if (Submersion > 0.5f)
         {
-            room.AddObject(new UnderwaterShock(room, null, pos, 10, 450f, 0.25f, cnt ?? null, overrideColor ?? Custom.HSL2RGB(hue, saturation, 0.625f)));
+            room.AddObject(new UnderwaterShock(room, null, pos, 10, 450f, 0.25f, cnt ?? null, scaleColor));
         }
         else foreach (AbstractCreature absCtr in room.abstractRoom.creatures)
+        {
+            if (absCtr.realizedCreature?.bodyChunks is null)
             {
-                if (absCtr.realizedCreature?.bodyChunks is null)
+                continue;
+            }
+
+            Creature ctr = absCtr.realizedCreature;
+            bool hit = false;
+
+            for (int b = ctr.bodyChunks.Length - 1; b >= 0; b--)
+            {
+                BodyChunk chunk = ctr.bodyChunks[b];
+                if (chunk is null || !Custom.DistLess(pos, chunk.pos, 150) || ctr is BigEel || (ctr is Centipede otherCnt && otherCnt.CentiState is not ChillipedeState) || ctr is BigJellyFish || ctr is Inspector)
                 {
                     continue;
                 }
 
-                Creature ctr = absCtr.realizedCreature;
-                bool hit = false;
-
-                for (int b = ctr.bodyChunks.Length - 1; b >= 0; b--)
-                {
-                    BodyChunk chunk = ctr.bodyChunks[b];
-                    if (chunk is null || !Custom.DistLess(pos, chunk.pos, 150) || ctr is BigEel || ctr is Centipede || ctr is BigJellyFish || ctr is Inspector)
-                    {
-                        continue;
-                    }
-
-                    ctr.Violence(cnt.mainBodyChunk ?? null, new Vector2(0, 0), chunk, null, Creature.DamageType.Electric, 0.1f, ctr is Player ? 30 : (20f * Mathf.Lerp(ctr.Template.baseStunResistance, 1f, 0.5f)));
-                    room.AddObject(new CreatureSpasmer(ctr, false, ctr.stun));
-                    if (!hit) hit = true;
-                }
-                if (hit)
-                {
-                    room.PlaySound(SoundID.Jelly_Fish_Tentacle_Stun, pos);
-                    room.AddObject(new Explosion.ExplosionLight(pos, 150f, 1f, 4, new Color(0.7f, 1f, 1f)));
-                }
+                ctr.Violence(cnt.mainBodyChunk ?? null, new Vector2(0, 0), chunk, null, Creature.DamageType.Electric, 0.1f, ctr is Player ? 30 : (20f * Mathf.Lerp(ctr.Template.baseStunResistance, 1f, 0.5f)));
+                room.AddObject(new CreatureSpasmer(ctr, false, ctr.stun));
+                if (!hit) hit = true;
             }
+            if (hit)
+            {
+                room.PlaySound(SoundID.Jelly_Fish_Tentacle_Stun, pos);
+                room.AddObject(new Explosion.ExplosionLight(pos, 150f, 1f, 4, scaleColor));
+            }
+        }
     }
 
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
-        if (overrideSprite is null)
-        {
-            sLeaser.sprites = new FSprite[2];
-            sLeaser.sprites[0] = new FSprite("CyanwingBackShell");
-            sLeaser.sprites[1] = new FSprite("CyanwingBackShell");
-        }
-        else
-        {
-            sLeaser.sprites = new FSprite[1];
-            sLeaser.sprites[0] = new FSprite(overrideSprite);
-        }
+        sLeaser.sprites = new FSprite[2];
+        sLeaser.sprites[0] = new FSprite("CyanwingBackShell");
+        sLeaser.sprites[1] = new FSprite("CyanwingBackShell");
         for (int s = 0; s < sLeaser.sprites.Length; s++)
         {
             sLeaser.sprites[s].scaleY = scaleY;
@@ -1817,65 +2534,43 @@ public class CyanwingShell : CosmeticSprite
         lastDarkness = darkness;
         darkness = rCam.room.Darkness(val);
         darkness *= 1f - 0.5f * rCam.room.LightSourceExposure(val);
-        Vector2 val2 = Custom.DegToVec(Mathf.Lerp(lastZRotation, zRotation, timeStacker));
+        Vector2 Zrotation = Custom.DegToVec(Mathf.Lerp(lastZRotation, zRotation, timeStacker));
         for (int i = 0; i < sLeaser.sprites.Length; i++)
         {
             sLeaser.sprites[i].x = val.x - camPos.x;
             sLeaser.sprites[i].y = val.y - camPos.y;
             sLeaser.sprites[i].rotation = Mathf.Lerp(lastRotation, rotation, timeStacker);
-            if (Mathf.Abs(val2.x) < 0.1f)
+            if (Mathf.Abs(Zrotation.x) < 0.1f)
             {
-                sLeaser.sprites[i].scaleX = 0.1f * Mathf.Sign(val2.x) * scaleX;
+                sLeaser.sprites[i].scaleX = 0.1f * Mathf.Sign(Zrotation.x) * scaleX;
             }
             else
             {
-                sLeaser.sprites[i].scaleX = val2.x * scaleX;
+                sLeaser.sprites[i].scaleX = Zrotation.x * scaleX;
             }
         }
         sLeaser.sprites[0].x += Custom.DegToVec(Mathf.Lerp(lastRotation, rotation, timeStacker)).x * 1.5f;
         sLeaser.sprites[0].y += Custom.DegToVec(Mathf.Lerp(lastRotation, rotation, timeStacker)).y * 1.5f;
-        if (overrideColor.HasValue)
+
+        if (Gilded)
         {
-            sLeaser.sprites[0].color =
-                Color.Lerp(Color.Lerp(overrideColor.Value, blackColor, darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-        }
-        else if (ModManager.MSC && lavaImmune)
-        {
-            sLeaser.sprites[0].color =
-                Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.7f + 0.3f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            sLeaser.sprites[0].color = Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.7f + 0.3f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            if (Zrotation.y > 0f)
+            {
+                sLeaser.sprites[1].color = Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            }
+            else sLeaser.sprites[1].color = Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.4f + 0.6f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
         }
         else
         {
-            sLeaser.sprites[0].color =
-                Color.Lerp(Color.Lerp(Custom.HSL2RGB(hue, saturation, 0.5f), blackColor, 0.7f + 0.3f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            sLeaser.sprites[0].color = Color.Lerp(scaleColor, Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            if (Zrotation.y > 0f)
+            {
+                sLeaser.sprites[1].color = Color.Lerp(scaleColor, Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            }
+            else sLeaser.sprites[1].color = Color.Lerp(Color.Lerp(scaleColor, blackColor, 0.5f), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
         }
-        if (sLeaser.sprites.Length > 1)
-        {
-            if (val2.y > 0f)
-            {
-                float num = Custom.LerpMap(Mathf.Abs(Vector2.Dot(val2, Custom.DegToVec(Mathf.Lerp(lastRotation, rotation, timeStacker) - 45f))), 0.5f, 1f, 0f, 1f, 2f);
-                if (ModManager.MSC && lavaImmune)
-                {
-                    sLeaser.sprites[1].color =
-                        Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-                }
-                else
-                {
-                    sLeaser.sprites[1].color =
-                        Color.Lerp(Color.Lerp(Custom.HSL2RGB(hue, saturation, 0.5f + 0.25f * num), blackColor, darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-                }
-            }
-            else if (ModManager.MSC && lavaImmune)
-            {
-                sLeaser.sprites[1].color =
-                    Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.4f + 0.6f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-            }
-            else
-            {
-                sLeaser.sprites[1].color =
-                    Color.Lerp(Color.Lerp(Custom.HSL2RGB(hue, saturation * 0.8f, 0.4f), blackColor, 0.4f + 0.6f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-            }
-        }
+        
         if (sLeaser.sprites[0] is not null)
         {
             currentShellColor = sLeaser.sprites[0].color;
@@ -1891,5 +2586,161 @@ public class CyanwingShell : CosmeticSprite
     public override void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
     {
         base.AddToContainer(sLeaser, rCam, newContatiner);
+    }
+}
+
+public class CyanwingSpark : CosmeticSprite
+{
+    private float size;
+
+    private float lastLife;
+    private float life;
+    private float lifeTime;
+
+    private Color color;
+
+    public CyanwingSpark(Vector2 pos, float size, Color color)
+    {
+        base.pos = pos;
+        lastPos = pos;
+        this.size = size;
+        life = 1f;
+        lastLife = 1f;
+        lifeTime = Mathf.Lerp(12f, 16f, size * Random.value);
+        this.color = color;
+    }
+
+    public override void Update(bool eu)
+    {
+        room.AddObject(new Spark(pos, Custom.RNV() * 60f * Random.value, color, null, 4, 50));
+        if (life <= 0f && lastLife <= 0f)
+        {
+            Destroy();
+            return;
+        }
+        lastLife = life;
+        life = Mathf.Max(0f, life - 1f / lifeTime);
+    }
+
+    public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
+    {
+        sLeaser.sprites = new FSprite[3];
+
+        sLeaser.sprites[0] = new("Futile_White");
+        sLeaser.sprites[0].shader = rCam.room.game.rainWorld.Shaders["LightSource"];
+        sLeaser.sprites[0].color = color;
+
+        sLeaser.sprites[1] = new("Futile_White");
+        sLeaser.sprites[1].shader = rCam.room.game.rainWorld.Shaders["FlatLight"];
+        sLeaser.sprites[1].color = color;
+
+        sLeaser.sprites[2] = new("Futile_White");
+        sLeaser.sprites[2].shader = rCam.room.game.rainWorld.Shaders["FlareBomb"];
+        sLeaser.sprites[2].color = color;
+
+        AddToContainer(sLeaser, rCam, rCam.ReturnFContainer("Water"));
+    }
+
+    public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
+    {
+        base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
+        float lifespanFac = Mathf.Lerp(lastLife, life, timeStacker);
+        for (int i = 0; i < 3; i++)
+        {
+            sLeaser.sprites[i].x = pos.x - camPos.x;
+            sLeaser.sprites[i].y = pos.y - camPos.y;
+        }
+        float sizeFac = Mathf.Lerp(20f, 120f, Mathf.Pow(size, 1.5f));
+
+        sLeaser.sprites[0].scale = Mathf.Pow(Mathf.Sin(lifespanFac * Mathf.PI), 0.5f) * Mathf.Lerp(0.8f, 1.2f, Random.value) * sizeFac * 4f / 8f;
+        sLeaser.sprites[0].alpha = Mathf.Pow(Mathf.Sin(lifespanFac * Mathf.PI), 0.5f) * Mathf.Lerp(0.6f, 1f, Random.value) * 0.75f;
+
+        sLeaser.sprites[1].scale = Mathf.Pow(Mathf.Sin(lifespanFac * Mathf.PI), 0.5f) * Mathf.Lerp(0.8f, 1.2f, Random.value) * sizeFac * 4f / 8f;
+        sLeaser.sprites[1].alpha = Mathf.Pow(Mathf.Sin(lifespanFac * Mathf.PI), 0.5f) * Mathf.Lerp(0.6f, 1f, Random.value) * 0.15f;
+
+        sLeaser.sprites[2].scale = Mathf.Lerp(0.5f, 1f, Mathf.Sin(lifespanFac * Mathf.PI)) * Mathf.Lerp(0.8f, 1.2f, Random.value) * sizeFac / 8f;
+        sLeaser.sprites[2].alpha = Mathf.Sin(lifespanFac * Mathf.PI) * Random.value * 0.75f;
+    }
+}
+
+public class ColorableZapFlash : CosmeticSprite
+{
+    private LightSource lightsource;
+
+    private float life;
+    private float lastLife;
+    private float lifeTime;
+
+    private float size;
+
+    private Color color;
+
+    public ColorableZapFlash(Vector2 initPos, float size, Color color)
+    {
+        this.size = size;
+        lifeTime = Mathf.Lerp(1f, 4f, Random.value) + 2f * size;
+        life = 1f;
+        lastLife = 1f;
+        pos = initPos;
+        lastPos = initPos;
+        this.color = color;
+    }
+
+    public override void Update(bool eu)
+    {
+        base.Update(eu);
+        if (lightsource is null)
+        {
+            lightsource = new LightSource(pos, false, color, this);
+            room.AddObject(lightsource);
+        }
+        lastLife = life;
+        life -= 1f / lifeTime;
+        if (lastLife < 0f)
+        {
+            if (lightsource is not null)
+            {
+                lightsource.Destroy();
+            }
+            Destroy();
+        }
+    }
+
+    public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
+    {
+        sLeaser.sprites = new FSprite[2];
+
+        sLeaser.sprites[0] = new FSprite("Futile_White");
+        sLeaser.sprites[0].color = color;
+        sLeaser.sprites[0].shader = rCam.room.game.rainWorld.Shaders["FlareBomb"];
+
+        sLeaser.sprites[1] = new FSprite("Futile_White");
+        sLeaser.sprites[1].color = Color.white;
+        sLeaser.sprites[1].shader = rCam.room.game.rainWorld.Shaders["FlatLight"];
+
+        AddToContainer(sLeaser, rCam, rCam.ReturnFContainer("Foreground"));
+    }
+
+    public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
+    {
+        base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
+        float lifespanFac = Mathf.Lerp(lastLife, life, timeStacker);
+        for (int i = 0; i < 2; i++)
+        {
+            sLeaser.sprites[i].x = Mathf.Lerp(lastPos.x, pos.x, timeStacker) - camPos.x;
+            sLeaser.sprites[i].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) - camPos.y;
+        }
+        if (lightsource is not null)
+        {
+            lightsource.HardSetRad(Mathf.Lerp(0.25f, 1f, Random.value * lifespanFac * size) * 2400f);
+            lightsource.HardSetAlpha(Mathf.Pow(lifespanFac * Random.value, 0.4f));
+            float colorSkew = Mathf.Pow(lifespanFac * Random.value, 4f);
+            lightsource.color = Color.Lerp(color, Color.white, colorSkew);
+        }
+        sLeaser.sprites[0].scale = Mathf.Lerp(0.5f, 1f, Random.value * lifespanFac * size) * 500f / 16f;
+        sLeaser.sprites[0].alpha = lifespanFac * Random.value * 0.75f;
+
+        sLeaser.sprites[1].scale = Mathf.Lerp(0.5f, 1f, (0.5f + 0.5f * Random.value) * lifespanFac * size) * 400f / 16f;
+        sLeaser.sprites[1].alpha = lifespanFac * Random.value * 0.75f;
     }
 }

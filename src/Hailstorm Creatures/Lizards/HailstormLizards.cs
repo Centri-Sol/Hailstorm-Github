@@ -86,8 +86,8 @@ internal class HailstormLizards
         On.Lizard.TerrainImpact += GorditoGreenieGroundImpact;
         On.Lizard.Stun += HailstormLizStun;
 
-        On.LizardAI.IUseARelationshipTracker_UpdateDynamicRelationship += LizardAITweaks;
-        On.LizardAI.ctor += ColdLizardAIConstructor;
+        On.LizardAI.IUseARelationshipTracker_UpdateDynamicRelationship += HailstormLizardRelationships;
+        On.LizardAI.ctor += ColdLizardAISetup;
         On.LizardAI.Update += ColdLizardAIUpdate;
         On.LizardAI.TravelPreference += HailstormLizTravelPrefs;
         LizardAI_ILHooks();
@@ -1717,11 +1717,59 @@ internal class HailstormLizards
 
     #region Lizard AI
 
-    public static CreatureTemplate.Relationship LizardAITweaks(On.LizardAI.orig_IUseARelationshipTracker_UpdateDynamicRelationship orig, LizardAI lizAI, RelationshipTracker.DynamicRelationship dynamRelat)
+    public static CreatureTemplate.Relationship HailstormLizardRelationships(On.LizardAI.orig_IUseARelationshipTracker_UpdateDynamicRelationship orig, LizardAI lizAI, RelationshipTracker.DynamicRelationship dynamRelat)
     {
         CreatureTemplate.Type lizType = lizAI.lizard.Template.type;
         CreatureTemplate.Type otherCtrType = dynamRelat.trackerRep.representedCreature.creatureTemplate.type;
         Creature ctr = dynamRelat.trackerRep.representedCreature.realizedCreature;
+
+
+
+        if (ctr is LuminCreature lmn && dynamRelat.state is not null)
+        {
+            LizardAI.LizardTrackState trackedState = dynamRelat.state as LizardAI.LizardTrackState;
+            if (dynamRelat.trackerRep.VisualContact && lmn is not null)
+            {
+                trackedState.spear = false;
+                trackedState.vultureMask = 0;
+                if (lmn.grasps is not null)
+                {
+                    for (int i = 0; i < lmn.grasps.Length; i++)
+                    {
+                        if (lmn.grasps[i] is null)
+                        {
+                            continue;
+                        }
+
+                        if (lmn.grasps[i].grabbed is Spear)
+                        {
+                            trackedState.spear = true;
+                        }
+                        else if (lmn.grasps[i].grabbed is VultureMask mask)
+                        {
+                            trackedState.vultureMask = Math.Max(trackedState.vultureMask, !mask.King ? 1 : 2);
+                        }
+                    }
+                }
+            }
+            if (trackedState.vultureMask > 0 &&
+                lizAI.creature.creatureTemplate.type != CreatureTemplate.Type.BlackLizard &&
+                lizAI.creature.creatureTemplate.type != CreatureTemplate.Type.RedLizard &&
+                lizAI.usedToVultureMask < (trackedState.vultureMask == 2 ? 1200 : 700))
+            {
+                lizAI.usedToVultureMask++;
+                if (lizAI.creature.creatureTemplate.type == CreatureTemplate.Type.GreenLizard && trackedState.vultureMask < 2)
+                {
+                    return new CreatureTemplate.Relationship
+                        (CreatureTemplate.Relationship.Type.Ignores, 0f);
+                }
+                float scareFac = trackedState.vultureMask != 2 ?
+                    (lizAI.creature.creatureTemplate.type == CreatureTemplate.Type.BlueLizard ? 0.8f : 0.6f) :
+                    (lizAI.creature.creatureTemplate.type == CreatureTemplate.Type.GreenLizard ? 0.4f : 0.9f);
+                return new CreatureTemplate.Relationship
+                    (CreatureTemplate.Relationship.Type.Afraid, Mathf.InverseLerp(a: trackedState.vultureMask == 2 ? 1200 : 700, b: 600f, value: lizAI.usedToVultureMask) * scareFac);
+            }
+        }
 
 
         if (OtherCreatureChanges.IsIncanStory(lizAI.lizard.room.game))
@@ -1977,7 +2025,7 @@ internal class HailstormLizards
         return orig(lizAI, dynamRelat);
     }
 
-    public static void ColdLizardAIConstructor(On.LizardAI.orig_ctor orig, LizardAI liz, AbstractCreature absCtr, World world)
+    public static void ColdLizardAISetup(On.LizardAI.orig_ctor orig, LizardAI liz, AbstractCreature absCtr, World world)
     {
         orig(liz, absCtr, world);
         if (liz.lizard is not null && liz.lizard.LizardState is ColdLizState lS)
@@ -1985,6 +2033,7 @@ internal class HailstormLizards
             if (lS.IcyBlue)
             {
                 liz.pathFinder.stepsPerFrame = 20;
+                liz.preyTracker.sureToGetPreyDistance = 5;
                 liz.preyTracker.giveUpOnUnreachablePrey = 1100;
                 liz.stuckTracker.minStuckCounter = 40;
                 liz.stuckTracker.maxStuckCounter = 80;
@@ -1992,6 +2041,7 @@ internal class HailstormLizards
             else if (lS.Freezer)
             {
                 liz.pathFinder.stepsPerFrame = 20;
+                liz.preyTracker.sureToGetPreyDistance = 10;
                 liz.preyTracker.giveUpOnUnreachablePrey = 1800;
                 liz.stuckTracker.minStuckCounter = 20;
                 liz.stuckTracker.maxStuckCounter = 40;
@@ -2046,6 +2096,10 @@ internal class HailstormLizards
                 if (lS.Freezer)
                 {
                     lizAI.noiseTracker.hearingSkill = 1.5f;
+                    if (Random.value < 0.01f)
+                    {
+                        lizAI.creature.abstractAI.AbstractBehavior(1);
+                    }
                 }
 
             }

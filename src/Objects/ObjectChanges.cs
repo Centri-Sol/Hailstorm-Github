@@ -22,6 +22,11 @@ internal class ObjectChanges
 {
     public static void Hooks()
     {
+        On.PhysicalObject.ctor += ObjectCWT;
+        On.Creature.SuckedIntoShortCut += ObjectInShortcutTracking;
+        On.Creature.SpitOutOfShortCut += ObjectOutOfShortcutTracking;
+
+
         On.Player.CanBeSwallowed += NewItemsSwallowableSettings;
         JollyCoopFoodFix();
 
@@ -29,7 +34,10 @@ internal class ObjectChanges
         On.BubbleGrass.Update += HeatyGrass;
 
         // Food
-        On.MoreSlugcats.GlowWeed.BitByPlayer += QuickerGlowweedEating;
+        On.MoreSlugcats.GlowWeed.ctor += HailstormGlowweedStats;
+        On.MoreSlugcats.GlowWeed.Update += HailstormGlowweedWinterLight;
+        On.MoreSlugcats.GlowWeed.BitByPlayer += HailstormGlowweedFasterToEat;
+        On.MoreSlugcats.GlowWeed.DrawSprites += HailstormGlowweedColdUpdate;
         On.SlimeMold.ctor += BIGMold;
         On.SaveState.AbstractPhysicalObjectFromString += AbstractSlimeMoldData;
 
@@ -62,10 +70,57 @@ internal class ObjectChanges
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+    }
+
+    public static void ObjectCWT(On.PhysicalObject.orig_ctor orig, PhysicalObject obj, AbstractPhysicalObject absObj)
+    {
+        orig(obj, absObj);
+        if (!CWT.ObjectData.TryGetValue(obj, out _))
+        {
+            CWT.ObjectData.Add(obj, new ObjectInfo(obj));
+        }
     }
 
     //--------------------------------------------
+    // Shortcut Tracking
+    public static void ObjectInShortcutTracking(On.Creature.orig_SuckedIntoShortCut orig, Creature ctr, IntVector2 entrancePos, bool wasBeingCarried)
+    {
+        if (ctr?.room is not null && ctr.room.GetTile(entrancePos).Terrain == Room.Tile.TerrainType.ShortcutEntrance && ctr.abstractCreature.stuckObjects.Count > 0)
+        {
+            List<AbstractPhysicalObject> stuckObjects = ctr.abstractCreature.GetAllConnectedObjects();
+            for (int i = 0; i < stuckObjects.Count; i++)
+            {
+                if (stuckObjects[i].realizedObject is null || !CWT.ObjectData.TryGetValue(stuckObjects[i].realizedObject, out ObjectInfo oI) || oI.inShortcut)
+                {
+                    continue;
+                }
+
+                oI.inShortcut = true;
+            }
+        }
+        orig(ctr, entrancePos, wasBeingCarried);
+    }
+    public static void ObjectOutOfShortcutTracking(On.Creature.orig_SpitOutOfShortCut orig, Creature ctr, IntVector2 pos, Room newRoom, bool spitOutAttachedStuff)
+    {
+        orig(ctr, pos, newRoom, spitOutAttachedStuff); 
+        if (spitOutAttachedStuff && ctr is not null && ctr.abstractCreature.stuckObjects.Count > 0)
+        {
+            List<AbstractPhysicalObject> stuckObjects = ctr.abstractCreature.GetAllConnectedObjects();
+            for (int i = 0; i < stuckObjects.Count; i++)
+            {
+                if (stuckObjects[i].realizedObject is null || !CWT.ObjectData.TryGetValue(stuckObjects[i].realizedObject, out ObjectInfo oI) || !oI.inShortcut)
+                {
+                    continue;
+                }
+
+                oI.inShortcut = false;
+            }
+        }
+    }
+
+    //----------------------------------------------------------------------------------
+    //----------------------------------------------------------------------------------
 
     private static bool NewItemsSwallowableSettings(On.Player.orig_CanBeSwallowed orig, Player self, PhysicalObject obj)
     {
@@ -132,15 +187,166 @@ internal class ObjectChanges
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-    #region Food
-    public static void QuickerGlowweedEating(On.MoreSlugcats.GlowWeed.orig_BitByPlayer orig, GlowWeed glw, Creature.Grasp grasp, bool eu)
+    #region Glowweed
+    public class GlowweedInfo
     {
-        if (IsIncanStory(glw?.room?.game) && glw.bites == 3)
+        public HSLColor warmColor;
+        public HSLColor coldColor;
+        public Color displayColor = Color.clear;
+        public float warmGlowRadius;
+        public float coldGlowRadius;
+        public float displayRadius = -1;
+        public int maxColdTime;
+        public GlowweedInfo(AbstractPhysicalObject absGlow)
         {
-            glw.bites--;
+            Random.State state = Random.state;
+            Random.InitState(absGlow.ID.RandomSeed);
+            warmColor = new HSLColor(Custom.WrappedRandomVariation( 80 / 360f, 20 / 360f, 0.33f), 0.6f, 0.5f);
+            coldColor = new HSLColor(Custom.WrappedRandomVariation(220 / 360f, 20 / 360f, 0.66f), 0.6f, Custom.WrappedRandomVariation(0.65f, 0.1f, 0.25f));
+            warmGlowRadius = (1f - warmColor.hue) * 360f;
+            coldGlowRadius = (1f - coldColor.hue) * 360f;
+            Random.state = state;
+            maxColdTime = Weather.LateBlizzardTime(absGlow.world);
         }
-        orig(glw, grasp, eu);
     }
+
+    public static ConditionalWeakTable<GlowWeed, GlowweedInfo> GlowweedData = new();
+
+    public static void HailstormGlowweedStats(On.MoreSlugcats.GlowWeed.orig_ctor orig, GlowWeed glow, AbstractPhysicalObject absGlow)
+    {
+        orig(glow, absGlow);
+        if (IsIncanStory(absGlow?.world?.game))
+        {
+            if (!GlowweedData.TryGetValue(glow, out _))
+            {
+                GlowweedData.Add(glow, new GlowweedInfo(absGlow));
+            }
+            glow.bounce = 0.5f;
+        }
+    }
+    public static void HailstormGlowweedWinterLight(On.MoreSlugcats.GlowWeed.orig_Update orig, GlowWeed glow, bool eu)
+    {
+        if (glow?.room is null || !GlowweedData.TryGetValue(glow, out GlowweedInfo gI))
+        {
+            orig(glow, eu);
+        }     
+        else
+        {
+            if (glow.myLight is null && glow.room.BeingViewed)
+            {
+                glow.LightCounter = Random.Range(0f, 100f);
+                glow.myLight = new LightSource(glow.firstChunk.pos, true, gI.displayColor, glow, true);
+                glow.myLight.affectedByPaletteDarkness = 0.75f;
+                glow.myLight.colorFromEnvironment = false;
+                glow.myLight.noGameplayImpact = true;
+                glow.myLight.requireUpKeep = true;
+                glow.room.AddObject(glow.myLight);
+            }
+
+            orig(glow, eu);
+
+            if (glow.myLight is not null)
+            {
+                float lightCounterFac = 1f + Mathf.Sin(glow.LightCounter) * 0.05f;
+                float biteFac = glow.bites / 3f;
+                float submersionMult = 1 + (glow.Submersion / 2f);
+                if (glow.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+                {
+                    float radiusGoal = Custom.LerpMap(glow.room.world.rainCycle.timer, glow.room.world.rainCycle.cycleLength, gI.maxColdTime, gI.warmGlowRadius, gI.coldGlowRadius) * submersionMult;
+                    if (gI.displayRadius > -1)
+                    {
+                        gI.displayRadius = Mathf.Lerp(glow.myLight.rad, radiusGoal, 0.01f);
+                    }
+                    else
+                    {
+                        gI.displayRadius = radiusGoal;
+                    }
+                }
+                else
+                {
+                    if (gI.displayRadius > -1)
+                    {
+                        gI.displayRadius = Mathf.Lerp(glow.myLight.rad, gI.warmGlowRadius * submersionMult, 0.01f);
+                    }
+                    else
+                    {
+                        gI.displayRadius = gI.warmGlowRadius * submersionMult;
+                    }
+                }
+                glow.myLight.HardSetPos(glow.firstChunk.pos);
+                glow.myLight.HardSetRad(gI.displayRadius * lightCounterFac * biteFac);
+                glow.myLight.HardSetAlpha(Mathf.Lerp((lightCounterFac - 0.1f) * biteFac * submersionMult, 0, 0.1f + glow.room.Darkness(glow.firstChunk.pos)/4f));
+                glow.myLight.color = gI.displayColor;
+                if (glow.myLight.rad > 5f)
+                {
+                    glow.myLight.stayAlive = true;
+                }
+                if (glow.myLight.room != glow.room || !glow.myLight.room.BeingViewed)
+                {
+                    glow.myLight.slatedForDeletetion = true;
+                    glow.myLight = null;
+                }
+            }
+        }
+
+    }
+    public static void HailstormGlowweedFasterToEat(On.MoreSlugcats.GlowWeed.orig_BitByPlayer orig, GlowWeed glow, Creature.Grasp grasp, bool eu)
+    {
+        if (glow is not null || GlowweedData.TryGetValue(glow, out _) && glow.bites == 3)
+        {
+            glow.bites--;
+        }
+        orig(glow, grasp, eu);
+    }
+    public static void HailstormGlowweedColdUpdate(On.MoreSlugcats.GlowWeed.orig_DrawSprites orig, GlowWeed glow, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
+    {
+        orig(glow, sLeaser, rCam, timeStacker, camPos);
+        if (glow?.room?.roomSettings is null || !GlowweedData.TryGetValue(glow, out GlowweedInfo gI))
+        {
+            return;
+        }
+
+        if (glow.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+        {
+            Color colorGoal = Color.Lerp(gI.warmColor.rgb, gI.coldColor.rgb, Mathf.InverseLerp(glow.room.world.rainCycle.cycleLength, gI.maxColdTime, glow.room.world.rainCycle.timer));
+            if (gI.displayColor != Color.clear)
+            {
+                gI.displayColor = Color.Lerp(gI.displayColor, colorGoal, 0.01f);
+            }
+            else
+            {
+                gI.displayColor = colorGoal;
+            }
+        }
+        else
+        {
+            if (gI.displayColor != Color.clear)
+            {
+                gI.displayColor = Color.Lerp(gI.displayColor, gI.warmColor.rgb, 0.01f);
+            }
+            else
+            {
+                gI.displayColor = gI.warmColor.rgb;
+            }
+        }
+
+        if (glow.blink > 0 && Random.value < 0.5f)
+        {
+            sLeaser.sprites[1].color = glow.blinkColor;
+            sLeaser.sprites[2].color = glow.blinkColor;
+            sLeaser.sprites[3].color = glow.blinkColor;
+            sLeaser.sprites[4].color = glow.blinkColor;
+        }
+        else
+        {
+            sLeaser.sprites[1].color = gI.displayColor;
+            sLeaser.sprites[2].color = gI.displayColor;
+            sLeaser.sprites[3].color = Color.Lerp(gI.displayColor, rCam.currentPalette.blackColor, 0.4f);
+            sLeaser.sprites[4].color = Color.Lerp(gI.displayColor, rCam.currentPalette.blackColor, 0.4f);
+        }
+    }
+
+    #endregion
 
     public static void BIGMold(On.SlimeMold.orig_ctor orig, SlimeMold slm, AbstractPhysicalObject absSlm)
     {
@@ -230,7 +436,6 @@ internal class ObjectChanges
         }
         return orig(world, objString);
     }
-    #endregion
 
     //-----------------------------------------
 
@@ -523,19 +728,7 @@ internal class ObjectChanges
         {
             stun *= Mathf.Lerp(source is JellyFish ? 2f : 1.5f, 1f, HS.ClampedHealth);
         }
-
-
-        if (target.Template.type == CreatureTemplate.Type.YellowLizard)
-        {
-            stun /= 2;
-        }
-        else
-        if (target.Template.type == HailstormEnums.IcyBlue ||
-            target.Template.type == HailstormEnums.Freezer)
-        {
-            stun *= 1.5f;
-        }
-        else
+        
         if (target is Player plr)
         {
             if (plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Saint)

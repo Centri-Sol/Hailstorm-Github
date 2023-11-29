@@ -13,27 +13,27 @@ public class GlowSpiderState : HealthState
 {
     public class Behavior : ExtEnum<Behavior>
     {
-        public static readonly Behavior Idle = new("Idle", false, true);
-        public static readonly Behavior Hunt = new("Hunt", false, true);
-        public static readonly Behavior Flee = new("Flee", false, true);
+        public static readonly Behavior Idle = new("Idle", 0, true);
+        public static readonly Behavior Hunt = new("Hunt", 0, true);
+        public static readonly Behavior Flee = new("Flee", 0, true);
 
-        public static readonly Behavior Hide = new("Hide", true, true);
-        public static readonly Behavior Rush = new("Rush", true, true);
-        public static readonly Behavior Aggravated = new("Aggravated", true, true);
-        public static readonly Behavior ReturnPrey = new("ReturnPrey", true, true);
-        public static readonly Behavior Overloaded = new("Overloaded", true, true);
-        public static readonly Behavior GetUnstuck = new("GetUnstuck", true, true);
-        public static readonly Behavior EscapeRain = new("EscapeRain", true, true);
+        public static readonly Behavior Hide = new("Hide", 1, true);
+        public static readonly Behavior Rush = new("Rush", 1, true);
+        public static readonly Behavior Aggravated = new("Aggravated", 1, true);
+        public static readonly Behavior ReturnPrey = new("ReturnPrey", 1, true);
+        public static readonly Behavior EscapeRain = new("EscapeRain", 1, true);
 
-        public bool Stubborn;
-        public Behavior(string value, bool stubborn, bool register = false) : base(value, register)
+        public static readonly Behavior Overloaded = new("Overloaded", 2, true);
+
+        public int Stubborness;
+        public Behavior(string value, int stubborness, bool register = false) : base(value, register)
         {
-            Stubborn = stubborn;
+            Stubborness = stubborness;
         }
     }
     public class Role : ExtEnum<Role>
     {
-        public static readonly Role Protector = new("Protector", true);
+        public static readonly Role Guardian = new("Protector", true);
         public static readonly Role Hunter = new("Hunter", true);
         public static readonly Role Forager = new("Forager", true);
         public Role(string value, bool register = false) : base(value, register)
@@ -99,20 +99,20 @@ public class GlowSpiderState : HealthState
                 role = Role.Hunter;
                 break;
             default:
-                role = Role.Protector;
+                role = Role.Guardian;
                 break;
         }
         ivars = new IndividualVariations(Random.Range(0.8f, 1.2f), Random.Range(0.8f, 1.2f));
         dominant = ivars.dominance > 1.2f;
-        if (role == Role.Hunter)
-        {
-            timeToWantToHide = !dominant ? 600 : 400;
-            timeToHide = !dominant ? 160 : 40;
-        }
-        else if (role != Role.Forager)
+        if (role == Role.Guardian)
         {
             timeToWantToHide = !dominant ? 1000 : 1600;
             timeToHide = 320;
+        }
+        else if (role == Role.Forager)
+        {
+            timeToWantToHide = 12000;
+            timeToHide = 200;
         }
         role = Role.Forager;
         dominant = true;
@@ -161,23 +161,18 @@ public class GlowSpiderState : HealthState
                 {
                     newState = Behavior.Hunt;
                 }
-                ChangeBehavior(newState, true);
+                ChangeBehavior(newState, 1);
             }
         }
 
-        if (lmn.sourceOfFear is null && lmn.currentPrey is null && (behavior == Behavior.Hunt || behavior == Behavior.Flee))
-        {
-            ChangeBehavior(Behavior.Idle, false);
-        }
-
     }
-    public virtual void ChangeBehavior(Behavior newState, bool forceChange)
+    public virtual void ChangeBehavior(Behavior newState, int stubborness)
     {
         if (newState is null || newState == behavior || (dead && newState != Behavior.Idle) || (behavior == Behavior.Overloaded && Stunned))
         {
             return;
         }
-        if (!dead && !forceChange && behavior.Stubborn)
+        if (!dead && behavior.Stubborness > stubborness)
         {
             suppressedState = newState;
             return;

@@ -186,6 +186,7 @@ public class LuminFlash : CosmeticSprite
     private readonly int lifeTime;
 
     private Color color;
+    private bool uncontrolled;
 
     private Vector2 lastDirection;
     private Vector2 direction;
@@ -196,7 +197,7 @@ public class LuminFlash : CosmeticSprite
     private float alpha;
     public float LightIntensity => Mathf.Pow(Mathf.Sin(life * Mathf.PI), 0.4f);
 
-    public LuminFlash(Room room, BodyChunk source, float baseRad, int lifeTime, Color color, float flashPitch) : this(room, new Vector2(0, 0), baseRad, lifeTime, color, flashPitch)
+    public LuminFlash(Room room, BodyChunk source, float baseRad, int lifeTime, Color color, float flashPitch, bool uncontrolled) : this(room, new Vector2(0, 0), baseRad, lifeTime, color, flashPitch, uncontrolled)
     {
         followChunk = source;
         if (followChunk?.owner is not null && followChunk.owner is Creature ctr)
@@ -204,7 +205,7 @@ public class LuminFlash : CosmeticSprite
             killTag = ctr.abstractCreature;
         }
     }
-    public LuminFlash(Room room, Vector2 pos, float baseRad, int lifeTime, Color color, float flashPitch)
+    public LuminFlash(Room room, Vector2 pos, float baseRad, int lifeTime, Color color, float flashPitch, bool uncontrolled)
     {
         this.room = room;
         base.pos = (followChunk is not null) ? followChunk.pos : pos;
@@ -212,6 +213,7 @@ public class LuminFlash : CosmeticSprite
         this.lifeTime = lifeTime;
         this.color = color;
         this.room.PlaySound(SoundID.Flare_Bomb_Burn, base.pos, 1.2f, flashPitch);
+        this.uncontrolled = uncontrolled;
     }
 
     public override void Update(bool eu)
@@ -263,11 +265,11 @@ public class LuminFlash : CosmeticSprite
             }
             else if (owned && ctr != followChunk.owner && ctr.State is not null && ctr.State is GlowSpiderState gs && gs.juice < gs.MaxJuice)
             {
-                gs.juice += 0.025f;
+                gs.juice += (uncontrolled ? 0.025f : 0.005f);
             }
             if (ctr.State is null || ctr.State is not GlowSpiderState)
             {
-                ctr.Blind((int)Custom.LerpMap(Vector2.Distance(pos, ctr.VisionPoint), 60f, 600f, 400f, 20f));
+                ctr.Blind((int)Custom.LerpMap(Vector2.Distance(pos, ctr.VisionPoint), baseRad/5f, baseRad, 800f, 200f));
             }
         }
 

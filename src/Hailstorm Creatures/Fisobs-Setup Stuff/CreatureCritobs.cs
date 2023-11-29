@@ -828,7 +828,7 @@ sealed class CyanwingCritob : Critob
 
     public override string DevtoolsMapName(AbstractCreature absCnt) => "CW";
 
-    public override IEnumerable<string> WorldFileAliases() => new[] { "cyanwing", "cyancentiwing", "Cyanwing", "CyanCentiwing" };
+    public override IEnumerable<string> WorldFileAliases() => new[] { "cyanwing", "Cyanwing" };
 
     public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[]
     {
@@ -863,7 +863,7 @@ sealed class CyanwingCritob : Critob
                 Slope = new(1f, PathCost.Legality.Allowed),
                 DropToFloor = new(1f, PathCost.Legality.Allowed),
                 DropToClimb = new(1f, PathCost.Legality.Allowed),
-                ShortCut = new(1f, PathCost.Legality.Allowed),
+                ShortCut = new(10f, PathCost.Legality.Allowed),
                 BigCreatureShortCutSqueeze = new(10f, PathCost.Legality.Allowed),
                 ReachUp = new(1f, PathCost.Legality.Allowed),
                 ReachDown = new(1f, PathCost.Legality.Allowed),
@@ -884,6 +884,7 @@ sealed class CyanwingCritob : Critob
         cf.dangerousToPlayer = 0.8f;
         cf.communityInfluence = 0.25f;
         cf.bodySize = 7f;
+        cf.socialMemory = true;
         cf.BlizzardAdapted = true;
         cf.BlizzardWanderer = true;
         cf.jumpAction = "Swap Heads";

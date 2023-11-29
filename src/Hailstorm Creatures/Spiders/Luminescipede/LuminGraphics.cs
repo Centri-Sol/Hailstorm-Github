@@ -188,10 +188,10 @@ public class LuminGraphics : GraphicsModule
                         Limb limb2 = limbs[limb, side];
                         limb2.vel += Custom.DegToVec(Random.value * 360f) * Random.value * 3f;
                     }
-                    else if (limb == 0 && lmn.graphicsAttachedToBodyChunk is not null)
+                    else if (limb == 0 && lmn.heavycarryChunk is not null)
                     {
                         noFooting = true;
-                        limbs[limb, side].absoluteHuntPos = lmn.graphicsAttachedToBodyChunk.pos + perpToFacedDirection * (-1 + 2 * side) * lmn.graphicsAttachedToBodyChunk.rad * 0.25f;
+                        limbs[limb, side].absoluteHuntPos = lmn.heavycarryChunk.pos + perpToFacedDirection * (-1 + 2 * side) * lmn.heavycarryChunk.rad * 0.25f;
                         limbs[limb, side].pos = limbs[limb, side].absoluteHuntPos;
                     }
                 }
@@ -306,7 +306,11 @@ public class LuminGraphics : GraphicsModule
 
         if (lmn.lungeTimer > 0 && lmn.lungeTimer < 20)
         {
-            bodyPos += Custom.RNV() * Mathf.InverseLerp(0, 20, lmn.lungeTimer) * 1.5f;
+            bodyPos += Custom.RNV() * Mathf.InverseLerp(0, 20, lmn.lungeTimer) * 2f;
+        }
+        else if (lmn.flashbombTimer > 0 && lmn.flashbombTimer < 40)
+        {
+            bodyPos += Custom.RNV() * Mathf.InverseLerp(0, 35, lmn.flashbombTimer) * 2f;
         }
 
         for (int p = 0; p < LegSpritesStart; p++)

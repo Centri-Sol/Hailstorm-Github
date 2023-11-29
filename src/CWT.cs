@@ -17,6 +17,8 @@ public class CWT
     public static ConditionalWeakTable<Player, HSSlugs> PlayerData = new();
     public static ConditionalWeakTable<Creature, CreatureInfo> CreatureData = new();
     public static ConditionalWeakTable<AbstractCreature, AbsCtrInfo> AbsCtrData = new();
+    public static ConditionalWeakTable<PhysicalObject, ObjectInfo> ObjectData = new();
+
 }
 
 
@@ -135,9 +137,9 @@ public class HSSlugs // Stores a boatload of information for individual players.
             flicker[i, 2] = 1f;
         }
 
-        inArena = self.room.world.game.IsArenaSession;
+        inArena = self.room.game.session is not null && self.room.game.IsArenaSession;
 
-        if (self.room.game.session is StoryGameSession SGS)
+        if (self.room.game.session is not null && self.room.game.session is StoryGameSession SGS)
         {
             SlugcatStats.Name[] slugcatTimelineOrder = SlugcatStats.getSlugcatTimelineOrder();
             bool? tooFar = null;
@@ -165,6 +167,7 @@ public class HSSlugs // Stores a boatload of information for individual players.
 
 public class LizardInfo
 {
+
     public bool Gordito;
     public bool bounceLungeUsed;
 
@@ -176,11 +179,15 @@ public class LizardInfo
 
 public class CentiInfo
 {
-    public bool isIncanCampaign;
     public bool Cyanwing;
     public bool BabyAquapede;
     public bool Chillipede;
     public bool isHailstormCenti;
+
+    public float Charge;
+    public HailstormFireSmokeCreator vaporSmoke;
+    public int SelfDestruct;
+    public int SparkCounter;
 
     public float[] segmentHues;
     public bool[] segmentGradientDirections;
@@ -189,11 +196,6 @@ public class CentiInfo
 
     public CentiInfo(Centipede cnt)
     {
-
-        isIncanCampaign =
-            cnt?.room is not null &&
-            cnt.room.game.IsStorySession &&
-            cnt.room.game.StoryCharacter == HSSlugs.Incandescent;
 
         Cyanwing =
             cnt is not null &&
@@ -221,12 +223,35 @@ public class CentiInfo
     }
 }
 
+public class VultureInfo
+{
+    public HSLColor ColorA;
+    public HSLColor ColorB;
+    public bool albino;
+
+    public Creature currentPrey;
+    public Vector2 laserAngle;
+
+    public HSLColor eyeCol;
+    public HSLColor wingColor;
+    public HSLColor featherColor1;
+    public HSLColor featherColor2;
+    public HSLColor MiscColor;
+
+    public HSLColor smokeCol1;
+    public HSLColor smokeCol2;
+
+    public int wingGlowFadeTimer;
+
+    public VultureInfo(Vulture vul)
+    {
+    }
+}
+
 //-----------------------------------------
 
 public class CreatureInfo
 {
-    public bool isIncanCampaign;
-    
 
     public int impactCooldown;
     public int chillTimer;
@@ -240,17 +265,12 @@ public class CreatureInfo
 
     public CreatureInfo(Creature ctr)
     {
-        isIncanCampaign =
-            ctr.room is not null &&
-            ctr.room.game.IsStorySession &&
-            ctr.room.game.StoryCharacter == HSSlugs.Incandescent;
 
     }
 }
 
 public class AbsCtrInfo
 {
-    public bool isIncanCampaign;
 
     public bool LateBlizzardRoamer;
     public bool HailstormAvoider;
@@ -270,11 +290,6 @@ public class AbsCtrInfo
 
     public AbsCtrInfo(AbstractCreature absCtr)
     {
-        isIncanCampaign =
-            absCtr?.world?.game is not null &&
-            absCtr.world.game.IsStorySession &&
-            absCtr.world.game.StoryCharacter == HSSlugs.Incandescent;
-
         if (absCtr is not null)
         {
             if (ctrList is null && (
@@ -323,10 +338,21 @@ public class AbsCtrInfo
 
 }
 
+public class ObjectInfo
+{
+    public bool inShortcut;
+
+    public ObjectInfo(PhysicalObject obj)
+    {
+
+    }
+}
+
 //-----------------------------------------
 
 public class TuskInfo
 {
+
     public Vector2 bounceOffSpeed;
 
     public TuskInfo (KingTusks.Tusk tusk)

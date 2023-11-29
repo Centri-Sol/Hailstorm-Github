@@ -34,7 +34,7 @@ internal class Dialogue
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
     }
 
     //----------------------------------------------------------------------------------

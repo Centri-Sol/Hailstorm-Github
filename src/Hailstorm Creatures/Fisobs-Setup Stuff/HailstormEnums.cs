@@ -9,6 +9,9 @@ public static class HailstormEnums
     [AllowNull] public static CreatureTemplate.Type InfantAquapede = new("InfantAquapede", true);
     [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID InfantAquapedeUnlock = new("InfantAquapede", true);
 
+    //[AllowNull] public static CreatureTemplate.Type Raven = new("Raven", true);
+    //[AllowNull] public static MultiplayerUnlocks.SandboxUnlockID RavenUnlock = new("Raven", true);
+
     [AllowNull] public static CreatureTemplate.Type IcyBlue = new("IcyBlueLizard", true);
     [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID IcyBlueUnlock = new("IcyBlueLizard", true);
 
@@ -37,18 +40,19 @@ public static class HailstormEnums
     [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID ChillipedeUnlock = new("Chillipede", true);
 
     public readonly static List<CreatureTemplate.Type> HailstormCreatures = new()
-        {
-            InfantAquapede,
-            IcyBlue,
-            Freezer,
-            PeachSpider,
-            Cyanwing,
-            GorditoGreenie,
-            //BezanBud,
-            Luminescipede,
-            //Strobelegs,
-            Chillipede
-        };
+    {
+        InfantAquapede,
+        //Raven,
+        IcyBlue,
+        Freezer,
+        PeachSpider,
+        Cyanwing,
+        GorditoGreenie,
+        //BezanBud,
+        Luminescipede,
+        //Strobelegs,
+        Chillipede
+    };
 
 
     [AllowNull] public static AbstractPhysicalObject.AbstractObjectType IceCrystal = new ("IceCrystal", true);
@@ -75,6 +79,17 @@ public static class HailstormEnums
             InfantAquapedeUnlock.Unregister();
             InfantAquapedeUnlock = null;
         }
+
+        /*if (Raven is not null)
+        {
+            Raven.Unregister();
+            Raven = null;
+        }
+        if (RavenUnlock is not null)
+        {
+            RavenUnlock.Unregister();
+            RavenUnlock = null;
+        }*/
 
         if (IcyBlue is not null)
         {

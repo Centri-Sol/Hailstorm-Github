@@ -2299,7 +2299,7 @@ internal class OtherCreatureChanges
                     (!aI.HailstormAvoider || (aI.HailstormAvoider && Weather.FogPrecycle) || (aI.HailstormAvoider && !Weather.FogPrecycle && absCtr.world.rainCycle.preTimer < 1)) &&
                     (!aI.FogRoamer || (aI.FogRoamer && absCtr.world.rainCycle.maxPreTimer > 0 && Weather.FogPrecycle)) &&
                     (!aI.FogAvoider || (aI.FogAvoider && !Weather.FogPrecycle) || (aI.FogAvoider && Weather.FogPrecycle && absCtr.world.rainCycle.preTimer < 1)) &&
-                    (!aI.LateBlizzardRoamer || (aI.LateBlizzardRoamer && absCtr.world.rainCycle.timer >= absCtr.world.rainCycle.cycleLength + 19200)) &&
+                    (!aI.LateBlizzardRoamer || (aI.LateBlizzardRoamer && absCtr.world.rainCycle.timer >= Weather.LateBlizzardTime(absCtr.world))) &&
                     (!aI.ErraticWindRoamer || (aI.ErraticWindRoamer && Weather.ErraticWindCycle)) &&
                     (!aI.ErraticWindAvoider || (aI.ErraticWindAvoider && !Weather.ErraticWindCycle)) &&
                     (!Weather.ErraticWindFearers.Contains(absCtr.creatureTemplate.type) || !Weather.ErraticWindCycle || !(aI.ErraticWindAvoider || Weather.ExtremeWindIntervals[Weather.WindInterval]))

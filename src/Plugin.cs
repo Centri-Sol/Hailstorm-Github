@@ -1,14 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using BepInEx;
 using BepInEx.Logging;
-using System.Diagnostics.CodeAnalysis;
 using Fisobs.Core;
 using DevInterface;
+using MoreSlugcats;
 using Color = UnityEngine.Color;
 
-
 namespace Hailstorm;
+
 
 [BepInPlugin(MOD_ID, "The Incandescent", "0.3.0")]
 public class Plugin : BaseUnityPlugin
@@ -19,10 +21,11 @@ public class Plugin : BaseUnityPlugin
 
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
-
+    
     // Add hooks.
     public void OnEnable()
     {
+
         logger = Logger;
         On.RainWorld.OnModsInit += Extras.WrapInit(LoadResources);
 
@@ -39,7 +42,6 @@ public class Plugin : BaseUnityPlugin
 
         Content.Register(new IceCrystalFisob());
         Content.Register(new BurnSpearFisob());
-
     }
     public void OnDisable() => logger = default;
 
@@ -67,14 +69,16 @@ public class Plugin : BaseUnityPlugin
             IncanCrafting.Hooks();
             IncanVisuals.Hooks();
 
-            WorldChanges.Hooks();
+            Regions.Hooks();
             Weather.Hooks();
             Dialogue.Hooks();
+            MiscWorldChanges.Hooks();
 
-            OtherCreatureChanges.Hooks();
             HailstormLizards.Hooks();
             HailstormCentis.Hooks();
             HailstormSpiders.Hooks();
+            OtherCreatureChanges.Hooks();
+            VultureChanges.Hooks();
 
             ObjectChanges.Hooks();
 
@@ -120,8 +124,8 @@ public class Plugin : BaseUnityPlugin
                 if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.CyanwingUnlock))
                     MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.CyanwingUnlock);
 
-                if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.LuminsecipedeUnlock))
-                    MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.LuminsecipedeUnlock);
+                if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.LuminescipedeUnlock))
+                    MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.LuminescipedeUnlock);
 
                 if (MultiplayerUnlocks.CreatureUnlockList.Contains(HailstormEnums.ChillipedeUnlock))
                     MultiplayerUnlocks.CreatureUnlockList.Remove(HailstormEnums.ChillipedeUnlock);

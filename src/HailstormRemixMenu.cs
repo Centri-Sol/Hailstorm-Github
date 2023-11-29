@@ -37,7 +37,10 @@ public class HSRemix : OptionInterface
     // Miros Vulture Configs
     public static Configurable<bool> ScissorhawkNoNormalLasers;
     public static Configurable<bool> ScissorhawkEagerBirds;
-    public static Configurable<bool> HailstormScissorhawksEverywhere;
+    public static Configurable<bool> AuroricMirosEverywhere;
+
+    // Cyanwing Configs
+    public static Configurable<bool> CyanwingAtomization; // Needs implementation
 
     // Color Variation Configs
     public static Configurable<bool> PolePlantColorsEverywhere;
@@ -78,7 +81,10 @@ public class HSRemix : OptionInterface
         // Miros Vultures
         ScissorhawkNoNormalLasers = config.Bind("ScissorhawkNoNormalLasers", false, (ConfigurableInfo)null);
         ScissorhawkEagerBirds = config.Bind("ScissorhawkEagerBirds", false, (ConfigurableInfo)null);
-        HailstormScissorhawksEverywhere = config.Bind("HailstormScissorhawksEverywhere", false, (ConfigurableInfo)null);
+        AuroricMirosEverywhere = config.Bind("HailstormScissorhawksEverywhere", false, (ConfigurableInfo)null);
+
+        // Cyanwings
+        CyanwingAtomization = config.Bind("CyanwingAtomization", false, (ConfigurableInfo)null);
 
         // Color Variation
         PolePlantColorsEverywhere = config.Bind("PolePlantColorsEverywhere", false, (ConfigurableInfo)null);
@@ -245,10 +251,19 @@ public class HSRemix : OptionInterface
                 description = "Instead of firing their lasers when hurt, Miros Vultures will just start shooting at you whenever.\nThis will extend their laser timers by a second, to make reacting to the lasers a bit more reasonable."
             },
             new OpLabel(new Vector2(575f, 340f), new Vector2(5, 5), "Hailstorm Miros Vultures\nEverywhere?", FLabelAlignment.Right, false, null),
-            new OpCheckBox(HailstormScissorhawksEverywhere, new Vector2(565f, 302.5f))
+            new OpCheckBox(AuroricMirosEverywhere, new Vector2(565f, 302.5f))
             {
                 description = "For all the people who dislike how Miros Vultures only attack players: this one's for you."
             },
+            //------------------------------
+            // Cyanwings
+            /*new OpLabel(239f, 230f, "Cyanwings", true),
+
+            new OpLabel(new Vector2(289f, 195f), new Vector2(5, 5), "Cyanwing Atomization", FLabelAlignment.Center, false, null),
+            new OpCheckBox(CyanwingAtomization, new Vector2(287f, 157.5f))
+            {
+                description = "Uh, this one's a little, how you say, 'fucked up'? Anything Cyanwings zap will straight-up get atomized. Poof.  G O N E.\nThis one is OFF by default because the fucked-up-ness of it was getting to me during testing."
+            },*/
             //------------------------------------------------------------
         };
         opTab2.AddItems(CreaturesTab);
