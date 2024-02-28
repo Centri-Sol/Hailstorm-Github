@@ -44,24 +44,24 @@
 		
 		"alignments": {
 			"Scavengers": { "like": -0.33 },
-			"Lizards": { "like": -0.25 }
+			"Lizards": { "like": -0.33 }
 		},
 
 		"auto_grab_batflies": false,
 		"weight": [ 0.9, 0.7 ],
-		"walk_speed": [ 1.15, 1 ],
-		"climb_speed": [ 1.15, 1 ],
-		"tunnel_speed": [ 1.15, 1 ],
-		"crouch_stealth": [ 0.2, 0.45 ],
+		"walk_speed": [ 1.15, 1.15 ],
+		"climb_speed": [ 1.15, 1.15 ],
+		"tunnel_speed": [ 1.15, 1.15 ],
+		"crouch_stealth": [ 0.2, 0.4 ],
 		"throw_skill": [1 , 1],
-		"loudness": [ 1.5, 1 ],
+		"loudness": [ 1.6, 1 ],
 		"perma_unlock_gates": true,
 				
 		"select_menu_scene": "Slugcat_Incandescent",
 		"sleep_scene": "Sleep_Scene_Incandescent",
 		"select_menu_scene_ascended": "Ghost_Incandescent",
 		
-		"expedition_description": "A sorrowful flame that looks for a brighter future. Returning to this painful land is<LINE>not a pleasant experience, but if it must be done, then the Incandescent will do their best."
+		"expedition_description": "A sorrowful flame with powerful mobility, the Incandescent journeys<LINE>through an ice-cold land in search for a brighter future."
 		
 	}
 }
