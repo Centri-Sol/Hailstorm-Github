@@ -68,15 +68,22 @@ public class Burn : Debuff
 
             victim.room.PlaySound(SoundID.Firecracker_Burn, victim.bodyChunks[chunk.Value].pos, 0.3f, Random.Range(0.3f, 0.4f));
 
-            if (victim is Player self && CWT.PlayerData.TryGetValue(self, out HSSlugs hS))
+            if (victim is Player self)
             {
-                self.playerState.permanentDamageTracking += 0.04f * hS.HeatDMGmult;
-                if (self.playerState.permanentDamageTracking >= 1) self.Die();
-                if (self.Hypothermia > 0.001f) self.Hypothermia -= 0.1f * Mathf.Lerp(hS.HeatDMGmult, 1, 0.5f);
+                float HeatDamageMult = CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(self, HailstormDamageTypes.Heat);
+                self.playerState.permanentDamageTracking += 0.04f * HeatDamageMult;
+                if (self.playerState.permanentDamageTracking >= 1)
+                {
+                    self.Die();
+                }
+                if (self.Hypothermia > 0.001f)
+                {
+                    self.Hypothermia -= 0.1f * Mathf.Lerp(HeatDamageMult, 1, 0.5f);
+                }
             }
             else if (victim.State is HealthState HP)
             {
-                float BurnRes = victim.Template.damageRestistances[HailstormEnums.Heat.index, 0];
+                float BurnRes = victim.Template.damageRestistances[HailstormDamageTypes.Heat.index, 0];
                 HP.health -= 0.035f / Mathf.Lerp(victim.Template.baseDamageResistance, 1f, 0.25f) / BurnRes;
                 if (victim.Hypothermia > 0.001f) victim.Hypothermia -= 0.1f / Mathf.Lerp(BurnRes, 1, 0.5f);
             }
