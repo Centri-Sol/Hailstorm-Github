@@ -12,6 +12,7 @@ public class HSRemix : OptionInterface
 
 
     // Incandescent Configs
+    public static Configurable<float> IncanFoodGainMultiplier; // Needs implementation
     public static Configurable<float> IncanSpearDamageMultiplier;
     public static Configurable<float> IncanCollisionDamageMultiplier;
     public static Configurable<bool> IncanArenaDowngradesOutsideOfArena;
@@ -57,6 +58,7 @@ public class HSRemix : OptionInterface
     {
 
         // The Incandescent
+        IncanFoodGainMultiplier = config.Bind("IncanFoodGainMultiplier", 1f, (ConfigurableInfo)null);
         IncanSpearDamageMultiplier = config.Bind("IncanSpearDamageMultiplier", 1f, (ConfigurableInfo)null);
         IncanCollisionDamageMultiplier = config.Bind("IncanCollisionDamageMultiplier", 1f, (ConfigurableInfo)null);
         IncanArenaDowngradesOutsideOfArena = config.Bind("IncanArenaDowngradesOutsideOfArena", false, (ConfigurableInfo)null);

@@ -1,4 +1,5 @@
 using System;
+using System.Security;
 using System.Security.Permissions;
 using UnityEngine;
 
@@ -9,9 +10,9 @@ using UnityEngine;
 
 // Allows access to private members
 #pragma warning disable CS0618
+[module: UnverifiableCode]
 [assembly: SecurityPermission(SecurityAction.RequestMinimum, SkipVerification = true)]
 #pragma warning restore CS0618
-
 
 internal static class Extras
 {
