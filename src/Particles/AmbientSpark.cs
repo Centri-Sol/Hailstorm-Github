@@ -1,9 +1,4 @@
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -96,9 +91,11 @@ public class AmbientSpark : GreenSparks.GreenSpark
         {
             if (light == null)
             {
-                light = new LightSource(pos, environmentalLight: false, col, this);
-                light.noGameplayImpact = true;
-                light.requireUpKeep = true;
+                light = new LightSource(pos, environmentalLight: false, col, this)
+                {
+                    noGameplayImpact = true,
+                    requireUpKeep = true
+                };
                 room.AddObject(light);
             }
             light.setPos = pos;

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using System.Linq;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -46,9 +38,11 @@ public class Chillipede : Centipede
             float chunkMass =
                     Mathf.Lerp(0.3f, 2.3f, Mathf.Pow(size, 1.3f));
 
-            bodyChunks[i] = new BodyChunk(this, i, default, chunkRad, chunkMass);
-            bodyChunks[i].loudness = 0.2f;
-            bodyChunks[i].terrainSqueeze = 0.9f;
+            bodyChunks[i] = new BodyChunk(this, i, default, chunkRad, chunkMass)
+            {
+                loudness = 0.2f,
+                terrainSqueeze = 0.9f
+            };
         }
         mainBodyChunkIndex = bodyChunks.Length / 2;
         for (int i = 0; i < bodyChunks.Length; i++)
@@ -91,10 +85,7 @@ public class Chillipede : Centipede
     }
     public override void InitiateGraphicsModule()
     {
-        if (graphicsModule is null)
-        {
-            graphicsModule = new ChillipedeGraphics(this);
-        }
+        graphicsModule ??= new ChillipedeGraphics(this);
     }
     public virtual void ResetShellData()
     {
@@ -771,20 +762,22 @@ public class Chillipede : Centipede
 
         if (victim is IceChunk ice)
         {
-            ice.absIce.size += 2f;
-            ice.absIce.freshness += 1f;
-            ice.absIce.color1 = ChillState.topShellColor;
-            ice.absIce.color2 = ChillState.bottomShellColor;
+            ice.AbsIce.size += 2f;
+            ice.AbsIce.freshness += 1f;
+            ice.AbsIce.color1 = ChillState.topShellColor;
+            ice.AbsIce.color2 = ChillState.bottomShellColor;
         }
 
         if (CustomObjectInfo.FreezableObjects.ContainsKey(victim.abstractPhysicalObject.type))
         {
-            AbstractIceChunk newAbsIce = new(victim.abstractPhysicalObject.world, victim.abstractPhysicalObject.pos, victim.abstractPhysicalObject.world.game.GetNewID());
-            newAbsIce.frozenObject = new FrozenObject(victim.abstractPhysicalObject);
-            newAbsIce.size = 2f;
-            newAbsIce.freshness = 1f;
-            newAbsIce.color1 = ChillState.topShellColor;
-            newAbsIce.color2 = ChillState.bottomShellColor;
+            AbstractIceChunk newAbsIce = new(victim.abstractPhysicalObject.world, victim.abstractPhysicalObject.pos, victim.abstractPhysicalObject.world.game.GetNewID())
+            {
+                frozenObject = new FrozenObject(victim.abstractPhysicalObject),
+                size = 2f,
+                freshness = 1f,
+                color1 = ChillState.topShellColor,
+                color2 = ChillState.bottomShellColor
+            };
             victim.abstractPhysicalObject.Room.AddEntity(newAbsIce);
             newAbsIce.RealizeInRoom();
 
@@ -796,10 +789,7 @@ public class Chillipede : Centipede
                 for (int g = victim.grabbedBy.Count - 1; g >= 0; g--)
                 {
                     Grasp grasp = victim.grabbedBy[g];
-                    if (grasp.grabber is not null)
-                    {
-                        grasp.grabber.Grab(newIce, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
-                    }
+                    grasp.grabber?.Grab(newIce, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
                 }
             }
             victim.RemoveFromRoom();
@@ -865,10 +855,10 @@ public class Chillipede : Centipede
 
         if (collateral is IceChunk ice)
         {
-            ice.absIce.size += distFac * 2f;
-            ice.absIce.freshness += distFac;
-            ice.absIce.color1 = Color.Lerp(ice.absIce.color1, ChillState.topShellColor, distFac);
-            ice.absIce.color2 = Color.Lerp(ice.absIce.color2, ChillState.bottomShellColor, distFac);
+            ice.AbsIce.size += distFac * 2f;
+            ice.AbsIce.freshness += distFac;
+            ice.AbsIce.color1 = Color.Lerp(ice.AbsIce.color1, ChillState.topShellColor, distFac);
+            ice.AbsIce.color2 = Color.Lerp(ice.AbsIce.color2, ChillState.bottomShellColor, distFac);
         }
         if (!CustomObjectInfo.FreezableObjects.ContainsKey(collateral.abstractPhysicalObject.type))
         {
@@ -876,12 +866,14 @@ public class Chillipede : Centipede
         }
 
 
-        AbstractIceChunk newAbsIce = new(collateral.abstractPhysicalObject.world, collateral.abstractPhysicalObject.pos, collateral.abstractPhysicalObject.world.game.GetNewID());
-        newAbsIce.frozenObject = new FrozenObject(collateral.abstractPhysicalObject);
-        newAbsIce.size = distFac * 2f;
-        newAbsIce.freshness = distFac;
-        newAbsIce.color1 = ChillState.topShellColor;
-        newAbsIce.color2 = ChillState.bottomShellColor;
+        AbstractIceChunk newAbsIce = new(collateral.abstractPhysicalObject.world, collateral.abstractPhysicalObject.pos, collateral.abstractPhysicalObject.world.game.GetNewID())
+        {
+            frozenObject = new FrozenObject(collateral.abstractPhysicalObject),
+            size = distFac * 2f,
+            freshness = distFac,
+            color1 = ChillState.topShellColor,
+            color2 = ChillState.bottomShellColor
+        };
         collateral.abstractPhysicalObject.Room.AddEntity(newAbsIce);
         newAbsIce.RealizeInRoom();
 
@@ -893,10 +885,7 @@ public class Chillipede : Centipede
             for (int g = collateral.grabbedBy.Count - 1; g >= 0; g--)
             {
                 Grasp grasp = collateral.grabbedBy[g];
-                if (grasp.grabber is not null)
-                {
-                    grasp.grabber.Grab(newIce, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
-                }
+                grasp.grabber?.Grab(newIce, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
             }
         }
         collateral.RemoveFromRoom();

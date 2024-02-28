@@ -1,11 +1,4 @@
-/*using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Collections.Generic;
-using UnityEngine;
-using RWCustom;
-using LizardCosmetics;
-
-namespace Hailstorm;
+/*namespace Hailstorm;
 
 sealed class Hooks
 {

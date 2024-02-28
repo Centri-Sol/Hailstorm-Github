@@ -1,23 +1,4 @@
-﻿using MoreSlugcats;
-using RWCustom;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using UnityEngine;
-using Color = UnityEngine.Color;
-using Random = UnityEngine.Random;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Runtime.ConstrainedExecution;
-using MonoMod.RuntimeDetour;
-using static System.Reflection.BindingFlags;
-using System.Drawing;
-using SlugBase.Features;
-using MonoMod;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class ObjectChanges
 {
@@ -142,7 +123,7 @@ internal class ObjectChanges
         IL.Player.AddQuarterFood += IL =>
         {
             ILCursor c = new(IL);
-            ILLabel? label = IL.DefineLabel();
+            var label = IL.DefineLabel();
             c.Emit(OpCodes.Ldarg_0);
             c.EmitDelegate((Player self) =>
             {
@@ -239,11 +220,13 @@ internal class ObjectChanges
             if (glow.myLight is null && glow.room.BeingViewed)
             {
                 glow.LightCounter = Random.Range(0f, 100f);
-                glow.myLight = new LightSource(glow.firstChunk.pos, true, gI.displayColor, glow, true);
-                glow.myLight.affectedByPaletteDarkness = 0.75f;
-                glow.myLight.colorFromEnvironment = false;
-                glow.myLight.noGameplayImpact = true;
-                glow.myLight.requireUpKeep = true;
+                glow.myLight = new LightSource(glow.firstChunk.pos, true, gI.displayColor, glow, true)
+                {
+                    affectedByPaletteDarkness = 0.75f,
+                    colorFromEnvironment = false,
+                    noGameplayImpact = true,
+                    requireUpKeep = true
+                };
                 glow.room.AddObject(glow.myLight);
             }
 
@@ -426,8 +409,10 @@ internal class ObjectChanges
                 AbstractPhysicalObject abstractPhysicalObject = null;
                 if (abstractObjectType == AbstractPhysicalObject.AbstractObjectType.SlimeMold && array.Length >= 6)
                 {
-                    abstractPhysicalObject = new AbstractSlimeMold(world, abstractObjectType, null, pos, iD, int.Parse(array[3], NumberStyles.Any, CultureInfo.InvariantCulture), int.Parse(array[4], NumberStyles.Any, CultureInfo.InvariantCulture), null, array[5] == "1" || array[5] == "big");
-                    abstractPhysicalObject.unrecognizedAttributes = SaveUtils.PopulateUnrecognizedStringAttrs(array, 5);
+                    abstractPhysicalObject = new AbstractSlimeMold(world, abstractObjectType, null, pos, iD, int.Parse(array[3], NumberStyles.Any, CultureInfo.InvariantCulture), int.Parse(array[4], NumberStyles.Any, CultureInfo.InvariantCulture), null, array[5] == "1" || array[5] == "big")
+                    {
+                        unrecognizedAttributes = SaveUtils.PopulateUnrecognizedStringAttrs(array, 5)
+                    };
                     return abstractPhysicalObject;
                 }
             }
@@ -574,11 +559,13 @@ internal class ObjectChanges
 
             if (absBrnSpr.glow is null && absBrnSpr.burning)
             {
-                absBrnSpr.glow = new LightSource(absBrnSpr.spearTipPos, false, absBrnSpr.currentColor, spr, true);
-                absBrnSpr.glow.requireUpKeep = true;
-                absBrnSpr.glow.stayAlive = true;
-                absBrnSpr.glow.affectedByPaletteDarkness = 0;
-                absBrnSpr.glow.setAlpha = new float?(1);
+                absBrnSpr.glow = new LightSource(absBrnSpr.spearTipPos, false, absBrnSpr.currentColor, spr, true)
+                {
+                    requireUpKeep = true,
+                    stayAlive = true,
+                    affectedByPaletteDarkness = 0,
+                    setAlpha = new float?(1)
+                };
                 spr.room.AddObject(absBrnSpr.glow);
             }
             else if (absBrnSpr.glow is not null)
@@ -665,7 +652,7 @@ internal class ObjectChanges
         IL.MoreSlugcats.ElectricSpear.Electrocute += IL =>
         {
             ILCursor c = new(IL);
-            ILLabel? label = IL.DefineLabel();
+            var label = IL.DefineLabel();
             c.Emit(OpCodes.Ldarg_0);
             c.Emit(OpCodes.Ldarg_1);
             c.EmitDelegate((ElectricSpear eSpr, PhysicalObject obj) =>

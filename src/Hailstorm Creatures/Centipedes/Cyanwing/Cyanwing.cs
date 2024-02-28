@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-using System.Runtime.ConstrainedExecution;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 public class Cyanwing : Centipede
 {
@@ -98,10 +88,7 @@ public class Cyanwing : Centipede
     }
     public override void InitiateGraphicsModule()
     {
-        if (graphicsModule is null)
-        {
-            graphicsModule = new CyanwingGraphics(this);
-        }
+        graphicsModule ??= new CyanwingGraphics(this);
     }
     public virtual void ResetShellData()
     {
@@ -525,8 +512,10 @@ public class Cyanwing : Centipede
         if (!dead)
         {
             SelfDestructCountdown += 240;
-            scareObj = new FirecrackerPlant.ScareObject(mainBodyChunk.pos);
-            scareObj.fearScavs = true;
+            scareObj = new FirecrackerPlant.ScareObject(mainBodyChunk.pos)
+            {
+                fearScavs = true
+            };
             room.AddObject(scareObj);
         }
         base.Die();

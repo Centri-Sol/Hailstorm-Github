@@ -1,16 +1,4 @@
-﻿using System;
-using UnityEngine;
-using Mono.Cecil.Cil;
-using MonoMod.Cil;
-using System.Collections.Generic;
-using System.Linq;
-using RWCustom;
-using SlugBase.DataTypes;
-using SlugBase.Features;
-using SlugBase;
-using JollyCoop;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 public class IncanVisuals
 {

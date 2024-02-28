@@ -1,13 +1,4 @@
-﻿using UnityEngine;
-using RWCustom;
-using LizardCosmetics;
-using Color = UnityEngine.Color;
-using Random = UnityEngine.Random;
-using System;
-using System.Linq;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //------------------------------------------------------
 
@@ -47,7 +38,7 @@ public class IcyCosmetics
             Color secondaryLizColor = Color.HSVToRGB(h, s, v);
 
             int colorPicker = Random.Range(0, 1);
-            Color bubbleColor = (colorPicker == 0 ? liz.effectColor : secondaryLizColor);
+            Color bubbleColor = colorPicker == 0 ? liz.effectColor : secondaryLizColor;
 
             int spriteNum = 0;
             if (bubble.hollow)
@@ -102,7 +93,7 @@ public class IcyCosmetics
     public static void IcyLongHeadScaleColors(On.LizardCosmetics.LongHeadScales.orig_DrawSprites orig, LongHeadScales LHS, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(LHS, sLeaser, rCam, timeStacker, camPos);
-        bool colorRNG = LHS.lGraphics.lizard.abstractCreature.ID.number % 2 == 0;
+        _ = LHS.lGraphics.lizard.abstractCreature.ID.number % 2 == 0;
 
         if (LHS.lGraphics.lizard.Template.type == HailstormCreatures.Freezer || LHS.lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue)
         {
@@ -148,7 +139,7 @@ public class IcyCosmetics
 
         bool icyCheck =
             LBS.lGraphics.lizard.Template.type == HailstormCreatures.Freezer ||
-            (LBS.lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue && Random.value < (0.2f + (LBS.lGraphics.lizard.TotalMass - 1.4f) * 4));
+            (LBS.lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue && Random.value < (0.2f + ((LBS.lGraphics.lizard.TotalMass - 1.4f) * 4)));
 
         if (icyCheck)
         {
@@ -156,13 +147,18 @@ public class IcyCosmetics
             for (int num = LBS.startSprite + LBS.scalesPositions.Length - 1; num >= LBS.startSprite; num--)
             {
                 sLeaser.sprites[num].element = Futile.atlasManager.GetElementWithName("LongHeadIceSpike" + graphic);
-                if (icyCheck) sLeaser.sprites[num].scale = 1.5f;
+                if (icyCheck)
+                {
+                    sLeaser.sprites[num].scale = 1.5f;
+                }
 
                 if (LBS.colored)
                 {
                     sLeaser.sprites[num + LBS.scalesPositions.Length].element = Futile.atlasManager.GetElementWithName("LongHeadIceSpikeB" + graphic);
-                    if (icyCheck) sLeaser.sprites[num + LBS.scalesPositions.Length].scale = 1.5f;
-
+                    if (icyCheck)
+                    {
+                        sLeaser.sprites[num + LBS.scalesPositions.Length].scale = 1.5f;
+                    }
                 }
             }
         }
@@ -206,7 +202,7 @@ public class IcyCosmetics
         {
             return new Color(1, 1, 1);
         }
-        float num = 1f - Mathf.Pow(0.5f + 0.5f * Mathf.Sin(Mathf.Lerp(liz.lastBlink, liz.blink, timeStacker) * 2f * Mathf.PI), 1.5f + liz.lizard.AI.excitement * 1.5f);
+        float num = 1f - Mathf.Pow(0.5f + (0.5f * Mathf.Sin(Mathf.Lerp(liz.lastBlink, liz.blink, timeStacker) * 2f * Mathf.PI)), 1.5f + (liz.lizard.AI.excitement * 1.5f));
         if (liz.headColorSetter != 0f)
         {
             num = Mathf.Lerp(num, (liz.headColorSetter > 0f) ? 1 : 0, Mathf.Abs(liz.headColorSetter));
@@ -263,7 +259,7 @@ public class ArmorIceSpikes : Template
     {
         liz = lGraphics.owner as Lizard;
         spritesOverlap = SpritesOverlap.BehindHead;
-        spikeLength = lGraphics.BodyAndTailLength * (liz.Template.type == HailstormCreatures.Freezer? 0.3f : 0.5f);
+        spikeLength = lGraphics.BodyAndTailLength * (liz.Template.type == HailstormCreatures.Freezer ? 0.3f : 0.5f);
 
         // Ice spike size range and colors
         scaleFac = 1;
@@ -287,7 +283,10 @@ public class ArmorIceSpikes : Template
             sizeRangeMax = sizeMult;
             dualColored = Random.Range(0, 2);
         }
-        else dualColored = 0;
+        else
+        {
+            dualColored = 0;
+        }
 
         sizeSkewExponent = Mathf.InverseLerp(0.8f, 0.95f, Random.value);
         backSpikes = 3;
@@ -322,7 +321,7 @@ public class ArmorIceSpikes : Template
     }
 
     public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
-    {        
+    {
         for (int num = endSprite; num >= startSprite; num--)
         {
             int spikeDepth = (int)Mathf.Lerp(3.3333f, 0.6666f, Mathf.InverseLerp(0f, 0.5f, Mathf.Abs(lGraphics.depthRotation)));
@@ -332,7 +331,7 @@ public class ArmorIceSpikes : Template
 
             float spriteProgress = Mathf.InverseLerp(startSprite, endSprite, num);
             float spikeSize = Mathf.Lerp(sizeRangeMin, sizeRangeMax, Mathf.Sin(Mathf.Pow(spriteProgress, sizeSkewExponent) * Mathf.PI));
-            LizardGraphics.LizardSpineData lizardSpineData = lGraphics.SpinePosition(Mathf.Lerp(0.1f, (spikeLength / lGraphics.BodyAndTailLength), spriteProgress - 0.1f), timeStacker);
+            LizardGraphics.LizardSpineData lizardSpineData = lGraphics.SpinePosition(Mathf.Lerp(0.1f, spikeLength / lGraphics.BodyAndTailLength, spriteProgress - 0.1f), timeStacker);
 
             sLeaser.sprites[num].x = lizardSpineData.outerPos.x - camPos.x;
             sLeaser.sprites[num].y = lizardSpineData.outerPos.y - camPos.y;
@@ -353,12 +352,12 @@ public class ArmorIceSpikes : Template
                 sLeaser.sprites[num + backSpikes].rotation = Custom.AimFromOneVectorToAnother(-lizardSpineData.perp * lizardSpineData.depthRotation, lizardSpineData.perp * lizardSpineData.depthRotation);
                 sLeaser.sprites[num + backSpikes].scaleX = spikeSize * scaleX * Mathf.Sign(lGraphics.depthRotation) * scaleFac;
                 sLeaser.sprites[num + backSpikes].element = Futile.atlasManager.GetElementWithName("ArmorIceSpike" + graphic + "A." + spikeDepth);
-                sLeaser.sprites[num + backSpikes].anchorY = anchorY;                
+                sLeaser.sprites[num + backSpikes].anchorY = anchorY;
             }
-        }   
-        
-        if (liz is not null &&
-            liz is ColdLizard cLiz)
+        }
+
+        if (liz is not null and
+            ColdLizard cLiz)
         {
             for (int c = 0; c < cLiz.ColdState.crystals.Length; c++)
             {
@@ -382,7 +381,7 @@ public class ArmorIceSpikes : Template
                         DropCrystals(cLiz, crystalPos, graphic);
                     }
                 }
-            }            
+            }
         }
     }
 
@@ -394,18 +393,26 @@ public class ArmorIceSpikes : Template
     {
         for (int particle = 0; particle < 13; particle++)
         {
-            if (particle % 2 == 0) liz.room.AddObject(new HailstormSnowflake(crystalPos, Custom.RNV() * Random.value * 12f, liz.effectColor, liz.effectColor2));
-            else liz.room.AddObject(new PuffBallSkin(crystalPos, Custom.RNV() * Random.value * 12f, liz.effectColor, liz.effectColor2));
+            if (particle % 2 == 0)
+            {
+                liz.room.AddObject(new HailstormSnowflake(crystalPos, Custom.RNV() * Random.value * 12f, liz.effectColor, liz.effectColor2));
+            }
+            else
+            {
+                liz.room.AddObject(new PuffBallSkin(crystalPos, Custom.RNV() * Random.value * 12f, liz.effectColor, liz.effectColor2));
+            }
         }
 
         Vector2 lizHeadAngle = (liz.bodyChunks[1].pos - liz.bodyChunks[0].pos).normalized;
         float rotationSide = Random.Range(1.5f, 3f) * ((lizHeadAngle.x > 0) ? 1 : -1);
 
-        AbstractIceChunk absIce = new(liz.room.world, liz.abstractCreature.pos, liz.room.game.GetNewID(), HailstormItems.FreezerCrystal);
-        absIce.freshness = 2f;
-        absIce.sprite = crystalType;
-        absIce.color1 = liz.effectColor;
-        absIce.color2 = liz.effectColor2;
+        AbstractIceChunk absIce = new(liz.room.world, liz.abstractCreature.pos, liz.room.game.GetNewID(), HailstormItems.FreezerCrystal)
+        {
+            freshness = 2f,
+            sprite = crystalType,
+            color1 = liz.effectColor,
+            color2 = liz.effectColor2
+        };
         liz.room.abstractRoom.AddEntity(absIce);
         absIce.RealizeInRoom();
 
@@ -431,13 +438,16 @@ public class IceSpikeTuft : LongBodyScales
 
         if ((freezer && Random.value < 0.85f) || (icyBlue && Random.value < 0.3f) || Random.value < 0.15f)
         {
-            TwoLines(0f, (freezer ? 1f :0.7f), 2.4f, Random.value);
+            TwoLines(0f, freezer ? 1f : 0.7f, 2.4f, Random.value);
         }
-        else GeneratePatchPattern(0f, Random.Range(3, 9), 1.6f, 1f); 
-        
+        else
+        {
+            GeneratePatchPattern(0f, Random.Range(3, 9), 1.6f, 1f);
+        }
+
         MoveScalesTowardsTail();
         //------------------------------------------------------
-        float num = Mathf.Lerp(1f, 1f / Mathf.Lerp(1f, (float)scalesPositions.Length, Mathf.Pow(Random.value, 2f)), 0.5f);
+        float num = Mathf.Lerp(1f, 1f / Mathf.Lerp(1f, scalesPositions.Length, Mathf.Pow(Random.value, 2f)), 0.5f);
         if (freezer)
         {
             num = Mathf.Max(num, 0.4f) * 1.1f;
@@ -445,11 +455,7 @@ public class IceSpikeTuft : LongBodyScales
         float num2 = Mathf.Lerp(5f, 10f, Random.value) * num;
         float num3 = Mathf.Lerp(num2, 25f, Mathf.Pow(Random.value, 0.5f)) * num;
 
-        if (freezer || (icyBlue && Random.value < 0.2f + (lGraphics.lizard.TotalMass - 1.4f) * 4))
-        {
-            colored = true;
-        }
-        else colored = false;
+        colored = freezer || (icyBlue && Random.value < 0.2f + ((lGraphics.lizard.TotalMass - 1.4f) * 4));
         //------------------------------------------------------
         scaleObjects = new LizardScale[scalesPositions.Length];
         backwardsFactors = new float[scalesPositions.Length];
@@ -474,7 +480,7 @@ public class IceSpikeTuft : LongBodyScales
             float num7 = Mathf.InverseLerp(num5, num4, scalesPositions[k].y);
             scaleObjects[k].length = Mathf.Lerp(num2, num3, num7);
             scaleObjects[k].width = Mathf.Lerp(0.8f, 1.2f, num7) * num;
-            backwardsFactors[k] = 0.3f + 0.7f * Mathf.InverseLerp(0.75f, 1f, scalesPositions[k].y);
+            backwardsFactors[k] = 0.3f + (0.7f * Mathf.InverseLerp(0.75f, 1f, scalesPositions[k].y));
             scalesPositions[k].x *= Mathf.InverseLerp(1.05f, 0.85f, scalesPositions[k].y) * num6;
         }
         numberOfSprites =
@@ -489,11 +495,11 @@ public class IceSpikeTuft : LongBodyScales
         float num3 = Mathf.Lerp(7f, 13f, Random.value);
         if (lGraphics.lizard.abstractCreature.creatureTemplate.type == HailstormCreatures.Freezer)
         {
-            num3 = (randomValue < 0.25f)? 6.25f : 7.5f;
+            num3 = (randomValue < 0.25f) ? 6.25f : 7.5f;
         }
         if (lGraphics.lizard.abstractCreature.creatureTemplate.type == HailstormCreatures.IcyBlue)
         {
-            num3 = (randomValue < 0.25f)? 8.25f : 11.25f;
+            num3 = (randomValue < 0.25f) ? 8.25f : 11.25f;
         }
 
         num3 *= spacingScale;
@@ -502,10 +508,10 @@ public class IceSpikeTuft : LongBodyScales
         scalesPositions = new Vector2[num4 * 2];
         for (int i = 0; i < num4; i++)
         {
-            float num5 = Mathf.Lerp(0f, num, (float)i / (float)(num4 - 1));
-            float num6 = 0.6f + 0.4f * Mathf.Sin((float)i / (float)(num4 - 1) * Mathf.PI);
+            float num5 = Mathf.Lerp(0f, num, i / (float)(num4 - 1));
+            float num6 = 0.6f + (0.4f * Mathf.Sin(i / (float)(num4 - 1) * Mathf.PI));
             scalesPositions[i * 2] = new Vector2(num6, num5);
-            scalesPositions[i * 2 + 1] = new Vector2(0f - num6, num5);
+            scalesPositions[(i * 2) + 1] = new Vector2(0f - num6, num5);
         }
     }
 
@@ -541,7 +547,7 @@ public class IcyRhinestones : BodyScales
 
         lizType = lGraphics.lizard.Template.type;
 
-        if (Random.value < (lizType == HailstormCreatures.Freezer? 0.6f : 0.4f))
+        if (Random.value < (lizType == HailstormCreatures.Freezer ? 0.6f : 0.4f))
         {
             stoneType = "pixel";
         }
@@ -556,8 +562,10 @@ public class IcyRhinestones : BodyScales
             case 0:
                 GenerateRows(0.1f, 0.9f, Random.Range(0.75f, 1.25f));
                 break;
-            case >=1:
+            case >= 1:
                 GenerateTwoLines(0.1f, 1f, 1.5f, 1.1f);
+                break;
+            default:
                 break;
         }
         numberOfSprites = scalesPositions.Length;
@@ -577,9 +585,11 @@ public class IcyRhinestones : BodyScales
 
         for (int i = startSprite + scalesPositions.Length - 1; i >= startSprite; i--)
         {
-            sLeaser.sprites[i] = new FSprite(stoneType);
-            sLeaser.sprites[i].scaleX = (0.3f + shapeSkew) * stoneScale;
-            sLeaser.sprites[i].scaleY = (0.5f - shapeSkew) * stoneScale;
+            sLeaser.sprites[i] = new FSprite(stoneType)
+            {
+                scaleX = (0.3f + shapeSkew) * stoneScale,
+                scaleY = (0.5f - shapeSkew) * stoneScale
+            };
         }
     }
 
@@ -594,15 +604,18 @@ public class IcyRhinestones : BodyScales
             switch (patternType)
             {
                 case 0:
-                    if ((RNG < 0.5f && colorPicker[S - startSprite] == 1) || 0.8333f < RNG)
-                        sLeaser.sprites[S].color = sLeaser.sprites[lGraphics.SpriteHeadStart].color;
-                    else sLeaser.sprites[S].color = sLeaser.sprites[lGraphics.SpriteHeadStart + 3].color;
+                    sLeaser.sprites[S].color = (RNG < 0.5f && colorPicker[S - startSprite] == 1) || 0.8333f < RNG
+                        ? sLeaser.sprites[lGraphics.SpriteHeadStart].color
+                        : sLeaser.sprites[lGraphics.SpriteHeadStart + 3].color;
                     break;
 
                 case >= 1:
-                    if (RNG < 0.75f && (S % 4 == 0 || S % 4 == 3))
-                        sLeaser.sprites[S].color = sLeaser.sprites[lGraphics.SpriteHeadStart].color;
-                    else sLeaser.sprites[S].color = sLeaser.sprites[lGraphics.SpriteHeadStart + 3].color;
+                    sLeaser.sprites[S].color = RNG < 0.75f && (S % 4 == 0 || S % 4 == 3)
+                        ? sLeaser.sprites[lGraphics.SpriteHeadStart].color
+                        : sLeaser.sprites[lGraphics.SpriteHeadStart + 3].color;
+
+                    break;
+                default:
                     break;
             }
         }
@@ -618,15 +631,15 @@ public class IcyRhinestones : BodyScales
         scalesPositions = new Vector2[num4 * num5];
         colorPicker = new int[num4 * num5];
         bool even = num5 % 2 == 0;
-        for (int i = 0; i < num4; i++)
+        for (int i = num4 - 1; i >= 0; i--)
         {
             float num6 = Mathf.Lerp(0f, num, i / (float)(num4 - 1f));
             for (int j = 0; j < num5; j++)
             {
-                float num7 = 0.6f + 0.6f * Mathf.Sin((float)i / (float)(num4 - 1) * Mathf.PI);
-                num7 *= Mathf.Lerp(-1f, 1f, (float)j / (float)(num5 - 1));
-                scalesPositions[i * num5 + j] = new Vector2(num7, num6);                
-                colorPicker[i * num5 + j] = ((RNG < 0.25f? i : (even && j > num5/2)? j + 1 : j) % 2 == 1) ? 1 : 0;               
+                float num7 = 0.6f + (0.6f * Mathf.Sin(i / (float)(num4 - 1) * Mathf.PI));
+                num7 *= Mathf.Lerp(-1f, 1f, (float)j / (num5 - 1));
+                scalesPositions[(i * num5) + j] = new Vector2(num7, num6);
+                colorPicker[(i * num5) + j] = ((RNG < 0.25f ? i : (even && j > num5 / 2) ? j + 1 : j) % 2 == 1) ? 1 : 0;
             }
         }
     }
@@ -641,7 +654,7 @@ public class IcyRhinestones : BodyScales
             Vector2 val = Custom.DegToVec(Random.value * 360f) * Random.value;
             scalesPositions[i].y = Mathf.Lerp(startPoint * lGraphics.bodyLength / lGraphics.BodyAndTailLength, num * lGraphics.bodyLength / lGraphics.BodyAndTailLength, (val.y + 1f) / 2f);
             scalesPositions[i].x = val.x;
-            colorPicker[i] = (Random.value < 0.5f)? 1 : 0;
+            colorPicker[i] = (Random.value < 0.5f) ? 1 : 0;
         }
     }
 

@@ -1,8 +1,4 @@
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 public class ColdLizAI : LizardAI
 {

@@ -1,12 +1,4 @@
-﻿using System.Globalization;
-using UnityEngine;
-using RWCustom;
-using Fisobs.Core;
-using Fisobs.Items;
-using Fisobs.Sandbox;
-using Fisobs.Properties;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 

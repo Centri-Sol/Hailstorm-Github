@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEngine;
-using RWCustom;
-using MoreSlugcats;
-using JollyCoop;
-using JollyCoop.JollyMenu;
-using System.Reflection;
-
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class JollyCoopFixes
 {
@@ -72,7 +61,7 @@ internal class JollyCoopFixes
         }
         goto IL_0064;
     IL_0064:
-        if (slugcat == HailstormSlugcats.Incandescent && (Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.DEFAULT || (playerNumber == 0 && Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.AUTO)))
+        if (slugcat == IncanInfo.Incandescent && (Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.DEFAULT || (playerNumber == 0 && Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.AUTO)))
         {
             return Custom.hexToColor("4F0900");
         }
@@ -94,7 +83,7 @@ internal class JollyCoopFixes
         }
         goto IL_0064;
     IL_0064:
-        if (slugcat == HailstormSlugcats.Incandescent && (Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.DEFAULT || (playerNumber == 0 && Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.AUTO)))
+        if (slugcat == IncanInfo.Incandescent && (Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.DEFAULT || (playerNumber == 0 && Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.AUTO)))
         {
             return Custom.hexToColor("FB8602");
         }
@@ -103,7 +92,7 @@ internal class JollyCoopFixes
     public static void WaistbandJollyColorArray(On.PlayerGraphics.orig_PopulateJollyColorArray orig, SlugcatStats.Name slugcat)
     {
         orig(slugcat);
-        if (slugcat != HailstormSlugcats.Incandescent) return;
+        if (slugcat != IncanInfo.Incandescent) return;
 
         for (int i = 0; i < PlayerGraphics.jollyColors.Length; i++)
         {
@@ -219,7 +208,7 @@ internal class JollyCoopFixes
         orig(pupButton);
         if (pupButton.owner is not JollyPlayerSelector JPS) return;
 
-        if (JPS.slugName == HailstormSlugcats.Incandescent && pupButton.symbolNameOn != "incandescent_pup_on")
+        if (JPS.slugName == IncanInfo.Incandescent && pupButton.symbolNameOn != "incandescent_pup_on")
         {
             pupButton.symbolNameOn = "incandescent_pup_on";
             pupButton.faceSymbol.fileName = "face_" + pupButton.symbolNameOn;
@@ -285,7 +274,7 @@ internal class JollyCoopFixes
         {
             return PlayerGraphics.JollyColor(playerNumber, 3);
         }
-        if (slugcat == HailstormSlugcats.Incandescent)
+        if (slugcat == IncanInfo.Incandescent)
         {
             result = Custom.hexToColor("281714");
         }

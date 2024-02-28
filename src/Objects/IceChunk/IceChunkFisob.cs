@@ -1,12 +1,4 @@
-﻿using System.Globalization;
-using UnityEngine;
-using RWCustom;
-using Fisobs.Core;
-using Fisobs.Items;
-using Fisobs.Sandbox;
-using Fisobs.Properties;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -16,10 +8,7 @@ public class IceFisobTemplate : Fisob
 
     internal IceFisobTemplate(AbstractPhysicalObject.AbstractObjectType objectType, MultiplayerUnlocks.SandboxUnlockID unlockType, MultiplayerUnlocks.SandboxUnlockID parentUnlock) : base(objectType)
     {
-        if (Icon is null)
-        {
-            Icon = new SimpleIcon("Icon_Ice_Chunk", IceColor);
-        }
+        Icon ??= new SimpleIcon("Icon_Ice_Chunk", IceColor);
         SandboxPerformanceCost = new(0.3f, 0f);
         RegisterUnlock(unlockType, parent: parentUnlock);
     }

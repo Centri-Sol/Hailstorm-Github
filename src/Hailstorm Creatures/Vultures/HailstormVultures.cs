@@ -1,22 +1,4 @@
-﻿using MoreSlugcats;
-using RWCustom;
-using System.Runtime.CompilerServices;
-using UnityEngine;
-using Color = UnityEngine.Color;
-using Random = UnityEngine.Random;
-using MonoMod.Cil;
-using OpCodes = Mono.Cecil.Cil.OpCodes;
-using System;
-using System.Reflection;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Runtime.Remoting.Messaging;
-using System.Net;
-using SlugBase.DataTypes;
-using MonoMod;
-using System.Security.Policy;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class HailstormVultures
 {
@@ -229,14 +211,14 @@ internal class HailstormVultures
         {
             ILCursor c = new(IL);
             ILLabel? label = IL.DefineLabel();
-            c.Emit(OpCodes.Ldarg_0);
-            c.Emit(OpCodes.Ldarg_1);
-            c.EmitDelegate((KingTusks.Tusk tusk, float speed) =>
+            _ = c.Emit(OpCodes.Ldarg_0);
+            _ = c.Emit(OpCodes.Ldarg_1);
+            _ = c.EmitDelegate((KingTusks.Tusk tusk, float speed) =>
             {
                 return KingtuskTargetIsArmored(tusk, speed);
             });
-            c.Emit(OpCodes.Brfalse_S, label);
-            c.Emit(OpCodes.Ret);
+            _ = c.Emit(OpCodes.Brfalse_S, label);
+            _ = c.Emit(OpCodes.Ret);
             c.MarkLabel(label);
         };
         IL.VultureTentacle.Update += IL =>
@@ -250,9 +232,9 @@ internal class HailstormVultures
                 x => x.MatchLdcI4(0),
                 x => x.MatchBle(out label)))
             {
-                c.Emit(OpCodes.Ldarg_0);
+                _ = c.Emit(OpCodes.Ldarg_0);
                 c.EmitDelegate((VultureTentacle wing) => HailstormVultureWingResizing(wing));
-                c.Emit(OpCodes.Brfalse, label);
+                _ = c.Emit(OpCodes.Brfalse, label);
             }
             else
                 Plugin.logger.LogError("[Hailstorm] An IL hook for Auroric Miros Vultures exploded! And by that I mean it stopped working! Tell me about this, please.");
@@ -483,19 +465,18 @@ internal class HailstormVultures
                     bombColor: vi.eyeCol.rgb));
                 vul.room.PlaySound(SoundID.Firecracker_Burn, vul.Head().pos);
 
-                if (vul.LaserLight is not null)
-                {
-                    vul.LaserLight.Destroy();
-                }
+                vul.LaserLight?.Destroy();
                 vul.laserCounter = 0;
             }
             if (vi.currentPrey is not null)
             {
                 if (vul.LaserLight is null)
                 {
-                    vul.LaserLight = new(vi.currentPrey.mainBodyChunk.pos, false, Custom.HSL2RGB(Mathf.Lerp(80 / 360f, 0, vul.LaserLight.alpha), 1, 0.5f), vul);
-                    vul.LaserLight.affectedByPaletteDarkness = 0;
-                    vul.LaserLight.submersible = true;
+                    vul.LaserLight = new(vi.currentPrey.mainBodyChunk.pos, false, Custom.HSL2RGB(Mathf.Lerp(80 / 360f, 0, vul.LaserLight.alpha), 1, 0.5f), vul)
+                    {
+                        affectedByPaletteDarkness = 0,
+                        submersible = true
+                    };
                     vul.room.AddObject(vul.LaserLight);
                     vul.LaserLight.HardSetRad(300 - vul.laserCounter);
                     vul.LaserLight.HardSetAlpha(Mathf.InverseLerp(400, 40, vul.laserCounter));
@@ -581,7 +562,7 @@ internal class HailstormVultures
                     {
                         continue;
                     }
-                    vul.Grab(ctr, 0, j, Creature.Grasp.Shareability.CanOnlyShareWithNonExclusive, 1, overrideEquallyDominant: true, pacifying: false);
+                    _ = vul.Grab(ctr, 0, j, Creature.Grasp.Shareability.CanOnlyShareWithNonExclusive, 1, overrideEquallyDominant: true, pacifying: false);
                     break;
                 }
             }
@@ -830,9 +811,7 @@ internal class HailstormVultures
             vi.ColorB = new HSLColor(h, s, l);
             if (vi.albino)
             {
-                HSLColor newB = vi.ColorA;
-                vi.ColorA = vi.ColorB;
-                vi.ColorB = newB;
+                (vi.ColorB, vi.ColorA) = (vi.ColorA, vi.ColorB);
             }
             vi.eyeCol = vi.ColorB;
             vi.featherColor1 = vi.ColorA;
@@ -1252,10 +1231,10 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
     public Vector2 vel;
     private Color color;
     private Color explodeColor;
-    private float rad;
+    private readonly float rad;
     private Vector2 rotation;
     public float burn;
-    public float submersion
+    public float Submersion
     {
         get
         {
@@ -1303,10 +1282,10 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
 
     public override void Update(bool eu)
     {
-        if (submersion > 0)
+        if (Submersion > 0)
         {
-            vel.y = Mathf.Lerp(vel.y, 0, submersion / 100f);
-            vel.x = Mathf.Lerp(vel.x, 0, submersion / 200f);
+            vel.y = Mathf.Lerp(vel.y, 0, Submersion / 100f);
+            vel.x = Mathf.Lerp(vel.x, 0, Submersion / 200f);
         }
         if (vel.y + vel.x < 8 && burn == 0)
         {
@@ -1346,7 +1325,7 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
 
         if (burn > 0f)
         {
-            if (submersion > 0 && !room.waterObject.WaterIsLethal)
+            if (Submersion > 0 && !room.waterObject.WaterIsLethal)
             {
                 burn = 0f;
             }
@@ -1362,10 +1341,7 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
         }
         else
         {
-            if (smoke is not null)
-            {
-                smoke.Destroy();
-            }
+            smoke?.Destroy();
             smoke = null;
         }
 
@@ -1391,7 +1367,7 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
             return;
         }
         Creature killtag = null;
-        if (source is not null && source is Creature)
+        if (source is not null and Creature)
         {
             killtag = source as Creature;
         }
@@ -1457,9 +1433,9 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
             smoke.stationary = true;
             smoke.DisconnectSmoke();
         }
-        else if (smoke is not null)
+        else
         {
-            smoke.Destroy();
+            smoke?.Destroy();
         }
         Destroy();
     }
@@ -1471,26 +1447,32 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
         sLeaser.sprites = new FSprite[spikes.Length + 4];
         for (int i = 0; i < 2; i++)
         {
-            sLeaser.sprites[i] = new FSprite("pixel");
-            sLeaser.sprites[i].scaleX = Mathf.Lerp(1, 2, Mathf.Pow(Random.value, 1.8f));
-            sLeaser.sprites[i].scaleY = Mathf.Lerp(4, 7, Random.value);
+            sLeaser.sprites[i] = new FSprite("pixel")
+            {
+                scaleX = Mathf.Lerp(1, 2, Mathf.Pow(Random.value, 1.8f)),
+                scaleY = Mathf.Lerp(4, 7, Random.value)
+            };
         }
         for (int j = 0; j < spikes.Length; j++)
         {
-            sLeaser.sprites[2 + j] = new FSprite("pixel");
-            sLeaser.sprites[2 + j].scaleX = Mathf.Lerp(2, 3, Random.value);
-            sLeaser.sprites[2 + j].scaleY = Mathf.Lerp(5, 7, Random.value);
-            sLeaser.sprites[2 + j].anchorY = 0f;
+            sLeaser.sprites[2 + j] = new FSprite("pixel")
+            {
+                scaleX = Mathf.Lerp(2, 3, Random.value),
+                scaleY = Mathf.Lerp(5, 7, Random.value),
+                anchorY = 0f
+            };
         }
-        sLeaser.sprites[spikes.Length + 2] = new FSprite("Futile_White");
-        sLeaser.sprites[spikes.Length + 2].shader = rCam.game.rainWorld.Shaders["JaggedCircle"];
-        sLeaser.sprites[spikes.Length + 2].scale = (rad + 0.75f) / 10f;
-        sLeaser.sprites[spikes.Length + 2].alpha = Mathf.Lerp(0.2f, 0.4f, Random.value);
+        sLeaser.sprites[spikes.Length + 2] = new FSprite("Futile_White")
+        {
+            shader = rCam.game.rainWorld.Shaders["JaggedCircle"],
+            scale = (rad + 0.75f) / 10f,
+            alpha = Mathf.Lerp(0.2f, 0.4f, Random.value)
+        };
         TriangleMesh.Triangle[] tris = new TriangleMesh.Triangle[1]
         {
-            new TriangleMesh.Triangle(0, 1, 2)
+            new(0, 1, 2)
         };
-        TriangleMesh triangleMesh = new TriangleMesh("Futile_White", tris, customColor: true);
+        TriangleMesh triangleMesh = new("Futile_White", tris, customColor: true);
         sLeaser.sprites[spikes.Length + 3] = triangleMesh;
         AddToContainer(sLeaser, rCam, null);
     }
@@ -1549,10 +1531,7 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
 
     public void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
     {
-        if (newContatiner == null)
-        {
-            newContatiner = rCam.ReturnFContainer("Items");
-        }
+        newContatiner ??= rCam.ReturnFContainer("Items");
         for (int i = 0; i < sLeaser.sprites.Length; i++)
         {
             sLeaser.sprites[i].RemoveFromContainer();

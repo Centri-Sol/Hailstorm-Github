@@ -1,19 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static System.Reflection.BindingFlags;
-using UnityEngine;
-using RWCustom;
-using MoreSlugcats;
-using Random = UnityEngine.Random;
-using MonoMod.RuntimeDetour;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Linq;
-using HUD;
-using Color = UnityEngine.Color;
-using System.Globalization;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class Weather
 {
@@ -287,62 +272,35 @@ internal class Weather
             if (ErraticWindCycle)
             {
                 SetUpNewWindcycle(rc);
-                string logMessage;
-                switch (Random.Range(0, 4))
+                string logMessage = Random.Range(0, 4) switch
                 {
-                    case 0:
-                        logMessage = "Oh hey the wind's picking up early. This'll be fun.";
-                        break;
-                    case 1:
-                        logMessage = "WHOA, the wind's going CRAZY this cycle!";
-                        break;
-                    case 2:
-                        logMessage = "What the heck's going on with the wind this cycle?";
-                        break;
-                    default:
-                        logMessage = "The winds are looking pretty erratic this cycle...";
-                        break;
-                }
+                    0 => "Oh hey the wind's picking up early. This'll be fun.",
+                    1 => "WHOA, the wind's going CRAZY this cycle!",
+                    2 => "What the heck's going on with the wind this cycle?",
+                    _ => "The winds are looking pretty erratic this cycle...",
+                };
                 Debug.Log("[Hailstorm] " + logMessage);
             }
             if (FogPrecycle)
             {
-                string logMessage;
-                switch (Random.Range(0, 4))
+                string logMessage = Random.Range(0, 4) switch
                 {
-                    case 0:
-                        logMessage = "Is that... fog? That's not good.";
-                        break;
-                    case 1:
-                        logMessage = "Yeeeesh, what's with all this cold mist?";
-                        break;
-                    case 2:
-                        logMessage = "It's, uh... a bit CHILLIER this cycle, isn't it? And foggier...";
-                        break;
-                    default:
-                        logMessage = "Lookin' a little foggy this cycle.";
-                        break;
-                }
+                    0 => "Is that... fog? That's not good.",
+                    1 => "Yeeeesh, what's with all this cold mist?",
+                    2 => "It's, uh... a bit CHILLIER this cycle, isn't it? And foggier...",
+                    _ => "Lookin' a little foggy this cycle.",
+                };
                 Debug.Log("[Hailstorm] " + logMessage);
             }
             else if (HailPrecycle)
             {
-                string logMessage;
-                switch (Random.Range(0, 4))
+                string logMessage = Random.Range(0, 4) switch
                 {
-                    case 0:
-                        logMessage = "Do you hear that? That sounds like hail.";
-                        break;
-                    case 1:
-                        logMessage = "OH, that's not snow outside; that's HAIL!";
-                        break;
-                    case 2:
-                        logMessage = "Oh hey, it's hailing outside. That stuff looks like it'll HURT!";
-                        break;
-                    default:
-                        logMessage = "There's a hailstorm going on this cycle!";
-                        break;
-                }
+                    0 => "Do you hear that? That sounds like hail.",
+                    1 => "OH, that's not snow outside; that's HAIL!",
+                    2 => "Oh hey, it's hailing outside. That stuff looks like it'll HURT!",
+                    _ => "There's a hailstorm going on this cycle!",
+                };
                 Debug.Log("[Hailstorm] " + logMessage);
             }
         }

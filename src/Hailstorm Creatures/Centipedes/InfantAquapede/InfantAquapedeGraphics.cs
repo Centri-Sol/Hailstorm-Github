@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 

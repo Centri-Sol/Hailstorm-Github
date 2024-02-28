@@ -1,24 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using RWCustom;
-using MoreSlugcats;
-using static Hailstorm.GlowSpiderState.Role;
-using static Hailstorm.GlowSpiderState.Behavior;
-using static Hailstorm.ObjectRelationship.Type;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINoiseReaction, IUseItemTracker
 {
-    public Luminescipede lmn => creature.realizedCreature as Luminescipede;
-    public GlowSpiderState GlowState => lmn.State as GlowSpiderState;
-    public GlowSpiderState.Role Role => GlowState.role;
-    public GlowSpiderState.Behavior Behavior => GlowState.behavior;
-    public virtual Vector2 lmnPos => lmn.DangerPos;
+    public Luminescipede Lmn => creature.realizedCreature as Luminescipede;
+    public GlowSpiderState GlowState => Lmn.State as GlowSpiderState;
+    public Role Role => GlowState.role;
+    public Behavior Behavior => GlowState.behavior;
+    public virtual Vector2 LmnPos => Lmn.DangerPos;
     public virtual bool HasValidDen =>
         denFinder?.denPosition is not null &&
         denFinder.denPosition.Value.NodeDefined &&
@@ -43,7 +33,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
     {
         get
         {
-            if (!lmn.Consious || Behavior == Hide || Behavior == Overloaded || lmn.flashbombTimer > 40 || (Behavior == Rush && GlowState.rushPreyCounter < 24))
+            if (!Lmn.Consious || Behavior == Hide || Behavior == Overloaded || Lmn.flashbombTimer > 40 || (Behavior == Rush && GlowState.rushPreyCounter < 24))
             {
                 return 0;
             }
@@ -66,18 +56,18 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 desire *= 1.2f;
             }
 
-            if (lmn.bloodlust > 1)
+            if (Lmn.bloodlust > 1)
             {
-                desire += (lmn.bloodlust - 1) / 10f;
+                desire += (Lmn.bloodlust - 1) / 10f;
             }
-            if (lmn.CamoFac > 0)
+            if (Lmn.CamoFac > 0)
             {
-                desire *= Mathf.Max(0, 1 - lmn.CamoFac);
+                desire *= Mathf.Max(0, 1 - Lmn.CamoFac);
             }
 
-            if (lmn.flashbombTimer > 0)
+            if (Lmn.flashbombTimer > 0)
             {
-                desire *= 1f - (lmn.flashbombTimer / 40f);
+                desire *= 1f - (Lmn.flashbombTimer / 40f);
             }
 
             return desire;
@@ -102,7 +92,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     public LuminAI(AbstractCreature absLmn, World world) : base(absLmn, world)
     {
-        lmn.AI = this;
+        Lmn.AI = this;
         AddModule(new StandardPather(this, world, absLmn));
         pathFinder.stepsPerFrame = 5;
         pathFinder.accessibilityStepsPerFrame = 10;
@@ -129,34 +119,23 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
     {
         try
         {
-            if (lmn?.room is null)
+            if (Lmn?.room is null)
             {
                 return;
             }
 
             base.Update();
 
-            if (lmn.LickedByPlayer is not null)
+            if (Lmn.LickedByPlayer is not null)
             {
-                tracker.SeeCreature(lmn.LickedByPlayer.abstractCreature);
+                tracker.SeeCreature(Lmn.LickedByPlayer.abstractCreature);
             }
 
             pathFinder.walkPastPointOfNoReturn = stranded || !denFinder.denPosition.HasValue || !pathFinder.CoordinatePossibleToGetBackFrom(denFinder.denPosition.Value) || threatTracker.Utility() > 0.96f;
 
-            if (Behavior == Overloaded)
-            {
-                noiseTracker.hearingSkill = 0;
-            }
-            else if (Behavior == Aggravated)
-            {
-                noiseTracker.hearingSkill = 0.3f;
-            }
-            else
-            {
-                noiseTracker.hearingSkill = 1f;
-            }
+            noiseTracker.hearingSkill = Behavior == Overloaded ? 0 : Behavior == Aggravated ? 0.3f : 1f;
 
-            if (Behavior != Overloaded && lmn.Role == Forager)
+            if (Behavior != Overloaded && Lmn.Role == Forager)
             {
                 noiseTracker.hearingSkill += 0.2f;
             }
@@ -167,23 +146,23 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             }
 
 
-            if (lmn.shortcutDelay < 1)
+            if (Lmn.shortcutDelay < 1)
             {
                 ConsiderTrackedCreature();
                 ConsiderTrackedItem();
             }
-            if (lmn.flock?.lumins is not null &&
-                lmn.flock.lumins.Count > 0)
+            if (Lmn.flock?.lumins is not null &&
+                Lmn.flock.lumins.Count > 0)
             {
-                for (int l = lmn.flock.lumins.Count - 1; l >= 0; l--)
+                for (int l = Lmn.flock.lumins.Count - 1; l >= 0; l--)
                 {
 
-                    Luminescipede otherLmn = lmn.flock.lumins[l];
+                    Luminescipede otherLmn = Lmn.flock.lumins[l];
 
                     if (otherLmn.dead ||
                         otherLmn.abstractCreature.pos.room != creature.pos.room)
                     {
-                        lmn.flock.RemoveLmn(otherLmn);
+                        Lmn.flock.RemoveLmn(otherLmn);
                         continue;
                     }
 
@@ -195,16 +174,16 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                     }
                 }
             }
-            if (lmn.currentPrey is not null)
+            if (Lmn.currentPrey is not null)
             {
-                if (lmn.currentPrey == lmn)
+                if (Lmn.currentPrey == Lmn)
                 {
-                    lmn.currentPrey = null;
+                    Lmn.currentPrey = null;
                     PreyPos = null;
                 }
                 else
                 {
-                    PreyPos = lmn.room.GetWorldCoordinate(lmn.MainChunkOfObject(lmn.currentPrey).pos);
+                    PreyPos = Lmn.room.GetWorldCoordinate(Lmn.MainChunkOfObject(Lmn.currentPrey).pos);
                 }
             }
             else if (PreyPos.HasValue)
@@ -215,14 +194,14 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
             PathingDestination();
 
-            inAccessibleTerrain = lmn.lungeTimer < 20 && lmn.room.aimap.TileAccessibleToCreature(lmnPos, lmn.Template.preBakedPathingAncestor);
+            inAccessibleTerrain = Lmn.lungeTimer < 20 && Lmn.room.aimap.TileAccessibleToCreature(LmnPos, Lmn.Template.preBakedPathingAncestor);
 
-            if (lmn.lunging && lmn.lungeTimer == 0 && inAccessibleTerrain)
+            if (Lmn.lunging && Lmn.lungeTimer == 0 && inAccessibleTerrain)
             {
-                lmn.lunging = false;
+                Lmn.lunging = false;
             }
 
-            if (lmn.lungeTimer > 0 || Behavior == Hide || Behavior == Overloaded || (Behavior == Rush && GlowState.rushPreyCounter < 24))
+            if (Lmn.lungeTimer > 0 || Behavior == Hide || Behavior == Overloaded || (Behavior == Rush && GlowState.rushPreyCounter < 24))
             {
                 MovementSpeed = 0;
             }
@@ -231,9 +210,9 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 MovementSpeed = Custom.LerpAndTick(MovementSpeed, MovementDesire, 0.01f, 0.01f);
             }
 
-            if (lmn.Consious && lmn.lungeTimer == 0 && !lmn.lunging)
+            if (Lmn.Consious && Lmn.lungeTimer == 0 && !Lmn.lunging)
             {
-                if (!lmn.safariControlled)
+                if (!Lmn.safariControlled)
                 {
                     NormalMovement();
                 }
@@ -251,7 +230,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     public virtual void NormalMovement() 
     {
-        if (lmn.Submersion > 0.3f)
+        if (Lmn.Submersion > 0.3f)
         {
             WaterPathfinding();
             return;
@@ -260,48 +239,38 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         if (specialMoveCounter > 0)
         {
             specialMoveCounter--;
-            MoveTowards(lmn.room.MiddleOfTile(specialMoveDestination));
-            travelDir = Vector2.Lerp(travelDir, Custom.DirVec(lmnPos, lmn.room.MiddleOfTile(specialMoveDestination)), 0.4f);
-            if (Custom.DistLess(lmnPos, lmn.room.MiddleOfTile(specialMoveDestination), 5))
+            MoveTowards(Lmn.room.MiddleOfTile(specialMoveDestination));
+            travelDir = Vector2.Lerp(travelDir, Custom.DirVec(LmnPos, Lmn.room.MiddleOfTile(specialMoveDestination)), 0.4f);
+            if (Custom.DistLess(LmnPos, Lmn.room.MiddleOfTile(specialMoveDestination), 5))
             {
                 specialMoveCounter = 0;
             }
         }
         else
         {
-            if (lmn.room.GetWorldCoordinate(lmnPos) == pathFinder.GetDestination && lmn.fearSource is null && !lmn.safariControlled)
+            if (Lmn.room.GetWorldCoordinate(LmnPos) == pathFinder.GetDestination && Lmn.fearSource is null && !Lmn.safariControlled)
             {
-                lmn.GoThroughFloors = false;
+                Lmn.GoThroughFloors = false;
             }
             else
             {
-                MovementConnection movementConnection = (pathFinder as StandardPather).FollowPath(lmn.room.GetWorldCoordinate(lmnPos), actuallyFollowingThisPath: true);
-                if (movementConnection is null)
-                {
-                    movementConnection = (pathFinder as StandardPather).FollowPath(lmn.room.GetWorldCoordinate(lmnPos), actuallyFollowingThisPath: true);
-                }
-                if (lmn.safariControlled && (movementConnection is null || !lmn.AllowableControlledAIOverride(movementConnection.type)))
+                MovementConnection movementConnection = (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(LmnPos), actuallyFollowingThisPath: true);
+                movementConnection ??= (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(LmnPos), actuallyFollowingThisPath: true);
+                if (Lmn.safariControlled && (movementConnection is null || !Lmn.AllowableControlledAIOverride(movementConnection.type)))
                 {
                     movementConnection = null;
-                    if (lmn.inputWithDiagonals.HasValue && Behavior != Hide)
+                    if (Lmn.inputWithDiagonals.HasValue && Behavior != Hide)
                     {
                         MovementConnection.MovementType type = MovementConnection.MovementType.Standard;
-                        if (lmn.shortcutDelay == 0 && lmn.room.GetTile(lmnPos).Terrain == Room.Tile.TerrainType.ShortcutEntrance)
+                        if (Lmn.shortcutDelay == 0 && Lmn.room.GetTile(LmnPos).Terrain == Room.Tile.TerrainType.ShortcutEntrance)
                         {
                             type = MovementConnection.MovementType.ShortCut;
                         }
-                        if (lmn.inputWithDiagonals.Value.AnyDirectionalInput)
+                        if (Lmn.inputWithDiagonals.Value.AnyDirectionalInput)
                         {
-                            movementConnection = new MovementConnection(type, lmn.room.GetWorldCoordinate(lmnPos), lmn.room.GetWorldCoordinate(lmnPos + new Vector2(lmn.inputWithDiagonals.Value.x, lmn.inputWithDiagonals.Value.y) * 40f), 2);
+                            movementConnection = new MovementConnection(type, Lmn.room.GetWorldCoordinate(LmnPos), Lmn.room.GetWorldCoordinate(LmnPos + (new Vector2(Lmn.inputWithDiagonals.Value.x, Lmn.inputWithDiagonals.Value.y) * 40f)), 2);
                         }
-                        if (lmn.inputWithDiagonals.Value.y < 0)
-                        {
-                            lmn.GoThroughFloors = true;
-                        }
-                        else
-                        {
-                            lmn.GoThroughFloors = false;
-                        }
+                        Lmn.GoThroughFloors = Lmn.inputWithDiagonals.Value.y < 0;
                     }
                 }
                 if (movementConnection is not null)
@@ -310,7 +279,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 }
                 else
                 {
-                    lmn.GoThroughFloors = false;
+                    Lmn.GoThroughFloors = false;
                 }
             }
         }
@@ -318,24 +287,24 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
     }
     public virtual void SafariMovement() 
     {
-        if (lmn.inputWithDiagonals.HasValue)
+        if (Lmn.inputWithDiagonals.HasValue)
         {
-            Vector2 inputAngle = new Vector2(lmn.inputWithDiagonals.Value.x, lmn.inputWithDiagonals.Value.y) * 20;
-            List<Vector2> posList = new() { lmnPos, lmnPos + inputAngle };
+            Vector2 inputAngle = new Vector2(Lmn.inputWithDiagonals.Value.x, Lmn.inputWithDiagonals.Value.y) * 20;
+            List<Vector2> posList = new() { LmnPos, LmnPos + inputAngle };
             for (int p = 0; p < posList.Count; p++)
             {
-                if (lmn.shortcutDelay == 0 &&
-                    lmn.room.GetTile(posList[p]).Terrain == Room.Tile.TerrainType.ShortcutEntrance && (
-                    (lmn.room.ShorcutEntranceHoleDirection(lmn.room.GetTilePosition(posList[p])).x != 0 && -lmn.inputWithDiagonals.Value.x == lmn.room.ShorcutEntranceHoleDirection(lmn.room.GetTilePosition(posList[p])).x) ||
-                    (lmn.room.ShorcutEntranceHoleDirection(lmn.room.GetTilePosition(posList[p])).y != 0 && -lmn.inputWithDiagonals.Value.y == lmn.room.ShorcutEntranceHoleDirection(lmn.room.GetTilePosition(posList[p])).y)))
+                if (Lmn.shortcutDelay == 0 &&
+                    Lmn.room.GetTile(posList[p]).Terrain == Room.Tile.TerrainType.ShortcutEntrance && (
+                    (Lmn.room.ShorcutEntranceHoleDirection(Lmn.room.GetTilePosition(posList[p])).x != 0 && -Lmn.inputWithDiagonals.Value.x == Lmn.room.ShorcutEntranceHoleDirection(Lmn.room.GetTilePosition(posList[p])).x) ||
+                    (Lmn.room.ShorcutEntranceHoleDirection(Lmn.room.GetTilePosition(posList[p])).y != 0 && -Lmn.inputWithDiagonals.Value.y == Lmn.room.ShorcutEntranceHoleDirection(Lmn.room.GetTilePosition(posList[p])).y)))
                 {
-                    lmn.enteringShortCut = lmn.room.GetTilePosition(posList[p]);
-                    MovementConnection movementConnection = (pathFinder as StandardPather).FollowPath(lmn.room.GetWorldCoordinate(lmn.enteringShortCut.Value), true);
+                    Lmn.enteringShortCut = Lmn.room.GetTilePosition(posList[p]);
+                    MovementConnection movementConnection = (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(Lmn.enteringShortCut.Value), true);
                     if (movementConnection.type == MovementConnection.MovementType.NPCTransportation)
                     {
                         bool atWackamoleEntrance = false;
                         List<IntVector2> wackamoleExits = new();
-                        ShortcutData[] shortcuts = lmn.room.shortcuts;
+                        ShortcutData[] shortcuts = Lmn.room.shortcuts;
                         for (int i = 0; i < shortcuts.Length; i++)
                         {
                             ShortcutData shortcutData = shortcuts[i];
@@ -350,15 +319,15 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                         }
                         if (atWackamoleEntrance && wackamoleExits.Count > 0)
                         {
-                            lmn.NPCTransportationDestination = lmn.room.GetWorldCoordinate(wackamoleExits[Random.Range(0, wackamoleExits.Count)]);
+                            Lmn.NPCTransportationDestination = Lmn.room.GetWorldCoordinate(wackamoleExits[Random.Range(0, wackamoleExits.Count)]);
                         }
                     }
                     break;
                 }
             }
-            if (lmn.Submersion > 0 || inAccessibleTerrain)
+            if (Lmn.Submersion > 0 || inAccessibleTerrain)
             {
-                if (lmn.inputWithDiagonals.Value.AnyDirectionalInput)
+                if (Lmn.inputWithDiagonals.Value.AnyDirectionalInput)
                 {
                     MoveTowards(posList[1]);
                 }
@@ -368,10 +337,10 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 float tileCheckAngle = Custom.VecToDeg(inputAngle);
                 for (int d = 0; d < 4; d++)
                 {
-                    if (lmn.room.aimap.TileAccessibleToCreature(lmnPos + 50f * Custom.DegToVec(tileCheckAngle + (90f * d)), lmn.Template.preBakedPathingAncestor))
+                    if (Lmn.room.aimap.TileAccessibleToCreature(LmnPos + (50f * Custom.DegToVec(tileCheckAngle + (90f * d))), Lmn.Template.preBakedPathingAncestor))
                     {
                         inAccessibleTerrain = true;
-                        if (lmn.inputWithDiagonals.Value.AnyDirectionalInput)
+                        if (Lmn.inputWithDiagonals.Value.AnyDirectionalInput)
                         {
                             MoveTowards(posList[1]);
                         }
@@ -381,7 +350,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             }
 
         }
-        if (lmn.Submersion > 0.3f)
+        if (Lmn.Submersion > 0.3f)
         {
             WaterPathfinding();
         }
@@ -393,22 +362,22 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         {
             (pathFinder as StandardPather).pastConnections.Clear();
         }
-        if (lmn.shortcutDelay < 1 &&
+        if (Lmn.shortcutDelay < 1 &&
             (followingConnection.type == MovementConnection.MovementType.ShortCut || followingConnection.type == MovementConnection.MovementType.NPCTransportation) &&
-            (lmn.grasps[0]?.grabbed is null || lmn.grasps[0].grabbed is not Creature carried || carried.dead))
+            (Lmn.grasps[0]?.grabbed is null || Lmn.grasps[0].grabbed is not Creature carried || carried.dead))
         {
-            lmn.enteringShortCut = followingConnection.StartTile;
+            Lmn.enteringShortCut = followingConnection.StartTile;
             if (followingConnection.type == MovementConnection.MovementType.NPCTransportation)
             {
-                lmn.NPCTransportationDestination = followingConnection.destinationCoord;
+                Lmn.NPCTransportationDestination = followingConnection.destinationCoord;
             }
         }
         else if (
-            followingConnection.type == MovementConnection.MovementType.OpenDiagonal ||
-            followingConnection.type == MovementConnection.MovementType.ReachOverGap ||
-            followingConnection.type == MovementConnection.MovementType.ReachUp ||
-            followingConnection.type == MovementConnection.MovementType.ReachDown ||
-            followingConnection.type == MovementConnection.MovementType.SemiDiagonalReach)
+            followingConnection.type is MovementConnection.MovementType.OpenDiagonal or
+            MovementConnection.MovementType.ReachOverGap or
+            MovementConnection.MovementType.ReachUp or
+            MovementConnection.MovementType.ReachDown or
+            MovementConnection.MovementType.SemiDiagonalReach)
         {
             specialMoveCounter = 30;
             specialMoveDestination = followingConnection.DestTile;
@@ -425,7 +394,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                     {
                         return;
                     }
-                    if (movementConnection2.destinationCoord.TileDefined && lmn.room.aimap.getAItile(movementConnection2.DestTile).acc < AItile.Accessibility.Ceiling)
+                    if (movementConnection2.destinationCoord.TileDefined && Lmn.room.aimap.getAItile(movementConnection2.DestTile).acc < AItile.Accessibility.Ceiling)
                     {
                         bool notAccessible = false;
                         for (int j = Math.Min(followingConnection.StartTile.x, movementConnection2.DestTile.x); j < Math.Max(followingConnection.StartTile.x, movementConnection2.DestTile.x); j++)
@@ -436,7 +405,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                             }
                             for (int k = Math.Min(followingConnection.StartTile.y, movementConnection2.DestTile.y); k < Math.Max(followingConnection.StartTile.y, movementConnection2.DestTile.y); k++)
                             {
-                                if (!lmn.room.aimap.TileAccessibleToCreature(j, k, lmn.Template.preBakedPathingAncestor))
+                                if (!Lmn.room.aimap.TileAccessibleToCreature(j, k, Lmn.Template.preBakedPathingAncestor))
                                 {
                                     notAccessible = true;
                                     break;
@@ -450,29 +419,29 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                     }
                 }
             }
-            Vector2 destination = lmn.room.MiddleOfTile(movementConnection.DestTile);
-            travelDir = Vector2.Lerp(travelDir, Custom.DirVec(lmnPos, destination), 0.4f);
+            Vector2 destination = Lmn.room.MiddleOfTile(movementConnection.DestTile);
+            travelDir = Vector2.Lerp(travelDir, Custom.DirVec(LmnPos, destination), 0.4f);
             if (lastFollowedConnection is not null && lastFollowedConnection.type == MovementConnection.MovementType.ReachUp)
             {
-                lmn.body.vel += Custom.DirVec(lmnPos, destination) * 4f;
+                Lmn.Body.vel += Custom.DirVec(LmnPos, destination) * 4f;
             }
             if (followingConnection.type != MovementConnection.MovementType.DropToFloor)
             {
                 if (followingConnection.startCoord.x == followingConnection.destinationCoord.x)
                 {
-                    lmn.body.vel.x += Mathf.Min((destination.x - lmnPos.x) / 8f, 1.2f);
+                    Lmn.Body.vel.x += Mathf.Min((destination.x - LmnPos.x) / 8f, 1.2f);
                 }
                 else if (followingConnection.startCoord.y == followingConnection.destinationCoord.y)
                 {
-                    lmn.body.vel.y += Mathf.Min((destination.y - lmnPos.y) / 8f, 1.2f);
+                    Lmn.Body.vel.y += Mathf.Min((destination.y - LmnPos.y) / 8f, 1.2f);
                 }
             }
             if (lastFollowedConnection is not null &&
-                (followingConnection.type != MovementConnection.MovementType.DropToFloor || lmn.room.aimap.TileAccessibleToCreature(lmnPos, lmn.Template.preBakedPathingAncestor)) && (
+                (followingConnection.type != MovementConnection.MovementType.DropToFloor || Lmn.room.aimap.TileAccessibleToCreature(LmnPos, Lmn.Template.preBakedPathingAncestor)) && (
                 (followingConnection.startCoord.x != followingConnection.destinationCoord.x && lastFollowedConnection.startCoord.x == lastFollowedConnection.destinationCoord.x) ||
                 (followingConnection.startCoord.y != followingConnection.destinationCoord.y && lastFollowedConnection.startCoord.y == lastFollowedConnection.destinationCoord.y)))
             {
-                lmn.body.vel *= 0.7f;
+                Lmn.Body.vel *= 0.7f;
             }
             MoveTowards(destination);
         }
@@ -480,30 +449,30 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
     }
     public virtual void WaterPathfinding() 
     {
-        lmn.GoThroughFloors = true;
-        lmn.body.vel *= inAccessibleTerrain ? 0.95f : 0.8f;
-        lmn.body.vel.y += 0.35f * (2.2f - GlowState.ivars.Size);
-        if (lmn.safariControlled)
+        Lmn.GoThroughFloors = true;
+        Lmn.Body.vel *= inAccessibleTerrain ? 0.95f : 0.8f;
+        Lmn.Body.vel.y += 0.35f * (2.2f - GlowState.ivars.Size);
+        if (Lmn.safariControlled)
         {
             return;
         }
-        MovementConnection movementDestination = (pathFinder as StandardPather).FollowPath(lmn.room.GetWorldCoordinate(lmnPos), actuallyFollowingThisPath: true);
-        if (movementDestination is null && Math.Abs(creature.pos.y - lmn.room.defaultWaterLevel) < 4)
+        MovementConnection movementDestination = (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(LmnPos), actuallyFollowingThisPath: true);
+        if (movementDestination is null && Math.Abs(creature.pos.y - Lmn.room.defaultWaterLevel) < 4)
         {
-            movementDestination = (pathFinder as StandardPather).FollowPath(new WorldCoordinate(creature.pos.room, creature.pos.x, lmn.room.defaultWaterLevel, creature.pos.abstractNode), actuallyFollowingThisPath: true);
+            movementDestination = (pathFinder as StandardPather).FollowPath(new WorldCoordinate(creature.pos.room, creature.pos.x, Lmn.room.defaultWaterLevel, creature.pos.abstractNode), actuallyFollowingThisPath: true);
         }
         if (movementDestination is not null)
         {
-            if (movementDestination.StartTile.y == movementDestination.DestTile.y && movementDestination.DestTile.y == lmn.room.defaultWaterLevel)
+            if (movementDestination.StartTile.y == movementDestination.DestTile.y && movementDestination.DestTile.y == Lmn.room.defaultWaterLevel)
             {
-                lmn.body.vel.x -= Mathf.Sign(lmn.room.MiddleOfTile(movementDestination.StartTile).x - lmn.room.MiddleOfTile(movementDestination.DestTile).x) * lmn.Submersion;
+                Lmn.Body.vel.x -= Mathf.Sign(Lmn.room.MiddleOfTile(movementDestination.StartTile).x - Lmn.room.MiddleOfTile(movementDestination.DestTile).x) * Lmn.Submersion;
                 return;
             }
-            lmn.body.vel *= 0.8f;
-            lmn.body.vel += Custom.DirVec(lmnPos, lmn.room.MiddleOfTile(movementDestination.destinationCoord));
-            lmn.body.vel *= Mathf.Lerp(1, 0.65f, lmn.Submersion);
+            Lmn.Body.vel *= 0.8f;
+            Lmn.Body.vel += Custom.DirVec(LmnPos, Lmn.room.MiddleOfTile(movementDestination.destinationCoord));
+            Lmn.Body.vel *= Mathf.Lerp(1, 0.65f, Lmn.Submersion);
             NormalPathfinding(movementDestination);
-            lmn.body.vel.y += 0.35f * (2.2f - GlowState.ivars.Size);
+            Lmn.Body.vel.y += 0.35f * (2.2f - GlowState.ivars.Size);
         }
     }
     public virtual void MoveTowards(Vector2 moveTo) 
@@ -513,44 +482,44 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return;
         }
         float vel = (GlowState.ivars.Size + 0.2f) * Mathf.Lerp(0.5f, 1, MovementSpeed);
-        Vector2 angle = Custom.DirVec(lmnPos, moveTo);
-        if (!lmn.safariControlled && lmn.IsTileSolid(0, 0, -1))
+        Vector2 angle = Custom.DirVec(LmnPos, moveTo);
+        if (!Lmn.safariControlled && Lmn.IsTileSolid(0, 0, -1))
         {
-            lmn.body.vel.x -= 1.3f * Mathf.Sign(angle.x);
+            Lmn.Body.vel.x -= 1.3f * Mathf.Sign(angle.x);
         }
-        if (lmn.GrabbingAnything)
+        if (Lmn.GrabbingAnything)
         {
-            for (int g = 0; g < lmn.grasps.Length; g++)
+            for (int g = 0; g < Lmn.grasps.Length; g++)
             {
-                if (lmn.grasps[g]?.grabbed is not null)
+                if (Lmn.grasps[g]?.grabbed is not null)
                 {
-                    float maxMass = lmn.AttackMassLimit/2f;
+                    float maxMass = Lmn.AttackMassLimit/2f;
                     if (g == 1)
                     {
                         maxMass *= 2f;
                     }
-                    vel *= Custom.LerpMap(lmn.grasps[g].grabbed.TotalMass, 0, maxMass, 1, 0.5f);
+                    vel *= Custom.LerpMap(Lmn.grasps[g].grabbed.TotalMass, 0, maxMass, 1, 0.5f);
                 }
             }
         }
-        lmn.body.vel += vel * angle * 3f;
-        lmn.GoThroughFloors = moveTo.y < lmnPos.y - 5f;
+        Lmn.Body.vel += vel * angle * 3f;
+        Lmn.GoThroughFloors = moveTo.y < LmnPos.y - 5f;
     }
     public virtual void PathingDestination() 
     {
-        if (lmn.safariControlled && lmn.Consious)
+        if (Lmn.safariControlled && Lmn.Consious)
         {
             GlowState.ChangeBehavior(Idle, 1);
             return;
         }
 
         Debug.Log("behavior: " + Behavior.value);
-        if (lmn.shortcutDelay > 0 && denFinder.denPosition.HasValue && denFinder.denPosition.Value == creature.abstractAI.destination && Custom.ManhattanDistance(creature.pos, lmn.room.LocalCoordinateOfNode(denFinder.denPosition.Value.abstractNode)) < 3)
+        if (Lmn.shortcutDelay > 0 && denFinder.denPosition.HasValue && denFinder.denPosition.Value == creature.abstractAI.destination && Custom.ManhattanDistance(creature.pos, Lmn.room.LocalCoordinateOfNode(denFinder.denPosition.Value.abstractNode)) < 3)
         {
             int x = creature.pos.x + (Random.Range(2, 5) * (Random.value < 0.5f ? 1 : -1));
             int y = creature.pos.y + (Random.Range(2, 5) * (Random.value < 0.5f ? 1 : -1));
-            WorldCoordinate coord = new(lmn.room.abstractRoom.index, x, y, -1);
-            if (lmn.room.aimap.TileAccessibleToCreature(lmn.room.MiddleOfTile(coord), lmn.Template.preBakedPathingAncestor) && pathFinder.CoordinateReachableAndGetbackable(coord))
+            WorldCoordinate coord = new(Lmn.room.abstractRoom.index, x, y, -1);
+            if (Lmn.room.aimap.TileAccessibleToCreature(Lmn.room.MiddleOfTile(coord), Lmn.Template.preBakedPathingAncestor) && pathFinder.CoordinateReachableAndGetbackable(coord))
             {
                 creature.abstractAI.SetDestination(coord);
             }
@@ -566,7 +535,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             forageSpotCounter--;
         }
 
-        if (lmn.lungs < 0.33f)
+        if (Lmn.lungs < 0.33f)
         {
             if (Random.value < 0.2f)
             {
@@ -597,7 +566,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         {
             if (Role == Guardian)
             {
-                if (denFinder.denPosition.HasValue && (creature.pos.room != denFinder.denPosition.Value.room || Custom.ManhattanDistance(creature.pos, lmn.room.LocalCoordinateOfNode(denFinder.denPosition.Value.abstractNode)) > 20))
+                if (denFinder.denPosition.HasValue && (creature.pos.room != denFinder.denPosition.Value.room || Custom.ManhattanDistance(creature.pos, Lmn.room.LocalCoordinateOfNode(denFinder.denPosition.Value.abstractNode)) > 20))
                 {
                     creature.abstractAI.SetDestination(denFinder.denPosition.Value);
                 }
@@ -614,13 +583,13 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 }
                 else if (!creature.abstractAI.WantToMigrate)
                 {
-                    WorldCoordinate coord = new WorldCoordinate(lmn.room.abstractRoom.index, Random.Range(0, lmn.room.TileWidth), Random.Range(0, lmn.room.TileHeight), -1);
+                    WorldCoordinate coord = new(Lmn.room.abstractRoom.index, Random.Range(0, Lmn.room.TileWidth), Random.Range(0, Lmn.room.TileHeight), -1);
                     if (pathFinder.CoordinateReachableAndGetbackable(coord) && ForagePosScore(coord) < ForagePosScore(nextForageSpot))
                     {
                         nextForageSpot = coord;
                     }
                     creature.abstractAI.SetDestination(forageSpot);
-                    if (Custom.ManhattanDistance(creature.pos, forageSpot) < 3 && (lmn.room.aimap.getAItile(creature.pos).narrowSpace || TileInEnclosedArea(creature.pos.Tile)))
+                    if (Custom.ManhattanDistance(creature.pos, forageSpot) < 3 && (Lmn.room.aimap.getAItile(creature.pos).narrowSpace || TileInEnclosedArea(creature.pos.Tile)))
                     {
                         forageSpotCounter -= 4;
                     }
@@ -633,14 +602,14 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                             prevForageSpots.RemoveAt(0);
                         }
                         forageSpot = nextForageSpot;
-                        nextForageSpot = new WorldCoordinate(lmn.room.abstractRoom.index, Random.Range(0, lmn.room.TileWidth), Random.Range(0, lmn.room.TileHeight), -1);
+                        nextForageSpot = new WorldCoordinate(Lmn.room.abstractRoom.index, Random.Range(0, Lmn.room.TileWidth), Random.Range(0, Lmn.room.TileHeight), -1);
                     }
                 }
                 else
                 {
                     if (migrationTimer < 2400) // Takes 8 seconds at 0 bloodlust.
                     {
-                        migrationTimer += 3 - lmn.bloodlust;
+                        migrationTimer += 3 - Lmn.bloodlust;
                     }
                     else
                     {
@@ -655,11 +624,11 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         else if (Behavior == Hunt)
         {
-            if ((!PreyPos.HasValue || lmn.currentPrey is not Creature) && lmn.useItem is not null && !lmn.GrabbingItem(lmn.useItem))
+            if ((!PreyPos.HasValue || Lmn.currentPrey is not Creature) && Lmn.useItem is not null && !Lmn.GrabbingItem(Lmn.useItem))
             {
-                creature.abstractAI.SetDestination(lmn.useItem.abstractPhysicalObject.pos);
+                creature.abstractAI.SetDestination(Lmn.useItem.abstractPhysicalObject.pos);
             }
-            else if (PreyPos.HasValue && !lmn.GrabbingItem(lmn.currentPrey))
+            else if (PreyPos.HasValue && !Lmn.GrabbingItem(Lmn.currentPrey))
             {
                 creature.abstractAI.SetDestination(PreyPos.Value);
             }
@@ -670,14 +639,14 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         else if (Behavior == Aggravated)
         {
-            if (PreyPos.HasValue && !Custom.DistLess(lmnPos, lmn.room.MiddleOfTile(PreyPos.Value), lmn.Template.visualRadius * 2 / 3f))
+            if (PreyPos.HasValue && !Custom.DistLess(LmnPos, Lmn.room.MiddleOfTile(PreyPos.Value), Lmn.Template.visualRadius * 2 / 3f))
             {
                 creature.abstractAI.SetDestination(PreyPos.Value);
             }
         }
         else if (Behavior == Rush)
         {
-            if (PreyPos.HasValue && !Custom.DistLess(lmnPos, lmn.room.MiddleOfTile(PreyPos.Value), lmn.Template.visualRadius * 2 / 3f))
+            if (PreyPos.HasValue && !Custom.DistLess(LmnPos, Lmn.room.MiddleOfTile(PreyPos.Value), Lmn.Template.visualRadius * 2 / 3f))
             {
                 creature.abstractAI.SetDestination(PreyPos.Value);
             }
@@ -689,8 +658,8 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                     occupyTile: creature.pos,
                     reevalutaions: 5,
                     maximumDistance: 40,
-                    considerLeavingRoom: lmn.FleeLevel > 0,
-                    considerGoingHome: lmn.FleeLevel > 0 && Role == Guardian));
+                    considerLeavingRoom: Lmn.FleeLevel > 0,
+                    considerGoingHome: Lmn.FleeLevel > 0 && Role == Guardian));
         }
         else if (Behavior == EscapeRain)
         {
@@ -701,15 +670,15 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         else if (Behavior == ReturnPrey)
         {
-            if (lmn.grasps[0] is null && PreyPos.HasValue)
+            if (Lmn.grasps[0] is null && PreyPos.HasValue)
             {
                 creature.abstractAI.SetDestination(PreyPos.Value);
             }
             else
             if (denFinder.denPosition.HasValue)
             {
-                if (lmn.grasps.Length < 2 && lmn.ConsiderPrey(lmn.grasps[0]?.grabbed) ||
-                    (lmn.grasps.Length > 1 && lmn.grasps[0] is not null && lmn.grasps[1] is not null && (lmn.ConsiderPrey(lmn.grasps[0].grabbed) || lmn.ConsiderPrey(lmn.grasps[1].grabbed))))
+                if ((Lmn.grasps.Length < 2 && Lmn.ConsiderPrey(Lmn.grasps[0]?.grabbed)) ||
+                    (Lmn.grasps.Length > 1 && Lmn.grasps[0] is not null && Lmn.grasps[1] is not null && (Lmn.ConsiderPrey(Lmn.grasps[0].grabbed) || Lmn.ConsiderPrey(Lmn.grasps[1].grabbed))))
                 {
                     creature.abstractAI.SetDestination(denFinder.denPosition.Value);
                 }
@@ -720,16 +689,16 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
     public override PathCost TravelPreference(MovementConnection connection, PathCost cost) 
     {
         cost.resistance += Mathf.Max(0f, threatTracker.ThreatOfTile(connection.destinationCoord, accountThreatCreatureAccessibility: true) - threatTracker.ThreatOfTile(creature.pos, accountThreatCreatureAccessibility: true)) * 40f;
-        if (lmn?.room is null)
+        if (Lmn?.room is null)
         {
-            cost.resistance += Custom.LerpMap(lmn.room.aimap.getAItile(connection.DestTile).smoothedFloorAltitude, 1f, 7f, 60f, 0f);
-            if (lmn.lungs < 0.33f)
+            cost.resistance += Custom.LerpMap(Lmn.room.aimap.getAItile(connection.DestTile).smoothedFloorAltitude, 1f, 7f, 60f, 0f);
+            if (Lmn.lungs < 0.33f)
             {
-                cost.resistance += lmn.room.GetTile(connection.destinationCoord).AnyWater ? 100 : -100f;
+                cost.resistance += Lmn.room.GetTile(connection.destinationCoord).AnyWater ? 100 : -100f;
             }
-            if (lmn.HoldingThisItemType(AbstractPhysicalObject.AbstractObjectType.BubbleGrass))
+            if (Lmn.HoldingThisItemType(AbstractPhysicalObject.AbstractObjectType.BubbleGrass))
             {
-                cost.resistance += lmn.room.GetTile(connection.destinationCoord).AnyWater ? -25 : 25f;
+                cost.resistance += Lmn.room.GetTile(connection.destinationCoord).AnyWater ? -25 : 25f;
             }
         }
         return base.TravelPreference(connection, cost);
@@ -739,7 +708,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         int numOfSolidSides = 0;
         for (int s = 0; s < 4; s++)
         {
-            if (lmn.room.GetTile(tilePos + Custom.fourDirections[s] * 2).Solid)
+            if (Lmn.room.GetTile(tilePos + (Custom.fourDirections[s] * 2)).Solid)
             {
                 numOfSolidSides++;
                 if (numOfSolidSides > 1)
@@ -756,12 +725,12 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         {
             return 50f;
         }
-        if (!lmn.room.aimap.WorldCoordinateAccessibleToCreature(coord, creature.creatureTemplate.preBakedPathingAncestor) || !pathFinder.CoordinateReachableAndGetbackable(coord))
+        if (!Lmn.room.aimap.WorldCoordinateAccessibleToCreature(coord, creature.creatureTemplate.preBakedPathingAncestor) || !pathFinder.CoordinateReachableAndGetbackable(coord))
         {
             return float.MaxValue;
         }
         float cost = 1f;
-        if (lmn.room.aimap.getAItile(coord).narrowSpace)
+        if (Lmn.room.aimap.getAItile(coord).narrowSpace)
         {
             cost += 600f;
         }
@@ -769,7 +738,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         {
             cost += 400f;
         }
-        if (lmn.room.aimap.getAItile(coord).terrainProximity > 1)
+        if (Lmn.room.aimap.getAItile(coord).terrainProximity > 1)
         {
             cost += 200f;
         }
@@ -779,8 +748,8 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             cost += Mathf.Pow(Mathf.InverseLerp(80, 5, prevForageSpots[i].Tile.FloatDist(coord.Tile)), 2f) * Custom.LerpMap(i, 0, 8, 70, 15);
         }
         cost += Mathf.Max(0f, creature.pos.Tile.FloatDist(coord.Tile) - 40f) / 20f;
-        cost += Mathf.Clamp(Mathf.Abs(800f - lmn.room.aimap.getAItile(coord).visibility), 300f, 1000f) / 30f;
-        return cost - Mathf.Max(lmn.room.aimap.getAItile(coord).smoothedFloorAltitude, 6) * 2;
+        cost += Mathf.Clamp(Mathf.Abs(800f - Lmn.room.aimap.getAItile(coord).visibility), 300f, 1000f) / 30f;
+        return cost - (Mathf.Max(Lmn.room.aimap.getAItile(coord).smoothedFloorAltitude, 6) * 2);
     }
 
 
@@ -788,30 +757,24 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     public override Tracker.CreatureRepresentation CreateTrackerRepresentationForCreature(AbstractCreature newCtr) 
     {
-        if (newCtr.realizedCreature is not null &&
+        return newCtr.realizedCreature is not null &&
             newCtr.realizedCreature is Luminescipede otherLmn &&
-           (newCtr.state.dead || (lmn.flock?.lumins is not null && lmn.flock.lumins.Contains(otherLmn))))
-        {
-            return null;
-        }
-        if (newCtr.creatureTemplate.smallCreature)
-        {
-            return new Tracker.SimpleCreatureRepresentation(tracker, newCtr, 0.15f, forgetWhenNotVisible: false);
-        }
-        return new Tracker.ElaborateCreatureRepresentation(tracker, newCtr, 0.85f, 3);
+           (newCtr.state.dead || (Lmn.flock?.lumins is not null && Lmn.flock.lumins.Contains(otherLmn)))
+            ? null
+            : (Tracker.CreatureRepresentation)(newCtr.creatureTemplate.smallCreature
+            ? new Tracker.SimpleCreatureRepresentation(tracker, newCtr, 0.15f, forgetWhenNotVisible: false)
+            : new Tracker.ElaborateCreatureRepresentation(tracker, newCtr, 0.85f, 3));
     }
     AIModule IUseARelationshipTracker.ModuleToTrackRelationship(CreatureTemplate.Relationship relationship)
     {
-        if (relationship.type == CreatureTemplate.Relationship.Type.Afraid ||
-            relationship.type == CreatureTemplate.Relationship.Type.StayOutOfWay)
-        {
-            return threatTracker;
-        }
-        return null;
+        return relationship.type == CreatureTemplate.Relationship.Type.Afraid ||
+            relationship.type == CreatureTemplate.Relationship.Type.StayOutOfWay
+            ? threatTracker
+            : (AIModule)null;
     }
     CreatureTemplate.Relationship IUseARelationshipTracker.UpdateDynamicRelationship(RelationshipTracker.DynamicRelationship relationship) 
     {
-        if (lmn.dead || relationship.trackerRep.representedCreature is null)
+        if (Lmn.dead || relationship.trackerRep.representedCreature is null)
         {
             return StaticRelationship(relationship.trackerRep.representedCreature);
         }
@@ -826,13 +789,13 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             float spiderMass = 0;
             foreach (AbstractCreature roomCtr in absCtr.Room.creatures)
             {
-                if (roomCtr?.realizedCreature is null || roomCtr.creatureTemplate.type != CreatureTemplate.Type.Spider || roomCtr.realizedCreature.dead || !Custom.DistLess(lmnPos, roomCtr.realizedCreature.DangerPos, 200))
+                if (roomCtr?.realizedCreature is null || roomCtr.creatureTemplate.type != CreatureTemplate.Type.Spider || roomCtr.realizedCreature.dead || !Custom.DistLess(LmnPos, roomCtr.realizedCreature.DangerPos, 200))
                 {
                     continue;
                 }
                 spiderMass += roomCtr.realizedCreature.TotalMass;
             }
-            if (spiderMass >= lmn.TotalMass)
+            if (spiderMass >= Lmn.TotalMass)
             {
                 newRelat = new CreatureTemplate.Relationship
                              (CreatureTemplate.Relationship.Type.Afraid, 0.5f);
@@ -851,9 +814,9 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 VisualContact(ctr.DangerPos) &&
                 denFinder.denPosition.HasValue &&
                 creature.pos.room == denFinder.denPosition.Value.room &&
-                Custom.ManhattanDistance(absCtr.pos, lmn.room.LocalCoordinateOfNode(denFinder.denPosition.Value.abstractNode)) < 16)
+                Custom.ManhattanDistance(absCtr.pos, Lmn.room.LocalCoordinateOfNode(denFinder.denPosition.Value.abstractNode)) < 16)
             {
-                if (ctr.TotalMass > lmn.AttackMassLimit)
+                if (ctr.TotalMass > Lmn.AttackMassLimit)
                 {
                     newRelat = new CreatureTemplate.Relationship
                                  (CreatureTemplate.Relationship.Type.Afraid, 1);
@@ -861,9 +824,9 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 else
                 if (newRelat.type == CreatureTemplate.Relationship.Type.Eats && newRelat.intensity != 1)
                 {
-                    if (ctr != lmn.currentPrey)
+                    if (ctr != Lmn.currentPrey)
                     {
-                        lmn.currentPrey = ctr;
+                        Lmn.currentPrey = ctr;
                     }
                     newRelat = new CreatureTemplate.Relationship
                                  (CreatureTemplate.Relationship.Type.Eats, 1);
@@ -871,9 +834,9 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 else
                 if (newRelat.type != CreatureTemplate.Relationship.Type.Attacks || newRelat.intensity != 1)
                 {
-                    if (ctr != lmn.currentPrey)
+                    if (ctr != Lmn.currentPrey)
                     {
-                        lmn.currentPrey = ctr;
+                        Lmn.currentPrey = ctr;
                     }
                     newRelat = new CreatureTemplate.Relationship
                                  (CreatureTemplate.Relationship.Type.Attacks, 1);
@@ -882,7 +845,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         else if (Role == Forager)
         {
-            if (lmn.HoldingThisItemType(AbstractPhysicalObject.AbstractObjectType.FlyLure))
+            if (Lmn.HoldingThisItemType(AbstractPhysicalObject.AbstractObjectType.FlyLure))
             {
                 if (absCtr.creatureTemplate.type == CreatureTemplate.Type.Fly)
                 {
@@ -901,8 +864,8 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             if (!ctr.dead &&
                 Behavior != Rush &&
                 Behavior != Aggravated &&
-                lmn.flock.lumins.Count < 3 &&
-                lmn.TotalMass < ctr.TotalMass &&
+                Lmn.flock.lumins.Count < 3 &&
+                Lmn.TotalMass < ctr.TotalMass &&
                 (newRelat.type == CreatureTemplate.Relationship.Type.Eats || newRelat.type == CreatureTemplate.Relationship.Type.Attacks))
             { 
                 newRelat = new CreatureTemplate.Relationship
@@ -913,12 +876,12 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
 
 
-        if (lmn.HoldingThisItemType(AbstractPhysicalObject.AbstractObjectType.VultureMask) &&
+        if (Lmn.HoldingThisItemType(AbstractPhysicalObject.AbstractObjectType.VultureMask) &&
             (newRelat.type == CreatureTemplate.Relationship.Type.Afraid || newRelat.type == CreatureTemplate.Relationship.Type.StayOutOfWay) &&
             ctr is not null &&
             ctr is Lizard liz &&
             liz.AI is not null &&
-            (liz.AI.DynamicRelationship(lmn.abstractCreature).type == CreatureTemplate.Relationship.Type.Afraid || liz.AI.DynamicRelationship(lmn.abstractCreature).type == CreatureTemplate.Relationship.Type.Ignores))
+            (liz.AI.DynamicRelationship(Lmn.abstractCreature).type == CreatureTemplate.Relationship.Type.Afraid || liz.AI.DynamicRelationship(Lmn.abstractCreature).type == CreatureTemplate.Relationship.Type.Ignores))
         {
             newRelat.type = CreatureTemplate.Relationship.Type.Ignores;
             // Lumins won't fear lizards that are scared while they hold a Vulture Mask.
@@ -955,39 +918,21 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             CreatureTemplate.Relationship ctrRelat =
                 DynamicRelationship(absObj as AbstractCreature);
 
-            if (ctrRelat.type == CreatureTemplate.Relationship.Type.Eats)
-            {
-                return new ObjectRelationship(Eats, ctrRelat.intensity);
-            }
-            if (ctrRelat.type == CreatureTemplate.Relationship.Type.Attacks)
-            {
-                return new ObjectRelationship(Attacks, ctrRelat.intensity);
-            }
-
-            if (ctrRelat.type == CreatureTemplate.Relationship.Type.Afraid)
-            {
-                return new ObjectRelationship(AfraidOf, ctrRelat.intensity);
-            }
-            if (ctrRelat.type == CreatureTemplate.Relationship.Type.StayOutOfWay)
-            {
-                return new ObjectRelationship(Avoids, ctrRelat.intensity);
-            }
-            if (ctrRelat.type == CreatureTemplate.Relationship.Type.Uncomfortable)
-            {
-                return new ObjectRelationship(UncomfortableAround, ctrRelat.intensity);
-            }
-
-            if (ctrRelat.type == CreatureTemplate.Relationship.Type.PlaysWith)
-            {
-                return new ObjectRelationship(PlaysWith, ctrRelat.intensity);
-            }
-
-            if (ctrRelat.type == CreatureTemplate.Relationship.Type.Ignores)
-            {
-                return new ObjectRelationship(Ignores, ctrRelat.intensity);
-            }
-
-            return new ObjectRelationship(DoesntTrack, 1);
+            return ctrRelat.type == CreatureTemplate.Relationship.Type.Eats
+                ? new ObjectRelationship(Eats, ctrRelat.intensity)
+                : ctrRelat.type == CreatureTemplate.Relationship.Type.Attacks
+                ? new ObjectRelationship(Attacks, ctrRelat.intensity)
+                : ctrRelat.type == CreatureTemplate.Relationship.Type.Afraid
+                ? new ObjectRelationship(AfraidOf, ctrRelat.intensity)
+                : ctrRelat.type == CreatureTemplate.Relationship.Type.StayOutOfWay
+                ? new ObjectRelationship(Avoids, ctrRelat.intensity)
+                : ctrRelat.type == CreatureTemplate.Relationship.Type.Uncomfortable
+                ? new ObjectRelationship(UncomfortableAround, ctrRelat.intensity)
+                : ctrRelat.type == CreatureTemplate.Relationship.Type.PlaysWith
+                ? new ObjectRelationship(PlaysWith, ctrRelat.intensity)
+                : ctrRelat.type == CreatureTemplate.Relationship.Type.Ignores
+                ? new ObjectRelationship(Ignores, ctrRelat.intensity)
+                : new ObjectRelationship(DoesntTrack, 1);
         }
 
         if (absObj.type == AbstractPhysicalObject.AbstractObjectType.Rock)
@@ -1019,7 +964,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
         if (Role == Hunter)
         {
-            if (lmn is not null && lmn.WantToHide)
+            if (Lmn is not null && Lmn.WantToHide)
             {
                 if (absObj.type == AbstractPhysicalObject.AbstractObjectType.ScavengerBomb ||
                         absObj.type == AbstractPhysicalObject.AbstractObjectType.DataPearl ||
@@ -1085,7 +1030,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             
             if (absObj is BubbleGrass.AbstractBubbleGrass ABG)
             {
-                float like = (lmn.room?.water is not null) ? 1f : 0.25f;
+                float like = (Lmn.room?.water is not null) ? 1f : 0.25f;
                 like *= ABG.oxygenLeft;
                 return new ObjectRelationship(Likes, like);
             }
@@ -1115,38 +1060,34 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     public void ReactToNoise(NoiseTracker.TheorizedSource source, Noise.InGameNoise noise)
     {
-        if (noiseRectionDelay > 0 || lmn?.room is null)
+        if (noiseRectionDelay > 0 || Lmn?.room is null)
         {
             return;
         }
         noiseRectionDelay = Role == Forager ? 20 : 100;
 
-        if (Role == Guardian && lmn.bloodlust >= 2 && (noise.interesting >= 3 || noise.strength > 900))
+        if (Role == Guardian && Lmn.bloodlust >= 2 && (noise.interesting >= 3 || noise.strength > 900))
         {
-            creature.abstractAI.SetDestination(lmn.room.GetWorldCoordinate(noise.pos));
+            creature.abstractAI.SetDestination(Lmn.room.GetWorldCoordinate(noise.pos));
         }
         if (Role == Forager)
         {
-            if (lmn.bloodlust < 1.5f && noise.strength > 500 && noise.strength < 800 && noise.interesting < 3)
+            if (Lmn.bloodlust < 1.5f && noise.strength > 500 && noise.strength < 800 && noise.interesting < 3)
             {
-                creature.abstractAI.SetDestination(lmn.room.GetWorldCoordinate(noise.pos));
+                creature.abstractAI.SetDestination(Lmn.room.GetWorldCoordinate(noise.pos));
             }
             if (noise.strength > 1200 && source?.creatureRep?.representedCreature?.realizedCreature is not null)
             {
-                lmn.fearSource = source.creatureRep.representedCreature.realizedCreature;
+                Lmn.fearSource = source.creatureRep.representedCreature.realizedCreature;
             }
         }
     }
 
     bool IUseItemTracker.TrackItem(AbstractPhysicalObject absObj)
     {
-        if (!lmn.safariControlled &&
-            ObjRelationship(absObj).type != ObjectRelationship.Type.Ignores &&
-            ObjRelationship(absObj).type != ObjectRelationship.Type.DoesntTrack)
-        {
-            return true;
-        }
-        return false;
+        return !Lmn.safariControlled &&
+            ObjRelationship(absObj).type != Ignores &&
+            ObjRelationship(absObj).type != DoesntTrack;
     }
     void IUseItemTracker.SeeThrownWeapon(PhysicalObject obj, Creature thrower)
     {
@@ -1156,7 +1097,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     public virtual void ConsiderTrackedCreature()
     {
-        if (lmn.safariControlled || tracker.creatures.Count < 1)
+        if (Lmn.safariControlled || tracker.creatures.Count < 1)
         {
             return;
         }
@@ -1177,31 +1118,31 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         {
             if (ctr is Luminescipede otherLmn &&
                 otherLmn.GlowState.alive &&
-                lmn.flock?.lumins is not null &&
-                !lmn.flock.lumins.Contains(otherLmn) &&
-                VisualContact(otherLmn.body.pos))
+                Lmn.flock?.lumins is not null &&
+                !Lmn.flock.lumins.Contains(otherLmn) &&
+                VisualContact(otherLmn.Body.pos))
             {
-                lmn.flock.AddLmn(otherLmn);
+                Lmn.flock.AddLmn(otherLmn);
                 tracker.ForgetCreature(otherLmn.abstractCreature);
             }
         }
-        else if (lmn.ConsiderPrey(ctr) && VisualContact(ctr.mainBodyChunk.pos))
+        else if (Lmn.ConsiderPrey(ctr) && VisualContact(ctr.mainBodyChunk.pos))
         {
             GlowState.timeSincePreyLastSeen = 0;
 
-            if (lmn.currentPrey is null || (ctr != lmn.currentPrey && lmn.WillingToDitchCurrentPrey(lmn.currentPrey)))
+            if (Lmn.currentPrey is null || (ctr != Lmn.currentPrey && Lmn.WillingToDitchCurrentPrey(Lmn.currentPrey)))
             {
-                lmn.currentPrey = ctr;
+                Lmn.currentPrey = ctr;
             }
         }
-        else if (lmn.ConsiderThreatening(ctr))
+        else if (Lmn.ConsiderThreatening(ctr))
         {
-            lmn.fearSource = ctr;
+            Lmn.fearSource = ctr;
         }
     }
     public virtual void ConsiderTrackedItem()
     {
-        if (lmn.safariControlled || itemTracker.items.Count < 1)
+        if (Lmn.safariControlled || itemTracker.items.Count < 1)
         {
             return;
         }
@@ -1209,7 +1150,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         for (int i = itemTracker.ItemCount - 1; i >= 0; i--)
         {
             if (itemTracker.items[i].representedItem is null ||
-                ObjRelationship(itemTracker.items[i].representedItem).type == ObjectRelationship.Type.Ignores)
+                ObjRelationship(itemTracker.items[i].representedItem).type == Ignores)
             {
                 itemTracker.items[i].Destroy();
             }
@@ -1226,37 +1167,37 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return;
         }
 
-        Vector2 itemPos = lmn.MainChunkOfObject(item).pos;
+        Vector2 itemPos = Lmn.MainChunkOfObject(item).pos;
 
-        if (lmn.ConsiderPrey(item) && VisualContact(itemPos))
+        if (Lmn.ConsiderPrey(item) && VisualContact(itemPos))
         {
             GlowState.timeSincePreyLastSeen = 0;
 
-            if (item != lmn.currentPrey && item.TotalMass < lmn.AttackMassLimit && lmn.WillingToDitchCurrentPrey(item))
+            if (item != Lmn.currentPrey && item.TotalMass < Lmn.AttackMassLimit && Lmn.WillingToDitchCurrentPrey(item))
             {
-                lmn.currentPrey = item;
+                Lmn.currentPrey = item;
             }
         }
-        else if (lmn.ConsiderUseful(item) && !lmn.GrabbingItem(item) && lmn.MoreAppealingThanCurrentItem(item) && VisualContact(itemPos))
+        else if (Lmn.ConsiderUseful(item) && !Lmn.GrabbingItem(item) && Lmn.MoreAppealingThanCurrentItem(item) && VisualContact(itemPos))
         {
-            lmn.useItem = item;
+            Lmn.useItem = item;
         }
-        else if (lmn.ConsiderThreatening(item))
+        else if (Lmn.ConsiderThreatening(item))
         {
-            lmn.fearSource = item;
+            Lmn.fearSource = item;
         }
     }
 
 
     new public virtual bool VisualContact(Vector2 pos, float bonus = 0)
     {
-        if (lmn.room is null || !lmn.room.VisualContact(lmnPos, pos))
+        if (Lmn.room is null || !Lmn.room.VisualContact(LmnPos, pos))
         {
             return false;
         }
         if (Role == Forager)
         {
-            bonus = lmn.Dominant ? 2 / 3f : 1 / 3f;
+            bonus = Lmn.Dominant ? 2 / 3f : 1 / 3f;
         }
         return base.VisualContact(pos, bonus);
     }
@@ -1295,36 +1236,24 @@ public struct ObjectRelationship
         this.intensity = intensity;
     }
 
-    public override bool Equals(object obj)
+    public override readonly bool Equals(object obj)
     {
-        if (obj is null || obj is not ObjectRelationship)
-        {
-            return false;
-        }
-        return Equals((ObjectRelationship)obj);
+        return obj is not null && obj is ObjectRelationship relationship && Equals(relationship);
     }
 
-    public bool Equals(ObjectRelationship relationship)
+    public readonly bool Equals(ObjectRelationship relationship)
     {
-        if (type == relationship.type)
-        {
-            return intensity == relationship.intensity;
-        }
-        return false;
+        return type == relationship.type && intensity == relationship.intensity;
     }
 
-    public override int GetHashCode()
+    public override readonly int GetHashCode()
     {
         return base.GetHashCode();
     }
 
     public static bool operator ==(ObjectRelationship a, ObjectRelationship b)
     {
-        if (a.type == b.type)
-        {
-            return a.intensity == b.intensity;
-        }
-        return false;
+        return a.type == b.type && a.intensity == b.intensity;
     }
 
     public static bool operator !=(ObjectRelationship a, ObjectRelationship b)
@@ -1332,12 +1261,12 @@ public struct ObjectRelationship
         return !(a == b);
     }
 
-    public ObjectRelationship Duplicate()
+    public readonly ObjectRelationship Duplicate()
     {
         return new ObjectRelationship(type, intensity);
     }
 
-    public override string ToString()
+    public override readonly string ToString()
     {
         return type.ToString() + " " + intensity;
     }

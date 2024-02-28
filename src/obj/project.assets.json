@@ -8,19 +8,19 @@
     ".NETFramework,Version=v4.8": []
   },
   "packageFolders": {
-    "C:\\Users\\brycc\\.nuget\\packages\\": {}
+    "C:\\Users\\Marmol Salazar\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\brycc\\Desktop\\The Incandescent\\TheIncandescent-master\\src\\Hailstorm.csproj",
+      "projectUniqueName": "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\Hailstorm.csproj",
       "projectName": "Hailstorm",
-      "projectPath": "C:\\Users\\brycc\\Desktop\\The Incandescent\\TheIncandescent-master\\src\\Hailstorm.csproj",
-      "packagesPath": "C:\\Users\\brycc\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\brycc\\Desktop\\The Incandescent\\TheIncandescent-master\\src\\obj\\",
+      "projectPath": "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\Hailstorm.csproj",
+      "packagesPath": "C:\\Users\\Marmol Salazar\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\brycc\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Marmol Salazar\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -45,7 +45,7 @@
     "frameworks": {
       "net48": {
         "targetAlias": "net48",
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.402\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

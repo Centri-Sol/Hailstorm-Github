@@ -1,21 +1,16 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using MoreSlugcats;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 public class IceChunk : Weapon
 {
-    public AbstractIceChunk absIce => abstractPhysicalObject as AbstractIceChunk;
-    public virtual bool FreezerCrystal => absIce.type == HailstormItems.FreezerCrystal;
-    public FrozenObject frozenObject => absIce.frozenObject;
+    public AbstractIceChunk AbsIce => abstractPhysicalObject as AbstractIceChunk;
+    public virtual bool FreezerCrystal => AbsIce.type == HailstormItems.FreezerCrystal;
+    public FrozenObject FrozenObject => AbsIce.frozenObject;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    public float Size => absIce.size;
+    public float Size => AbsIce.size;
     public float BaseMass => Mathf.Lerp(0.04f, 0.2f, Size/2f);
     public float BaseRadius => Mathf.Lerp(2, 12, Size/2f);
     public virtual float BaseDamage
@@ -75,8 +70,10 @@ public class IceChunk : Weapon
     public IceChunk(AbstractIceChunk absIce, World world): base(absIce, world)
     {
         bodyChunks = new BodyChunk[1];
-        bodyChunks[0] = new BodyChunk(this, 0, default, BaseRadius, BaseMass);
-        bodyChunks[0].loudness = 10f;
+        bodyChunks[0] = new BodyChunk(this, 0, default, BaseRadius, BaseMass)
+        {
+            loudness = 10f
+        };
 
         bodyChunkConnections = new BodyChunkConnection[0];
 
@@ -90,14 +87,14 @@ public class IceChunk : Weapon
         gravity = 0.9f;
         bounce = FreezerCrystal ? 2/3f : 1/3f;
 
-        if (frozenObject.obj is not null)
+        if (FrozenObject.obj is not null)
         {
-            bodyChunks[0].mass += frozenObject.TotalMass;
-            bodyChunks[0].rad += frozenObject.AddedRad;
-            waterFriction = Mathf.Lerp(frozenObject.waterFriction, waterFriction, 0.5f);
-            airFriction = Mathf.Lerp(frozenObject.airFriction, airFriction, 0.5f);
-            buoyancy = Mathf.Lerp(frozenObject.buoyancy, buoyancy, 0.5f);
-            bounce = Mathf.Lerp(frozenObject.bounce, bounce, 0.5f);
+            bodyChunks[0].mass += FrozenObject.TotalMass;
+            bodyChunks[0].rad += FrozenObject.AddedRad;
+            waterFriction = Mathf.Lerp(FrozenObject.waterFriction, waterFriction, 0.5f);
+            airFriction = Mathf.Lerp(FrozenObject.airFriction, airFriction, 0.5f);
+            buoyancy = Mathf.Lerp(FrozenObject.buoyancy, buoyancy, 0.5f);
+            bounce = Mathf.Lerp(FrozenObject.bounce, bounce, 0.5f);
         }
 
         exitThrownModeSpeed = -1;
@@ -133,8 +130,10 @@ public class IceChunk : Weapon
 
         if (light is null)
         {
-            light = new LightSource(firstChunk.pos, environmentalLight: false, color, this);
-            light.affectedByPaletteDarkness = 0.25f;
+            light = new LightSource(firstChunk.pos, environmentalLight: false, color, this)
+            {
+                affectedByPaletteDarkness = 0.25f
+            };
             room.AddObject(light);
         }
         else
@@ -167,11 +166,11 @@ public class IceChunk : Weapon
                 {
                     float heatFac = Mathf.InverseLerp(mscHeatSource.range, mscHeatSource.range * 0.2f, dist);
                     float heat = mscHeatSource.warmth * heatFac;
-                    if (absIce.freshness > 0)
+                    if (AbsIce.freshness > 0)
                     {
-                        heat *= Mathf.Pow(0.75f, absIce.freshness);
+                        heat *= Mathf.Pow(0.75f, AbsIce.freshness);
                     }
-                    absIce.size -= heat;
+                    AbsIce.size -= heat;
                 }
             }
             if (room.blizzardGraphics is not null)
@@ -186,14 +185,14 @@ public class IceChunk : Weapon
                     cold += room.blizzardGraphics.GetBlizzardPixel((int)(firstChunk.pos.x / 20f), (int)(firstChunk.pos.y / 20f)).g * (1 - Submersion);
                 }
                 cold *= Mathf.Lerp(0.0001f, 0.00002f, Size - 1f);
-                absIce.size += cold;
+                AbsIce.size += cold;
             }
             else
             {
-                absIce.size -= 0.00002f;
+                AbsIce.size -= 0.00002f;
             }
         }
-        absIce.size = Mathf.Clamp(Size, 0, 2);
+        AbsIce.size = Mathf.Clamp(Size, 0, 2);
         if (Size == 0)
         {
             Melt();
@@ -202,11 +201,11 @@ public class IceChunk : Weapon
         {
             firstChunk.mass = BaseMass;
             firstChunk.rad = BaseRadius;
-            if (frozenObject.obj is not null)
+            if (FrozenObject.obj is not null)
             {
-                firstChunk.mass += frozenObject.TotalMass;
+                firstChunk.mass += FrozenObject.TotalMass;
                 firstChunk.rad /= 2f;
-                firstChunk.rad += frozenObject.AddedRad;
+                firstChunk.rad += FrozenObject.AddedRad;
             }
         }
     }
@@ -386,17 +385,17 @@ public class IceChunk : Weapon
         room.AddObject(new FreezerMistVisionObscurer(firstChunk.pos, 100, 100, 0.8f, 40));
         room.PlaySound(SoundID.Coral_Circuit_Break, firstChunk.pos, 1.25f, 1.5f);
 
-        if (absIce.size - 1f > 0)
+        if (AbsIce.size - 1f > 0)
         {
-            absIce.size = Mathf.Max(0, absIce.size - 1);
+            AbsIce.size = Mathf.Max(0, AbsIce.size - 1);
             return;
         }
 
-        if (frozenObject.obj is not null)
+        if (FrozenObject.obj is not null)
         {
-            AbstractPhysicalObject absObj = frozenObject.obj;
-            absObj.world = absIce.world;
-            absObj.pos = absIce.pos;
+            AbstractPhysicalObject absObj = FrozenObject.obj;
+            absObj.world = AbsIce.world;
+            absObj.pos = AbsIce.pos;
             room.abstractRoom.AddEntity(absObj);
             absObj.RealizeInRoom();
 
@@ -408,10 +407,7 @@ public class IceChunk : Weapon
                 for (int g = grabbedBy.Count - 1; g >= 0; g--)
                 {
                     Creature.Grasp grasp = grabbedBy[g];
-                    if (grasp.grabber is not null)
-                    {
-                        grasp.grabber.Grab(obj, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
-                    }
+                    grasp.grabber?.Grab(obj, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
                 }
             }
         }
@@ -425,10 +421,10 @@ public class IceChunk : Weapon
             return;
         }
 
-        if (frozenObject.obj is not null)
+        if (FrozenObject.obj is not null)
         {
-            AbstractPhysicalObject absObj = frozenObject.obj;
-            absObj.pos = absIce.pos;
+            AbstractPhysicalObject absObj = FrozenObject.obj;
+            absObj.pos = AbsIce.pos;
             room.abstractRoom.AddEntity(absObj);
             absObj.RealizeInRoom();
 
@@ -440,10 +436,7 @@ public class IceChunk : Weapon
                 for (int g = grabbedBy.Count - 1; g >= 0; g--)
                 {
                     Creature.Grasp grasp = grabbedBy[g];
-                    if (grasp.grabber is not null)
-                    {
-                        grasp.grabber.Grab(obj, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
-                    }
+                    grasp.grabber?.Grab(obj, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
                 }
             }
         }
@@ -460,14 +453,14 @@ public class IceChunk : Weapon
     {
         string spriteName = FreezerCrystal ? "IceCrystal" : "IceChunk";
         sLeaser.sprites = new FSprite[3];
-        sLeaser.sprites[0] = new FSprite(spriteName + absIce.sprite + "A");
-        sLeaser.sprites[1] = new FSprite(spriteName + absIce.sprite + "B");
+        sLeaser.sprites[0] = new FSprite(spriteName + AbsIce.sprite + "A");
+        sLeaser.sprites[1] = new FSprite(spriteName + AbsIce.sprite + "B");
 
         IceSprites = sLeaser.sprites.Length - 1;
 
         TriangleMesh.Triangle[] trailMesh = new TriangleMesh.Triangle[1]
         {
-            new TriangleMesh.Triangle(0, 1, 2)
+            new(0, 1, 2)
         };
         sLeaser.sprites[sLeaser.sprites.Length - 1] = new TriangleMesh("Futile_White", trailMesh, customColor: true);
 
@@ -505,7 +498,7 @@ public class IceChunk : Weapon
             trail.MoveVertice(2, trailPos - camPos);
             for (int i = 0; i < trail.verticeColors.Length; i++)
             {
-                trail.verticeColors[i] = Color.Lerp(absIce.color2, Color.clear, Mathf.InverseLerp(0, trail.verticeColors.Length, i));
+                trail.verticeColors[i] = Color.Lerp(AbsIce.color2, Color.clear, Mathf.InverseLerp(0, trail.verticeColors.Length, i));
             }
         }
         else
@@ -529,19 +522,19 @@ public class IceChunk : Weapon
             }
             else
             {
-                sLeaser.sprites[0].color = absIce.color1;
-                sLeaser.sprites[1].color = absIce.color2;
+                sLeaser.sprites[0].color = AbsIce.color1;
+                sLeaser.sprites[1].color = AbsIce.color2;
             }
         }
         else
         {
-            if (sLeaser.sprites[0].color != absIce.color1)
+            if (sLeaser.sprites[0].color != AbsIce.color1)
             {
-                sLeaser.sprites[0].color = absIce.color1;
+                sLeaser.sprites[0].color = AbsIce.color1;
             }
-            if (sLeaser.sprites[1].color != absIce.color2)
+            if (sLeaser.sprites[1].color != AbsIce.color2)
             {
-                sLeaser.sprites[1].color = absIce.color2;
+                sLeaser.sprites[1].color = AbsIce.color2;
             }
         }
     }
@@ -555,15 +548,15 @@ public class IceChunk : Weapon
 
     public virtual void EmitSnowflake(Vector2 pos, Vector2 vel)
     {
-        room.AddObject(new HailstormSnowflake(pos, vel, absIce.color1, absIce.color2));
+        room.AddObject(new HailstormSnowflake(pos, vel, AbsIce.color1, AbsIce.color2));
     }
     public virtual void EmitIceflake(Vector2 pos, Vector2 vel)
     {
-        room.AddObject(new PuffBallSkin(pos, vel, absIce.color1, absIce.color2));
+        room.AddObject(new PuffBallSkin(pos, vel, AbsIce.color1, AbsIce.color2));
     }
     public virtual void EmitIceshard(Vector2 pos, Vector2 vel, float scale, float shardVolume, float shardPitch)
     {
-        Color shardColor = (Random.value < 1.3f) ? absIce.color2 : absIce.color1;
+        Color shardColor = (Random.value < 1.3f) ? AbsIce.color2 : AbsIce.color1;
         if (FreezerCrystal)
         {
             scale *= 1.5f;
@@ -573,7 +566,7 @@ public class IceChunk : Weapon
 
     public virtual void EmitFreezerMist(Vector2 pos, Vector2 vel, float size, InsectCoordinator insectCoordinator, bool hasGameplayImpact)
     {
-        room.AddObject(new FreezerMist(pos, vel, absIce.color1, absIce.color2, size, thrownBy?.abstractCreature, insectCoordinator, hasGameplayImpact));
+        room.AddObject(new FreezerMist(pos, vel, AbsIce.color1, AbsIce.color2, size, thrownBy?.abstractCreature, insectCoordinator, hasGameplayImpact));
     }
 
 }

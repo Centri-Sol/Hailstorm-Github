@@ -1,20 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-using MonoMod.RuntimeDetour;
-using static System.Reflection.BindingFlags;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Drawing;
-using System.Security.Policy;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //------------------------------------------------------------------------
 
@@ -387,11 +371,10 @@ internal class CentiHooks
                 hitChunk.index < cnt.CentiState.shells.Length &&
                 cnt.CentiState.shells[hitChunk.index];
 
-            IncanInfo incan;
 
             bool hitByIncan =
                 source.owner is Player self &&
-                IncanInfo.IncanData.TryGetValue(self, out incan) &&
+                IncanInfo.IncanData.TryGetValue(self, out IncanInfo incan) &&
                 incan.isIncan &&
                 damage < 1;
 

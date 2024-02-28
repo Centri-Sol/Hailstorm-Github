@@ -1,14 +1,4 @@
-﻿using Fisobs.Core;
-using Fisobs.Creatures;
-using Fisobs.Sandbox;
-using MoreSlugcats;
-using UnityEngine;
-using System.Collections.Generic;
-using DevInterface;
-using RWCustom;
-using System;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------

@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -113,19 +105,12 @@ public class ChillipedeGraphics : CentipedeGraphics
                             continue;
                         }
 
-                        switch (v)
+                        antennaMesh.verticeColors[v] = v switch
                         {
-                            case > 11:
-                                antennaMesh.verticeColors[v] = ChillState.topShellColor;
-                                break;
-                            case > 8:
-                                antennaMesh.verticeColors[v] = Color.Lerp(ChillState.topShellColor, ChillState.bottomShellColor, Mathf.InverseLerp(11, 9, v));
-                                break;
-                            default:
-                                antennaMesh.verticeColors[v] = Color.Lerp(ChillState.bottomShellColor, blackColor, Mathf.InverseLerp(8, 6, v));
-                                break;
-                        }
-
+                            > 11 => ChillState.topShellColor,
+                            > 8 => Color.Lerp(ChillState.topShellColor, ChillState.bottomShellColor, Mathf.InverseLerp(11, 9, v)),
+                            _ => Color.Lerp(ChillState.bottomShellColor, blackColor, Mathf.InverseLerp(8, 6, v)),
+                        };
                         if (v >= 5)
                         {
                             antennaMesh.verticeColors[v] = Color.Lerp(antennaMesh.verticeColors[v], blackColor, darkness / 2f);

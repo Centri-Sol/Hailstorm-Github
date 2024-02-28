@@ -1,9 +1,4 @@
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -14,9 +9,9 @@ public class ColorableZapFlash : CosmeticSprite
 
     private float life;
     private float lastLife;
-    private float lifeTime;
+    private readonly float lifeTime;
 
-    private float size;
+    private readonly float size;
 
     private Color color;
 
@@ -43,10 +38,7 @@ public class ColorableZapFlash : CosmeticSprite
         life -= 1f / lifeTime;
         if (lastLife < 0f)
         {
-            if (lightsource is not null)
-            {
-                lightsource.Destroy();
-            }
+            lightsource?.Destroy();
             Destroy();
         }
     }
@@ -55,13 +47,17 @@ public class ColorableZapFlash : CosmeticSprite
     {
         sLeaser.sprites = new FSprite[2];
 
-        sLeaser.sprites[0] = new FSprite("Futile_White");
-        sLeaser.sprites[0].color = color;
-        sLeaser.sprites[0].shader = rCam.room.game.rainWorld.Shaders["FlareBomb"];
+        sLeaser.sprites[0] = new FSprite("Futile_White")
+        {
+            color = color,
+            shader = rCam.room.game.rainWorld.Shaders["FlareBomb"]
+        };
 
-        sLeaser.sprites[1] = new FSprite("Futile_White");
-        sLeaser.sprites[1].color = Color.white;
-        sLeaser.sprites[1].shader = rCam.room.game.rainWorld.Shaders["FlatLight"];
+        sLeaser.sprites[1] = new FSprite("Futile_White")
+        {
+            color = Color.white,
+            shader = rCam.room.game.rainWorld.Shaders["FlatLight"]
+        };
 
         AddToContainer(sLeaser, rCam, rCam.ReturnFContainer("Foreground"));
     }

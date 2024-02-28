@@ -1,24 +1,4 @@
-﻿using MoreSlugcats;
-using RWCustom;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Runtime.CompilerServices;
-using System.Text.RegularExpressions;
-using UnityEngine;
-using Color = UnityEngine.Color;
-using Random = UnityEngine.Random;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using OpCodes = Mono.Cecil.Cil.OpCodes;
-using System.Reflection.Emit;
-using System.Runtime.ConstrainedExecution;
-using System.Net;
-using System;
-using System.Linq;
-using UnityEngine.Rendering;
-using System.Drawing.Text;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class OtherCreatureChanges
 {
@@ -101,7 +81,7 @@ internal class OtherCreatureChanges
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
     }
 
     //-----------------------------------------
@@ -114,7 +94,7 @@ internal class OtherCreatureChanges
         {
             CWT.CreatureData.Add(ctr, new CreatureInfo(ctr));
         }
-        
+
         if (absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.BigJelly && ctr.grasps is null)
         {
             ctr.grasps = new Creature.Grasp[ctr.Template.grasps];
@@ -140,8 +120,10 @@ internal class OtherCreatureChanges
             }
             Debug.Log(absCtr.creatureTemplate.name + " spawndata: " + spawnData);
         }
-        else Debug.Log("nope lol"); // this is for testing
-        
+        else
+        {
+            Debug.Log("nope lol"); // this is for testing
+        }
     }
 
     public static void AbsCtrCWT(On.AbstractCreature.orig_ctor orig, AbstractCreature absCtr, World world, CreatureTemplate temp, Creature realizedCtr, WorldCoordinate pos, EntityID ID)
@@ -152,7 +134,7 @@ internal class OtherCreatureChanges
         {
             CWT.AbsCtrData.Add(absCtr, new AbsCtrInfo(absCtr));
         }
-        
+
         if (absCtr is not null &&
             (IsIncanStory(absCtr.world?.game) || HailstormCreatures.Types.Contains(temp.type)))
         {
@@ -213,7 +195,10 @@ internal class OtherCreatureChanges
     public static void WinterSquitJumpHeight1(On.Player.orig_GraphicsModuleUpdated orig, Player self, bool actuallyViewed, bool eu)
     {
         orig(self, actuallyViewed, eu);
-        if (self is null) return;
+        if (self is null)
+        {
+            return;
+        }
 
         int squitCount = 0;
         for (int i = 0; i < 2; i++)
@@ -314,7 +299,7 @@ internal class OtherCreatureChanges
     {
         if (sqt is not null && sqt.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate && sqt.currentlyLiftingPlayer)
         {
-            sqt.stamina += (1f / (sqt.gender ? 160f : 150f));
+            sqt.stamina += 1f / (sqt.gender ? 160f : 150f);
             orig(sqt);
             sqt.flying = sqt.stamina > 1f / 3f;
         }
@@ -329,8 +314,8 @@ internal class OtherCreatureChanges
         if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate)
         {
             bool whiteCicada = sg.cicada.gender;
-            
-            Color val = Color.Lerp(HSLColor.Lerp(sg.iVars.color, new HSLColor(sg.iVars.color.hue, 0, 0.4f), 0.9f).rgb, (whiteCicada ? palette.fogColor : palette.blackColor), 0.2f);
+
+            Color val = Color.Lerp(HSLColor.Lerp(sg.iVars.color, new HSLColor(sg.iVars.color.hue, 0, 0.4f), 0.9f).rgb, whiteCicada ? palette.fogColor : palette.blackColor, 0.2f);
 
             sg.shieldColor =
                     Color.Lerp(val, new HSLColor(sg.iVars.color.hue, 0.875f, 0.5f).rgb, 0.85f);
@@ -341,9 +326,9 @@ internal class OtherCreatureChanges
             sLeaser.sprites[sg.ShieldSprite].color = sg.shieldColor;
             for (int i = 0; i < 2; i++)
             {
-                for (int j = 0; j < 2; j++)
+                for (int j = 2 - 1; j >= 0; j--)
                 {
-                    sLeaser.sprites[sg.WingSprite(i, j)].color = Color.Lerp(Color.Lerp(val, sg.shieldColor, 0.3f), (whiteCicada ? Color.white : palette.blackColor), 0.3f);
+                    sLeaser.sprites[sg.WingSprite(i, j)].color = Color.Lerp(Color.Lerp(val, sg.shieldColor, 0.3f), whiteCicada ? Color.white : palette.blackColor, 0.3f);
                     sLeaser.sprites[sg.TentacleSprite(i, j)].color = val;
                 }
             }
@@ -368,25 +353,31 @@ internal class OtherCreatureChanges
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
-                if (sLeaser.sprites[s] is TriangleMesh || s == sg.HeadSprite || s == sg.ShieldSprite) continue;
-                
-                if (s == sg.EyesASprite || s == sg.EyesBSprite)
+                if (sLeaser.sprites[s] is TriangleMesh || s == sg.HeadSprite || s == sg.ShieldSprite)
                 {
-                    sLeaser.sprites[s].scale *= 1.25f;
+                    continue;
                 }
-                else if (s == sg.BodySprite)
+
+                if (s != sg.EyesASprite && s != sg.EyesBSprite)
                 {
-                    sLeaser.sprites[s].scale = 0.7f;
-                    sLeaser.sprites[s].scaleY *= 1.15f;
-                    sLeaser.sprites[s].scaleX *= 0.67f;
-                }
-                else if (s < 10 || s > 13)
-                {
-                    sLeaser.sprites[s].scale *= 0.6f;
+                    if (s == sg.BodySprite)
+                    {
+                        sLeaser.sprites[s].scale = 0.7f;
+                        sLeaser.sprites[s].scaleY *= 1.15f;
+                        sLeaser.sprites[s].scaleX *= 0.67f;
+                    }
+                    else if (s is < 10 or > 13)
+                    {
+                        sLeaser.sprites[s].scale *= 0.6f;
+                    }
+                    else
+                    {
+                        sLeaser.sprites[s].scale *= 1.2f;
+                    }
                 }
                 else
                 {
-                    sLeaser.sprites[s].scale *= 1.2f;
+                    sLeaser.sprites[s].scale *= 1.25f;
                 }
 
             }
@@ -399,7 +390,8 @@ internal class OtherCreatureChanges
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
-                if (sLeaser.sprites[s] is TriangleMesh mesh)
+                bool v = sLeaser.sprites[s] is TriangleMesh;
+                if (v)
                 {
                     continue;
                 }
@@ -480,7 +472,7 @@ internal class OtherCreatureChanges
                 {
                     for (int v = 1; v < mesh.vertices.Length; v++)
                     {
-                        Vector2 distance = mesh.vertices[v] - Vector2.Lerp(mesh.vertices[0], mesh.vertices[mesh.vertices.Length/2], 0.5f);
+                        Vector2 distance = mesh.vertices[v] - Vector2.Lerp(mesh.vertices[0], mesh.vertices[mesh.vertices.Length / 2], 0.5f);
                         mesh.vertices[v] += distance * 0.33f;
                     }
                 }
@@ -498,7 +490,7 @@ internal class OtherCreatureChanges
         orig(worm, eu);
         if (IsIncanStory(worm?.room?.game) && !worm.dead && worm.mainBodyChunk.submersion > 0.5f)
         {
-            worm.lungs += Mathf.Min(worm.lungs + (0.85f/160f), 1f);
+            worm.lungs += Mathf.Min(worm.lungs + (0.85f / 160f), 1f);
         }
     }
 
@@ -552,13 +544,16 @@ internal class OtherCreatureChanges
                             smallCreatures++;
                         }
                     }
-                    for (bool addCtr = true; aI.functionTimer != 1; addCtr = Random.value < 1.75f - (aI.ctrList.Count - smallCreatures) * 0.75f)
+                    for (bool addCtr = true; aI.functionTimer != 1; addCtr = Random.value < 1.75f - ((aI.ctrList.Count - smallCreatures) * 0.75f))
                     {
                         if (addCtr)
                         {
                             aI.ctrList.AddRange(StowawayIndigestion(stwAwy));
                         }
-                        else aI.functionTimer = 1;
+                        else
+                        {
+                            aI.functionTimer = 1;
+                        }
                     }
                     if (aI.ctrList.Count > 0 && aI.ctrList[aI.ctrList.Count - 1].creatureTemplate.type is not null)
                     {
@@ -574,7 +569,10 @@ internal class OtherCreatureChanges
                             {
                                 foodAtOnce++;
                             }
-                            else break;
+                            else
+                            {
+                                break;
+                            }
                         }
 
                         for (int j = foodAtOnce; j > 0; j--)
@@ -758,7 +756,7 @@ internal class OtherCreatureChanges
     public static bool StoreCreatureInsteadOfDestroy(StowawayBug stwAwy)
     {
         Vector2 pos = stwAwy.firstChunk.pos;
-        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value == true) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out AbsCtrInfo aI) && aI.ctrList is not null)
+        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out AbsCtrInfo aI) && aI.ctrList is not null)
         {
             for (int i = stwAwy.eatObjects.Count - 1; i >= 0; i--)
             {
@@ -867,14 +865,16 @@ internal class OtherCreatureChanges
             }
 
             if (strength >= (StaticWorld.GetCreatureTemplate(regionSpawns[ctrNum]).ancestor == StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate) ? 6 : 8) &&
-                Random.value < 0.2f + strength / 30f)
+                Random.value < 0.2f + (strength / 30f))
             {
                 ctrNum = (ctrNum + 1 >= regionSpawns.Count) ? 0 : ctrNum + 1;
             }
 
             ctrType = regionSpawns[ctrNum];
         }
-        else switch (Random.value)
+        else
+        {
+            switch (Random.value)
             {
                 case < 0.100f:
                     ctrType =
@@ -918,6 +918,8 @@ internal class OtherCreatureChanges
                         case 3:
                             ctrType = MoreSlugcatsEnums.CreatureTemplateType.MotherSpider;
                             break;
+                        default:
+                            break;
                     }
                     break;
                 case < 0.725f:
@@ -936,53 +938,30 @@ internal class OtherCreatureChanges
                     ctrType = CreatureTemplate.Type.DropBug;
                     break;
                 case < 1f:
-                    switch (Random.Range(0, 10))
+                    ctrType = Random.Range(0, 10) switch
                     {
-                        case 0:
-                            ctrType =
-                                Random.value < 0.75f ? CreatureTemplate.Type.PinkLizard :
-                                Random.value < 0.75f ? MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard :
-                                CreatureTemplate.Type.RedLizard;
-                            break;
-                        case 1:
-                            ctrType = CreatureTemplate.Type.GreenLizard;
-                            break;
-                        case 2:
-                            ctrType =
-                                Random.value < 0.75? CreatureTemplate.Type.BlueLizard :
-                                Random.value < 0.75? HailstormCreatures.IcyBlue :
-                                HailstormCreatures.Freezer;
-                            break;
-                        case 3:
-                            ctrType = CreatureTemplate.Type.Salamander;
-                            break;
-                        case 4:
-                            ctrType = MoreSlugcatsEnums.CreatureTemplateType.EelLizard;
-                            break;
-                        case 5:
-                            ctrType = CreatureTemplate.Type.WhiteLizard;
-                            break;
-                        case 6:
-                            ctrType = CreatureTemplate.Type.YellowLizard;
-                            break;
-                        case 7:
-                            ctrType = CreatureTemplate.Type.BlackLizard;
-                            break;
-                        case 8:
-                            ctrType = MoreSlugcatsEnums.CreatureTemplateType.SpitLizard;
-                            break;
-                        case 9:
-                            ctrType = CreatureTemplate.Type.CyanLizard;
-                            break;
-                        default:
-                            ctrType = null;
-                            break;
-                    }
+                        0 => Random.value < 0.75f ? CreatureTemplate.Type.PinkLizard :
+                                                        Random.value < 0.75f ? MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard :
+                                                        CreatureTemplate.Type.RedLizard,
+                        1 => CreatureTemplate.Type.GreenLizard,
+                        2 => Random.value < 0.75 ? CreatureTemplate.Type.BlueLizard :
+                                                        Random.value < 0.75 ? HailstormCreatures.IcyBlue :
+                                                        HailstormCreatures.Freezer,
+                        3 => CreatureTemplate.Type.Salamander,
+                        4 => MoreSlugcatsEnums.CreatureTemplateType.EelLizard,
+                        5 => CreatureTemplate.Type.WhiteLizard,
+                        6 => CreatureTemplate.Type.YellowLizard,
+                        7 => CreatureTemplate.Type.BlackLizard,
+                        8 => MoreSlugcatsEnums.CreatureTemplateType.SpitLizard,
+                        9 => CreatureTemplate.Type.CyanLizard,
+                        _ => null,
+                    };
                     break;
                 default:
                     ctrType = null;
                     break;
             }
+        }
 
         if (IsIncanStory(stwAwy.room.game) && stwAwy.room.abstractRoom.name == "GW_A08")
         {
@@ -1110,26 +1089,18 @@ internal class OtherCreatureChanges
                     Custom.HSL2RGB(Random.Range(-40/360f, 40/360f), 1, Custom.ClampedRandomVariation(0.6f, 0.15f, 0.2f)); // Default colors
             Color col2 =
                     pmg.pole.abstractCreature.Winterized ?
-                    Custom.HSL2RGB(Random.Range(190/360f, 250/360f), 1, Custom.ClampedRandomVariation(0.9f, 0.10f, 0.4f)) : // Winter colors
+                    Custom.HSL2RGB(Random.Range(190 / 360f, 250 / 360f), 1, Custom.ClampedRandomVariation(0.9f, 0.10f, 0.4f)) : // Winter colors
                     pmg.pole.abstractCreature.world.region is not null &&
                     pmg.pole.abstractCreature.world.region.name == "OE" ?
                     Random.ColorHSV(40/360f, 140/360f, 1, 1, 0.5f, 0.6f) : // Outer Expanse colors
                     Custom.HSL2RGB(Random.Range(-40/360f, 40/360f), 1, Custom.ClampedRandomVariation(0.6f, 0.15f, 0.2f)); // Default colors
 
-            float gradientSkew;
-            switch (Random.Range(0, 3))
+            float gradientSkew = Random.Range(0, 3) switch
             {
-                case 0:
-                    gradientSkew = 0.4f;
-                    break;
-                case 2:
-                    gradientSkew = 1.6f;
-                    break;
-                default:
-                    gradientSkew = 1f;
-                    break;
-            }
-
+                0 => 0.4f,
+                2 => 1.6f,
+                _ => 1f,
+            };
             Random.state = state;
 
             Color val = Color.Lerp(pmg.blackColor, pmg.mimicColor, Mathf.Lerp(pmg.lastLookLikeAPole, pmg.lookLikeAPole, timeStacker));
@@ -1139,12 +1110,15 @@ internal class OtherCreatureChanges
             {
                 for (int j = 0; j < 2; j++)
                 {
-                    if (i >= pmg.decoratedLeafPairs) return;
+                    if (i >= pmg.decoratedLeafPairs)
+                    {
+                        return;
+                    }
 
                     Color leafColor = Color.Lerp(col1, col2, Mathf.Pow(Mathf.InverseLerp(0, pmg.leafPairs/3f, i), gradientSkew));
 
                     sLeaser.sprites[pmg.LeafDecorationSprite(i, j)].color =
-                        Color.Lerp(leafColor, val, Mathf.Pow(Mathf.InverseLerp((pmg.decoratedLeafPairs / 2f), pmg.decoratedLeafPairs, i), 0.6f));
+                        Color.Lerp(leafColor, val, Mathf.Pow(Mathf.InverseLerp(pmg.decoratedLeafPairs / 2f, pmg.decoratedLeafPairs, i), 0.6f));
 
                     if (pmg.pole.abstractCreature.Winterized)
                     {
@@ -1202,20 +1176,12 @@ internal class OtherCreatureChanges
                 Random.ColorHSV(30/360f, 170/360f, 1, 1, 0.4f, 0.7f) : // Outer Expanse colors
                 Random.ColorHSV(-60/360f, 20/360f, 1, 1, 0.45f, 0.65f); // Default colors
 
-            float gradientSkew;
-            switch (Random.Range(0, 3))
+            float gradientSkew = Random.Range(0, 3) switch
             {
-                case 0:
-                    gradientSkew = 0.4f;
-                    break;
-                case 2:
-                    gradientSkew = 1.6f;
-                    break;
-                default:
-                    gradientSkew = 1f;
-                    break;
-            }
-
+                0 => 0.4f,
+                2 => 1.6f,
+                _ => 1f,
+            };
             for (int i = 0; i < mkg.danglers.Length; i++)
             {
                 Color finalKelpColors = Color.Lerp(col1, col2, Mathf.Pow(mkg.danglerProps[i, 0], gradientSkew));
@@ -1267,7 +1233,7 @@ internal class OtherCreatureChanges
             vI.impactCooldown = 40;
             victim.Violence(bigJelly.bodyChunks[myChunk], bigJelly.bodyChunks[myChunk].vel, victim.bodyChunks[otherChunk], null, Creature.DamageType.Blunt, 2f, Random.Range(60, 81));
             bigJelly.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, bigJelly.bodyChunks[myChunk], false, 1.4f, 1.1f);
-            float volume = (victim.State is HealthState HS && HS.ClampedHealth == 0 || victim.State.dead) ? 1.66f : 1f;
+            float volume = ((victim.State is HealthState HS && HS.ClampedHealth == 0) || victim.State.dead) ? 1.66f : 1f;
             bigJelly.room.PlaySound(SoundID.Spear_Stick_In_Creature, bigJelly.bodyChunks[myChunk], false, volume, Random.Range(0.6f, 0.8f));
         }
     }
@@ -1291,8 +1257,10 @@ internal class OtherCreatureChanges
             int num = Random.Range(8, 16);
             for (int j = 0; j < num; j++)
             {
-                AbstractConsumable jellyWad = new AbstractConsumable(bigJelly.room.world, AbstractPhysicalObject.AbstractObjectType.SlimeMold, null, bigJelly.abstractCreature.pos, bigJelly.room.game.GetNewID(), -1, -1, null);
-                jellyWad.destroyOnAbstraction = true;
+                AbstractConsumable jellyWad = new(bigJelly.room.world, AbstractPhysicalObject.AbstractObjectType.SlimeMold, null, bigJelly.abstractCreature.pos, bigJelly.room.game.GetNewID(), -1, -1, null)
+                {
+                    destroyOnAbstraction = true
+                };
                 bigJelly.room.abstractRoom.AddEntity(jellyWad);
                 jellyWad.RealizeInRoom();
                 (jellyWad.realizedObject as SlimeMold).JellyfishMode = true;
@@ -1312,7 +1280,7 @@ internal class OtherCreatureChanges
                 AbstractConsumable slimeMold = new AbstractSlimeMold(bigJelly.room.world, AbstractPhysicalObject.AbstractObjectType.SlimeMold, null, bigJelly.abstractCreature.pos, bigJelly.room.game.GetNewID(), -1, -1, null, big);
                 bigJelly.room.abstractRoom.AddEntity(slimeMold);
                 slimeMold.RealizeInRoom();
-                slimeMold.realizedObject.firstChunk.pos = bigJelly.bodyChunks[bigJelly.CoreChunk].pos + Custom.RNV() * Random.value * 15f;
+                slimeMold.realizedObject.firstChunk.pos = bigJelly.bodyChunks[bigJelly.CoreChunk].pos + (Custom.RNV() * Random.value * 15f);
                 slimeMold.realizedObject.firstChunk.vel *= 0f;
             }
 
@@ -1325,7 +1293,7 @@ internal class OtherCreatureChanges
                 if (ModManager.MSC && bigJelly.room is not null && bigJelly.room.world.game.IsArenaSession && bigJelly.room.world.game.GetArenaGameSession.chMeta is not null && (bigJelly.room.world.game.GetArenaGameSession.chMeta.secondaryWinMethod == ChallengeInformation.ChallengeMeta.WinCondition.PROTECT || bigJelly.room.world.game.GetArenaGameSession.chMeta.winMethod == ChallengeInformation.ChallengeMeta.WinCondition.PROTECT))
                 {
                     bool flag = false;
-                    if (bigJelly.room.world.game.GetArenaGameSession.chMeta.protectCreature is null || bigJelly.room.world.game.GetArenaGameSession.chMeta.protectCreature == "")
+                    if (bigJelly.room.world.game.GetArenaGameSession.chMeta.protectCreature is null or "")
                     {
                         flag = true;
                     }
@@ -1352,10 +1320,7 @@ internal class OtherCreatureChanges
                 if (bigJelly?.killTag?.realizedCreature is not null)
                 {
                     Room realizedRoom = bigJelly.room;
-                    if (realizedRoom is null)
-                    {
-                        realizedRoom = bigJelly.abstractCreature.Room.realizedRoom;
-                    }
+                    realizedRoom ??= bigJelly.abstractCreature.Room.realizedRoom;
                     if (realizedRoom?.socialEventRecognizer is not null)
                     {
                         realizedRoom.socialEventRecognizer.Killing(bigJelly.killTag.realizedCreature, bigJelly);
@@ -1412,27 +1377,24 @@ internal class OtherCreatureChanges
 
             HSLColor accColor =
                 absYeek.Winterized?
-                new(Random.Range(160/360f, 280/360f), (Random.value < 0.1? 0 : Random.Range(0.75f, 1)), (Random.value < 0.1f ? Random.Range(0.45f, 0.55f) : Random.Range(0.55f, 0.70f))) : // Winter colors
+                new(Random.Range(160 / 360f, 280 / 360f), Random.value < 0.1 ? 0 : Random.Range(0.75f, 1), Random.value < 0.1f ? Random.Range(0.45f, 0.55f) : Random.Range(0.55f, 0.70f)) : // Winter colors
                 absYeek.world.region is not null &&
                 absYeek.world.region.name == "OE" ?
-                new(Custom.WrappedRandomVariation(30 / 360f, 80 / 360f, 0.5f), Random.Range(0.8f, 1), Custom.WrappedRandomVariation((Random.value < 0.15? 0.55f : 0.7f), 0.1f, 0.5f)) : // Outer Expanse colors
+                new(Custom.WrappedRandomVariation(30 / 360f, 80 / 360f, 0.5f), Random.Range(0.8f, 1), Custom.WrappedRandomVariation(Random.value < 0.15 ? 0.55f : 0.7f, 0.1f, 0.5f)) : // Outer Expanse colors
                 new(Random.value, Random.Range(0.85f, 1), Custom.WrappedRandomVariation(0.66f, 0.11f, 0.1f)); // Default colors
 
             yGrph.tailHighlightColor = Color.HSVToRGB(accColor.hue, accColor.saturation, accColor.lightness);
             yGrph.featherColor = Color.HSVToRGB(Custom.ClampedRandomVariation(accColor.hue, 20/360f, 0.2f), accColor.saturation + 0.075f, accColor.lightness - 0.15f);
-            
+        
             if (Random.value < 0.01f)
             {
-                Color c = yGrph.tailHighlightColor;
-                yGrph.tailHighlightColor = yGrph.featherColor;
-                yGrph.featherColor = c;
-
+                (yGrph.featherColor, yGrph.tailHighlightColor) = (yGrph.tailHighlightColor, yGrph.featherColor);
             }
 
-            yGrph.furColor = Color.Lerp(yGrph.featherColor, Color.HSVToRGB(accColor.hue, accColor.saturation - 0.1f, accColor.lightness - 0.3f), 0.33f + absYeek.personality.energy * 0.25f);
+            yGrph.furColor = Color.Lerp(yGrph.featherColor, Color.HSVToRGB(accColor.hue, accColor.saturation - 0.1f, accColor.lightness - 0.3f), 0.33f + (absYeek.personality.energy * 0.25f));
 
             Color val =
-                Color.Lerp(yGrph.featherColor, new Color(0.33f, 0.33f, 0.33f), 0.33f + absYeek.personality.aggression * 0.25f);
+                Color.Lerp(yGrph.featherColor, new Color(0.33f, 0.33f, 0.33f), 0.33f + (absYeek.personality.aggression * 0.25f));
             val =
                 (absYeek.personality.nervous <= absYeek.personality.bravery) ?
                 Color.Lerp(val, Color.black, absYeek.personality.bravery * 0.5f) :
@@ -1442,11 +1404,11 @@ internal class OtherCreatureChanges
             yGrph.furColor = Color.Lerp(yGrph.furColor, Color.white, Random.Range(0.6f, 0.75f) + (absYeek.Winterized? 0.15f : 0));
             yGrph.HeadfurColor = Color.Lerp(yGrph.furColor + new Color(0.1f, 0.1f, 0.1f), yGrph.furColor + new Color(0.3f, 0.15f, 0.15f), absYeek.personality.bravery);
             yGrph.HeadfurColor = Color.Lerp(yGrph.furColor, yGrph.HeadfurColor, absYeek.personality.dominance);
-            yGrph.beakColor = Color.Lerp(yGrph.furColor, new Color(0.81f, 0.53f, 0.34f), 0.6f + absYeek.personality.dominance / 3f);
+            yGrph.beakColor = Color.Lerp(yGrph.furColor, new Color(0.81f, 0.53f, 0.34f), 0.6f + (absYeek.personality.dominance / 3f));
             yGrph.featherColor = yGrph.tailHighlightColor;
             yGrph.trueEyeColor = yGrph.featherColor;
             yGrph.plumageGraphic = 2;
-            while (yGrph.plumageGraphic == 2 || yGrph.plumageGraphic == 1)
+            while (yGrph.plumageGraphic is 2 or 1)
             {
                 yGrph.plumageGraphic = Random.Range(0, 7);
             }
@@ -1550,13 +1512,10 @@ internal class OtherCreatureChanges
 
     public static bool CreatureEdibility(On.Player.orig_EatMeatOmnivoreGreenList orig, Player self, Creature ctr)
     {
-        if (ctr is Cyanwing ||
+        return ctr is Cyanwing ||
             ctr is Chillipede ||
-            ctr.Template.type == HailstormCreatures.PeachSpider)
-        {
-            return true;
-        }
-        return orig(self, ctr);
+            ctr.Template.type == HailstormCreatures.PeachSpider
+|| orig(self, ctr);
     }
 
     public static void HypothermiaSafeAreas(On.AbstractCreature.orig_Update orig, AbstractCreature absCtr, int time)
@@ -1571,14 +1530,9 @@ internal class OtherCreatureChanges
             absCtr.world.region.name != "CL" &&
             absCtr.world.region.name != "SB")
         {
-            if (absCtr.InDen || absCtr.HypothermiaImmune)
-            {
-                absCtr.Hypothermia = Mathf.Lerp(absCtr.Hypothermia, 0f, 0.04f);
-            }
-            else
-            {
-                absCtr.Hypothermia = Mathf.Lerp(absCtr.Hypothermia, 3f, Mathf.InverseLerp(0f, -600f, absCtr.world.rainCycle.AmountLeft));
-            }
+            absCtr.Hypothermia = absCtr.InDen || absCtr.HypothermiaImmune
+                ? Mathf.Lerp(absCtr.Hypothermia, 0f, 0.04f)
+                : Mathf.Lerp(absCtr.Hypothermia, 3f, Mathf.InverseLerp(0f, -600f, absCtr.world.rainCycle.AmountLeft));
         }
 
     }
@@ -1594,7 +1548,7 @@ internal class OtherCreatureChanges
         {
             cI.impactCooldown--; // Used for the IncanCollision method in IncanFeatures.
         }
-        
+
         if (cI.chillTimer > 0)
         {
             ctr.Hypothermia += 0.05f;
@@ -1735,13 +1689,11 @@ internal class OtherCreatureChanges
                 otherHypo *= 1.25f;
                 selfHypo = 0;
             }
-            else if (other.Template.BlizzardAdapted)
-            {
-                selfHypo = Mathf.Lerp(self.Hypothermia, 0, 0.001f) - self.Hypothermia;
-            }
             else
             {
-                selfHypo = Mathf.Lerp(self.Hypothermia, other.Hypothermia, 0.001f) - self.Hypothermia;
+                selfHypo = other.Template.BlizzardAdapted
+                    ? Mathf.Lerp(self.Hypothermia, 0, 0.001f) - self.Hypothermia
+                    : Mathf.Lerp(self.Hypothermia, other.Hypothermia, 0.001f) - self.Hypothermia;
             }
 
             if (self.room?.blizzardGraphics is not null)
@@ -1863,23 +1815,16 @@ internal class OtherCreatureChanges
 
     public static Player.ObjectGrabability GrababilityChanges(On.Player.orig_Grabability orig, Player self, PhysicalObject obj)
     {
-        if (IsIncanStory(self?.abstractCreature.world?.game) && obj is Cicada ccd && ccd.abstractCreature.Winterized && !ccd.Charging && (ccd.cantPickUpCounter == 0 || ccd.cantPickUpPlayer != self))
-        {
-            return Player.ObjectGrabability.OneHand;
-        }
-        if (obj is Luminescipede lmn && (lmn.dead || (SlugcatStats.SlugcatCanMaul(self.SlugCatClass) && self.dontGrabStuff < 1 && obj != self && !lmn.Consious)))
-        {
-            return Player.ObjectGrabability.OneHand;
-        }
-        return orig(self, obj);
+        return IsIncanStory(self?.abstractCreature.world?.game) && obj is Cicada ccd && ccd.abstractCreature.Winterized && !ccd.Charging && (ccd.cantPickUpCounter == 0 || ccd.cantPickUpPlayer != self)
+            ? Player.ObjectGrabability.OneHand
+            : obj is Luminescipede lmn && (lmn.dead || (SlugcatStats.SlugcatCanMaul(self.SlugCatClass) && self.dontGrabStuff < 1 && obj != self && !lmn.Consious))
+            ? Player.ObjectGrabability.OneHand
+            : orig(self, obj);
     }
     public static bool LuminDenUpdate(On.AbstractCreature.orig_WantToStayInDenUntilEndOfCycle orig, AbstractCreature absCtr)
     {
-        if (absCtr is not null && absCtr.creatureTemplate.type == HailstormCreatures.Luminescipede && !Luminescipede.WantToHideInDen(absCtr))
-        {
-            return false;
-        }
-        return orig(absCtr);
+        return (absCtr is null || absCtr.creatureTemplate.type != HailstormCreatures.Luminescipede || Luminescipede.WantToHideInDen(absCtr))
+&& orig(absCtr);
     }
     public static void ActivateCustomFlags(On.AbstractCreature.orig_setCustomFlags orig, AbstractCreature absCtr)
     {
@@ -1920,8 +1865,12 @@ internal class OtherCreatureChanges
                 c1.EmitDelegate((bool flag, AbstractCreature absCtr) => flag && !(IsIncanStory(absCtr?.world.game) && Weather.FogPrecycle));
                                                                                 // Prevents normal Precycle creatures from spawning if a special precycle type becomes active in the Incandescent's campaign.
             }
+            
+            
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook to IL.AbstractCreature.InDenUpdate ain't workin'.");
+            }
         };
 
         IL.AbstractCreature.WantToStayInDenUntilEndOfCycle += IL =>
@@ -1937,10 +1886,12 @@ internal class OtherCreatureChanges
                 c1.Emit(OpCodes.Ldarg_0);
                 c1.EmitDelegate((AbstractCreature absCtr) => !IsIncanStory(absCtr?.world?.game) || !CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) || !aI.LateBlizzardRoamer);
                 c1.Emit(OpCodes.Brfalse, label);
-                                                                                // Allows late blizzard roamers to stay outside of their dens in the Incandescent's campaign.
+                // Allows late blizzard roamers to stay outside of their dens in the Incandescent's campaign.
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #1 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+            }
 
             ILCursor c2 = new(IL);
             if (c2.TryGotoNext(
@@ -1958,7 +1909,9 @@ internal class OtherCreatureChanges
                 // Cyanwings will not go back to their dens if they're low on health.
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #2 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+            }
 
             ILCursor c3 = new(IL);
             if (c3.TryGotoNext(
@@ -1970,7 +1923,9 @@ internal class OtherCreatureChanges
                 c3.EmitDelegate((bool flag, AbstractCreature absCtr) => flag || (IsIncanStory(absCtr?.world.game) && CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) && aI.FogRoamer));
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #3 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+            }
 
             ILCursor c4 = new(IL);
             if (c4.TryGotoNext(
@@ -1988,7 +1943,9 @@ internal class OtherCreatureChanges
                 //c4.Emit(OpCodes.Brfalse, label);
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #4 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+            }
 
             ILCursor c5 = new(IL);
             if (c5.TryGotoNext(
@@ -2002,8 +1959,9 @@ internal class OtherCreatureChanges
                 // Keeps creatures inside their dens for the cycle if they're not a fan of the current conditions.
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #5 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
-
+            }
         };
 
         IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle += IL =>
@@ -2023,7 +1981,9 @@ internal class OtherCreatureChanges
                 c1.Emit(OpCodes.Brtrue, label);
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #1 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+            }
 
             ILCursor c2 = new(IL);
             if (c2.TryGotoNext(
@@ -2041,7 +2001,9 @@ internal class OtherCreatureChanges
                 c2.Emit(OpCodes.Brfalse, label);
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #2 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+            }
 
             ILCursor c3 = new(IL);
             if (c3.TryGotoNext(
@@ -2052,11 +2014,13 @@ internal class OtherCreatureChanges
                 x => x.MatchCallvirt<CreatureState>("get_dead")))
             {
                 c3.Emit(OpCodes.Ldarg_0);
-                c3.EmitDelegate((bool flag, AbstractCreatureAI absCtrAI) => flag || (IsIncanStory(absCtrAI?.parent?.world?.game) && AdverseToCurrentCycle(absCtrAI.parent)));
+                _ = c3.EmitDelegate((bool flag, AbstractCreatureAI absCtrAI) => flag || (IsIncanStory(absCtrAI?.parent?.world?.game) && AdverseToCurrentCycle(absCtrAI.parent)));
                 // Keeps creatures inside their dens for the cycle if they're not a fan of the current conditions.
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] Hook #3 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+            }
         };
     }
 
@@ -2072,17 +2036,43 @@ internal class OtherCreatureChanges
 
         if (absCtr.spawnData is not null && absCtr.spawnData[0] == '{')
         {
-            if (aI.HailstormAvoider) aI.HailstormAvoider = false;
-            if (aI.FogRoamer) aI.FogRoamer = false;
-            if (aI.FogAvoider) aI.FogAvoider = false;
-            if (aI.ErraticWindRoamer) aI.ErraticWindRoamer = false;
-            if (aI.ErraticWindAvoider) aI.ErraticWindAvoider = false;
-            if (aI.LateBlizzardRoamer) aI.LateBlizzardRoamer = false;
+            if (aI.HailstormAvoider)
+            {
+                aI.HailstormAvoider = false;
+            }
+
+            if (aI.FogRoamer)
+            {
+                aI.FogRoamer = false;
+            }
+
+            if (aI.FogAvoider)
+            {
+                aI.FogAvoider = false;
+            }
+
+            if (aI.ErraticWindRoamer)
+            {
+                aI.ErraticWindRoamer = false;
+            }
+
+            if (aI.ErraticWindAvoider)
+            {
+                aI.ErraticWindAvoider = false;
+            }
+
+            if (aI.LateBlizzardRoamer)
+            {
+                aI.LateBlizzardRoamer = false;
+            }
 
             string[] array = absCtr.spawnData.Substring(1, absCtr.spawnData.Length - 2).Split(new char[1] { '-' });
             for (int i = 0; i < array.Length; i++)
             {
-                if (array[i].Length < 1) continue;
+                if (array[i].Length < 1)
+                {
+                    continue;
+                }
 
                 switch (array[i].Split(new char[1] { ':' })[0])
                 {
@@ -2132,6 +2122,8 @@ internal class OtherCreatureChanges
                     case "Seed":
                         absCtr.ID.setAltSeed(int.Parse(array[i].Split(new char[1] { ':' })[1], NumberStyles.Any, CultureInfo.InvariantCulture));
                         absCtr.personality = new AbstractCreature.Personality(absCtr.ID);
+                        break;
+                    default:
                         break;
                 }
             }
@@ -2302,11 +2294,7 @@ internal class OtherCreatureChanges
 
     public static bool AdverseToCurrentCycle(AbstractCreature absCtr)
     {
-        if (CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI))
-        {
-            return (Weather.ErraticWindCycle && aI.ErraticWindAvoider);
-        }
-        return false;
+        return CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) && Weather.ErraticWindCycle && aI.ErraticWindAvoider;
     }
 
     public static void HailstormHeatsourceUpdate(Creature target)
@@ -2417,7 +2405,10 @@ internal class OtherCreatureChanges
                         float heatStrength = Mathf.InverseLerp(incSpr.glow.rad, incSpr.glow.rad / 5f, distance);
                         target.HypothermiaExposure = Mathf.Min(target.HypothermiaExposure, Mathf.Lerp(1, 0.7f, distance));
                         target.Hypothermia -= Mathf.Lerp(receiverIsIncan ? 0.0001f : 0.0003f, 0f, target.HypothermiaExposure) * heatStrength;
-                        if (!receiverIsIncan && target.HypothermiaGain * Mathf.Lerp(0, 0.75f, incSpr.heat) > HypoRes) HypoRes = target.HypothermiaGain * Mathf.Lerp(0, 0.75f, incSpr.heat);
+                        if (!receiverIsIncan && target.HypothermiaGain * Mathf.Lerp(0, 0.75f, incSpr.heat) > HypoRes)
+                        {
+                            HypoRes = target.HypothermiaGain * Mathf.Lerp(0, 0.75f, incSpr.heat);
+                        }
                     }
                 }
 
@@ -2489,7 +2480,7 @@ internal class OtherCreatureChanges
             {
                 num = 0.75f;
             }
-            else if (absCtr.state is not null && absCtr.state is GlowSpiderState gs)
+            else if (absCtr.state is not null and GlowSpiderState gs)
             {
                 /*if (ctrType == HailstormEnums.Luminescipede)
                 {
@@ -2563,4 +2554,5 @@ public class SlimeMoldData : PlacedObject.ConsumableObjectData
         return SaveUtils.AppendUnrecognizedStringAttrs(BaseSaveString() + string.Format(CultureInfo.InvariantCulture, "~{0}", big ? 1 : 0), "~", unrecognizedAttributes);
     }
 }
+
 #endregion

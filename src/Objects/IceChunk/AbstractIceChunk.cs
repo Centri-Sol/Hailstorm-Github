@@ -1,8 +1,4 @@
-﻿using UnityEngine;
-using RWCustom;
-using Fisobs.Core;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -48,10 +44,7 @@ public class AbstractIceChunk : AbstractPhysicalObject
     public override void Realize()
     {
         base.Realize();
-        if (realizedObject is null)
-        {
-            realizedObject = new IceChunk(this, world);
-        }
+        realizedObject ??= new IceChunk(this, world);
     }
 
     //--------------------------------------------------------------------------------

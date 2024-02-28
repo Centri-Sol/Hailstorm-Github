@@ -1,22 +1,17 @@
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 
 public class LuminSpark : CosmeticSprite
 {
-    private float lifeTime;
+    private readonly float lifeTime;
     private float life;
 
-    private int graphic;
+    private readonly int graphic;
 
     private Color startColor;
     private Color fadeColor;
-    private float fade => Mathf.InverseLerp(0.75f, 1, life);
+    private float Fade => Mathf.InverseLerp(0.75f, 1, life);
 
     private float dir;
 
@@ -60,8 +55,10 @@ public class LuminSpark : CosmeticSprite
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         sLeaser.sprites = new FSprite[1];
-        sLeaser.sprites[0] = new FSprite("LuminSpark" + graphic);
-        sLeaser.sprites[0].color = startColor;
+        sLeaser.sprites[0] = new FSprite("LuminSpark" + graphic)
+        {
+            color = startColor
+        };
         AddToContainer(sLeaser, rCam, null);
     }
 
@@ -69,8 +66,8 @@ public class LuminSpark : CosmeticSprite
     {
         sLeaser.sprites[0].x = Mathf.Lerp(lastPos.x, pos.x, timeStacker) - camPos.x;
         sLeaser.sprites[0].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) - camPos.y;
-        sLeaser.sprites[0].color = Color.Lerp(startColor, fadeColor, fade);
-        sLeaser.sprites[0].scale = 1 - fade;
+        sLeaser.sprites[0].color = Color.Lerp(startColor, fadeColor, Fade);
+        sLeaser.sprites[0].scale = 1 - Fade;
         base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
     }
 
@@ -95,15 +92,15 @@ public class LuminBlink : CosmeticSprite
 
     private float radVel;
 
-    private float initRad;
+    private readonly float initRad;
 
-    private float lifeTime;
+    private readonly float lifeTime;
 
     private float lastLife;
 
     private float life;
 
-    private float intensity;
+    private readonly float intensity;
 
     private Vector2 aimPos;
 
@@ -149,8 +146,10 @@ public class LuminBlink : CosmeticSprite
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         sLeaser.sprites = new FSprite[1];
-        sLeaser.sprites[0] = new FSprite("Futile_White");
-        sLeaser.sprites[0].shader = rCam.game.rainWorld.Shaders["VectorCircle"];
+        sLeaser.sprites[0] = new FSprite("Futile_White")
+        {
+            shader = rCam.game.rainWorld.Shaders["VectorCircle"]
+        };
         AddToContainer(sLeaser, rCam, rCam.ReturnFContainer("Foreground"));
     }
 
@@ -187,11 +186,11 @@ public class LuminFlash : CosmeticSprite
     private readonly int lifeTime;
 
     private Color color;
-    private bool uncontrolled;
+    private readonly bool uncontrolled;
 
     private Vector2 lastDirection;
     private Vector2 direction;
-    private float baseRad;
+    private readonly float baseRad;
     private float lastRad;
     public float rad;
     private float lastAlpha;
@@ -300,10 +299,7 @@ public class LuminFlash : CosmeticSprite
 
     public override void Destroy()
     {
-        if (light is not null)
-        {
-            light.Destroy();
-        }
+        light?.Destroy();
         base.Destroy();
     }
 
@@ -336,10 +332,7 @@ public class LuminFlash : CosmeticSprite
     }
     public override void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
     {
-        if (newContatiner is null)
-        {
-            newContatiner = rCam.ReturnFContainer("Water");
-        }
+        newContatiner ??= rCam.ReturnFContainer("Water");
         newContatiner.AddChild(sLeaser.sprites[0]);
     }
 }

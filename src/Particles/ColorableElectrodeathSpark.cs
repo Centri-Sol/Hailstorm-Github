@@ -1,20 +1,15 @@
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
 
 public class ColorableElectrodeathSpark : CosmeticSprite
 {
-    private float size;
+    private readonly float size;
 
     private float lastLife;
     private float life;
-    private float lifeTime;
+    private readonly float lifeTime;
 
     private Color color;
 
@@ -45,17 +40,23 @@ public class ColorableElectrodeathSpark : CosmeticSprite
     {
         sLeaser.sprites = new FSprite[3];
 
-        sLeaser.sprites[0] = new("Futile_White");
-        sLeaser.sprites[0].shader = rCam.room.game.rainWorld.Shaders["LightSource"];
-        sLeaser.sprites[0].color = color;
+        sLeaser.sprites[0] = new("Futile_White")
+        {
+            shader = rCam.room.game.rainWorld.Shaders["LightSource"],
+            color = color
+        };
 
-        sLeaser.sprites[1] = new("Futile_White");
-        sLeaser.sprites[1].shader = rCam.room.game.rainWorld.Shaders["FlatLight"];
-        sLeaser.sprites[1].color = color;
+        sLeaser.sprites[1] = new("Futile_White")
+        {
+            shader = rCam.room.game.rainWorld.Shaders["FlatLight"],
+            color = color
+        };
 
-        sLeaser.sprites[2] = new("Futile_White");
-        sLeaser.sprites[2].shader = rCam.room.game.rainWorld.Shaders["FlareBomb"];
-        sLeaser.sprites[2].color = color;
+        sLeaser.sprites[2] = new("Futile_White")
+        {
+            shader = rCam.room.game.rainWorld.Shaders["FlareBomb"],
+            color = color
+        };
 
         AddToContainer(sLeaser, rCam, rCam.ReturnFContainer("Water"));
     }

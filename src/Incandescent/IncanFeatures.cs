@@ -1,14 +1,4 @@
-﻿using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-using System.Runtime.ConstrainedExecution;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 public class IncanFeatures
 {
@@ -488,11 +478,9 @@ public class IncanFeatures
     }
     public static int SaintNoYouCantEatTheseFuckOff_WaitNoPUTAWAYYOURASCENSIONPOWERSDONOTBLOWUPMYMINDLIKEPANCA(On.SlugcatStats.orig_NourishmentOfObjectEaten orig, SlugcatStats.Name slugcat, IPlayerEdible eatenobject)
     {
-        if (slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob))
-        {
-            return -1;
-        }
-        return orig(slugcat, eatenobject);
+        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob)
+            ? -1
+            : orig(slugcat, eatenobject);
     }
 
     public static void IncanILHooks()
@@ -931,7 +919,7 @@ public class IncanFeatures
             else
             {
                 float lastFallPos = self.lastGroundY - self.firstChunk.pos.y;
-                stn = stn * Mathf.Floor(Mathf.Abs(self.mainBodyChunk.vel.magnitude) / 7f);
+                stn *= Mathf.Floor(Mathf.Abs(self.mainBodyChunk.vel.magnitude) / 7f);
                 dmg =
                     lastFallPos < 100f? dmg * 0.5f :
                         lastFallPos < 200f? dmg :
@@ -1064,10 +1052,7 @@ public class IncanFeatures
             }
         }
 
-        if (Incan.fireSmoke is null)
-        {
-            Incan.fireSmoke = new HailstormFireSmokeCreator(self.room);
-        }
+        Incan.fireSmoke ??= new HailstormFireSmokeCreator(self.room);
         for (int s = 0; s < 10; s++)
         {
             Vector2 SmokeVel;
@@ -1272,10 +1257,7 @@ public class IncanFeatures
                 self.Hypothermia += HEATLOSS;
                 target.Hypothermia -= HEATLOSS * 0.75f;
 
-                if (Incan.fireSmoke is null)
-                {
-                    Incan.fireSmoke = new HailstormFireSmokeCreator(self.room);
-                }
+                Incan.fireSmoke ??= new HailstormFireSmokeCreator(self.room);
                 for (int f = 0; f < 10; f++)
                 {
                     if (Incan.Glow is not null && self.room.ViewedByAnyCamera(self.bodyChunks[1].pos, 300f) && Incan.fireSmoke.AddParticle(Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Custom.RNV() * Random.Range(8f, 12f), 40) is Smoke.FireSmoke.FireSmokeParticle bonkFireSmoke)

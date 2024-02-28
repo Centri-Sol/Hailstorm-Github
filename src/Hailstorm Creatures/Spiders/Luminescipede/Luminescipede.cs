@@ -1,13 +1,4 @@
-﻿using MoreSlugcats;
-using RWCustom;
-using System.Collections.Generic;
-using UnityEngine;
-using static Hailstorm.GlowSpiderState.Role;
-using static Hailstorm.GlowSpiderState.Behavior;
-using Color = UnityEngine.Color;
-using Random = UnityEngine.Random;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -18,11 +9,11 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     public LuminFlock flock;
     
     public LuminAI AI;
-    public BodyChunk body => firstChunk;
-    public LuminGraphics graphics => graphicsModule as LuminGraphics;
+    public BodyChunk Body => firstChunk;
+    public LuminGraphics Graphics => graphicsModule as LuminGraphics;
     public GlowSpiderState GlowState => State as GlowSpiderState;
-    public GlowSpiderState.Behavior Behavior => GlowState.behavior;
-    public GlowSpiderState.Role Role => GlowState.role;
+    public Behavior Behavior => GlowState.behavior;
+    public Role Role => GlowState.role;
 
     //---- General Stats ----//
 
@@ -104,20 +95,16 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     public float bloodlustRate;
     public int nullpreyCounter;
     public int lastNullpreyCounter;
-    public int preyVisualCounter => GlowState.timeSincePreyLastSeen;
+    public int PreyVisualCounter => GlowState.timeSincePreyLastSeen;
     public virtual float CurrentPreyRelationIntensity
     {
         get
         {
-            if (currentPrey?.abstractPhysicalObject is not null)
-            {
-                if (currentPrey.abstractPhysicalObject is AbstractCreature absCtr)
-                {
-                    return Mathf.Clamp(AI.DynamicRelationship(absCtr).intensity, 0, 1);
-                }
-                return Mathf.Clamp(AI.ObjRelationship(currentPrey.abstractPhysicalObject).intensity, 0, 1);
-            }
-            return 0;
+            return currentPrey?.abstractPhysicalObject is not null
+                ? currentPrey.abstractPhysicalObject is AbstractCreature absCtr
+                    ? Mathf.Clamp(AI.DynamicRelationship(absCtr).intensity, 0, 1)
+                    : Mathf.Clamp(AI.ObjRelationship(currentPrey.abstractPhysicalObject).intensity, 0, 1)
+                : 0;
         }
     }
 
@@ -132,13 +119,9 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             {
                 return 0;
             }
-            float fear;
-            if (fearSource.abstractPhysicalObject is AbstractCreature absCtr)
-            {
-                fear = Mathf.Clamp(AI.DynamicRelationship(absCtr).intensity, 0, 1);
-            }
-            else fear = Mathf.Clamp(AI.ObjRelationship(fearSource.abstractPhysicalObject).intensity, 0, 1);
-
+            float fear = fearSource.abstractPhysicalObject is AbstractCreature absCtr
+                ? Mathf.Clamp(AI.DynamicRelationship(absCtr).intensity, 0, 1)
+                : Mathf.Clamp(AI.ObjRelationship(fearSource.abstractPhysicalObject).intensity, 0, 1);
             return fear;
         }
     }
@@ -163,7 +146,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                     ForceFleeRad *= 2f;
                 }
             }
-            else if (AI.ObjRelationship(fearSource.abstractPhysicalObject).type == ObjectRelationship.Type.AfraidOf)
+            else if (AI.ObjRelationship(fearSource.abstractPhysicalObject).type == AfraidOf)
             {
                 ForceFleeRad *= 2f;
             }
@@ -202,14 +185,9 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             }
             if (Behavior == Rush)
             {
-                if (GlowState.stateTimeLimit > 140)
-                {
-                    bodyColor = Color.Lerp(camoColor, baseColor, Mathf.InverseLerp(0, 24, GlowState.rushPreyCounter));
-                }
-                else
-                {
-                    bodyColor = Color.Lerp(baseColor, bodyColor, Mathf.InverseLerp(140, 0, GlowState.stateTimeLimit));
-                }
+                bodyColor = GlowState.stateTimeLimit > 140
+                    ? Color.Lerp(camoColor, baseColor, Mathf.InverseLerp(0, 24, GlowState.rushPreyCounter))
+                    : Color.Lerp(baseColor, bodyColor, Mathf.InverseLerp(140, 0, GlowState.stateTimeLimit));
             }
             else if (Behavior == Hide)
             {
@@ -233,14 +211,9 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             }
             if (Behavior == Rush)
             {
-                if (GlowState.stateTimeLimit > 140)
-                {
-                    altColor = Color.Lerp(camoColor, glowColor, Mathf.InverseLerp(0, 4, GlowState.rushPreyCounter));
-                }
-                else
-                {
-                    altColor = Color.Lerp(glowColor, altColor, Mathf.InverseLerp(140, 0, GlowState.stateTimeLimit));
-                }
+                altColor = GlowState.stateTimeLimit > 140
+                    ? Color.Lerp(camoColor, glowColor, Mathf.InverseLerp(0, 4, GlowState.rushPreyCounter))
+                    : Color.Lerp(glowColor, altColor, Mathf.InverseLerp(140, 0, GlowState.stateTimeLimit));
             }
             else if (Behavior == Hide)
             {
@@ -283,11 +256,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     {
         get
         {
-            if (room is not null)
-            {
-                return Mathf.Min(1, (LuminLightSourceExposure(DangerPos) + (1 - room.Darkness(DangerPos))) / 2f);
-            }
-            return 0;
+            return room is not null ? Mathf.Min(1, (LuminLightSourceExposure(DangerPos) + (1 - room.Darkness(DangerPos))) / 2f) : 0;
         }
     } // Only used to affect Juice regen.
 
@@ -323,7 +292,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     {
         Random.State state = Random.state;
         Random.InitState(absLmn.ID.RandomSeed);
-        baseColor = Custom.HSL2RGB((Random.value < 0.04f ? Random.value : Custom.WrappedRandomVariation(260 / 360f, 60 / 360f, 0.5f)), 0.4f, Custom.WrappedRandomVariation(0.5f, 0.125f, 0.3f));
+        baseColor = Custom.HSL2RGB(Random.value < 0.04f ? Random.value : Custom.WrappedRandomVariation(260 / 360f, 60 / 360f, 0.5f), 0.4f, Custom.WrappedRandomVariation(0.5f, 0.125f, 0.3f));
         glowColor = Color.Lerp(baseColor, Color.white, 0.6f);
         Random.state = state;
 
@@ -381,10 +350,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     }
     public override void InitiateGraphicsModule()
     {
-        if (graphicsModule is null)
-        {
-            graphicsModule = new LuminGraphics(this);
-        }
+        graphicsModule ??= new LuminGraphics(this);
     }
     public virtual void Reset()
     {
@@ -426,13 +392,13 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             deathSpasms = Mathf.Max(0f, deathSpasms - (1 / Mathf.Lerp(200f, 400f, Random.value)));
         }
-        IntVector2 tilePosition = room.GetTilePosition(body.pos);
+        IntVector2 tilePosition = room.GetTilePosition(Body.pos);
         tilePosition.x = Custom.IntClamp(tilePosition.x, 0, room.TileWidth - 1);
         tilePosition.y = Custom.IntClamp(tilePosition.y, 0, room.TileHeight - 1);
 
         if (room.game.devToolsActive && Input.GetKey("b") && room.game.cameras[0].room == room)
         {
-            body.vel += Custom.DirVec(DangerPos, (Vector2)Futile.mousePosition + room.game.cameras[0].pos) * 14f;
+            Body.vel += Custom.DirVec(DangerPos, (Vector2)Futile.mousePosition + room.game.cameras[0].pos) * 14f;
             Stun(12);
         }
 
@@ -499,7 +465,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             testingTimer++;
 
             if (AI.denFinder?.denPosition is null ||
-                preyVisualCounter > (currentPrey is null ? 40 : Mathf.Lerp(320, 960, CurrentPreyRelationIntensity)))
+                PreyVisualCounter > (currentPrey is null ? 40 : Mathf.Lerp(320, 960, CurrentPreyRelationIntensity)))
             {
                 GlowState.ChangeBehavior(Idle, 1);
             }
@@ -544,11 +510,11 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
             if (testingTimer % 20 == 0)
             {
-                room.AddObject(new LuminBlink(body.pos + Custom.RNV() * 50f, DangerPos, default, 5, Color.cyan, Color.red));
+                room.AddObject(new LuminBlink(Body.pos + (Custom.RNV() * 50f), DangerPos, default, 5, Color.cyan, Color.red));
             }
 
             if (closestFearChunk is not null && ConsiderUseful(grasps[0]?.grabbed) &&
-                AI.ObjRelationship(grasps[0].grabbed.abstractPhysicalObject).type == ObjectRelationship.Type.Uses)
+                AI.ObjRelationship(grasps[0].grabbed.abstractPhysicalObject).type == Uses)
             {
                 lookAtChunk = closestFearChunk;
             }
@@ -586,7 +552,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 GlowState.ChangeBehavior(Idle, 0);
             }
         }
-        else if (flashbombTimer > 0 && flashbombTimer < 40)
+        else if (flashbombTimer is > 0 and < 40)
         {
             flashbombTimer = 0;
         }
@@ -626,8 +592,8 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         if (validConnection && (Submersion > 0 || AI.inAccessibleTerrain))
         {
-            body.vel *= 0.7f;
-            body.vel.y += gravity;
+            Body.vel *= 0.7f;
+            Body.vel.y += gravity;
         }
         if (grasps[0] is null)
         {
@@ -652,12 +618,12 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         if (room.GetTile(coord).Solid && !room.GetTile(lastCoord).Solid)
         {
             Debug.Log("trying to set pos back in-bounds");
-            body.HardSetPosition(room.MiddleOfTile(lastCoord));
+            Body.HardSetPosition(room.MiddleOfTile(lastCoord));
         }
         if (Submersion > 0.3f || AI.inAccessibleTerrain)
         {
-            body.vel *= 0.7f;
-            body.vel.y += gravity;
+            Body.vel *= 0.7f;
+            Body.vel.y += gravity;
         }
         if (currentPrey is not null && (currentPrey == this || GrabbedObjects.Contains(currentPrey)))
         {
@@ -707,7 +673,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                         bool foundPrey = false;
                         foreach (BodyChunk chunk in absCtr.realizedCreature.bodyChunks)
                         {
-                            if (chunk is not null && Custom.DistLess(VisionPoint, chunk.pos, body.rad + chunk.rad))
+                            if (chunk is not null && Custom.DistLess(VisionPoint, chunk.pos, Body.rad + chunk.rad))
                             {
                                 currentPrey = absCtr.realizedCreature;
                                 foundPrey = true;
@@ -728,7 +694,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                         bool foundPrey = false;
                         foreach (BodyChunk chunk in absObj.realizedObject.bodyChunks)
                         {
-                            if (chunk is not null && Custom.DistLess(VisionPoint, chunk.pos, body.rad + chunk.rad))
+                            if (chunk is not null && Custom.DistLess(VisionPoint, chunk.pos, Body.rad + chunk.rad))
                             {
                                 currentPrey = absObj.realizedObject;
                                 foundPrey = true;
@@ -751,10 +717,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     }
     public virtual void Refresh(bool eu)
     {
-        if (grasps is null)
-        {
-            grasps = new Grasp[Role == Forager && Dominant ? 2 : 1];
-        }
+        grasps ??= new Grasp[Role == Forager && Dominant ? 2 : 1];
         if (grasps.Length != 2 && Role == Forager && Dominant)
         {
             grasps = new Grasp[2];
@@ -778,10 +741,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             flock = new LuminFlock(this, room);
         }
-        if (flock is not null)
-        {
-            flock.Update(eu);
-        }
+        flock?.Update(eu);
 
         if (FleeLevel != -1)
         {
@@ -793,11 +753,11 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         }
         if (fearSource is not null)
         {
-            float distToBeat = Custom.Dist(body.pos, fearSource.firstChunk.pos);
+            float distToBeat = Custom.Dist(Body.pos, fearSource.firstChunk.pos);
             closestFearChunk = fearSource.firstChunk;
             for (int b = 1; b < fearSource.bodyChunks.Length; b++)
             {
-                float chunkDist = Custom.Dist(body.pos, fearSource.bodyChunks[b].pos);
+                float chunkDist = Custom.Dist(Body.pos, fearSource.bodyChunks[b].pos);
                 if (chunkDist < distToBeat)
                 {
                     distToBeat = chunkDist;
@@ -819,17 +779,17 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         AI.Update();
         GlowState.Update(this, eu);
 
-        dragPos = DangerPos + Custom.DirVec(DangerPos, dragPos) * connectDistance;
+        dragPos = DangerPos + (Custom.DirVec(DangerPos, dragPos) * connectDistance);
         VisionPoint = DangerPos + (direction * connectDistance);
         lastDirection = direction;
         if (heavycarryChunk is not null)
         {
-            direction = Custom.DirVec(body.pos, heavycarryChunk.pos);
+            direction = Custom.DirVec(Body.pos, heavycarryChunk.pos);
             heavycarryChunk = null;
         }
         else if (lookAtChunk is not null)
         {
-            direction += Custom.DirVec(body.pos, lookAtChunk.pos) * 0.1f;
+            direction += Custom.DirVec(Body.pos, lookAtChunk.pos) * 0.1f;
             if (!Consious)
             {
                 direction += Custom.DegToVec(Random.value * 360f) * deathSpasms;
@@ -839,8 +799,8 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         }
         else
         {
-            direction -= Custom.DirVec(body.pos, dragPos);
-            direction += body.vel * 0.25f;
+            direction -= Custom.DirVec(Body.pos, dragPos);
+            direction += Body.vel * 0.25f;
             if (!Consious)
             {
                 direction += Custom.DegToVec(Random.value * 360f) * deathSpasms;
@@ -879,16 +839,16 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
             if ((safariControlled ||
                 ((attachCounter > 15 || target is not Creature || (target as Creature).Template.smallCreature) && (target is not Creature || (target as Creature).shortcutDelay < 1))) &&
-                Custom.DistLess(VisionPoint, chunk.pos, body.rad + chunk.rad))
+                Custom.DistLess(VisionPoint, chunk.pos, Body.rad + chunk.rad))
             {
-                Grab(target, 0, i, Grasp.Shareability.NonExclusive, 0.2f, false, false);
-                room.PlaySound(SoundID.Big_Spider_Grab_Creature, body.pos, 0.9f, 2.5f - GlowState.ivars.Size);
+                _ = Grab(target, 0, i, Grasp.Shareability.NonExclusive, 0.2f, false, false);
+                room.PlaySound(SoundID.Big_Spider_Grab_Creature, Body.pos, 0.9f, 2.5f - GlowState.ivars.Size);
                 grabCooldown = 20;
                 return;
             }
-            if (Random.value < 0.2f && !safariControlled && Behavior != Hide && Custom.DistLess(DangerPos, chunk.pos, body.rad + chunk.rad + 75))
+            if (Random.value < 0.2f && !safariControlled && Behavior != Hide && Custom.DistLess(DangerPos, chunk.pos, Body.rad + chunk.rad + 75))
             {
-                body.vel += Custom.DirVec(VisionPoint, chunk.pos) * 5f;
+                Body.vel += Custom.DirVec(VisionPoint, chunk.pos) * 5f;
                 timeWithoutPreyContact = 15;
                 attachCounter++;
                 return;
@@ -933,9 +893,9 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                     lookAtChunk is not null &&
                     ConsiderUseful(grasps[0]?.grabbed) &&
                     AI.VisualContact(lookAtChunk.pos) &&
-                    AI.ObjRelationship(grasps[0].grabbed.abstractPhysicalObject).type == ObjectRelationship.Type.Uses &&
-                    Mathf.Abs(Custom.VecToDeg(Custom.DirVec(body.pos, lookAtChunk.pos)) - Custom.VecToDeg(direction)) <= 5f &&
-                    (grasps[0].grabbed is not ScavengerBomb || Custom.DistLess(body.pos, lookAtChunk.pos, 300)))
+                    AI.ObjRelationship(grasps[0].grabbed.abstractPhysicalObject).type == Uses &&
+                    Mathf.Abs(Custom.VecToDeg(Custom.DirVec(Body.pos, lookAtChunk.pos)) - Custom.VecToDeg(direction)) <= 5f &&
+                    (grasps[0].grabbed is not ScavengerBomb || Custom.DistLess(Body.pos, lookAtChunk.pos, 300)))
                 {
                     ThrowObject(eu);
                 }
@@ -962,8 +922,8 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             }
             else
             {
-                body.vel.x *= 0.4f + (Mathf.InverseLerp(AttackMassLimit, TotalMass, grasps[1].grabbed.TotalMass) * 0.6f);
-                body.vel.y -= Mathf.InverseLerp(TotalMass, AttackMassLimit, grasps[1].grabbed.TotalMass);
+                Body.vel.x *= 0.4f + (Mathf.InverseLerp(AttackMassLimit, TotalMass, grasps[1].grabbed.TotalMass) * 0.6f);
+                Body.vel.y -= Mathf.InverseLerp(TotalMass, AttackMassLimit, grasps[1].grabbed.TotalMass);
                 Vector2 backCarryPos = DangerPos;
                 if (grasps[1].grabbed.bodyChunks.Length == 2)
                 {
@@ -971,7 +931,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 }
                 BodyChunk chunk = grasps[1].grabbed.bodyChunks.Length > 2 ? grasps[1].grabbed.bodyChunks[Mathf.FloorToInt(grasps[1].grabbed.bodyChunks.Length / 2)] : grasps[1].grabbedChunk;
                 chunk.MoveFromOutsideMyUpdate(eu, (remainingGraspSwapTime > 0) ? Vector2.Lerp(backCarryPos, VisionPoint, remainingGraspSwapTime / 10f) : backCarryPos);
-                chunk.vel = body.vel;
+                chunk.vel = Body.vel;
                 if (WantToBackcarry(grasps[0]?.grabbed) && !WantToBackcarry(grasps[1].grabbed))
                 {
                     shouldTickGraspDelayCounter = true;
@@ -999,14 +959,14 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             }
             if (floatyPower > 0)
             {
-                if (body.vel.y < 0)
+                if (Body.vel.y < 0)
                 {
-                    body.vel.y *= 1 - floatyPower;
+                    Body.vel.y *= 1 - floatyPower;
                 }
-                body.vel.x *= 1 - floatyPower;
+                Body.vel.x *= 1 - floatyPower;
                 if (inputWithDiagonals.HasValue)
                 {
-                    body.vel.x += inputWithDiagonals.Value.x * 0.75f;
+                    Body.vel.x += inputWithDiagonals.Value.x * 0.75f;
                 }
             }
         }
@@ -1076,17 +1036,17 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             else
             {
                 chunk.MoveFromOutsideMyUpdate(eu, enteringShortCut.HasValue ? DangerPos : (remainingGraspSwapTime == 0 ? VisionPoint : Vector2.Lerp(VisionPoint, DangerPos, remainingGraspSwapTime / 10f)));
-                chunk.vel = body.vel;
+                chunk.vel = Body.vel;
             }
             return;
         }
         heavycarryChunk = chunk;
         Vector2 pushAngle = Custom.DirVec(DangerPos, chunk.pos);
         float chunkDistGap = Custom.Dist(DangerPos, chunk.pos);
-        float chunKRadii = body.rad + chunk.rad;
+        float chunKRadii = Body.rad + chunk.rad;
         float massFac = TotalMass / (TotalMass + chunk.mass);
-        body.vel += pushAngle * (chunkDistGap - chunKRadii) * (1f - massFac);
-        body.pos += pushAngle * (chunkDistGap - chunKRadii) * (1f - massFac);
+        Body.vel += pushAngle * (chunkDistGap - chunKRadii) * (1f - massFac);
+        Body.pos += pushAngle * (chunkDistGap - chunKRadii) * (1f - massFac);
         chunk.vel -= pushAngle * (chunkDistGap - chunKRadii) * massFac;
         chunk.pos -= pushAngle * (chunkDistGap - chunKRadii) * massFac;
 
@@ -1213,7 +1173,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             else
             {
                 target.Die();
-                room.PlaySound(SoundID.Big_Spider_Slash_Creature, body.pos, 0.9f, 2.5f - GlowState.ivars.Size);
+                room.PlaySound(SoundID.Big_Spider_Slash_Creature, Body.pos, 0.9f, 2.5f - GlowState.ivars.Size);
             }
         }
         else
@@ -1240,17 +1200,17 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         if (grasp.grabbedChunk is not null)
         {
             float weightMult = Mathf.InverseLerp(AttackMassLimit / 2f, 0, grasp.grabbed.TotalMass);
-            if (grasp.grabbed is Rock ||
-                grasp.grabbed is FirecrackerPlant ||
-                grasp.grabbed is ScavengerBomb ||
-                grasp.grabbed is SporePlant ||
-                grasp.grabbed is LillyPuck)
+            if (grasp.grabbed is Rock or
+                FirecrackerPlant or
+                ScavengerBomb or
+                SporePlant or
+                LillyPuck)
             {
                 IntVector2 throwDir = new(Mathf.RoundToInt(direction.x), Mathf.RoundToInt(direction.y));
                 float force = GlowState.health * (grasp.grabbed is LillyPuck ? 0.3f : 0.4f);
 
                 (grasp.grabbed as Weapon).Thrown(this, VisionPoint, VisionPoint + (direction * 20), throwDir, force, eu);
-                grasp.grabbedChunk.vel += body.vel * 0.2f * weightMult;
+                grasp.grabbedChunk.vel += Body.vel * 0.2f * weightMult;
             }
             else
             {
@@ -1351,21 +1311,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
     public virtual bool GrabbingItem(PhysicalObject item)
     {
-        if (item is null)
-        {
-            return false;
-        }
-
-        if (grasps[0]?.grabbed == item)
-        {
-            return true;
-        }
-        if (grasps.Length > 1 && grasps[1]?.grabbed == item)
-        {
-            return true;
-        }
-
-        return false;
+        return item is not null && (grasps[0]?.grabbed == item || grasps.Length > 1 && grasps[1]?.grabbed == item);
     }
     public virtual bool WantToBackcarry(PhysicalObject target)
     {
@@ -1398,7 +1344,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         if (ConsiderUseful(target))
         {
-            if (AI.ObjRelationship(target.abstractPhysicalObject).type == ObjectRelationship.Type.Likes)
+            if (AI.ObjRelationship(target.abstractPhysicalObject).type == Likes)
             {
                 return true;
             }
@@ -1414,7 +1360,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             if (HeldMass > -1 && target == grasps[0].grabbed &&
                 BackMass > -1 && ConsiderUseful(grasps[1].grabbed) &&
-                AI.ObjRelationship(grasps[1].grabbed.abstractPhysicalObject).type == ObjectRelationship.Type.Uses)
+                AI.ObjRelationship(grasps[1].grabbed.abstractPhysicalObject).type == Uses)
             {
                 return true;
             }
@@ -1424,24 +1370,13 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     }
     public virtual bool HoldingThisItemType(AbstractPhysicalObject.AbstractObjectType itemType)
     {
-        if (itemType is null)
-        {
-            return false;
-        }
-
-        if (grasps[0]?.grabbed is not null &&
+        bool v = grasps.Length > 1 &&
+                    grasps[1]?.grabbed is not null &&
+                    grasps[1].grabbed.abstractPhysicalObject.type == itemType;
+        return itemType is not null
+&& ((grasps[0]?.grabbed is not null &&
             grasps[0].grabbed.abstractPhysicalObject.type == itemType)
-        {
-            return true;
-        }
-        if (grasps.Length > 1 &&
-            grasps[1]?.grabbed is not null &&
-            grasps[1].grabbed.abstractPhysicalObject.type == itemType)
-        {
-            return true;
-        }
-
-        return false;
+|| v);
     }
 
 
@@ -1489,7 +1424,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             nullpreyCounter++;
         }
 
-        if (nullpreyCounter > 320 || !ConsiderPrey(currentPrey) || preyVisualCounter > Mathf.Lerp(320, 960, CurrentPreyRelationIntensity))
+        if (nullpreyCounter > 320 || !ConsiderPrey(currentPrey) || PreyVisualCounter > Mathf.Lerp(320, 960, CurrentPreyRelationIntensity))
         {
             currentPrey = null;
             if (Behavior == ReturnPrey)
@@ -1534,7 +1469,10 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             return;
         }
 
-        if (Random.value < 0.1f) room.AddObject(new LuminBlink(MainChunkOfObject(currentPrey).pos, MainChunkOfObject(currentPrey).pos + (Custom.DirVec(MainChunkOfObject(currentPrey).pos, body.pos) * 100f), default, 3, baseColor, baseColor));
+        if (Random.value < 0.1f)
+        {
+            room.AddObject(new LuminBlink(MainChunkOfObject(currentPrey).pos, MainChunkOfObject(currentPrey).pos + (Custom.DirVec(MainChunkOfObject(currentPrey).pos, Body.pos) * 100f), default, 3, baseColor, baseColor));
+        }
 
         if (currentPrey is Creature ctr)
         {
@@ -1555,8 +1493,8 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 }
             }
 
-            if (!grabbing &&
-                (AI.DynamicRelationship(ctr.abstractCreature).type == CreatureTemplate.Relationship.Type.Eats && (!ctr.dead || (Behavior == ReturnPrey && (TotalLmnCount == 0 || TotalLmnMass * 3f < ctr.TotalMass)))) ||
+            if ((!grabbing &&
+                AI.DynamicRelationship(ctr.abstractCreature).type == CreatureTemplate.Relationship.Type.Eats && (!ctr.dead || (Behavior == ReturnPrey && (TotalLmnCount == 0 || TotalLmnMass * 3f < ctr.TotalMass)))) ||
                 (AI.DynamicRelationship(ctr.abstractCreature).type == CreatureTemplate.Relationship.Type.Attacks && Behavior != ReturnPrey && !ctr.dead))
             {
                 TryToAttach(ctr);
@@ -1577,7 +1515,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
             if (!grabbing &&
                 (TotalLmnCount == 0 || TotalLmnMass * 3f < currentPrey.TotalMass) &&
-                AI.ObjRelationship(currentPrey.abstractPhysicalObject).type == ObjectRelationship.Type.Eats)
+                AI.ObjRelationship(currentPrey.abstractPhysicalObject).type == Eats)
             {
                 TryToAttach(currentPrey);
             }
@@ -1638,7 +1576,10 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 }
                 TryToAttach(useItem);
             }
-            else itemVisualCounter++;
+            else
+            {
+                itemVisualCounter++;
+            }
         }
 
     }
@@ -1680,7 +1621,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 }
                 else if (AI.DynamicRelationship(ctr.abstractCreature).type == CreatureTemplate.Relationship.Type.Eats)
                 {
-                    GlowSpiderState.Behavior reaction = bloodlust >= 2 ? Aggravated : Hunt;
+                    Behavior reaction = bloodlust >= 2 ? Aggravated : Hunt;
                     GlowState.ChangeBehavior(reaction, 0);
                     if (Behavior == Aggravated)
                     {
@@ -1711,7 +1652,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 }
                 else if (AI.DynamicRelationship(thrower.abstractCreature).type == CreatureTemplate.Relationship.Type.Eats)
                 {
-                    GlowSpiderState.Behavior reaction = bloodlust >= 2 ? Aggravated : Hunt;
+                    Behavior reaction = bloodlust >= 2 ? Aggravated : Hunt;
                     GlowState.ChangeBehavior(reaction, 0);
                     if (Behavior == Aggravated)
                     {
@@ -1766,10 +1707,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     public virtual void Overload()
     {
         GlowState.ChangeBehavior(Overloaded, 2);
-        if (room is not null)
-        {
-            room.AddObject(new LuminFlash(room, body, baseRad: 400, lifeTime: 15, Color.Lerp(baseColor, glowColor, 0.5f), Random.Range(1.4f, 1.8f), true));
-        }
+        room?.AddObject(new LuminFlash(room, Body, baseRad: 400, lifeTime: 15, Color.Lerp(baseColor, glowColor, 0.5f), Random.Range(1.4f, 1.8f), true));
         flashbombTimer = 0;
         GlowState.health -= 0.2f;
         GlowState.darknessCounter = 0;
@@ -1787,7 +1725,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         if (target is Creature ctr)
         {
-            if (ctr.State is not null && ctr.State is GlowSpiderState)
+            if (ctr.State is not null and GlowSpiderState)
             {
                 return false;
             }
@@ -1804,7 +1742,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         }
         else
         {
-            if (AI.ObjRelationship(target.abstractPhysicalObject).type != ObjectRelationship.Type.Eats)
+            if (AI.ObjRelationship(target.abstractPhysicalObject).type != Eats)
             {
                 return false;
             }
@@ -1875,7 +1813,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         if (target is Creature ctr)
         {
-            if (ctr.State is not null && ctr.State is GlowSpiderState)
+            if (ctr.State is not null and GlowSpiderState)
             {
                 return false;
             }
@@ -1890,7 +1828,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             }
         }
         else
-        if (AI.ObjRelationship(target.abstractPhysicalObject).type == ObjectRelationship.Type.Avoids ||
+        if (AI.ObjRelationship(target.abstractPhysicalObject).type == Avoids ||
             AI.ObjRelationship(target.abstractPhysicalObject).type == ObjectRelationship.Type.AfraidOf)
         {
             return true;
@@ -1944,7 +1882,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             return true;
         }
-        if (!Custom.DistLess(body.pos, MainChunkOfObject(newTarget).pos, Custom.Dist(body.pos, MainChunkOfObject(currentPrey).pos) * 1.2f))
+        if (!Custom.DistLess(Body.pos, MainChunkOfObject(newTarget).pos, Custom.Dist(Body.pos, MainChunkOfObject(currentPrey).pos) * 1.2f))
         {
             return false;
         }
@@ -1995,12 +1933,12 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 {
                     return true;
                 }
-                if (preyVisualCounter >= Mathf.Lerp(100, 1200, bloodlust / 3f))
+                if (PreyVisualCounter >= Mathf.Lerp(100, 1200, bloodlust / 3f))
                 {
                     return true;
                 }
             }
-            else if (!ctr.dead && preyVisualCounter > (400 * CurrentPreyRelationIntensity) - (160 * AI.DynamicRelationship(ctr.abstractCreature).intensity))
+            else if (!ctr.dead && PreyVisualCounter > (400 * CurrentPreyRelationIntensity) - (160 * AI.DynamicRelationship(ctr.abstractCreature).intensity))
             {
                 return true;
             }
@@ -2021,12 +1959,12 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 {
                     return true;
                 }
-                if (preyVisualCounter >= Mathf.Lerp(100, 1200, bloodlust / 3f))
+                if (PreyVisualCounter >= Mathf.Lerp(100, 1200, bloodlust / 3f))
                 {
                     return true;
                 }
             }
-            else if (preyVisualCounter > (400 * CurrentPreyRelationIntensity) - (160 * AI.ObjRelationship(newTarget.abstractPhysicalObject).intensity))
+            else if (PreyVisualCounter > (400 * CurrentPreyRelationIntensity) - (160 * AI.ObjRelationship(newTarget.abstractPhysicalObject).intensity))
             {
                 return true;
             }
@@ -2054,7 +1992,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             oldItemAppeal *= 0.75f;
         }
-        if (AI.ObjRelationship(newItem.abstractPhysicalObject).type == ObjectRelationship.Type.PlaysWith)
+        if (AI.ObjRelationship(newItem.abstractPhysicalObject).type == PlaysWith)
         {
             newItemAppeal *= 0.75f;
         }
@@ -2075,20 +2013,13 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             }
         }
 
-        if (newItemAppeal > oldItemAppeal)
-        {
-            return true;
-        }
-
-        return false;
+        return newItemAppeal > oldItemAppeal;
     }
     public virtual BodyChunk MainChunkOfObject(PhysicalObject obj)
     {
-        if (obj is Creature ctr)
-        {
-            return ctr.mainBodyChunk;
-        }
-        return obj.bodyChunks.Length < 3 ?
+        return obj is Creature ctr
+            ? ctr.mainBodyChunk
+            : obj.bodyChunks.Length < 3 ?
             obj.firstChunk :
             obj.bodyChunks[obj.bodyChunks.Length / 2];
     }
@@ -2106,7 +2037,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             {
                 if (currentPrey is not null && currentPrey is Creature ctr && AI.VisualContact(ctr.mainBodyChunk.pos))
                 {
-                    body.vel += Custom.DirVec(body.pos, ctr.mainBodyChunk.pos);
+                    Body.vel += Custom.DirVec(Body.pos, ctr.mainBodyChunk.pos);
                 }
             }
             else if (GlowState.rushPreyCounter == 24)
@@ -2173,7 +2104,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             if (currentPrey is not null && currentPrey is Creature ctr && bloodlust > 0 && ((Custom.DistLess(ctr.mainBodyChunk.pos, DangerPos, 200) && AI.VisualContact(ctr.mainBodyChunk.pos)) || FleeLevel > -1))
             {
                 GlowState.rushPreyCounter++;
-                if ((GlowState.rushPreyCounter > 40 && (Random.value < Mathf.InverseLerp(0, 80, GlowState.rushPreyCounter) / 500f) || bloodlust >= 1) || GlowState.rushPreyCounter == 80)
+                if ((GlowState.rushPreyCounter > 40 && (Random.value < Mathf.InverseLerp(0, 80, GlowState.rushPreyCounter) / 500f)) || bloodlust >= 1 || GlowState.rushPreyCounter == 80)
                 {
                     RushPrey(false);
                 }
@@ -2242,12 +2173,12 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         lungeTimer++;
         if (lungeTimer < 20)
         {
-            body.vel -= direction * Mathf.InverseLerp(20, 0, lungeTimer) / 2f;
+            Body.vel -= direction * Mathf.InverseLerp(20, 0, lungeTimer) / 2f;
         }
         else if (lungeTimer == 20)
         {
             room.PlaySound(SoundID.Drop_Bug_Voice, DangerPos, 1, 2.5f - GlowState.ivars.Fatness);
-            body.vel += direction * 16f;
+            Body.vel += direction * 16f;
             lunging = true;
         }
         else if (lungeTimer > 30)
@@ -2262,11 +2193,11 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             if (lunging && otherObject is Creature victim && (victim.State is null || victim.State is not GlowSpiderState))
             {
                 lunging = false;
-                room.PlaySound(SoundID.Big_Spider_Slash_Creature, body.pos, 0.9f, 2.5f - GlowState.ivars.Size);
-                float DMG = victim.State is not null && victim.State is GlowSpiderState ? 0.25f : 0.5f;
-                victim.Violence(body, body.vel / 2f, victim.bodyChunks[otherChunk], null, DamageType.Bite, DMG, 60);
-                body.vel = Vector2.Lerp(body.vel.normalized, Custom.DirVec(body.pos, victim.bodyChunks[otherChunk].pos), 0.5f) * body.vel.magnitude;
-                body.vel *= -1f;
+                room.PlaySound(SoundID.Big_Spider_Slash_Creature, Body.pos, 0.9f, 2.5f - GlowState.ivars.Size);
+                float DMG = victim.State is null or not GlowSpiderState ? 0.5f : 0.25f;
+                victim.Violence(Body, Body.vel / 2f, victim.bodyChunks[otherChunk], null, DamageType.Bite, DMG, 60);
+                Body.vel = Vector2.Lerp(Body.vel.normalized, Custom.DirVec(Body.pos, victim.bodyChunks[otherChunk].pos), 0.5f) * Body.vel.magnitude;
+                Body.vel *= -1f;
             }
             if (!safariControlled)
             {
@@ -2297,11 +2228,11 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         flashbombTimer++;
         if (flashbombTimer == 40)
         {
-            room.AddObject(new LuminFlash(room, body, 160, 40, Color.Lerp(baseColor, glowColor, 0.5f), Random.Range(1.4f, 1.8f), false));
+            room.AddObject(new LuminFlash(room, Body, 160, 40, Color.Lerp(baseColor, glowColor, 0.5f), Random.Range(1.4f, 1.8f), false));
             float angle = Custom.VecToDeg(direction);
             for (int f = 0; f < 4; f++)
             {
-                room.AddObject(new LuminBlink(body.pos, body.pos + 50f * Custom.DegToVec(angle + (90f * f)), default, 4, glowColor, baseColor));
+                room.AddObject(new LuminBlink(Body.pos, Body.pos + (50f * Custom.DegToVec(angle + (90f * f))), default, 4, glowColor, baseColor));
             }
         }
         if (flashbombTimer >= 40)
@@ -2322,9 +2253,9 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     {
         if (!Consious)
         {
-            if (body.contactPoint.y < 0)
+            if (Body.contactPoint.y < 0)
             {
-                body.vel.x *= 0.95f;
+                Body.vel.x *= 0.95f;
             }
             if (Juice > 0)
             {
@@ -2395,7 +2326,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
             if (flickeringFac > 0f)
             {
-                flickeringFac = Mathf.Max(0, flickeringFac - 1f / flickerDuration);
+                flickeringFac = Mathf.Max(0, flickeringFac - (1f / flickerDuration));
                 if (Random.value < 1f / 15f && Random.value < flickeringFac)
                 {
                     flicker = Mathf.Pow(Random.value, 1f - flickeringFac);
@@ -2409,7 +2340,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             }
             if (flicker > 0f)
             {
-                flicker = Mathf.Max(0, flicker - 1 / 15f);
+                flicker = Mathf.Max(0, flicker - (1 / 15f));
                 if (Random.value < flicker / 3f)
                 {
                     EmitSparks(1, Custom.RNV() * Random.Range(3f, 7f), 40f);
@@ -2539,8 +2470,8 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             {
                 Luminescipede lmn = flock.lumins[Random.Range(0, flock.lumins.Count)];
                 TileScore -=
-                    (lmn == this || !Custom.DistLess(DangerPos, lmn.body.pos, 200f)) ?
-                    200f * bloodlust : Custom.Dist(DangerPos, lmn.body.pos) * bloodlust;
+                    (lmn == this || !Custom.DistLess(DangerPos, lmn.Body.pos, 200f)) ?
+                    200f * bloodlust : Custom.Dist(DangerPos, lmn.Body.pos) * bloodlust;
             }
         }
 
@@ -2695,7 +2626,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             return;
         }
-        if (followingConnection.type == MovementConnection.MovementType.Standard || followingConnection.type == MovementConnection.MovementType.DropToFloor)
+        if (followingConnection.type is MovementConnection.MovementType.Standard or MovementConnection.MovementType.DropToFloor)
         {
             IdleMove(followingConnection);
         }
@@ -2721,7 +2652,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             return;
         }
 
-        body.vel += addedVel;
+        Body.vel += addedVel;
     }
 
 
@@ -2741,18 +2672,21 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         if (State is HealthState HS)
         {
             HS.health -= 0.35f;
-            if (HS.health <= 0) Die();
+            if (HS.health <= 0)
+            {
+                Die();
+            }
         }
         room.PlaySound((bites == 0) ? SoundID.Slugcat_Eat_Centipede : SoundID.Slugcat_Bite_Centipede, DangerPos);
-        body.MoveFromOutsideMyUpdate(eu, grasp.grabber.mainBodyChunk.pos);
+        Body.MoveFromOutsideMyUpdate(eu, grasp.grabber.mainBodyChunk.pos);
         if (bites < 1)
         {
             Player eater = grasp.grabber as Player;
             eater.ObjectEaten(this);
             if (!eater.isNPC)
             {
-                if (room.game.session is not null &&
-                    room.game.session is StoryGameSession SGS)
+                if (room.game.session is not null and
+                    StoryGameSession SGS)
                 {
                     SGS.saveState.theGlow = true;
                 }
@@ -2772,9 +2706,10 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             for (int s = 0; s < Mathf.Lerp(0, 20, Juice); s++)
             {
+                Vector2 vector2 = Custom.DegToVec(360f * Random.value) * 7f * Random.value;
                 Vector2 vel = -new Vector2(
                     mainBodyChunk.vel.x * Random.Range(0.6f, 1.4f),
-                    mainBodyChunk.vel.y * Random.Range(0.6f, 1.4f)) + Custom.DegToVec(360f * Random.value) * 7f * Random.value;
+                    mainBodyChunk.vel.y * Random.Range(0.6f, 1.4f)) + vector2;
 
                 EmitSparks(1, vel, 40f);
             }
@@ -2786,12 +2721,9 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         base.SpitOutOfShortCut(pos, newRoom, spitOutAllSticks);
         Vector2 pipeDirection = Custom.IntVector2ToVector2(newRoom.ShorcutEntranceHoleDirection(pos));
         shortcutDelay = 30;
-        body.HardSetPosition(newRoom.MiddleOfTile(pos) - pipeDirection * 5f);
-        body.vel = pipeDirection * 7.5f;
-        if (graphicsModule is not null)
-        {
-            graphicsModule.Reset();
-        }
+        Body.HardSetPosition(newRoom.MiddleOfTile(pos) - (pipeDirection * 5f));
+        Body.vel = pipeDirection * 7.5f;
+        graphicsModule?.Reset();
     }
     public static bool WantToHideInDen(AbstractCreature absLmn) 
     {
@@ -2826,15 +2758,8 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 return true;
             }
         }
-        if (absLmn.world?.game?.session is not null && absLmn.world.game.IsArenaSession && absLmn.world.game.GetArenaGameSession.arenaSitting.gameTypeSetup.gameType == MoreSlugcatsEnums.GameTypeID.Challenge)
-        {
-            return false;
-        }
-        if (absLmn.state is GlowSpiderState gs && gs.role != Guardian && gs.health < (gs.role == Forager ? 0.1f : 0.05f))
-        {
-            return true;
-        }
-        return false;
+        return (absLmn.world?.game?.session is null || !absLmn.world.game.IsArenaSession || absLmn.world.game.GetArenaGameSession.arenaSitting.gameTypeSetup.gameType != MoreSlugcatsEnums.GameTypeID.Challenge)
+&& absLmn.state is GlowSpiderState gs && gs.role != Guardian && gs.health < (gs.role == Forager ? 0.1f : 0.05f);
     }
 
 
@@ -2853,11 +2778,7 @@ public abstract class LuminMass
     {
         get
         {
-            if (lumins.Count == 0)
-            {
-                return null;
-            }
-            return lumins[0];
+            return lumins.Count == 0 ? null : lumins[0];
         }
     }
 
@@ -2914,7 +2835,7 @@ public abstract class LuminMass
     private void RemoveLmnAt(int i)
     {
         if (this is LuminFlock &&
-            lumins[i].flock == this as LuminFlock)
+            lumins[i].flock == (this as LuminFlock))
         {
             lumins[i].flock = null;
         }
@@ -2948,10 +2869,7 @@ public class LuminFlock : LuminMass
 
     public override void Update(bool eu)
     {
-        if (lumins is null)
-        {
-            lumins = new();
-        }
+        lumins ??= new();
         if (!ShouldIUpdate(eu))
         {
             return;

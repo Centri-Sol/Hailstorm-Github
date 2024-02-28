@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using MoreSlugcats;
-using System;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------

@@ -1,7 +1,4 @@
 ﻿/*
-using System.Globalization;
-using System.Text.RegularExpressions;
-
 namespace Hailstorm;
 
 internal class DevToolStuff

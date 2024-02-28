@@ -1,16 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static System.Reflection.BindingFlags;
-using UnityEngine;
-using On.Menu;
-using RWCustom;
-using MoreSlugcats;
-using Random = UnityEngine.Random;
-using MonoMod.RuntimeDetour;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class MiscWorldChanges
 {
@@ -535,10 +523,7 @@ internal class MiscWorldChanges
         orig(postCycleScreen, package);
         if (postCycleScreen.IsSleepScreen && package.characterStats.name.value == IncanInfo.Incandescent.value)
         {
-            if (postCycleScreen.soundLoop is not null)
-            {
-                postCycleScreen.soundLoop.Destroy();
-            }
+            postCycleScreen.soundLoop?.Destroy();
             postCycleScreen.mySoundLoopID = MoreSlugcatsEnums.MSCSoundID.Sleep_Blizzard_Loop;
         }
     }

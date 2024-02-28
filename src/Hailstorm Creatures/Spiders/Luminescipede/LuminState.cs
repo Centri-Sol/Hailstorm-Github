@@ -1,11 +1,4 @@
-﻿using System.Globalization;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Random = UnityEngine.Random;
-using UnityEngine;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -86,35 +79,29 @@ public class GlowSpiderState : HealthState
     public GlowSpiderState(AbstractCreature absLmn) : base (absLmn)
     {
         juice = 1;
-        behavior = Behavior.Idle;
+        behavior = Idle;
         stateTimeLimit = -1;
         Random.State rState = Random.state;
         Random.InitState(absLmn.ID.RandomSeed);
-        switch (Random.value)
+        role = Random.value switch
         {
-            case < 0.25f:
-                role = Role.Forager;
-                break;
-            case < 0.55f:
-                role = Role.Hunter;
-                break;
-            default:
-                role = Role.Guardian;
-                break;
-        }
+            < 0.25f => Forager,
+            < 0.55f => Hunter,
+            _ => Guardian,
+        };
         ivars = new IndividualVariations(Random.Range(0.8f, 1.2f), Random.Range(0.8f, 1.2f));
         dominant = ivars.dominance > 1.2f;
-        if (role == Role.Guardian)
+        if (role == Guardian)
         {
             timeToWantToHide = !dominant ? 1000 : 1600;
             timeToHide = 320;
         }
-        else if (role == Role.Forager)
+        else if (role == Forager)
         {
             timeToWantToHide = 12000;
             timeToHide = 200;
         }
-        role = Role.Forager;
+        role = Forager;
         dominant = true;
         Random.state = rState;
     }
@@ -124,7 +111,7 @@ public class GlowSpiderState : HealthState
         timeSincePreyLastSeen = 0;
         darknessCounter = 0;
         rushPreyCounter = 0;
-        behavior = Behavior.Idle;
+        behavior = Idle;
         suppressedState = null;
         stateTimeLimit = -1;
     }
@@ -168,7 +155,7 @@ public class GlowSpiderState : HealthState
     }
     public virtual void ChangeBehavior(Behavior newState, int stubborness)
     {
-        if (newState is null || newState == behavior || (dead && newState != Behavior.Idle) || (behavior == Behavior.Overloaded && Stunned))
+        if (newState is null || newState == behavior || (dead && newState != Behavior.Idle) || (behavior == Overloaded && Stunned))
         {
             return;
         }

@@ -1,21 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using static System.Reflection.BindingFlags;
-using UnityEngine;
-using On.Menu;
-using RWCustom;
-using MoreSlugcats;
-using Random = UnityEngine.Random;
-using MonoMod.RuntimeDetour;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Globalization;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Runtime.CompilerServices;
-using static Hailstorm.ObjectChanges;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class Regions
 {
@@ -93,12 +76,11 @@ internal class Regions
             cTracker.displayRegions = new List<string>(new string[12] { "MS", "SL", "CL", "GW", "HI", "UG", "SU", "CC", "VS", "SI", "LF", "SB" });
             cTracker.collectionData = cTracker.MineForSaveData(menu.manager, saveSlot);
             string[] slugcatOptionalRegions = SlugcatStats.getSlugcatOptionalRegions(saveSlot);
-            if (cTracker.collectionData is null)
-            {
-                cTracker.collectionData = new ();
-                cTracker.collectionData.currentRegion = "??";
-                cTracker.collectionData.regionsVisited = new List<string>();
-            }
+            cTracker.collectionData ??= new()
+                {
+                    currentRegion = "??",
+                    regionsVisited = new List<string>()
+                };
             for (int i = 0; i < cTracker.displayRegions.Count; i++)
             {
                 cTracker.displayRegions[i] = cTracker.displayRegions[i].ToLowerInvariant();
@@ -122,9 +104,11 @@ internal class Regions
             {
                 if (cTracker.collectionData is not null && cTracker.displayRegions[l] == cTracker.collectionData.currentRegion)
                 {
-                    cTracker.regionIcons[l] = new FSprite("keyShiftB");
-                    cTracker.regionIcons[l].rotation = 180f;
-                    cTracker.regionIcons[l].scale = 0.5f;
+                    cTracker.regionIcons[l] = new FSprite("keyShiftB")
+                    {
+                        rotation = 180f,
+                        scale = 0.5f
+                    };
                 }
                 else
                 {

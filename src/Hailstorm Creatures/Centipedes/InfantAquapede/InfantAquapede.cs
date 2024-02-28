@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -71,10 +63,7 @@ public class InfantAquapede : Centipede, IPlayerEdible
     }
     public override void InitiateGraphicsModule()
     {
-        if (graphicsModule is null)
-        {
-            graphicsModule = new InfantAquapedeGraphics(this);
-        }
+        graphicsModule ??= new InfantAquapedeGraphics(this);
     }
 
     //--------------------------------------------------------------------------------

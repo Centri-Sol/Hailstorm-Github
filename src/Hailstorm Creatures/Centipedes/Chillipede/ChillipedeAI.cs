@@ -1,9 +1,4 @@
-﻿using System;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using UnityEngine;
-using BepInEx;
-using BepInEx.Logging;
-using Fisobs.Core;
-using DevInterface;
-using MoreSlugcats;
-using Color = UnityEngine.Color;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 
 [BepInPlugin(MOD_ID, "The Incandescent", "0.3.0")]

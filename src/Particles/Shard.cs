@@ -1,10 +1,4 @@
-﻿using System;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //--------------------------------------------------------------------------------
 
@@ -115,9 +109,11 @@ public class Shard : CosmeticSprite
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         sLeaser.sprites = new FSprite[1];
-        sLeaser.sprites[0] = new FSprite("SpearFragment" + (1 + Random.Range(0, 2)));
-        sLeaser.sprites[0].scaleX = (Random.value < 0.5f ? -1f : 1f) * scale;
-        sLeaser.sprites[0].scaleY = (Random.value < 0.5f ? -1f : 1f) * scale;
+        sLeaser.sprites[0] = new FSprite("SpearFragment" + (1 + Random.Range(0, 2)))
+        {
+            scaleX = (Random.value < 0.5f ? -1f : 1f) * scale,
+            scaleY = (Random.value < 0.5f ? -1f : 1f) * scale
+        };
         AddToContainer(sLeaser, rCam, null);
     }
 

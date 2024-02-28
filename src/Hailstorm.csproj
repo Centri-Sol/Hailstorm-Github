@@ -13,7 +13,14 @@
     </ItemGroup>
     
     <ItemGroup>
-      <Folder Include="Creatures\Vultures\Raven\" />
+      <Compile Remove="Creatures\**" />
+      <EmbeddedResource Remove="Creatures\**" />
+      <None Remove="Creatures\**" />
+      <Reference Remove="Creatures\**" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <None Remove="CWT.cs~RF163d3c43.TMP" />
     </ItemGroup>
     
     <Target Name="GenerateMod" AfterTargets="PostBuildEvent">

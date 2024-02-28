@@ -1,8 +1,4 @@
-﻿using RWCustom;
-using UnityEngine;
-using Color = UnityEngine.Color;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -28,7 +24,7 @@ public class FreezerMist : CosmeticSprite
     public InsectCoordinator smallInsects;
 
     private float gradient;
-    private float gradientSpeed;
+    private readonly float gradientSpeed;
     private bool gradientLerpFlip;
 
     public bool dangerous;
@@ -168,8 +164,10 @@ public class FreezerMist : CosmeticSprite
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         sLeaser.sprites = new FSprite[1];
-        sLeaser.sprites[0] = new FSprite("Futile_White");
-        sLeaser.sprites[0].shader = rCam.room.game.rainWorld.Shaders["Spores"];
+        sLeaser.sprites[0] = new FSprite("Futile_White")
+        {
+            shader = rCam.room.game.rainWorld.Shaders["Spores"]
+        };
         AddToContainer(sLeaser, rCam, null);
     }
 

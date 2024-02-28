@@ -1,12 +1,4 @@
-﻿using System;
-using System.Linq;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -320,9 +312,11 @@ public class ColdLizard : Lizard
         if (chillAura is null &&
             chillRadius >= 50)
         {
-            chillAura = new LightSource(DangerPos, false, effectColor, this);
-            chillAura.affectedByPaletteDarkness = 0.2f;
-            chillAura.requireUpKeep = true;
+            chillAura = new LightSource(DangerPos, false, effectColor, this)
+            {
+                affectedByPaletteDarkness = 0.2f,
+                requireUpKeep = true
+            };
             room.AddObject(chillAura);
         }
         else if (chillAura is not null)

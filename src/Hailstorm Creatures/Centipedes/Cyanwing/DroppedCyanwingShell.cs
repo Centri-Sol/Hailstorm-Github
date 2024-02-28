@@ -1,10 +1,4 @@
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -26,7 +20,7 @@ public class DroppedCyanwingShell : CosmeticSprite
     private readonly float scaleX;
     private readonly float scaleY;
 
-    private SharedPhysics.TerrainCollisionData scratchTerrainCollisionData = new SharedPhysics.TerrainCollisionData();
+    private readonly SharedPhysics.TerrainCollisionData scratchTerrainCollisionData = new();
 
     public int fuseTime;
 
@@ -34,7 +28,7 @@ public class DroppedCyanwingShell : CosmeticSprite
     private Color scaleColor;
     private Color blackColor;
     private Color currentShellColor;
-    private bool isBackShell;
+    private readonly bool isBackShell;
 
     public LightSource shellLight;
 

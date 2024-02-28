@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 public class CustomObjectInfo
 {

@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
-using RWCustom;
-using UnityEngine;
-using Random = UnityEngine.Random;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 public abstract class Debuff
 {
@@ -161,9 +151,11 @@ public class Burn : Debuff
 
         if (glow is null)
         {
-            glow = new LightSource(victim.bodyChunks[chunk.Value].pos, false, mainColor, null, false);
-            glow.requireUpKeep = true;
-            glow.setAlpha = new float?(1);
+            glow = new LightSource(victim.bodyChunks[chunk.Value].pos, false, mainColor, null, false)
+            {
+                requireUpKeep = true,
+                setAlpha = new float?(1)
+            };
             victim.room.AddObject(glow);
         }
         else if (glow is not null)
@@ -189,10 +181,7 @@ public class Burn : Debuff
         }
         if (duration % (burnCount > 0 ? burnCount : 3) == 0) // Creates smoke at a lower rate the more burns are applied.
         {
-            if (smoke is null)
-            {
-                smoke = new HailstormFireSmokeCreator(victim.room);
-            }
+            smoke ??= new HailstormFireSmokeCreator(victim.room);
             if (smoke is not null)
             {
                 smoke.Update(eu);

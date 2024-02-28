@@ -1,11 +1,4 @@
-﻿using UnityEngine;
-using RWCustom;
-using MoreSlugcats;
-using HUD;
-using System.Collections.Generic;
-
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 internal class Dialogue
 {
@@ -234,10 +227,7 @@ internal class Dialogue
                                 continue;
                             }
 
-                            if (moon.currentConversation == null)
-                            {
-                                moon.currentConversation = new SLOracleBehaviorHasMark.MoonConversation(Conversation.ID.None, moon, SLOracleBehaviorHasMark.MiscItemType.NA);
-                            }
+                            moon.currentConversation ??= new SLOracleBehaviorHasMark.MoonConversation(Conversation.ID.None, moon, SLOracleBehaviorHasMark.MiscItemType.NA);
 
                             if (musicPearlStolenBackCount == 1)
                             {
@@ -622,10 +612,7 @@ internal class Dialogue
 
             Conversation mConv = moon.currentConversation;
 
-            if (mConv == null)
-            {
-                mConv = new SLOracleBehaviorHasMark.MoonConversation(Conversation.ID.None, moon, SLOracleBehaviorHasMark.MiscItemType.NA);
-            }
+            mConv ??= new SLOracleBehaviorHasMark.MoonConversation(Conversation.ID.None, moon, SLOracleBehaviorHasMark.MiscItemType.NA);
 
             moon.State.likesPlayer = LP - 0.3f;
             moon.respondToNeuronFromNoSpeakMode = RFSN;            

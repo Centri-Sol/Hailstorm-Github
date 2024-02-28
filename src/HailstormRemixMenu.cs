@@ -1,8 +1,4 @@
-﻿using Menu.Remix.MixedUI;
-using UnityEngine;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 public class HSRemix : OptionInterface
 {
@@ -102,15 +98,15 @@ public class HSRemix : OptionInterface
     public override void Initialize()
     {
         base.Initialize();
-        OpTab opTab1 = new OpTab(this, "The Incandescent");
-        OpTab opTab2 = new OpTab(this, "Creatures");
-        OpTab opTab3 = new OpTab(this, "Color Variation");
+        OpTab opTab1 = new(this, "The Incandescent");
+        OpTab opTab2 = new(this, "Creatures");
+        OpTab opTab3 = new(this, "Color Variation");
         Tabs = new[] { opTab1, opTab2, opTab3 };
 
 
         OpContainer containerTab1 = new(new Vector2(0, 0));
         opTab1.AddItems(containerTab1);
-        FSprite IncanIcon = new FSprite("HSColoredIcon_Incandescent") { x = 300, y = 500, width = 56, height = 34 };
+        FSprite IncanIcon = new("HSColoredIcon_Incandescent") { x = 300, y = 500, width = 56, height = 34 };
         containerTab1.container.AddChild(IncanIcon);
         IncandescentTab = new UIelement[]
         {
@@ -160,12 +156,12 @@ public class HSRemix : OptionInterface
         opTab1.AddItems(IncandescentTab);
 
 
-        OpContainer containerTab2 = new OpContainer(new Vector2(0, 0));
+        OpContainer containerTab2 = new(new Vector2(0, 0));
         opTab2.AddItems(containerTab2);
-        FSprite StowawayIcon = new FSprite("HSColoredIcon_Stowaway") { x = 85, y = 520 };
-        FSprite MotherSpiderIcon = new FSprite("HSColoredIcon_MotherSpider") { x = 299, y = 520 };
-        FSprite MirosVultureIcon = new FSprite("HSColoredIcon_MirosVulture") { x = 510, y = 520 };
-        FSprite BabySpiderIcon = new FSprite("HSColoredIcon_BabySpider") { x = 300, y = 270 };
+        FSprite StowawayIcon = new("HSColoredIcon_Stowaway") { x = 85, y = 520 };
+        FSprite MotherSpiderIcon = new("HSColoredIcon_MotherSpider") { x = 299, y = 520 };
+        FSprite MirosVultureIcon = new("HSColoredIcon_MirosVulture") { x = 510, y = 520 };
+        FSprite BabySpiderIcon = new("HSColoredIcon_BabySpider") { x = 300, y = 270 };
 
         containerTab2.container.AddChild(StowawayIcon);
         containerTab2.container.AddChild(MotherSpiderIcon);
@@ -270,7 +266,7 @@ public class HSRemix : OptionInterface
         };
         opTab2.AddItems(CreaturesTab);
 
-        OpContainer containerTab3 = new OpContainer(new Vector2(0, 0));
+        OpContainer containerTab3 = new(new Vector2(0, 0));
         opTab3.AddItems(containerTab3);
         PolePlantIcon = new FSprite("Kill_PoleMimic") { x = 50, y = 485, color = Color.red };
         MonsterKelpIcon = new FSprite("Kill_TentaclePlant") { x = 50, y = 435, color = Color.red };

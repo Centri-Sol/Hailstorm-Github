@@ -1,16 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Security.Cryptography;
-using System.Drawing;
-using System.Security.Claims;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -57,7 +45,7 @@ internal class HailstormSpiders
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
     }
 
 
@@ -128,11 +116,8 @@ internal class HailstormSpiders
     }
     public static bool WinterCoalescipedeHigherMassLimit(On.Spider.orig_ConsiderPrey orig, Spider spd, Creature ctr)
     {
-        if (spd is not null && IsWinterCoalescipede(spd) && ctr.TotalMass <= 6.72f && spd.Template.CreatureRelationship(ctr.Template).type == CreatureTemplate.Relationship.Type.Eats && !ctr.leechedOut)
-        {
-            return true;
-        }
-        return orig(spd, ctr);
+        return spd is not null && IsWinterCoalescipede(spd) && ctr.TotalMass <= 6.72f && spd.Template.CreatureRelationship(ctr.Template).type == CreatureTemplate.Relationship.Type.Eats && !ctr.leechedOut
+|| orig(spd, ctr);
     }
 
     public static void SpiderILHooks()
@@ -141,7 +126,7 @@ internal class HailstormSpiders
         {
             ILCursor c = new(IL);
             ILLabel? label = IL.DefineLabel();
-            c.Emit(OpCodes.Ldarg_0);
+            _ = c.Emit(OpCodes.Ldarg_0);
             c.Emit(OpCodes.Ldarg_1);
             c.EmitDelegate((Spider.Centipede cls, bool eu) =>
             {
@@ -154,7 +139,10 @@ internal class HailstormSpiders
     }
     public static bool LightAdaptionChanges(Spider.Centipede cls, bool eu)
     {
-        if (cls?.FirstSpider is null || !IsWinterCoalescipede(cls.FirstSpider)) return false;
+        if (cls?.FirstSpider is null || !IsWinterCoalescipede(cls.FirstSpider))
+        {
+            return false;
+        }
 
         cls.counter++;
         if (cls.counter >= cls.body.Count)
@@ -163,7 +151,10 @@ internal class HailstormSpiders
             cls.Tighten();
         }
 
-        if (!cls.ShouldIUpdate(eu)) return true;
+        if (!cls.ShouldIUpdate(eu))
+        {
+            return true;
+        }
 
         for (int num = cls.spiders.Count - 1; num >= 0; num--)
         {
@@ -230,14 +221,7 @@ internal class HailstormSpiders
                 cls.preyVisualCounter = 0;
             }
         }
-        if (cls.preyVisualCounter < 100 && cls.prey is not null)
-        {
-            cls.hunt = Mathf.Min(cls.hunt + 0.005f, 1f);
-        }
-        else
-        {
-            cls.hunt = Mathf.Max(cls.hunt - 0.005f, 0f);
-        }
+        cls.hunt = cls.preyVisualCounter < 100 && cls.prey is not null ? Mathf.Min(cls.hunt + 0.005f, 1f) : Mathf.Max(cls.hunt - 0.005f, 0f);
         cls.preyVisualCounter++;
 
         return true;
@@ -373,7 +357,10 @@ internal class HailstormSpiders
     public static void WinterMotherSpiderBabySpawn(On.BigSpider.orig_Update orig, BigSpider bigSpd, bool eu)
     {
         orig(bigSpd, eu);
-        if (bigSpd?.room is null) return;
+        if (bigSpd?.room is null)
+        {
+            return;
+        }
 
         if (bigSpd.Template.type == HailstormCreatures.PeachSpider)
         {
@@ -389,7 +376,7 @@ internal class HailstormSpiders
         else if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out AbsCtrInfo aI))
         {
             // Partially counteracts the Mother Spider's regeneration, or else it would be WAY too fast thanks to the health increase that Mother Spiders get (it's pretty much percentage-based).
-            if (bigSpd.State.health > 0 && bigSpd.State.health < 1)
+            if (bigSpd.State.health is > 0 and < 1)
             {
                 bigSpd.State.health -=
                     0.0014705883f * (bigSpd.State.health < 0.5f ? 0.5f : 0.875f);
@@ -440,13 +427,17 @@ internal class HailstormSpiders
                     Vector2 pos = bigSpd.mainBodyChunk.pos;
                     for (int j = 0; j < 5; j++)
                     {
-                        SporeCloud sC = new(pos, Custom.RNV() * Random.value * 10f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.4f), 1f, null, j % 20, smallInsects);
-                        sC.nonToxic = true;
+                        SporeCloud sC = new(pos, Custom.RNV() * Random.value * 10f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.4f), 1f, null, j % 20, smallInsects)
+                        {
+                            nonToxic = true
+                        };
                         bigSpd.room.AddObject(sC);
                     }
 
-                    SporePuffVisionObscurer sPVO = new(pos);
-                    sPVO.doNotCallDeer = true;
+                    SporePuffVisionObscurer sPVO = new(pos)
+                    {
+                        doNotCallDeer = true
+                    };
                     bigSpd.room.AddObject(sPVO);
 
                     bigSpd.room.AddObject(new PuffBallSkin(pos, Custom.RNV() * Random.value * 16f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.2f), Color.Lerp(bigSpd.yellowCol, Color.black, 0.6f)));
@@ -506,12 +497,12 @@ internal class HailstormSpiders
 
             target.Violence(bigSpd.bodyChunks[myChunk], bigSpd.bodyChunks[myChunk].vel, target.bodyChunks[otherChunk], null, Creature.DamageType.Blunt, damage, stun);
 
-            bigSpd.room.PlaySound(SoundID.Cicada_Heavy_Terrain_Impact, bigSpd.bodyChunks[myChunk]);
+            _ = bigSpd.room.PlaySound(SoundID.Cicada_Heavy_Terrain_Impact, bigSpd.bodyChunks[myChunk]);
             bigSpd.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, bigSpd.bodyChunks[myChunk], false, 1.4f, 1.1f);
-            bigSpd.room.PlaySound(SoundID.Rock_Hit_Wall, bigSpd.bodyChunks[myChunk], false, 1.5f, Random.Range(0.66f, 0.8f));
-            if (target.State is HealthState HS && HS.ClampedHealth == 0 || target.State.dead)
+            _ = bigSpd.room.PlaySound(SoundID.Rock_Hit_Wall, bigSpd.bodyChunks[myChunk], false, 1.5f, Random.Range(0.66f, 0.8f));
+            if ((target.State is HealthState HS && HS.ClampedHealth == 0) || target.State.dead)
             {
-                bigSpd.room.PlaySound(SoundID.Spear_Stick_In_Creature, bigSpd.bodyChunks[myChunk], false, 1.7f, Random.Range(0.6f, 0.8f));
+                _ = bigSpd.room.PlaySound(SoundID.Spear_Stick_In_Creature, bigSpd.bodyChunks[myChunk], false, 1.7f, Random.Range(0.6f, 0.8f));
             }
         }
         orig(bigSpd, obj, myChunk, otherChunk);
@@ -565,13 +556,17 @@ internal class HailstormSpiders
                     Vector2 pos = bigSpd.mainBodyChunk.pos;
                     for (int j = 0; j < remainingSpiders * 2; j++)
                     {
-                        SporeCloud sC = new(pos, Custom.RNV() * Random.value * 10f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.2f), 1f, null, j % 20, smallInsects);
-                        sC.nonToxic = true;
+                        SporeCloud sC = new(pos, Custom.RNV() * Random.value * 10f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.2f), 1f, null, j % 20, smallInsects)
+                        {
+                            nonToxic = true
+                        };
                         bigSpd.room.AddObject(sC);
                     }
 
-                    SporePuffVisionObscurer sPVO = new(pos);
-                    sPVO.doNotCallDeer = true;
+                    SporePuffVisionObscurer sPVO = new(pos)
+                    {
+                        doNotCallDeer = true
+                    };
                     bigSpd.room.AddObject(sPVO);
 
                     for (int k = 0; k < remainingSpiders * 0.2f; k++)
@@ -633,14 +628,7 @@ internal class HailstormSpiders
             bigSpd.borrowedTime += 500;
         }
     }
-    public static Color PeachSpiderShortcutColor(On.BigSpider.orig_ShortCutColor orig, BigSpider bigSpd)
-    {
-        if (bigSpd.Template.type == HailstormCreatures.PeachSpider)
-        {
-            return bigSpd.yellowCol * 0.75f;
-        }
-        return orig(bigSpd);
-    }
+    public static Color PeachSpiderShortcutColor(On.BigSpider.orig_ShortCutColor orig, BigSpider bigSpd) => bigSpd.Template.type == HailstormCreatures.PeachSpider ? bigSpd.yellowCol * 0.75f : orig(bigSpd);
 
     public static void PeachSpiderScales(On.BigSpiderGraphics.orig_ctor orig, BigSpiderGraphics bsg, PhysicalObject owner)
     {
@@ -739,7 +727,7 @@ internal class HailstormSpiders
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
-                if (sLeaser.sprites[s] is not TriangleMesh && sLeaser.sprites[s] is not CustomFSprite)
+                if (sLeaser.sprites[s] is not TriangleMesh and not CustomFSprite)
                 {
                     sLeaser.sprites[s].scale *=
                         bsg.bug.Template.type == HailstormCreatures.PeachSpider ? 0.2f : 1.15f;
@@ -797,8 +785,8 @@ internal class HailstormSpiders
                         float mandibleCharge = Mathf.Lerp(bsg.lastMandiblesCharge, bsg.mandiblesCharge, timeStacker);
                         cfs.verticeColors[2] = bsg.yellowCol;
                         cfs.verticeColors[3] = bsg.yellowCol;
-                        cfs.verticeColors[0] = Color.Lerp(bsg.blackColor, bsg.yellowCol, 0.6f * (1f - mandibleCharge) + 0.4f * bsg.darkness);
-                        cfs.verticeColors[1] = Color.Lerp(bsg.blackColor, bsg.yellowCol, 0.6f * (1f - mandibleCharge) + 0.4f * bsg.darkness);
+                        cfs.verticeColors[0] = Color.Lerp(bsg.blackColor, bsg.yellowCol, (0.6f * (1f - mandibleCharge)) + (0.4f * bsg.darkness));
+                        cfs.verticeColors[1] = Color.Lerp(bsg.blackColor, bsg.yellowCol, (0.6f * (1f - mandibleCharge)) + (0.4f * bsg.darkness));
                         for (int v = 0; v < cfs.vertices.Length - 1; v++)
                         {
                             cfs.vertices[v] = Vector2.Lerp(cfs.vertices[v], sLeaser.sprites[bsg.HeadSprite].GetPosition(), 0.3f);
@@ -823,11 +811,11 @@ internal class HailstormSpiders
     public static void LuminAntiAbstraction(On.AbstractCreature.orig_Abstractize orig, AbstractCreature absCtr, WorldCoordinate coord)
     {
         orig(absCtr, coord);
-        if (absCtr?.abstractAI?.RealAI?.pathFinder is not null && absCtr.state is not null && !absCtr.state.dead && absCtr.state is GlowSpiderState gs && gs.behavior == GlowSpiderState.Behavior.Hide)
+        if (absCtr?.abstractAI?.RealAI?.pathFinder is not null && absCtr.state is not null && !absCtr.state.dead && absCtr.state is GlowSpiderState gs && gs.behavior == Hide)
         {
             if (absCtr.abstractAI.RealAI.rainTracker is not null && absCtr.abstractAI.RealAI.rainTracker.Utility() >= 1)
             {
-                gs.behavior = GlowSpiderState.Behavior.EscapeRain;
+                gs.behavior = EscapeRain;
             }
             else
             {
@@ -847,11 +835,9 @@ internal class HailstormSpiders
 
     public static RelationshipTracker.TrackedCreatureState LuminsGetTrackedByLizards(On.LizardAI.orig_IUseARelationshipTracker_CreateTrackedCreatureState orig, LizardAI lizAI, RelationshipTracker.DynamicRelationship rel) // Make sure you set up the code for lizards reacting to this when you add Icy liz reactions towards Lumins!
     {
-        if (rel.trackerRep.representedCreature.creatureTemplate.type == HailstormCreatures.Luminescipede)
-        {
-            return new LizardAI.LizardTrackState();
-        }
-        return orig(lizAI, rel);
+        return rel.trackerRep.representedCreature.creatureTemplate.type == HailstormCreatures.Luminescipede
+            ? new LizardAI.LizardTrackState()
+            : orig(lizAI, rel);
     }
 
 

@@ -1,8 +1,4 @@
-﻿using RWCustom;
-using UnityEngine;
-using Color = UnityEngine.Color;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -26,8 +22,8 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
 
     private float Rad => 4f * massLeft;
 
-    private Vector2[,] slime;
-    private SharedPhysics.TerrainCollisionData scratchTerrainCollisionData = new SharedPhysics.TerrainCollisionData();
+    private readonly Vector2[,] slime;
+    private readonly SharedPhysics.TerrainCollisionData scratchTerrainCollisionData = new();
 
     public int JaggedSprite => 0;
     public int DotSprite => 1 + slime.GetLength(0);
@@ -230,10 +226,10 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
 
                 if (obj is IceChunk ice)
                 {
-                    ice.absIce.size += distFac;
-                    ice.absIce.freshness += distFac * 0.5f;
-                    ice.absIce.color1 = Color.Lerp(ice.absIce.color1, color1, distFac);
-                    ice.absIce.color2 = Color.Lerp(ice.absIce.color2, color2, distFac);
+                    ice.AbsIce.size += distFac;
+                    ice.AbsIce.freshness += distFac * 0.5f;
+                    ice.AbsIce.color1 = Color.Lerp(ice.AbsIce.color1, color1, distFac);
+                    ice.AbsIce.color2 = Color.Lerp(ice.AbsIce.color2, color2, distFac);
                 }
                 if (!CustomObjectInfo.FreezableObjects.ContainsKey(obj.abstractPhysicalObject.type))
                 {
@@ -241,12 +237,14 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
                 }
 
 
-                AbstractIceChunk newAbsIce = new(obj.abstractPhysicalObject.world, obj.abstractPhysicalObject.pos, obj.abstractPhysicalObject.world.game.GetNewID());
-                newAbsIce.frozenObject = new FrozenObject(obj.abstractPhysicalObject);
-                newAbsIce.size = distFac;
-                newAbsIce.freshness = distFac * 0.5f;
-                newAbsIce.color1 = color1;
-                newAbsIce.color2 = color2;
+                AbstractIceChunk newAbsIce = new(obj.abstractPhysicalObject.world, obj.abstractPhysicalObject.pos, obj.abstractPhysicalObject.world.game.GetNewID())
+                {
+                    frozenObject = new FrozenObject(obj.abstractPhysicalObject),
+                    size = distFac,
+                    freshness = distFac * 0.5f,
+                    color1 = color1,
+                    color2 = color2
+                };
                 obj.abstractPhysicalObject.Room.AddEntity(newAbsIce);
                 newAbsIce.RealizeInRoom();
 
@@ -258,10 +256,7 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
                     for (int g = obj.grabbedBy.Count - 1; g >= 0; g--)
                     {
                         Creature.Grasp grasp = obj.grabbedBy[g];
-                        if (grasp.grabber is not null)
-                        {
-                            grasp.grabber.Grab(newIce, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
-                        }
+                        grasp.grabber?.Grab(newIce, grasp.graspUsed, 0, grasp.shareability, grasp.dominance, true, grasp.pacifying);
                     }
                 }
                 obj.RemoveFromRoom();
@@ -302,20 +297,26 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
     {
         sLeaser.sprites = new FSprite[TotalSprites];
 
-        sLeaser.sprites[DotSprite] = new FSprite("Futile_White");
-        sLeaser.sprites[DotSprite].shader = rCam.game.rainWorld.Shaders["JaggedCircle"];
-        sLeaser.sprites[DotSprite].alpha = Random.value * 0.5f;
+        sLeaser.sprites[DotSprite] = new FSprite("Futile_White")
+        {
+            shader = rCam.game.rainWorld.Shaders["JaggedCircle"],
+            alpha = Random.value * 0.5f
+        };
 
-        sLeaser.sprites[JaggedSprite] = new FSprite("Futile_White");
-        sLeaser.sprites[JaggedSprite].shader = rCam.game.rainWorld.Shaders["JaggedCircle"];
-        sLeaser.sprites[JaggedSprite].alpha = Random.value * 0.5f;
+        sLeaser.sprites[JaggedSprite] = new FSprite("Futile_White")
+        {
+            shader = rCam.game.rainWorld.Shaders["JaggedCircle"],
+            alpha = Random.value * 0.5f
+        };
 
         for (int i = 0; i < slime.GetLength(0); i++)
         {
-            sLeaser.sprites[SlimeSprite(i)] = new FSprite("Futile_White");
-            sLeaser.sprites[SlimeSprite(i)].anchorY = 0.05f;
-            sLeaser.sprites[SlimeSprite(i)].shader = rCam.game.rainWorld.Shaders["JaggedCircle"];
-            sLeaser.sprites[SlimeSprite(i)].alpha = Random.value;
+            sLeaser.sprites[SlimeSprite(i)] = new FSprite("Futile_White")
+            {
+                anchorY = 0.05f,
+                shader = rCam.game.rainWorld.Shaders["JaggedCircle"],
+                alpha = Random.value
+            };
         }
         AddToContainer(sLeaser, rCam, null);
     }
@@ -364,10 +365,7 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
     }
     public void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
     {
-        if (newContatiner == null)
-        {
-            newContatiner = rCam.ReturnFContainer("Items");
-        }
+        newContatiner ??= rCam.ReturnFContainer("Items");
         for (int i = 0; i < sLeaser.sprites.Length; i++)
         {
             sLeaser.sprites[i].RemoveFromContainer();

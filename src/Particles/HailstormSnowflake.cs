@@ -1,9 +1,4 @@
-﻿using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------
@@ -82,9 +77,11 @@ public class HailstormSnowflake : CosmeticSprite
         sLeaser.sprites = new FSprite[2];
         for (int i = 0; i < 2; i++)
         {
-            sLeaser.sprites[i] = new FSprite("Snowflake" + Random.Range(0, 1) + ".0");
-            sLeaser.sprites[i].scaleX = ((Random.value < 0.5f) ? -1f : 1f) * Mathf.Lerp(0.5f, 1f, Random.value);
-            sLeaser.sprites[i].scaleY = ((Random.value < 0.5f) ? -1f : 1f) * 1.2f;
+            sLeaser.sprites[i] = new FSprite("Snowflake" + Random.Range(0, 1) + ".0")
+            {
+                scaleX = ((Random.value < 0.5f) ? -1f : 1f) * Mathf.Lerp(0.5f, 1f, Random.value),
+                scaleY = ((Random.value < 0.5f) ? -1f : 1f) * 1.2f
+            };
         }
         AddToContainer(sLeaser, rCam, null);
     }

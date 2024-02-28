@@ -1,14 +1,4 @@
-﻿using System;
-using UnityEngine;
-using SlugBase;
-using MoreSlugcats;
-using Random = UnityEngine.Random;
-using System.Collections.Generic;
-using RWCustom;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -141,9 +131,12 @@ public class AbsCtrInfo
 
     public void AddBurn(AbstractPhysicalObject burnSource, PhysicalObject target, int? hitChunk, int debuffDuration, Color baseColor, Color fadeColor)
     {
-        if (burnSource is null || target is null) return;
+        if (burnSource is null || target is null)
+        {
+            return;
+        }
 
-        if (debuffs is null) debuffs = new();
+        debuffs ??= new();
 
 
         if (IsTargetBurnImmune(target))
@@ -160,14 +153,10 @@ public class AbsCtrInfo
 
     public bool IsTargetBurnImmune(PhysicalObject target)
     {
-        if (target is Overseer ||
+        return target is Overseer ||
             target is Inspector ||
             (target is EggBug egg && egg.FireBug) ||
-            (target is Player self && IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan))
-        {
-            return true;
-        }
-        return false;
+            (target is Player self && IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan);
     }
 
 }
@@ -189,7 +178,7 @@ public class TuskInfo
 
     public Vector2 bounceOffSpeed;
 
-    public TuskInfo (KingTusks.Tusk tusk)
+    public TuskInfo(KingTusks.Tusk tusk)
     {
 
     }
@@ -201,7 +190,7 @@ public class PupButtonInfo
 {
     public Menu.MenuIllustration uniqueSymbol2;
     public Color uniqueTintColor2;
-    public PupButtonInfo(JollyCoop.JollyMenu.SymbolButtonTogglePupButton pupButton)
+    public PupButtonInfo(SymbolButtonTogglePupButton pupButton)
     {
 
     }

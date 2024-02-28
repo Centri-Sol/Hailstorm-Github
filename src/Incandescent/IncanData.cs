@@ -1,14 +1,4 @@
-﻿using System;
-using UnityEngine;
-using SlugBase;
-using MoreSlugcats;
-using Random = UnityEngine.Random;
-using System.Collections.Generic;
-using RWCustom;
-using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -354,10 +344,12 @@ public class IncanInfo // Stores a boatload of information for individual player
 
         if (Glow is null && !self.dead)
         {
-            Glow = new LightSource(GlowPos, false, FireColor, self);
-            Glow.affectedByPaletteDarkness = 0;
-            Glow.requireUpKeep = true;
-            Glow.setAlpha = 1;
+            Glow = new LightSource(GlowPos, false, FireColor, self)
+            {
+                affectedByPaletteDarkness = 0,
+                requireUpKeep = true,
+                setAlpha = 1
+            };
             self.room.AddObject(Glow);
         }
         else if (Glow is not null)

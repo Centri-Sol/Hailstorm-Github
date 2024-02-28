@@ -1,12 +1,4 @@
-﻿using System;
-using System.Linq;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -30,8 +22,8 @@ public class GorditoGraphics : LizardGraphics
 
         int cosmeticSprites = startOfExtraSprites + extraSprites;
 
-        cosmeticSprites = AddCosmetic(cosmeticSprites, new LizardCosmetics.SnowAccumulation(this, cosmeticSprites));
-        cosmeticSprites = AddCosmetic(cosmeticSprites, new LizardCosmetics.SnowAccumulation(this, cosmeticSprites));
+        cosmeticSprites = AddCosmetic(cosmeticSprites, new SnowAccumulation(this, cosmeticSprites));
+        cosmeticSprites = AddCosmetic(cosmeticSprites, new SnowAccumulation(this, cosmeticSprites));
 
         Random.state = state;
 
@@ -115,7 +107,7 @@ public class GorditoGraphics : LizardGraphics
 
     public virtual Color GorditoHeadColor(float timeStacker, Color baseColor)
     {
-        float flickerIntensity = 1f - Mathf.Pow(0.5f + 0.5f * Mathf.Sin(Mathf.Lerp(lastBlink, blink, timeStacker) * 2f * Mathf.PI), 1.5f + liz.AI.excitement * 1.5f);
+        float flickerIntensity = 1f - Mathf.Pow(0.5f + (0.5f * Mathf.Sin(Mathf.Lerp(lastBlink, blink, timeStacker) * 2f * Mathf.PI)), 1.5f + (liz.AI.excitement * 1.5f));
         flickerIntensity = Mathf.Lerp(flickerIntensity, Mathf.Pow(Mathf.Max(0f, Mathf.Lerp(lastVoiceVisualization, voiceVisualization, timeStacker)), 0.75f), Mathf.Lerp(lastVoiceVisualizationIntensity, voiceVisualizationIntensity, timeStacker));
         return Color.Lerp(flashColor, baseColor, flickerIntensity);
     }

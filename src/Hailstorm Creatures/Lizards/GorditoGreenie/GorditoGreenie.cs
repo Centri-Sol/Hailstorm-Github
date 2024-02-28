@@ -1,12 +1,4 @@
-﻿using System;
-using System.Linq;
-using UnityEngine;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using RWCustom;
-using MoreSlugcats;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -52,10 +44,7 @@ public class GorditoGreenie : Lizard
     }
     public override void InitiateGraphicsModule()
     {
-        if (graphicsModule is null)
-        {
-            graphicsModule = new GorditoGraphics(this);
-        }
+        graphicsModule ??= new GorditoGraphics(this);
     }
 
     //--------------------------------------------------------------------------------

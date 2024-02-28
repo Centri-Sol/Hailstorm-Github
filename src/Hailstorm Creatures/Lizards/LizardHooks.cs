@@ -1,21 +1,3 @@
-using MonoMod.Cil;
-using Mono.Cecil.Cil;
-using System.Collections.Generic;
-using UnityEngine;
-using RWCustom;
-using LizardCosmetics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using MoreSlugcats;
-using Random = UnityEngine.Random;
-using Color = UnityEngine.Color;
-using MonoMod.RuntimeDetour;
-using System;
-using static System.Reflection.BindingFlags;
-using Mono.Cecil;
-using System.Security.Claims;
-using System.Runtime.ConstrainedExecution;
-
 namespace Hailstorm;
 
 //------------------------------------------------------------------------
@@ -36,7 +18,7 @@ internal class LizardHooks
         On.LizardBreeds.BreedTemplate_Type_CreatureTemplate_CreatureTemplate += EelTemperatureResistances;
         On.Lizard.ctor += HailstormLizConstructors;
 
-        new Hook(typeof(LizardTongue).GetMethod("get_Ready", Public | NonPublic | Instance), (Func<LizardTongue, bool> orig, LizardTongue tongue) => orig(tongue) && !(tongue.lizard.Template.type == HailstormCreatures.IcyBlue && tongue.lizard.TotalMass > 1.55f));
+        _ = new Hook(typeof(LizardTongue).GetMethod("get_Ready", Public | NonPublic | Instance), (Func<LizardTongue, bool> orig, LizardTongue tongue) => orig(tongue) && !(tongue.lizard.Template.type == HailstormCreatures.IcyBlue && tongue.lizard.TotalMass > 1.55f));
         On.LizardTongue.ctor += IcyBlueTongues;
         On.Lizard.HitHeadShield += GorditoSquishyHead1;
         On.Lizard.HitInMouth += GorditoSquishyHead2;
@@ -56,8 +38,8 @@ internal class LizardHooks
         On.LizardGraphics.ApplyPalette += ColdLizardBodyColors1;
         On.LizardGraphics.BodyColor += ColdLizardBodyColors2;
         IcyCosmetics.Init();
-        new Hook(typeof(LizardGraphics).GetMethod("get_SalamanderColor", Public | NonPublic | Instance), (Func<LizardGraphics, Color> orig, LizardGraphics lG) => !(IsIncanStory(lG?.lizard?.room?.game) && lG.lizard.abstractCreature.Winterized) ? orig(lG) : Color.Lerp((lG.blackSalamander ? new Color(0.25f, 0.25f, 0.25f) : new Color(0.75f, 0.75f, 0.75f)), lG.effectColor, 0.08f));
-       
+        _ = new Hook(typeof(LizardGraphics).GetMethod("get_SalamanderColor", Public | NonPublic | Instance), (Func<LizardGraphics, Color> orig, LizardGraphics lG) => !(IsIncanStory(lG?.lizard?.room?.game) && lG.lizard.abstractCreature.Winterized) ? orig(lG) : Color.Lerp(lG.blackSalamander ? new Color(0.25f, 0.25f, 0.25f) : new Color(0.75f, 0.75f, 0.75f), lG.effectColor, 0.08f));
+
     }
 
     //----------------------------------------------------------------------------------
@@ -65,7 +47,7 @@ internal class LizardHooks
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return !(RWG?.session is null || !RWG.IsStorySession || RWG.StoryCharacter != IncanInfo.Incandescent);
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
@@ -95,7 +77,9 @@ internal class LizardHooks
                 c.Emit(OpCodes.Brfalse, label);
             }
             else
+            {
                 Plugin.logger.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Freezer Lizards!");
+            }
 
             ILCursor c2 = new(il);
             ILLabel? label2 = null;
@@ -113,9 +97,10 @@ internal class LizardHooks
                 c2.Emit(OpCodes.Brtrue, label2);
             }
             else
+            {
                 Plugin.logger.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Icy Blue Lizards!");
+            }
 
-            
             ILCursor c3 = new(il);
             ILLabel? label3 = null;
             if (c2.TryGotoNext(
@@ -132,8 +117,9 @@ internal class LizardHooks
                 c2.Emit(OpCodes.Brfalse, label3);
             }
             else
+            {
                 Plugin.logger.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Gorditio Greenie Lizards!");
-            
+            }
         };
     }
 
@@ -183,11 +169,7 @@ internal class LizardHooks
                     }
                 }
 
-                if (list.Count == 0)
-                {
-                    res = SoundID.None;
-                }
-                else res = list[Random.Range(0, list.Count)];
+                res = list.Count == 0 ? SoundID.None : list[Random.Range(0, list.Count)];
             }
             else if (liz.Template.type == HailstormCreatures.IcyBlue)
             {
@@ -205,11 +187,7 @@ internal class LizardHooks
                     }
                 }
 
-                if (list.Count == 0)
-                {
-                    res = SoundID.None;
-                }
-                else res = list[Random.Range(0, list.Count)];
+                res = list.Count == 0 ? SoundID.None : list[Random.Range(0, list.Count)];
             }
             else if (liz.Template.type == HailstormCreatures.GorditoGreenie)
             {
@@ -227,11 +205,7 @@ internal class LizardHooks
                     }
                 }
 
-                if (list.Count == 0)
-                {
-                    res = SoundID.None;
-                }
-                else res = list[Random.Range(0, list.Count)];
+                res = list.Count == 0 ? SoundID.None : list[Random.Range(0, list.Count)];
             }
         }
         return res;
@@ -263,32 +237,32 @@ internal class LizardHooks
             CreatureTemplate frzTemp = StaticWorld.GetCreatureTemplate(HailstormCreatures.Freezer);
             LizardBreedParams frzStats = frzTemp.breedParameters as LizardBreedParams;
 
-			// Icy Blues are unique in that their stats vary based on their mass (I just say "size" because it feels more natural), kinda like Centipedes but more detailed.
-			// This variation is now done in Lizard.ctor, but I originally tried doing it in here, hence the leftover size-related code. (It doesn't work if done here)
-			// This section is still good for seeing any Icy Blue stats that don't vary.
+            // Icy Blues are unique in that their stats vary based on their mass (I just say "size" because it feels more natural), kinda like Centipedes but more detailed.
+            // This variation is now done in Lizard.ctor, but I originally tried doing it in here, hence the leftover size-related code. (It doesn't work if done here)
+            // This section is still good for seeing any Icy Blue stats that don't vary.
             float sizeMult = 1.33f;
             float sizeFac = Mathf.InverseLerp(1f, 2f, sizeMult);
 
-			//----Basic Info----//
-			icyBlueTemp.type = lizardType;
+            //----Basic Info----//
+            icyBlueTemp.type = lizardType;
             icyBlueTemp.name = "Icy Blue Lizard";
 			icyBlueTemp.meatPoints = 6;
             icyBlueStats.standardColor = Custom.HSL2RGB(0.625f, 0.7f, 0.7f);
             icyBlueStats.tamingDifficulty = 5.4f;
             icyBlueStats.aggressionCurveExponent = Mathf.Lerp(0.9f, frzStats.aggressionCurveExponent, sizeFac);
-			icyBlueStats.danger = Mathf.Lerp(0.45f, frzStats.danger, sizeFac);
+            icyBlueStats.danger = Mathf.Lerp(0.45f, frzStats.danger, sizeFac);
             icyBlueTemp.dangerousToPlayer = icyBlueStats.danger;
             icyBlueTemp.hibernateOffScreen = false;
-			//----HP and Resistances----//
+            //----HP and Resistances----//
             icyBlueTemp.baseDamageResistance = 3;
 			icyBlueTemp.instantDeathDamageLimit = 3;
             icyBlueTemp.baseStunResistance = 2.4f;
             CustomTemplateInfo.DamageResistances.AddLizardDamageResistances(ref icyBlueTemp, lizardType);
 			icyBlueTemp.wormGrassImmune = false;
-			icyBlueTemp.BlizzardAdapted = true;
+            icyBlueTemp.BlizzardAdapted = true;
             icyBlueTemp.BlizzardWanderer = true;
-			//----Vision----//
-			icyBlueTemp.visualRadius = 1250;
+            //----Vision----//
+            icyBlueTemp.visualRadius = 1250;
             icyBlueTemp.waterVision = Mathf.Lerp(0.4f, frzTemp.waterVision, sizeFac);
             icyBlueTemp.throughSurfaceVision = 0.7f;
             icyBlueStats.perfectVisionAngle = Mathf.Lerp(0.8888f, frzStats.perfectVisionAngle, sizeFac);
@@ -678,7 +652,7 @@ internal class LizardHooks
                 Random.InitState(absLiz.ID.RandomSeed);
                 float winterHue = Custom.WrappedRandomVariation(195 / 360f, 65 / 360f, 0.5f);
                 liz.effectColor =
-                    absLiz.Winterized && world.region is not null && world.region.name != "CC" ? Custom.HSL2RGB(winterHue, Random.Range(0.6f, 1) - Mathf.InverseLerp(13 / 24f, 13 / 12f, winterHue), Custom.ClampedRandomVariation((Random.value < 0.08f ? 0.3f : 0.7f), 0.05f, 0.2f)) : // Winter colors
+                    absLiz.Winterized && world.region is not null && world.region.name != "CC" ? Custom.HSL2RGB(winterHue, Random.Range(0.6f, 1) - Mathf.InverseLerp(13 / 24f, 13 / 12f, winterHue), Custom.ClampedRandomVariation(Random.value < 0.08f ? 0.3f : 0.7f, 0.05f, 0.2f)) : // Winter colors
                     world.region is not null && world.region.name == "OE" ? Custom.HSL2RGB(Custom.WrappedRandomVariation(225 / 360f, 95 / 360f, 1), Random.Range(0.85f, 1), Random.Range(0.3f, 0.5f)) : // Outer Expanse colors
                     Custom.HSL2RGB(Custom.WrappedRandomVariation(130 / 360f, 65 / 360f, 0.8f), Random.Range(0.7f, 1), Custom.ClampedRandomVariation(0.25f, 0.15f, 0.33f)); // Default colors
 
@@ -731,7 +705,7 @@ internal class LizardHooks
                     {
                         Random.State state = Random.state;
                         Random.InitState(absLiz.ID.RandomSeed);
-                        float hue = Custom.WrappedRandomVariation(210/360f, 50/360f, 0.6f);
+                        float hue = Custom.WrappedRandomVariation(210 / 360f, 50 / 360f, 0.6f);
                         liz.effectColor = Custom.HSL2RGB(hue, 1f, Custom.ClampedRandomVariation(hue, 0.2f, 0.3f));
                         Random.state = state;
                     }
@@ -788,19 +762,11 @@ internal class LizardHooks
     }
     public static bool GorditoSquishyHead1(On.Lizard.orig_HitHeadShield orig, Lizard liz, Vector2 direction)
     {
-        if (liz is GorditoGreenie)
-        {
-            return false;
-        }
-        return orig(liz, direction);
+        return !(liz is GorditoGreenie || !orig(liz, direction));
     }
     public static bool GorditoSquishyHead2(On.Lizard.orig_HitInMouth orig, Lizard liz, Vector2 direction)
     {
-        if (liz is GorditoGreenie)
-        {
-            return false;
-        }
-        return orig(liz, direction);
+        return liz is not GorditoGreenie && orig(liz, direction);
     }
     public static void HailstormLizardViolence(On.Lizard.orig_Violence orig, Lizard liz, BodyChunk source, Vector2? directionAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos onAppendagePos, Creature.DamageType dmgType, float dmg, float bonusStun)
     {
@@ -861,18 +827,9 @@ internal class LizardHooks
         orig(liz, anim, forceAnimChange);
         if (liz is GorditoGreenie g && anim == Lizard.Animation.Lounge)
         {
-            if (liz.loungeDir.x != 0)
-            {
-                g.BounceDir = liz.loungeDir.x < 0 ? -1 : 1;
-            }
-            else if (liz.loungeDir.y != 0)
-            {
-                g.BounceDir = liz.loungeDir.y < 0 ? -1 : 1;
-            }
-            else
-            {
-                g.BounceDir = Random.value < 0.5f ? -1 : 1;
-            }
+            g.BounceDir = liz.loungeDir.x != 0
+                ? liz.loungeDir.x < 0 ? -1 : 1
+                : liz.loungeDir.y != 0 ? liz.loungeDir.y < 0 ? -1 : 1 : Random.value < 0.5f ? -1 : 1;
 
             foreach (BodyChunk chunk in liz.bodyChunks)
             {
@@ -894,8 +851,7 @@ internal class LizardHooks
         CreatureTemplate.Type otherCtrType = dynamRelat.trackerRep.representedCreature.creatureTemplate.type;
         Creature ctr = dynamRelat.trackerRep.representedCreature.realizedCreature;
 
-        CreatureTemplate.Relationship relat = default;
-
+        CreatureTemplate.Relationship relat;
         if (ctr is Luminescipede &&
             dynamRelat.state is not null)
         {
@@ -965,25 +921,26 @@ internal class LizardHooks
 
                 if (ctr is Centipede cnt && (cnt.Red || cnt is Cyanwing))
                 {
-                    if (ctr.dead)
-                    {
-                        return
-                            cldAI.NearAFreezer ? 
+                    return ctr.dead
+                        ? cldAI.NearAFreezer ?
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.StayOutOfWay, 0.6f) :
-                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, Mathf.Lerp(0.2f, 1, cldAI.PackPower));
-                    }
-                    return cldAI.PackPower >= 0.7f && cldAI.NearAFreezer ?
+                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, Mathf.Lerp(0.2f, 1, cldAI.PackPower))
+                        : cldAI.PackPower >= 0.7f && cldAI.NearAFreezer ?
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, cldAI.PackPower) :
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 1);
                 }
 
-                if (ctr is Vulture || ctr is MirosBird) // Attacks and kills both vultures and Miros birds, then eats them.
+                if (ctr is Vulture or MirosBird) // Attacks and kills both vultures and Miros birds, then eats them.
                 {
                     float threshold = Scissorbird ? 1 : 0.5f;
-                    if (cldAI.NearAFreezer) threshold -= 0.2f;
+                    if (cldAI.NearAFreezer)
+                    {
+                        threshold -= 0.2f;
+                    }
+
                     return cldAI.PackPower >= threshold ?
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, cldAI.PackPower) :
-                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, Mathf.InverseLerp(1, (Scissorbird ? 0.8f : 0.4f), cldAI.PackPower));
+                        new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, Mathf.InverseLerp(1, !Scissorbird ? 0.4f : 0.8f, cldAI.PackPower));
                 }
 
                 if (ctr is Scavenger && ctr?.room is not null)
@@ -1028,30 +985,26 @@ internal class LizardHooks
 
                 if (ctr is Lizard && !packMember) // Eats other lizards if they're dead, otherwise fighting them to kill.
                 {
-                    if (otherCtrType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard)
-                    {
-                        return cldAI.PackPower >= 0.6f?
+                    return otherCtrType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard
+                        ? cldAI.PackPower >= 0.6f?
                             new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, 1) :
-                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.5f);
-                    }
-                    return !ctr.State.dead ?
+                            new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, 0.5f)
+                        : !ctr.State.dead ?
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(otherCtrType == CreatureTemplate.Type.RedLizard ? 0.75f : 0.5f, 1, Mathf.InverseLerp(0.2f, 1, cldAI.PackPower))) :
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Eats, 0.5f);
                 }
 
                 if (ctr is Centipede cnt && (cnt.Red || cnt is Cyanwing))
                 { // Wants to eat mega centipedes, but is only willing to attack from afar if it doesn't have backup.
-                    if (ctr.dead)
-                    {
-                        return new CreatureTemplate.Relationship
-                            (CreatureTemplate.Relationship.Type.Eats, 1);
-                    }
-                    return cldAI.PackPower >= 0.7f || !Custom.DistLess(lizAI.lizard.DangerPos, cnt.DangerPos, 350) ?
+                    return ctr.dead
+                        ? new CreatureTemplate.Relationship
+                            (CreatureTemplate.Relationship.Type.Eats, 1)
+                        : cldAI.PackPower >= 0.7f || !Custom.DistLess(lizAI.lizard.DangerPos, cnt.DangerPos, 350) ?
                         new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Max(0.5f, Mathf.InverseLerp(350, 50, Custom.Dist(lizAI.lizard.DangerPos, cnt.DangerPos)))) :
                         new CreatureTemplate.Relationship (CreatureTemplate.Relationship.Type.Afraid, 1);
                 }
 
-                if (ctr is Vulture || ctr is MirosBird) // Attacks and kills both vultures and Miros birds, then eats them.
+                if (ctr is Vulture or MirosBird) // Attacks and kills both vultures and Miros birds, then eats them.
                 {
                     return new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(Scissorbird ? 0.8f : 0.6f, 1, Mathf.InverseLerp(0.2f, 1, cldAI.PackPower)));
                 }
@@ -1173,12 +1126,10 @@ internal class LizardHooks
                             spd.TotalMass / (spd.dead ? 3 : 1);
                     }
                 }
-                if (spiderMass > lizAI.lizard.TotalMass * 1.33f)
-                {
-                    return new CreatureTemplate.Relationship
-                        (CreatureTemplate.Relationship.Type.Afraid, spiderMass / 2);
-                }
-                return new CreatureTemplate.Relationship
+                return spiderMass > lizAI.lizard.TotalMass * 1.33f
+                    ? new CreatureTemplate.Relationship
+                        (CreatureTemplate.Relationship.Type.Afraid, spiderMass / 2)
+                    : new CreatureTemplate.Relationship
                     (CreatureTemplate.Relationship.Type.Eats, 1 - (spiderMass / 2));
             }
         }
@@ -1187,44 +1138,34 @@ internal class LizardHooks
     }
     public static CreatureTemplate.Relationship OtherLizRelationshipsWithColdLizards(CreatureTemplate.Type lizType, ColdLizard icy)
     {
-        if (lizType == CreatureTemplate.Type.CyanLizard && icy.IcyBlue)
-        {
-            return (icy.ColdAI.NearAFreezer || icy.ColdAI.PackPower >= 0.5f) ?
+        return lizType == CreatureTemplate.Type.CyanLizard && icy.IcyBlue
+            ? (icy.ColdAI.NearAFreezer || icy.ColdAI.PackPower >= 0.5f) ?
                 new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, icy.ColdAI.NearAFreezer ? 1 : Mathf.Lerp(0.25f, 1, Mathf.InverseLerp(0.5f, 1, icy.ColdAI.PackPower))) :
-                new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.5f, 0.25f, Mathf.InverseLerp(0, 0.5f, icy.ColdAI.PackPower)));
-        }
-        if (lizType == CreatureTemplate.Type.GreenLizard ||
+                new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.5f, 0.25f, Mathf.InverseLerp(0, 0.5f, icy.ColdAI.PackPower)))
+            : lizType == CreatureTemplate.Type.GreenLizard ||
             lizType == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard ||
-            lizType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard)
-        {
-            if (lizType == CreatureTemplate.Type.GreenLizard &&
+            lizType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard
+            ? lizType == CreatureTemplate.Type.GreenLizard &&
                 icy.IcyBlue &&
                 icy.dead &&
-                !icy.ColdAI.NearAFreezer)
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Eats, 0.25f);
-            }
-            if (icy.ColdAI.PackPower >= 0.9f &&
-                (icy.Freezer || icy.ColdAI.NearAFreezer))
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Afraid, 1);
-            }
-            return new CreatureTemplate.Relationship
-                (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0, 0.9f, icy.ColdAI.PackPower)));
-        }
-        if (lizType == CreatureTemplate.Type.RedLizard &&
+                !icy.ColdAI.NearAFreezer
+                ? new CreatureTemplate.Relationship
+                    (CreatureTemplate.Relationship.Type.Eats, 0.25f)
+                : icy.ColdAI.PackPower >= 0.9f &&
+                (icy.Freezer || icy.ColdAI.NearAFreezer)
+                ? new CreatureTemplate.Relationship
+                    (CreatureTemplate.Relationship.Type.Afraid, 1)
+                : new CreatureTemplate.Relationship
+                (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0, 0.9f, icy.ColdAI.PackPower)))
+            : lizType == CreatureTemplate.Type.RedLizard &&
             icy.IcyBlue &&
-            icy.ColdAI.PackPower >= 0.5f)
-        {
-            return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0.5f, 1, icy.ColdAI.PackPower)));
-        }
-        return new CreatureTemplate.Relationship
+            icy.ColdAI.PackPower >= 0.5f
+            ? new CreatureTemplate.Relationship
+                    (CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.7f, 1, Mathf.InverseLerp(0.5f, 1, icy.ColdAI.PackPower)))
+            : new CreatureTemplate.Relationship
             (CreatureTemplate.Relationship.Type.DoesntTrack, 0);
     }
-    
+
 
     public static void HailstormLizAIUpdate(On.LizardAI.orig_Update orig, LizardAI lizAI)
     {
@@ -1306,10 +1247,12 @@ internal class LizardHooks
             {
                 c.Emit(OpCodes.Ldarg_0);
                 c.EmitDelegate((LizardJumpModule ljm) => !(Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval]));
-                c.Emit(OpCodes.Brfalse, label);
+                _ = c.Emit(OpCodes.Brfalse, label);
             }
             else
+            {
                 Plugin.logger.LogError("[Hailstorm] BEEP BOOP! SOMETHING WITH CYAN LIZARDS AND ERRATIC WIND CYCLES BROKE! REPORT THIS!");
+            }
         };
     }
 
@@ -1339,14 +1282,12 @@ internal class LizardHooks
                 return new LizardGraphics.IndividualVariations(headSize, bodyFatness, tailLength, bodyFatness, Mathf.Lerp(0.25f, 0.75f, massLerp));
             }
         }
-        if (liz.lizard is GorditoGreenie)
-        {
-            return new LizardGraphics.IndividualVariations(headSize, bodyFatness, tailLength, Random.Range(0.875f, 0.925f), 0.5f);
-        }
-        return orig(liz);
+        return liz.lizard is GorditoGreenie
+            ? new LizardGraphics.IndividualVariations(headSize, bodyFatness, tailLength, Random.Range(0.875f, 0.925f), 0.5f)
+            : orig(liz);
     }
     public static void HailstormLizardGraphics(On.LizardGraphics.orig_ctor orig, LizardGraphics lG, PhysicalObject ow)
-    {        
+    {
         orig(lG, ow);
         if (lG.lizard is not null && LizardData.TryGetValue(lG.lizard, out _))
         {
@@ -1363,7 +1304,7 @@ internal class LizardHooks
                     cosmeticSprites = lG.AddCosmetic(cosmeticSprites, new LongHeadScales(lG, cosmeticSprites));
                     num++;
                 }
-                if (num == 0 || Random.value < (0.5f - 0.125f * num))
+                if (num == 0 || Random.value < (0.5f - (0.125f * num)))
                 {
                     cosmeticSprites = lG.AddCosmetic(cosmeticSprites, new IceSpikeTuft(lG, cosmeticSprites));
                     num++;
@@ -1387,7 +1328,9 @@ internal class LizardHooks
                 bool LSS = false;
 
                 if (Random.value < 0.8888f)
+                {
                     cosmeticSprites = lG.AddCosmetic(cosmeticSprites, new IceSpikeTuft(lG, cosmeticSprites));
+                }
 
                 if (Random.value < 0.125f)
                 {
@@ -1400,7 +1343,7 @@ internal class LizardHooks
                     cosmeticSprites = lG.AddCosmetic(cosmeticSprites, new IcyRhinestones(lG, cosmeticSprites));
                     num++;
                 }
-                if ((!LSS && Random.value < (0.7f - 0.2f * num)) || Random.value < 0.04f)
+                if ((!LSS && Random.value < (0.7f - (0.2f * num))) || Random.value < 0.04f)
                 {
                     cosmeticSprites = lG.AddCosmetic(cosmeticSprites, new LongHeadScales(lG, cosmeticSprites));
                 }
@@ -1438,7 +1381,7 @@ internal class LizardHooks
                             float connectionRad =
                                 ((j > 0 ? 8f : 16f) + rad) / 2f * lG.lizard.lizardParams.tailLengthFactor * lG.iVars.tailLength;
 
-                            lG.tail[j].rad = rad * (lG.lizard.Template.type == CreatureTemplate.Type.GreenLizard? 3f : 1.15f);
+                            lG.tail[j].rad = rad * (lG.lizard.Template.type == CreatureTemplate.Type.GreenLizard ? 3f : 1.15f);
                             lG.tail[j].connectionRad = connectionRad * 1.15f;
                         }
                     }
@@ -1603,7 +1546,7 @@ internal class LizardHooks
     #region Custom Lizard Colors
     public static Color FreezerHeadColor(LizardGraphics liz, float timeStacker, Color baseColor)
     {
-        float flickerIntensity = 1f - Mathf.Pow(0.5f + 0.5f * Mathf.Sin(Mathf.Lerp(liz.lastBlink, liz.blink, timeStacker) * 2f * Mathf.PI), 1.5f + liz.lizard.AI.excitement * 1.5f);
+        float flickerIntensity = 1f - Mathf.Pow(0.5f + (0.5f * Mathf.Sin(Mathf.Lerp(liz.lastBlink, liz.blink, timeStacker) * 2f * Mathf.PI)), 1.5f + (liz.lizard.AI.excitement * 1.5f));
         flickerIntensity = Mathf.Lerp(flickerIntensity, Mathf.Pow(Mathf.Max(0f, Mathf.Lerp(liz.lastVoiceVisualization, liz.voiceVisualization, timeStacker)), 0.75f), Mathf.Lerp(liz.lastVoiceVisualizationIntensity, liz.voiceVisualizationIntensity, timeStacker));
         Color whiteOut = Color.Lerp(baseColor, Color.white, 0.6f);
         return Color.Lerp(whiteOut, baseColor, flickerIntensity);
@@ -1615,7 +1558,7 @@ internal class LizardHooks
 
     public static Color IcyBlueHeadColor(LizardGraphics liz, float timeStacker, Color baseColor)
     {
-        float flickerIntensity = 1f - Mathf.Pow(0.5f + 0.5f * Mathf.Sin(Mathf.Lerp(liz.lastBlink, liz.blink, timeStacker) * 2f * Mathf.PI), 1.5f + liz.lizard.AI.excitement * 1.5f);
+        float flickerIntensity = 1f - Mathf.Pow(0.5f + (0.5f * Mathf.Sin(Mathf.Lerp(liz.lastBlink, liz.blink, timeStacker) * 2f * Mathf.PI)), 1.5f + (liz.lizard.AI.excitement * 1.5f));
         flickerIntensity = Mathf.Lerp(flickerIntensity, Mathf.Pow(Mathf.Max(0f, Mathf.Lerp(liz.lastVoiceVisualization, liz.voiceVisualization, timeStacker)), 0.75f), Mathf.Lerp(liz.lastVoiceVisualizationIntensity, liz.voiceVisualizationIntensity, timeStacker));
         Color whiteOut = Color.Lerp(baseColor, Color.white, 0.55f);
         return Color.Lerp(whiteOut, baseColor, flickerIntensity);
