@@ -1,0 +1,18 @@
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\bin\Debug\net48\TheIncandescent.dll
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\bin\Debug\net48\TheIncandescent.pdb
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\obj\Debug\net48\TheIncandescent.csproj.AssemblyReference.cache
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\obj\Debug\net48\TheIncandescent.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\obj\Debug\net48\TheIncandescent.AssemblyInfoInputs.cache
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\obj\Debug\net48\TheIncandescent.AssemblyInfo.cs
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\obj\Debug\net48\TheIncandescent.csproj.CoreCompileInputs.cache
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\obj\Debug\net48\TheIncandescent.dll
+C:\Users\brycc\Desktop\Slugcat Shenanigans - The Pyromancer\SlugTemplate-master\src\obj\Debug\net48\TheIncandescent.pdb
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\bin\Debug\net48\TheIncandescent.dll
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\bin\Debug\net48\TheIncandescent.pdb
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\obj\Debug\net48\TheIncandescent.csproj.AssemblyReference.cache
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\obj\Debug\net48\TheIncandescent.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\obj\Debug\net48\TheIncandescent.AssemblyInfoInputs.cache
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\obj\Debug\net48\TheIncandescent.AssemblyInfo.cs
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\obj\Debug\net48\TheIncandescent.csproj.CoreCompileInputs.cache
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\obj\Debug\net48\TheIncandescent.dll
+C:\Users\brycc\Desktop\The Incandescent\TheIncandescent-master\src\obj\Debug\net48\TheIncandescent.pdb
