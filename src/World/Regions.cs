@@ -39,7 +39,7 @@ internal class Regions
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
@@ -51,7 +51,7 @@ internal class Regions
     public static void HailstormRegionParams(On.Region.orig_ctor orig, Region region, string name, int firstRoomIndex, int regionNumber, SlugcatStats.Name campaign)
     {
         if (campaign is not null &&
-            campaign == HSSlugs.Incandescent &&
+            campaign == IncanInfo.Incandescent &&
             !RegionData.TryGetValue(region, out _))
         {
             RegionData.Add(region, new RegionInfo(name, campaign));
@@ -60,7 +60,7 @@ internal class Regions
     }
     public static string Incan_RegionSwaps(On.Region.orig_GetProperRegionAcronym orig, SlugcatStats.Name playerChar, string baseAcronym)
     {
-        if (playerChar is not null && playerChar.value == HSSlugs.Incandescent.value)
+        if (playerChar is not null && playerChar.value == IncanInfo.Incandescent.value)
         {
             if (baseAcronym == "DS")
             {
@@ -75,7 +75,7 @@ internal class Regions
     }
     public static string[] Incan_StoryRegions(On.SlugcatStats.orig_getSlugcatStoryRegions orig, SlugcatStats.Name saveFile)
     {
-        if (saveFile.value == HSSlugs.Incandescent.value)
+        if (saveFile.value == IncanInfo.Incandescent.value)
         {
             return new string[12]
             {
@@ -87,7 +87,7 @@ internal class Regions
     public static void Incan_SleepScreenRegionUnlocks(On.MoreSlugcats.CollectiblesTracker.orig_ctor orig, CollectiblesTracker cTracker, Menu.Menu menu, Menu.MenuObject owner, Vector2 pos, FContainer container, SlugcatStats.Name saveSlot)
     {
         orig(cTracker, menu, owner, pos, container, saveSlot);
-        if (saveSlot == HSSlugs.Incandescent)
+        if (saveSlot == IncanInfo.Incandescent)
         {
             RainWorld rainWorld = menu.manager.rainWorld;
             cTracker.displayRegions = new List<string>(new string[12] { "MS", "SL", "CL", "GW", "HI", "UG", "SU", "CC", "VS", "SI", "LF", "SB" });
@@ -249,7 +249,7 @@ internal class Regions
     }
     public static Color SubmergedSuperstructureColor(On.Region.orig_RegionColor orig, string regionName)
     {
-        if (RainWorld.lastActiveSaveSlot.value == HSSlugs.Incandescent.value && Region.EquivalentRegion(regionName, "MS"))
+        if (RainWorld.lastActiveSaveSlot.value == IncanInfo.Incandescent.value && Region.EquivalentRegion(regionName, "MS"))
         {
             return new Color(0.8f, 0.8f, 1f);
         }

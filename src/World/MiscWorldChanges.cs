@@ -39,7 +39,7 @@ internal class MiscWorldChanges
         SleepAndDeathScreen.GetDataFromGame += Incan_SleepScreenBlizzardSounds;
         On.WinState.CreateAndAddTracker += ChieftainAndPilgrimPassageChanges;
         On.WinState.CycleCompleted += MakeColdLizardKillsCountForDragonslayerSorta;
-        new Hook(typeof(CreatureTemplate).GetMethod("get_IsLizard", Public | NonPublic | Instance), (Func<CreatureTemplate, bool> orig, CreatureTemplate temp) => temp.type == HailstormEnums.IcyBlue || temp.type == HailstormEnums.Freezer || temp.type == HailstormEnums.GorditoGreenie || orig(temp));
+        new Hook(typeof(CreatureTemplate).GetMethod("get_IsLizard", Public | NonPublic | Instance), (Func<CreatureTemplate, bool> orig, CreatureTemplate temp) => temp.type == HailstormCreatures.IcyBlue || temp.type == HailstormCreatures.Freezer || temp.type == HailstormCreatures.GorditoGreenie || orig(temp));
         Incan_PatientShelters();
     
     }
@@ -49,7 +49,7 @@ internal class MiscWorldChanges
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
@@ -62,7 +62,7 @@ internal class MiscWorldChanges
     public static bool Incan_AllowAllEchoesToSpawn(On.World.orig_CheckForRegionGhost orig, SlugcatStats.Name saveFile, string regionString)
     {
         GhostWorldPresence.GhostID ghostID = GhostWorldPresence.GetGhostID(regionString);
-        if (saveFile == HSSlugs.Incandescent && ghostID != GhostWorldPresence.GhostID.NoGhost && ghostID != MoreSlugcatsEnums.GhostID.LC)
+        if (saveFile == IncanInfo.Incandescent && ghostID != GhostWorldPresence.GhostID.NoGhost && ghostID != MoreSlugcatsEnums.GhostID.LC)
         {
             return true;
         }
@@ -452,7 +452,7 @@ internal class MiscWorldChanges
     public static void Moon_StartsWith6Neurons(On.SLOrcacleState.orig_ForceResetState orig, SLOrcacleState moon, SlugcatStats.Name name)
     {
         orig(moon, name);
-        if (name is not null && name.value == HSSlugs.Incandescent.value)
+        if (name is not null && name.value == IncanInfo.Incandescent.value)
         {
             moon.neuronsLeft = 6;
         }
@@ -533,7 +533,7 @@ internal class MiscWorldChanges
     public static void Incan_SleepScreenBlizzardSounds(SleepAndDeathScreen.orig_GetDataFromGame orig, Menu.SleepAndDeathScreen postCycleScreen, Menu.KarmaLadderScreen.SleepDeathScreenDataPackage package)
     { // Plays the blizzard background noise when going to sleep in the Incandescent's campaign.
         orig(postCycleScreen, package);
-        if (postCycleScreen.IsSleepScreen && package.characterStats.name.value == HSSlugs.Incandescent.value)
+        if (postCycleScreen.IsSleepScreen && package.characterStats.name.value == IncanInfo.Incandescent.value)
         {
             if (postCycleScreen.soundLoop is not null)
             {
@@ -544,7 +544,7 @@ internal class MiscWorldChanges
     }
     public static WinState.EndgameTracker ChieftainAndPilgrimPassageChanges(On.WinState.orig_CreateAndAddTracker orig, WinState.EndgameID ID, List<WinState.EndgameTracker> endgameTrackers)
     {
-        if (RainWorld.lastActiveSaveSlot.value == HSSlugs.Incandescent.value)
+        if (RainWorld.lastActiveSaveSlot.value == IncanInfo.Incandescent.value)
         {
             WinState.EndgameTracker tracker;
             if (ID == WinState.EndgameID.Chieftain)
@@ -605,7 +605,7 @@ internal class MiscWorldChanges
                     {
                         continue;
                     }
-                    if (playerSessionRecord.kills[j].symbolData.critType == HailstormEnums.IcyBlue || playerSessionRecord.kills[j].symbolData.critType == HailstormEnums.Freezer)
+                    if (playerSessionRecord.kills[j].symbolData.critType == HailstormCreatures.IcyBlue || playerSessionRecord.kills[j].symbolData.critType == HailstormCreatures.Freezer)
                     {
                         if (!lizList.Contains(2))
                         {
@@ -640,7 +640,7 @@ internal class MiscWorldChanges
                 x => x.MatchCall(out _)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((bool NotSaint, Player self) => NotSaint && self.SlugCatClass != HSSlugs.Incandescent);
+                c.EmitDelegate((bool NotSaint, Player self) => NotSaint && self.SlugCatClass != IncanInfo.Incandescent);
             }
             else
                 Plugin.logger.LogError("[Hailstorm] Shelter IL hook is borked; they will not be patient. Report this if you see it, please!");

@@ -49,7 +49,7 @@ internal class Weather
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
@@ -57,7 +57,40 @@ internal class Weather
     //----------------------------------------------------------------------------------
 
     public static bool HailPrecycle;
+    public readonly static Dictionary<CreatureTemplate.Type, float> HailResistantCreatures = new()
+    {
+        { CreatureTemplate.Type.BigSpider, 0.9f },
+        { CreatureTemplate.Type.SpitterSpider, 0.8f },
+        { CreatureTemplate.Type.SmallCentipede, 0.75f },
+        { CreatureTemplate.Type.Centipede, 0.75f },
+        { CreatureTemplate.Type.Centiwing, 0.75f },
+        { MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.75f },
+        { MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 0.35f },
+        { MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.35f },
+        { CreatureTemplate.Type.KingVulture, 0.25f },
+        { MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.25f },
+        { CreatureTemplate.Type.RedCentipede, 0.25f },
+        { HailstormCreatures.Cyanwing, 0.25f },
+        { CreatureTemplate.Type.Salamander, 0 },
+        { CreatureTemplate.Type.Deer, 0 },
+        { MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0 },
+        { HailstormCreatures.GorditoGreenie, 0 }
+    }; // For each listed creature type, hail damage and stun are multiplied by the given number.
+
     public static bool FogPrecycle;
+
+    public static bool ErraticWindCycle;
+    public static List<int> WindIntervalDurations;
+    public static List<float> WindIntervalIntensities;
+    public static List<bool> ExtremeWindIntervals;
+    public static int WindcycleTimer;
+    public static int WindcycleCount;
+    public static HUDCircle[] ExtremeWindRings;
+    public static float CurrentWindIntensity;
+    public static int WindInterval;
+    public static bool TimerBlink;
+    public static int TimePerPip = 1200;
+    // A whole 9 things to set up Erratic Wind cycles. Most of this is necessary to color cycle pips the way I did.
 
     public readonly static List<CreatureTemplate.Type> ErraticWindFearers = new()
     {
@@ -73,25 +106,14 @@ internal class Weather
         MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing,
         MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard,
         MoreSlugcatsEnums.CreatureTemplateType.MirosVulture,
-        HailstormEnums.Luminescipede
+        HailstormCreatures.Luminescipede
     };
 
-    public static bool ErraticWindCycle;
-    public static List<int> WindIntervalDurations;
-    public static List<float> WindIntervalIntensities;
-    public static List<bool> ExtremeWindIntervals;
-    public static int WindcycleTimer;
-    public static int WindcycleCount;
-    public static HUDCircle[] ExtremeWindRings;
-    public static float CurrentWindIntensity;
-    public static int WindInterval;
-    public static bool TimerBlink;
-    public static int TimePerPip = 1200;
-    // A whole 9 things to set up Erratic Wind cycles. Most of this is necessary to color cycle pips the way I did.
 
     public static int LateBlizzardTime(World world)
     {
-        if (world.region is not null && Regions.RegionData.TryGetValue(world.region, out RegionInfo rI))
+        if (world.region is not null &&
+            Regions.RegionData.TryGetValue(world.region, out RegionInfo rI))
         {
             return world.rainCycle.cycleLength + rI.lateBlizzardStartTimeAfterCycleEnds;
         }
@@ -130,7 +152,7 @@ internal class Weather
                 if (itemList == "")
                 {
                     if (lmnGrip.B.realizedObject is not null &&
-                        absLmn.realizedObject is LuminCreature lmn)
+                        absLmn.realizedObject is Luminescipede lmn)
                     {
                         float massFac = Mathf.InverseLerp(lmn.TotalMass, lmn.BackholdMassLimit, lmnGrip.B.realizedObject.TotalMass);
                         denTime = (int)Mathf.Lerp(60, 560, massFac / lmnGrip.B.stuckObjects.Count);
@@ -163,7 +185,7 @@ internal class Weather
                     othergs.ChangeBehavior(GlowSpiderState.Behavior.Idle, 2);
                     grabber.remainInDenCounter += denTime + (20 * (itemGrabbersCount - b));
                     if (grabber.realizedCreature is not null &&
-                        grabber.realizedCreature is LuminCreature otherLmn)
+                        grabber.realizedCreature is Luminescipede otherLmn)
                     {
                         otherLmn.currentPrey = null;
                     }
@@ -174,7 +196,7 @@ internal class Weather
 
                 lmnGrip.B.Abstractize(den);
 
-                if (absLmn.realizedObject is LuminCreature itemcarryingLmn &&
+                if (absLmn.realizedObject is Luminescipede itemcarryingLmn &&
                     itemcarryingLmn.ConsiderUseful(lmnGrip.B?.realizedObject))
                 {
                     absLmn.DropCarriedObject(lmnGrip.grasp);
@@ -184,7 +206,7 @@ internal class Weather
             if (itemList != "")
             {
                 if (absLmn.realizedCreature is not null &&
-                    absLmn.realizedCreature is LuminCreature lmn)
+                    absLmn.realizedCreature is Luminescipede lmn)
                 {
                     lmn.currentPrey = null;
                     lmn.useItem = null;
@@ -725,7 +747,7 @@ internal class Weather
             {
                 if (Random.value < rI.erraticWindWrongDandelionTypeChance)
                 {
-                    AbstractCreature PeachSpider = new(room.world, StaticWorld.GetCreatureTemplate(HailstormEnums.PeachSpider), null, spawnCoordinate.Value, room.game.GetNewID());
+                    AbstractCreature PeachSpider = new(room.world, StaticWorld.GetCreatureTemplate(HailstormCreatures.PeachSpider), null, spawnCoordinate.Value, room.game.GetNewID());
                     OtherCreatureChanges.CustomFlags(PeachSpider);
                     room.abstractRoom.AddEntity(PeachSpider);
                     PeachSpider.RealizeInRoom();
@@ -782,7 +804,7 @@ internal class Weather
 
             if (obj is Creature windImmune && (
                 windImmune.Template.type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
-                windImmune.Template.type == HailstormEnums.GorditoGreenie))
+                windImmune.Template.type == HailstormCreatures.GorditoGreenie))
             {
                 return;
             }
@@ -809,14 +831,7 @@ internal class Weather
                     else blizzPush *= 0.05f;
                 }
 
-                if (obj is DandelionPeach)
-                {
-                    blizzPush.y = 0;
-                }
-                else
-                {
-                    blizzPush.y *= -2;
-                }
+                blizzPush.y = 0;
 
                 if (ErraticWindCycle)
                 {
@@ -852,41 +867,30 @@ internal class Weather
                 {
                     CreatureTemplate.Type type = ctr.Template.type;
 
-                    if (ctr is Lizard liz && (liz.State is ColdLizState || type == CreatureTemplate.Type.WhiteLizard))
+                    float windVulnerability = 1;
+                    if (CustomTemplateInfo.WeatherResistances.Wind.ContainsKey(type))
                     {
-                        if (liz.LegsGripping > 3) break;
-                        else blizzPush *= Mathf.InverseLerp(4, -4, liz.LegsGripping);
+                        windVulnerability = CustomTemplateInfo.WeatherResistances.Wind[type];
                     }
-                    else
-                    if (type == CreatureTemplate.Type.GreenLizard ||
-                        type == CreatureTemplate.Type.CyanLizard ||
-                        type == CreatureTemplate.Type.CicadaA ||
-                        type == CreatureTemplate.Type.CicadaB ||
-                        type == CreatureTemplate.Type.Centiwing ||
-                        type == CreatureTemplate.Type.Vulture)
+
+                    if (ctr is Lizard liz &&
+                        liz.LegsGripping < 4 - (liz.TotalMass/3f))
                     {
-                        blizzPush *= 0.75f;
+                        windVulnerability *= (liz.LegsGripping / 4f);
                     }
-                    else
-                    if (type == CreatureTemplate.Type.DropBug ||
-                        type == CreatureTemplate.Type.MirosBird ||
-                        type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture ||
-                        type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
-                        type == HailstormEnums.Cyanwing)
+
+                    if (windVulnerability > 0)
                     {
-                        blizzPush *= 0.50f;
+                        blizzPush *= windVulnerability;
                     }
-                    else
-                    if (type == CreatureTemplate.Type.Deer ||
-                        type == CreatureTemplate.Type.KingVulture ||
-                        type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard ||
-                        type == HailstormEnums.Chillipede)
-                    {
-                        blizzPush *= 0.25f;
-                    }
+                    else return;
+
                 }
+
                 chunk.vel += blizzPush;
+
             }
+
         }
     }
 

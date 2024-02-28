@@ -34,7 +34,7 @@ internal class Dialogue
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSSlugs.Incandescent);
+        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
     }
 
     //----------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ internal class Dialogue
     public static void NewEchoConversations(On.GhostConversation.orig_AddEvents orig, GhostConversation gConv)
     {            
         orig(gConv);
-        if (gConv.currentSaveFile == HSSlugs.Incandescent && (gConv.id == MoreSlugcatsEnums.ConversationID.Ghost_MS || gConv.id == Conversation.ID.Ghost_CC || gConv.id == Conversation.ID.Ghost_SI || gConv.id == Conversation.ID.Ghost_LF || gConv.id == Conversation.ID.Ghost_SB))
+        if (gConv.currentSaveFile == IncanInfo.Incandescent && (gConv.id == MoreSlugcatsEnums.ConversationID.Ghost_MS || gConv.id == Conversation.ID.Ghost_CC || gConv.id == Conversation.ID.Ghost_SI || gConv.id == Conversation.ID.Ghost_LF || gConv.id == Conversation.ID.Ghost_SB))
         {
             RemoveEvents(gConv);
 
@@ -100,8 +100,8 @@ internal class Dialogue
     static bool blizzardNoticed;
     static int postCycleTime;
 
-    private static readonly SLOracleBehaviorHasMark.MiscItemType IceCrys = new("IceCrys", register: true);
-    private static readonly SLOracleBehaviorHasMark.MiscItemType IceCrys_BrokenMidtalk = new("IceCrys_BrokenMidtalk", register: true);
+    private static readonly SLOracleBehaviorHasMark.MiscItemType IceChunk = new("IceChunk", register: true);
+    private static readonly SLOracleBehaviorHasMark.MiscItemType IceChunk_BrokenMidtalk = new("IceChunk_BrokenMidtalk", register: true);
     //private static readonly SLOracleBehaviorHasMark.MiscItemType BezanNut = new("BezanNut", register: true);
     //private static readonly SLOracleBehaviorHasMark.MiscItemType LargeBezanNut = new("LargeBezanNut", register: true);
     private static bool incPresent;
@@ -178,12 +178,13 @@ internal class Dialogue
             }
         }
 
-        if (moon.currentConversation != null && moon.currentConversation is SLOracleBehaviorHasMark.MoonConversation mConv && mConv.describeItem == IceCrys && moon.holdingObject is IceCrystal iceCrs && iceCrs.shatterTimer >= 100)
+        if (moon.currentConversation is not null &&
+            moon.currentConversation is SLOracleBehaviorHasMark.MoonConversation mConv &&
+            mConv.describeItem == IceChunk &&
+            moon.holdingObject is null)
         {
-            moon.holdingObject = null;
             mConv.describeItem = SLOracleBehaviorHasMark.MiscItemType.NA;
             RemoveEvents(mConv);
-            mConv.Interrupt("...", 80);
             CrystalBrokeMidtalk(mConv, 0, 40);
         }
 
@@ -272,14 +273,14 @@ internal class Dialogue
 
     public static void HasMoonTalkedAboutItemAlready(On.SLOracleBehaviorHasMark.orig_GrabObject orig, SLOracleBehaviorHasMark moon, PhysicalObject obj)
     {
-        if (moon.oracle.room.game.StoryCharacter == HSSlugs.Incandescent)
+        if (moon.oracle.room.game.StoryCharacter == IncanInfo.Incandescent)
         {
             incPresent = false;
             if (moon?.oracle?.room?.abstractRoom is not null)
             {
                 foreach (AbstractCreature absCtr in moon.oracle.room.abstractRoom.creatures)
                 {
-                    if (absCtr != null && absCtr.realizedCreature is Player plr && CWT.PlayerData.TryGetValue(plr, out HSSlugs player) && player.isIncan)
+                    if (absCtr != null && absCtr.realizedCreature is Player plr && IncanInfo.IncanData.TryGetValue(plr, out IncanInfo player) && player.isIncan)
                     {
                         incPresent = true;
                         break;
@@ -336,7 +337,7 @@ internal class Dialogue
             }
             return false;
         }
-        if (item is Lizard liz && (liz.Template.type == HailstormEnums.Freezer || liz.Template.type == HailstormEnums.IcyBlue))
+        if (item is Lizard liz && (liz.Template.type == HailstormCreatures.Freezer || liz.Template.type == HailstormCreatures.IcyBlue))
         {
             return false;
         }
@@ -396,14 +397,14 @@ internal class Dialogue
 
     public static SLOracleBehaviorHasMark.MiscItemType NewMoonConversationTypes(On.SLOracleBehaviorHasMark.orig_TypeOfMiscItem orig, SLOracleBehaviorHasMark moon, PhysicalObject item)
     {         
-        if (moon.currentConversation is SLOracleBehaviorHasMark.MoonConversation mConv && mConv.describeItem == IceCrys && item == null)
+        if (moon.currentConversation is SLOracleBehaviorHasMark.MoonConversation mConv && mConv.describeItem == IceChunk && item == null)
         {
-            return IceCrys_BrokenMidtalk;
+            return IceChunk_BrokenMidtalk;
         }
 
-        if (item is IceCrystal)
+        if (item is IceChunk)
         {
-            return IceCrys;                    
+            return IceChunk;                    
         }
 
         return orig(moon, item);
@@ -413,7 +414,7 @@ internal class Dialogue
     {
         orig(mConv);
 
-        if (mConv.currentSaveFile == HSSlugs.Incandescent)
+        if (mConv.currentSaveFile == IncanInfo.Incandescent)
         {
             if (mConv.id == Conversation.ID.Moon_Pebbles_Pearl || mConv.id.value.StartsWith("Moon_Pearl"))
             {
@@ -559,7 +560,7 @@ internal class Dialogue
                     }                   
                 }
             }
-            else if (mConv.describeItem == IceCrys)
+            else if (mConv.describeItem == IceChunk)
             {
 
                 RemoveEvents(mConv);                   
@@ -589,7 +590,7 @@ internal class Dialogue
                 }
             }
         }       
-        else if (mConv.describeItem == IceCrys)
+        else if (mConv.describeItem == IceChunk)
         {
             RemoveEvents(mConv);
 
@@ -672,7 +673,7 @@ internal class Dialogue
 
     public static void IncanConversationReactions(On.Conversation.DialogueEvent.orig_Update orig, Conversation.DialogueEvent dEvent)
     { // Delicious hardcoded timings, oh boy.
-        if (dEvent.owner.currentSaveFile == HSSlugs.Incandescent && dEvent.owner is not null)
+        if (dEvent.owner.currentSaveFile == IncanInfo.Incandescent && dEvent.owner is not null)
         {
             List<Conversation.DialogueEvent> events = dEvent.owner.events;
             if (dEvent.owner.id == MoreSlugcatsEnums.ConversationID.Moon_Pearl_RM)
@@ -923,24 +924,29 @@ internal class Dialogue
 
     public static void CrystalBrokeMidtalk(Conversation conv, int initialWait, int textLinger)
     {
-        string text = "";
+        string text;
 
         switch (Random.Range(0, 4))
         {
-            case 0:
-                text = "...Little one, why?";
-                break;
             case 1:
-                text = "...Please, little one, don't do that again.";
+                conv.Interrupt("!", 0);
+                text = "Little one! You would bring this all the way to me just to smash it in my hand?<LINE>Well, I hope the amusement was worth the effort...";
                 break;
             case 2:
-                text = "...Nevermind then.";
+                conv.Interrupt("...", 60);
+                text = "Nevermind then.";
                 break;
             case 3:
-                text = "...Please don't do that again.";
+                conv.Interrupt("...", 20);
+                text = "And there it goes.";
                 break;
             case 4:
-                text = "...Why would you do that?";
+                conv.Interrupt("Little one! Goodness...", 40);
+                text = "Well, all that's left to talk about now are little ice shards, and I do not think<LINE>either of us will find much interest in those.";
+                break;
+            default:
+                conv.Interrupt("...", 80);
+                text = "...Little one, why did you do that?";
                 break;
         }
 
