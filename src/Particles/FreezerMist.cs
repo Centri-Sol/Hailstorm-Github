@@ -113,7 +113,7 @@ public class FreezerMist : CosmeticSprite
                 {
                     cI.freezerChill +=
                         cI.freezerChill == 0 ? 0.04f :
-                        (killTag is not null && killTag.creatureTemplate.type == HailstormCreatures.Chillipede) ? 0.002f : 0.001f;
+                        (killTag is not null && killTag.creatureTemplate.type == HSEnums.CreatureType.Chillipede) ? 0.002f : 0.001f;
 
                     if (killTag is not null && ctr.killTag != killTag)
                     {

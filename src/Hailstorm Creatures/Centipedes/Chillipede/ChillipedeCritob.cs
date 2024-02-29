@@ -7,13 +7,13 @@ sealed class ChillipedeCritob : Critob
 {
     public Color ChillipedeColor = new HSLColor(198/360f, 1, 0.75f).rgb;
 
-    internal ChillipedeCritob() : base(HailstormCreatures.Chillipede)
+    internal ChillipedeCritob() : base(HSEnums.CreatureType.Chillipede)
     {
         Icon = new SimpleIcon("Kill_Chillipede", ChillipedeColor);
         LoadedPerformanceCost = 15f;
         SandboxPerformanceCost = new(0.9f, 0.75f);
         ShelterDanger = ShelterDanger.TooLarge;
-        RegisterUnlock(KillScore.Configurable(14), HailstormUnlocks.Chillipede);
+        RegisterUnlock(KillScore.Configurable(14), HSEnums.SandboxUnlock.Chillipede);
     }
     public override int ExpeditionScore() => 14;
 
@@ -89,7 +89,7 @@ sealed class ChillipedeCritob : Critob
     }
     public override void EstablishRelationships()
     {
-        Relationships Chl = new(HailstormCreatures.Chillipede);
+        Relationships Chl = new(HSEnums.CreatureType.Chillipede);
 
         Chl.Eats(CreatureTemplate.Type.Spider, 0.4f);
         Chl.Eats(CreatureTemplate.Type.BigSpider, 0.4f);
@@ -100,15 +100,15 @@ sealed class ChillipedeCritob : Critob
         Chl.Eats(CreatureTemplate.Type.Centipede, 0.4f);
         Chl.Eats(CreatureTemplate.Type.Centiwing, 0.4f);
         Chl.Eats(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.4f);
-        Chl.Eats(HailstormCreatures.InfantAquapede, 0.4f);
+        Chl.Eats(HSEnums.CreatureType.InfantAquapede, 0.4f);
 
         Chl.Fears(CreatureTemplate.Type.RedCentipede, 1);
-        Chl.Fears(HailstormCreatures.Cyanwing, 1);
+        Chl.Fears(HSEnums.CreatureType.Cyanwing, 1);
         Chl.Fears(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.8f);
 
-        Chl.Ignores(HailstormCreatures.Chillipede);
-        Chl.Ignores(HailstormCreatures.IcyBlue);
-        Chl.Ignores(HailstormCreatures.Freezer);
+        Chl.Ignores(HSEnums.CreatureType.Chillipede);
+        Chl.Ignores(HSEnums.CreatureType.IcyBlueLizard);
+        Chl.Ignores(HSEnums.CreatureType.FreezerLizard);
 
         //  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
@@ -121,20 +121,20 @@ sealed class ChillipedeCritob : Critob
         Chl.EatenBy(CreatureTemplate.Type.Centipede, 0.4f);
         Chl.EatenBy(CreatureTemplate.Type.RedCentipede, 0.4f);
         Chl.EatenBy(CreatureTemplate.Type.Centiwing, 0.4f);
-        Chl.EatenBy(HailstormCreatures.Cyanwing, 0.4f);
-        Chl.EatenBy(HailstormCreatures.InfantAquapede, 0.4f);
+        Chl.EatenBy(HSEnums.CreatureType.Cyanwing, 0.4f);
+        Chl.EatenBy(HSEnums.CreatureType.InfantAquapede, 0.4f);
         Chl.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.6f);
         Chl.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.8f);
-        Chl.EatenBy(HailstormCreatures.GorditoGreenie, 1);
+        Chl.EatenBy(HSEnums.CreatureType.GorditoGreenieLizard, 1);
 
         Chl.Intimidates(CreatureTemplate.Type.BigSpider, 0.5f);
-        Chl.Intimidates(HailstormCreatures.Luminescipede, 0.75f);
+        Chl.Intimidates(HSEnums.CreatureType.Luminescipede, 0.75f);
 
         Chl.FearedBy(CreatureTemplate.Type.Spider, 0.5f);
         Chl.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.7f);
 
-        Chl.IgnoredBy(HailstormCreatures.IcyBlue);
-        Chl.IgnoredBy(HailstormCreatures.Freezer);
+        Chl.IgnoredBy(HSEnums.CreatureType.IcyBlueLizard);
+        Chl.IgnoredBy(HSEnums.CreatureType.FreezerLizard);
 
     }
 

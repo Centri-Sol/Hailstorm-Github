@@ -27,7 +27,7 @@ internal class MiscWorldChanges
         SleepAndDeathScreen.GetDataFromGame += Incan_SleepScreenBlizzardSounds;
         On.WinState.CreateAndAddTracker += ChieftainAndPilgrimPassageChanges;
         On.WinState.CycleCompleted += MakeColdLizardKillsCountForDragonslayerSorta;
-        new Hook(typeof(CreatureTemplate).GetMethod("get_IsLizard", Public | NonPublic | Instance), (Func<CreatureTemplate, bool> orig, CreatureTemplate temp) => temp.type == HailstormCreatures.IcyBlue || temp.type == HailstormCreatures.Freezer || temp.type == HailstormCreatures.GorditoGreenie || orig(temp));
+        new Hook(typeof(CreatureTemplate).GetMethod("get_IsLizard", Public | NonPublic | Instance), (Func<CreatureTemplate, bool> orig, CreatureTemplate temp) => temp.type == HSEnums.CreatureType.IcyBlueLizard || temp.type == HSEnums.CreatureType.FreezerLizard || temp.type == HSEnums.CreatureType.GorditoGreenieLizard || orig(temp));
         Incan_PatientShelters();
     
     }
@@ -590,7 +590,7 @@ internal class MiscWorldChanges
                     {
                         continue;
                     }
-                    if (playerSessionRecord.kills[j].symbolData.critType == HailstormCreatures.IcyBlue || playerSessionRecord.kills[j].symbolData.critType == HailstormCreatures.Freezer)
+                    if (playerSessionRecord.kills[j].symbolData.critType == HSEnums.CreatureType.IcyBlueLizard || playerSessionRecord.kills[j].symbolData.critType == HSEnums.CreatureType.FreezerLizard)
                     {
                         if (!lizList.Contains(2))
                         {
@@ -628,7 +628,7 @@ internal class MiscWorldChanges
                 c.EmitDelegate((bool NotSaint, Player self) => NotSaint && self.SlugCatClass != IncanInfo.Incandescent);
             }
             else
-                Plugin.logger.LogError("[Hailstorm] Shelter IL hook is borked; they will not be patient. Report this if you see it, please!");
+                Debug.LogError("[Hailstorm] Shelter IL hook is borked; they will not be patient. Report this if you see it, please!");
         };
     }        
 

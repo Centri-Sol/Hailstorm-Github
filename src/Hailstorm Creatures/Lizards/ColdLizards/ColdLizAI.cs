@@ -81,11 +81,11 @@ public class ColdLizAI : LizardAI
                     if (PackPower < 1)
                     {
                         PackPower +=
-                            absCtr.creatureTemplate.type == HailstormCreatures.Freezer ? 0.2f :
-                            absCtr.creatureTemplate.type == HailstormCreatures.IcyBlue ? 0.1f : 0.05f;
+                            absCtr.creatureTemplate.type == HSEnums.CreatureType.FreezerLizard ? 0.2f :
+                            absCtr.creatureTemplate.type == HSEnums.CreatureType.IcyBlueLizard ? 0.1f : 0.05f;
                     }
 
-                    if (absCtr.creatureTemplate.type == HailstormCreatures.Freezer && !NearAFreezer)
+                    if (absCtr.creatureTemplate.type == HSEnums.CreatureType.FreezerLizard && !NearAFreezer)
                     {
                         NearAFreezer = true;
                         if (creature.abstractAI.followCreature is null && preyTracker.MostAttractivePrey is null)

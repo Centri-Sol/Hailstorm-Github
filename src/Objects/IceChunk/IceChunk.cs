@@ -5,7 +5,7 @@
 public class IceChunk : Weapon
 {
     public AbstractIceChunk AbsIce => abstractPhysicalObject as AbstractIceChunk;
-    public virtual bool FreezerCrystal => AbsIce.type == HailstormItems.FreezerCrystal;
+    public virtual bool FreezerCrystal => AbsIce.type == HSEnums.AbstractObjectType.FreezerCrystal;
     public FrozenObject FrozenObject => AbsIce.frozenObject;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -286,7 +286,7 @@ public class IceChunk : Weapon
             {
                 egg.timeWithoutEggs = 10;
             }
-            target.Violence(firstChunk, firstChunk.vel * firstChunk.mass, result.chunk, result.onAppendagePos, HailstormDamageTypes.Cold, BaseDamage, 120);
+            target.Violence(firstChunk, firstChunk.vel * firstChunk.mass, result.chunk, result.onAppendagePos, HSEnums.DamageTypes.Cold, BaseDamage, 120);
             target.Hypothermia += Chill;
         }
         else if (result.chunk is not null)

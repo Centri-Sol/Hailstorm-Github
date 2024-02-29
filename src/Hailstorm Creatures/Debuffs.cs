@@ -60,7 +60,7 @@ public class Burn : Debuff
 
             if (victim is Player self)
             {
-                float HeatDamageMult = CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(self, HailstormDamageTypes.Heat);
+                float HeatDamageMult = CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(self, HSEnums.DamageTypes.Heat);
                 self.playerState.permanentDamageTracking += 0.04f * HeatDamageMult;
                 if (self.playerState.permanentDamageTracking >= 1)
                 {
@@ -73,7 +73,7 @@ public class Burn : Debuff
             }
             else if (victim.State is HealthState HP)
             {
-                float BurnRes = victim.Template.damageRestistances[HailstormDamageTypes.Heat.index, 0];
+                float BurnRes = victim.Template.damageRestistances[HSEnums.DamageTypes.Heat.index, 0];
                 HP.health -= 0.035f / Mathf.Lerp(victim.Template.baseDamageResistance, 1f, 0.25f) / BurnRes;
                 if (victim.Hypothermia > 0.001f) victim.Hypothermia -= 0.1f / Mathf.Lerp(BurnRes, 1, 0.5f);
             }

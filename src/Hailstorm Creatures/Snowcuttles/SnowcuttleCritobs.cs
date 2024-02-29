@@ -5,14 +5,6 @@
 
 class SnowcuttleTemplate : Critob
 {
-    public static void RegisterSnowcuttles()
-    {
-        Content.Register(new SnowcuttleTemplate(HailstormCreatures.SnowcuttleTemplate, null, null));
-        Content.Register(new SnowcuttleFemaleCritob());
-        Content.Register(new SnowcuttleMaleCritob());
-        Content.Register(new SnowcuttleLeCritob());
-    }
-
     public virtual Color SnowcuttleColor => new HSLColor(240 / 360f, 0.04f, 0.35f).rgb;
 
     internal SnowcuttleTemplate(CreatureTemplate.Type snowcuttleType, MultiplayerUnlocks.SandboxUnlockID sandboxUnlock, MultiplayerUnlocks.SandboxUnlockID unlockParent) : base(snowcuttleType)
@@ -81,7 +73,7 @@ class SnowcuttleTemplate : Critob
     }
     public override void EstablishRelationships()
     {
-        Relationships scTempRelation = new(HailstormCreatures.SnowcuttleTemplate);
+        Relationships scTempRelation = new(HSEnums.CreatureType.SnowcuttleTemplate);
 
         // Will bash and nibble at these creatures until they die.
         scTempRelation.Attacks(CreatureTemplate.Type.Spider, 1);
@@ -92,7 +84,7 @@ class SnowcuttleTemplate : Critob
         // Called "StayOutOfWay" in the game's code.
         scTempRelation.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 1);
         scTempRelation.IntimidatedBy(CreatureTemplate.Type.Centipede, 1);
-        scTempRelation.IntimidatedBy(HailstormCreatures.InfantAquapede, 1);
+        scTempRelation.IntimidatedBy(HSEnums.CreatureType.InfantAquapede, 1);
         scTempRelation.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy, 1);
         scTempRelation.IntimidatedBy(CreatureTemplate.Type.LizardTemplate, 0.9f);
         scTempRelation.IntimidatedBy(CreatureTemplate.Type.SeaLeech, 0.9f);
@@ -103,14 +95,14 @@ class SnowcuttleTemplate : Critob
 
         // Flies away from these creatures if they are anywhere nearby, showing active fear.
         // (Flee radius is much larger than with IntimidatedBy/StayOutOfWay.)
-        scTempRelation.Fears(HailstormCreatures.Raven, 1);
-        //scTempRelation.Fears(HailstormCreatures.Strobelegs, 1);
-        scTempRelation.Fears(HailstormCreatures.Luminescipede, 1);
+        scTempRelation.Fears(HSEnums.CreatureType.Raven, 1);
+        //scTempRelation.Fears(HSEnums.CreatureType.Strobelegs, 1);
+        scTempRelation.Fears(HSEnums.CreatureType.Luminescipede, 1);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 1);
         scTempRelation.Fears(CreatureTemplate.Type.SpitterSpider, 0.9f);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
-        scTempRelation.Fears(HailstormCreatures.Freezer, 0.9f);
-        scTempRelation.Fears(HailstormCreatures.Cyanwing, 0.9f);
+        scTempRelation.Fears(HSEnums.CreatureType.FreezerLizard, 0.9f);
+        scTempRelation.Fears(HSEnums.CreatureType.Cyanwing, 0.9f);
         scTempRelation.Fears(CreatureTemplate.Type.Vulture, 0.8f);
         scTempRelation.Fears(CreatureTemplate.Type.CyanLizard, 0.8f);
         scTempRelation.Fears(CreatureTemplate.Type.RedCentipede, 0.8f);
@@ -122,7 +114,7 @@ class SnowcuttleTemplate : Critob
         scTempRelation.Fears(CreatureTemplate.Type.WhiteLizard, 0.6f);
         scTempRelation.Fears(CreatureTemplate.Type.BigSpider, 0.6f);
         scTempRelation.Fears(CreatureTemplate.Type.DaddyLongLegs, 0.6f);
-        scTempRelation.Fears(HailstormCreatures.PeachSpider, 0.9f);
+        scTempRelation.Fears(HSEnums.CreatureType.PeachSpider, 0.9f);
         scTempRelation.Fears(CreatureTemplate.Type.Slugcat, 0.5f);
         scTempRelation.Fears(CreatureTemplate.Type.MirosBird, 0.5f);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.5f);
@@ -131,8 +123,8 @@ class SnowcuttleTemplate : Critob
         scTempRelation.Fears(CreatureTemplate.Type.Scavenger, 0.4f);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.4f);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.4f);
-        scTempRelation.Fears(HailstormCreatures.IcyBlue, 0.4f);
-        scTempRelation.Fears(HailstormCreatures.GorditoGreenie, 0.3f);
+        scTempRelation.Fears(HSEnums.CreatureType.IcyBlueLizard, 0.4f);
+        scTempRelation.Fears(HSEnums.CreatureType.GorditoGreenieLizard, 0.3f);
         scTempRelation.Fears(CreatureTemplate.Type.BigEel, 0.3f);
         scTempRelation.Fears(CreatureTemplate.Type.BrotherLongLegs, 0.3f);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.Inspector, 0.3f);
@@ -143,7 +135,7 @@ class SnowcuttleTemplate : Critob
         scTempRelation.IsInPack(CreatureTemplate.Type.TentaclePlant, 0.6f);
         scTempRelation.IsInPack(CreatureTemplate.Type.CicadaA, 0.4f);
         scTempRelation.IsInPack(CreatureTemplate.Type.CicadaB, 0.4f);
-        scTempRelation.IsInPack(HailstormCreatures.SnowcuttleTemplate, 0.2f);
+        scTempRelation.IsInPack(HSEnums.CreatureType.SnowcuttleTemplate, 0.2f);
         scTempRelation.IsInPack(CreatureTemplate.Type.PoleMimic, 0.1f);
 
         scTempRelation.Ignores(CreatureTemplate.Type.Fly);
@@ -153,14 +145,14 @@ class SnowcuttleTemplate : Critob
 
         scTempRelation.EatenBy(CreatureTemplate.Type.LizardTemplate, 0.15f);
 
-        scTempRelation.EatenBy(HailstormCreatures.GorditoGreenie, 1);
-        scTempRelation.EatenBy(HailstormCreatures.PeachSpider, 0.7f);
-        scTempRelation.EatenBy(HailstormCreatures.IcyBlue, 0.66f);
-        scTempRelation.EatenBy(HailstormCreatures.Freezer, 0.66f);
+        scTempRelation.EatenBy(HSEnums.CreatureType.GorditoGreenieLizard, 1);
+        scTempRelation.EatenBy(HSEnums.CreatureType.PeachSpider, 0.7f);
+        scTempRelation.EatenBy(HSEnums.CreatureType.IcyBlueLizard, 0.66f);
+        scTempRelation.EatenBy(HSEnums.CreatureType.FreezerLizard, 0.66f);
         scTempRelation.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 0.5f);
-        scTempRelation.EatenBy(HailstormCreatures.Raven, 0.5f);
-        scTempRelation.EatenBy(HailstormCreatures.Luminescipede, 0.5f);
-        //scTempRelation.EatenBy(HailstormCreatures.Strobelegs, 0.5f);
+        scTempRelation.EatenBy(HSEnums.CreatureType.Raven, 0.5f);
+        scTempRelation.EatenBy(HSEnums.CreatureType.Luminescipede, 0.5f);
+        //scTempRelation.EatenBy(HSEnums.CreatureType.Strobelegs, 0.5f);
         scTempRelation.EatenBy(CreatureTemplate.Type.CyanLizard, 0.3f);
         scTempRelation.EatenBy(CreatureTemplate.Type.WhiteLizard, 0.3f);
         scTempRelation.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.3f);
@@ -204,13 +196,13 @@ sealed class SnowcuttleFemaleCritob : SnowcuttleTemplate
 
     public override Color SnowcuttleColor => Custom.HSL2RGB(220/360f, 0.25f, 0.6f);
 
-    internal SnowcuttleFemaleCritob() : base(HailstormCreatures.SnowcuttleFemale, HailstormUnlocks.SnowcuttleFemale, null) {}
+    internal SnowcuttleFemaleCritob() : base(HSEnums.CreatureType.SnowcuttleFemale, HSEnums.SandboxUnlock.SnowcuttleFemale, null) {}
     public override string DevtoolsMapName(AbstractCreature absCtl) => "ctlF";
     public override IEnumerable<string> WorldFileAliases() => new[] { "SnowcuttleF" };
 
     public override CreatureTemplate CreateTemplate()
     {
-        CreatureTemplate snwCtlFemale = new CreatureFormula(HailstormCreatures.SnowcuttleTemplate, Type, "Snowcuttle Female").IntoTemplate();
+        CreatureTemplate snwCtlFemale = new CreatureFormula(HSEnums.CreatureType.SnowcuttleTemplate, Type, "Snowcuttle Female").IntoTemplate();
         snwCtlFemale.visualRadius = 900;
         snwCtlFemale.throughSurfaceVision = 0.45f;
         snwCtlFemale.waterVision = 0.4f;
@@ -219,13 +211,13 @@ sealed class SnowcuttleFemaleCritob : SnowcuttleTemplate
     }
     public override void EstablishRelationships()
     {
-        Relationships scF = new(HailstormCreatures.SnowcuttleFemale);
+        Relationships scF = new(HSEnums.CreatureType.SnowcuttleFemale);
 
         // Will snatch up these creatures and fly back to its den.
         scF.Eats(CreatureTemplate.Type.Fly, 0.9f);
         scF.Eats(CreatureTemplate.Type.Leech, 0.9f);
         scF.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.7f);
-        scF.Eats(HailstormCreatures.PeachSpider, 0.6f);
+        scF.Eats(HSEnums.CreatureType.PeachSpider, 0.6f);
         scF.Eats(CreatureTemplate.Type.SeaLeech, 0.6f);
         scF.Eats(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 0.6f);
         scF.Eats(CreatureTemplate.Type.Hazer, 0.5f);
@@ -246,13 +238,13 @@ sealed class SnowcuttleMaleCritob : SnowcuttleTemplate
 
     public override Color SnowcuttleColor => Custom.HSL2RGB(320/360f, 0.25f, 0.6f);
 
-    internal SnowcuttleMaleCritob() : base (HailstormCreatures.SnowcuttleMale, HailstormUnlocks.SnowcuttleMale, HailstormUnlocks.SnowcuttleFemale) {}
+    internal SnowcuttleMaleCritob() : base (HSEnums.CreatureType.SnowcuttleMale, HSEnums.SandboxUnlock.SnowcuttleMale, HSEnums.SandboxUnlock.SnowcuttleFemale) {}
     public override string DevtoolsMapName(AbstractCreature absCtl) => "ctlM";
     public override IEnumerable<string> WorldFileAliases() => new[] { "SnowcuttleM" };
 
     public override CreatureTemplate CreateTemplate()
     {
-        CreatureTemplate snwCtlMale = new CreatureFormula(HailstormCreatures.SnowcuttleTemplate, Type, "Snowcuttle Male").IntoTemplate();
+        CreatureTemplate snwCtlMale = new CreatureFormula(HSEnums.CreatureType.SnowcuttleTemplate, Type, "Snowcuttle Male").IntoTemplate();
         snwCtlMale.visualRadius = 1200;
         snwCtlMale.throughSurfaceVision = 0.8f;
         snwCtlMale.waterVision = 0.8f;
@@ -261,10 +253,10 @@ sealed class SnowcuttleMaleCritob : SnowcuttleTemplate
     }
     public override void EstablishRelationships()
     {
-        Relationships scM = new(HailstormCreatures.SnowcuttleMale);
+        Relationships scM = new(HSEnums.CreatureType.SnowcuttleMale);
 
         // Flies away from this creature if they are anywhere nearby, showing active fear.
-        scM.Fears(HailstormCreatures.PeachSpider, 0.8f);
+        scM.Fears(HSEnums.CreatureType.PeachSpider, 0.8f);
 
     }
 
@@ -278,7 +270,7 @@ sealed class SnowcuttleLeCritob : SnowcuttleTemplate
 
     public override Color SnowcuttleColor => Custom.HSL2RGB(270 / 360f, 0.25f, 0.6f);
 
-    internal SnowcuttleLeCritob() : base (HailstormCreatures.SnowcuttleLe, HailstormUnlocks.SnowcuttleLe, HailstormUnlocks.SnowcuttleFemale) {}
+    internal SnowcuttleLeCritob() : base (HSEnums.CreatureType.SnowcuttleLe, HSEnums.SandboxUnlock.SnowcuttleLe, HSEnums.SandboxUnlock.SnowcuttleFemale) {}
     public override string DevtoolsMapName(AbstractCreature absCtl) => "ctlL";
     public override IEnumerable<string> WorldFileAliases() => new[] { "SnowcuttleL" };
     public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction()
@@ -294,11 +286,11 @@ sealed class SnowcuttleLeCritob : SnowcuttleTemplate
 
     public override CreatureTemplate CreateTemplate()
     {
-        return new CreatureFormula(HailstormCreatures.SnowcuttleTemplate, Type, "Snowcuttle Le").IntoTemplate();
+        return new CreatureFormula(HSEnums.CreatureType.SnowcuttleTemplate, Type, "Snowcuttle Le").IntoTemplate();
     }
     public override void EstablishRelationships()
     {
-        Relationships scL = new(HailstormCreatures.SnowcuttleLe);
+        Relationships scL = new(HSEnums.CreatureType.SnowcuttleLe);
 
         // Will snatch up these creatures and fly back to its den.
         scL.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.9f);
@@ -313,13 +305,13 @@ sealed class SnowcuttleLeCritob : SnowcuttleTemplate
         scL.Attacks(CreatureTemplate.Type.BigNeedleWorm, 0.6f);
         scL.Attacks(CreatureTemplate.Type.EggBug, 0.6f);
         scL.Attacks(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 0.6f);
-        scL.Attacks(HailstormCreatures.Luminescipede, 0.6f);
+        scL.Attacks(HSEnums.CreatureType.Luminescipede, 0.6f);
         //scL.Attacks(HailstormEnums.Strobelegs, 0.6f);
 
         // Hangs out near these creatures when it has nothing else to do, and flies to them for protection if nearby and in danger.
         scL.IsInPack(CreatureTemplate.Type.CicadaA, 0.6f);
         scL.IsInPack(CreatureTemplate.Type.CicadaB, 0.6f);
-        scL.IsInPack(HailstormCreatures.SnowcuttleTemplate, 0.6f);
+        scL.IsInPack(HSEnums.CreatureType.SnowcuttleTemplate, 0.6f);
 
         // Flies away from these creatures if they are anywhere nearby, showing active fear.
         scL.Fears(CreatureTemplate.Type.DropBug, 1);
@@ -337,7 +329,7 @@ sealed class SnowcuttleLeCritob : SnowcuttleTemplate
         scL.Ignores(CreatureTemplate.Type.PoleMimic);
         scL.Ignores(CreatureTemplate.Type.TentaclePlant);
         scL.Ignores(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti);
-        scL.Ignores(HailstormCreatures.InfantAquapede);
+        scL.Ignores(HSEnums.CreatureType.InfantAquapede);
 
     }
 

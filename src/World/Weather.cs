@@ -55,11 +55,11 @@ internal class Weather
         { CreatureTemplate.Type.KingVulture, 0.25f },
         { MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.25f },
         { CreatureTemplate.Type.RedCentipede, 0.25f },
-        { HailstormCreatures.Cyanwing, 0.25f },
+        { HSEnums.CreatureType.Cyanwing, 0.25f },
         { CreatureTemplate.Type.Salamander, 0 },
         { CreatureTemplate.Type.Deer, 0 },
         { MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0 },
-        { HailstormCreatures.GorditoGreenie, 0 }
+        { HSEnums.CreatureType.GorditoGreenieLizard, 0 }
     }; // For each listed creature type, hail damage and stun are multiplied by the given number.
 
     public static bool FogPrecycle;
@@ -91,7 +91,7 @@ internal class Weather
         MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing,
         MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard,
         MoreSlugcatsEnums.CreatureTemplateType.MirosVulture,
-        HailstormCreatures.Luminescipede
+        HSEnums.CreatureType.Luminescipede
     };
 
 
@@ -647,7 +647,7 @@ internal class Weather
                 c.Emit(OpCodes.Brfalse, label);
             }
             else
-                Plugin.logger.LogError("[Hailstorm] An IL hook for Erratic Wind Cycles isn't working! Report this if you see it!");
+                Debug.LogError("[Hailstorm] An IL hook for Erratic Wind Cycles isn't working! Report this if you see it!");
         };
 
     }
@@ -705,7 +705,7 @@ internal class Weather
             {
                 if (Random.value < rI.erraticWindWrongDandelionTypeChance)
                 {
-                    AbstractCreature PeachSpider = new(room.world, StaticWorld.GetCreatureTemplate(HailstormCreatures.PeachSpider), null, spawnCoordinate.Value, room.game.GetNewID());
+                    AbstractCreature PeachSpider = new(room.world, StaticWorld.GetCreatureTemplate(HSEnums.CreatureType.PeachSpider), null, spawnCoordinate.Value, room.game.GetNewID());
                     OtherCreatureChanges.CustomFlags(PeachSpider);
                     room.abstractRoom.AddEntity(PeachSpider);
                     PeachSpider.RealizeInRoom();
@@ -762,7 +762,7 @@ internal class Weather
 
             if (obj is Creature windImmune && (
                 windImmune.Template.type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
-                windImmune.Template.type == HailstormCreatures.GorditoGreenie))
+                windImmune.Template.type == HSEnums.CreatureType.GorditoGreenieLizard))
             {
                 return;
             }

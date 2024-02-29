@@ -7,8 +7,8 @@ public class ColdLizard : Lizard
     public ColdLizAI ColdAI => AI as ColdLizAI;
     public ColdLizState ColdState => State as ColdLizState;
     public LizardGraphics LizGraphics => graphicsModule as LizardGraphics;
-    public virtual bool IcyBlue => Template.type == HailstormCreatures.IcyBlue;
-    public virtual bool Freezer => Template.type == HailstormCreatures.Freezer;
+    public virtual bool IcyBlue => Template.type == HSEnums.CreatureType.IcyBlueLizard;
+    public virtual bool Freezer => Template.type == HSEnums.CreatureType.FreezerLizard;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -66,7 +66,7 @@ public class ColdLizard : Lizard
     public virtual void SetUpIcyBlueStats(AbstractCreature absLiz, float SizeMult)
     {
         LizardBreedParams Icyblue = lizardParams;
-        LizardBreedParams Freezer = StaticWorld.GetCreatureTemplate(HailstormCreatures.Freezer).breedParameters as LizardBreedParams;
+        LizardBreedParams Freezer = StaticWorld.GetCreatureTemplate(HSEnums.CreatureType.FreezerLizard).breedParameters as LizardBreedParams;
 
         chillRadius = Custom.LerpMap(SizeMult, 1, 1.2f, 30, 120);
 
@@ -200,13 +200,13 @@ public class ColdLizard : Lizard
             {
                 SpitUpdate();
             }
-            catch (Exception e) { Plugin.logger.LogError("[Hailstorm] Freezer Lizard spit AI broke: " + e); }
+            catch (Exception e) { Debug.LogError("[Hailstorm] Freezer Lizard spit AI broke: " + e); }
 
             try
             {
                 BreathUpdate(eu);
             }
-            catch (Exception e) { Plugin.logger.LogError("[Hailstorm] Freezer Lizard ice breath broke???? Report this, please:" + e); }
+            catch (Exception e) { Debug.LogError("[Hailstorm] Freezer Lizard ice breath broke???? Report this, please:" + e); }
 
         }
 
@@ -265,7 +265,7 @@ public class ColdLizard : Lizard
                     {
                         room.PlaySound(SoundID.Lizard_Jaws_Bite_Do_Damage, bodyChunks[0].pos, 1.25f, 1);
                     }
-                    ctr.Violence(bodyChunks[0], -bodyChunks[0].vel, ctr.firstChunk, null, HailstormDamageTypes.Cold, 0.15f, 25);
+                    ctr.Violence(bodyChunks[0], -bodyChunks[0].vel, ctr.firstChunk, null, HSEnums.DamageTypes.Cold, 0.15f, 25);
                     grasp.Release();
                 }
                 // ^ Briefly stuns grabber and makes them let go if they toucha da lizor's armor.    
@@ -279,7 +279,7 @@ public class ColdLizard : Lizard
             victim is not Player &&
             victim is not Chillipede)
         {
-            float frostbite = (Freezer ? 0.0045f : 0.002f) / victim.Template.baseDamageResistance / victim.Template.damageRestistances[HailstormDamageTypes.Cold.index, 0];
+            float frostbite = (Freezer ? 0.0045f : 0.002f) / victim.Template.baseDamageResistance / victim.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0];
             if (victim is Centipede cnt)
             {
                 float sizeFac = cnt.size;
@@ -291,7 +291,7 @@ public class ColdLizard : Lizard
             }
             if (LizardHooks.IsIncanStory(room?.game))
             {
-                frostbite /= CustomTemplateInfo.DamageResistances.IncanStoryResistances(victim.Template, HailstormDamageTypes.Cold, false);
+                frostbite /= CustomTemplateInfo.DamageResistances.IncanStoryResistances(victim.Template, HSEnums.DamageTypes.Cold, false);
             }
             hs.health -= frostbite;
 
@@ -633,7 +633,7 @@ public class ColdLizard : Lizard
                     ColdState.crystals[i] = false;
                     CrystalsToBreak--;
                     drop = Random.value < (dmgType == DamageType.Blunt ? 0.01875f : 0.075f) &&
-                        dmgType != HailstormDamageTypes.Heat &&
+                        dmgType != HSEnums.DamageTypes.Heat &&
                         !(source?.owner is not null && source.owner is Spear spr && spr.bugSpear);
 
                     if (drop)

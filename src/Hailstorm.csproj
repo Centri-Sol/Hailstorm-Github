@@ -21,6 +21,7 @@
     
     <ItemGroup>
       <None Remove="CWT.cs~RF163d3c43.TMP" />
+      <None Remove="Hailstorm Creatures\Centipedes\Chillipede\ChillipedeCritob.cs~RF1a7e281d.TMP" />
     </ItemGroup>
     
     <Target Name="GenerateMod" AfterTargets="PostBuildEvent">

@@ -7,9 +7,9 @@ public static class CustomTemplateInfo
 {
     public static bool IsColdCreature(CreatureTemplate.Type creatureType)
     {
-        if (creatureType == HailstormCreatures.IcyBlue ||
-            creatureType == HailstormCreatures.Freezer ||
-            creatureType == HailstormCreatures.Chillipede)
+        if (creatureType == HSEnums.CreatureType.IcyBlueLizard ||
+            creatureType == HSEnums.CreatureType.FreezerLizard ||
+            creatureType == HSEnums.CreatureType.Chillipede)
         {
             return true;
         }
@@ -49,14 +49,14 @@ public static class CustomTemplateInfo
 
         public static void AddNewDamageResistances(CreatureTemplate temp, CreatureTemplate.Type type)
         {
-            if (HailstormDamageTypes.Cold.index >= temp.damageRestistances.GetLength(0)) return;
+            if (HSEnums.DamageTypes.Cold.index >= temp.damageRestistances.GetLength(0)) return;
 
-            temp.damageRestistances[HailstormDamageTypes.Cold.index, 0] = 1; // 0 is damage resistance
-            temp.damageRestistances[HailstormDamageTypes.Cold.index, 1] = 1; // 1 is stun resistance
-            temp.damageRestistances[HailstormDamageTypes.Heat.index, 0] = 1;
-            temp.damageRestistances[HailstormDamageTypes.Heat.index, 1] = 1;
-            temp.damageRestistances[HailstormDamageTypes.Venom.index, 0] = 1;
-            temp.damageRestistances[HailstormDamageTypes.Venom.index, 1] = 1;
+            temp.damageRestistances[HSEnums.DamageTypes.Cold.index, 0] = 1; // 0 is damage resistance
+            temp.damageRestistances[HSEnums.DamageTypes.Cold.index, 1] = 1; // 1 is stun resistance
+            temp.damageRestistances[HSEnums.DamageTypes.Heat.index, 0] = 1;
+            temp.damageRestistances[HSEnums.DamageTypes.Heat.index, 1] = 1;
+            temp.damageRestistances[HSEnums.DamageTypes.Venom.index, 0] = 1;
+            temp.damageRestistances[HSEnums.DamageTypes.Venom.index, 1] = 1;
 
             AddCreatureColdResistances(temp, type);
             AddCreatureHeatResistances(temp, type);
@@ -201,28 +201,28 @@ public static class CustomTemplateInfo
             }
             //____________________
             // Hailstorm creatures
-            else if (type == HailstormCreatures.InfantAquapede)
+            else if (type == HSEnums.CreatureType.InfantAquapede)
             {
                 temp.damageRestistances[Cold.index, 0] = 4 / 3f; // -25% damage
                 temp.damageRestistances[Cold.index, 1] = 0.8f; // +25% stun
             }
-            else if (type == HailstormCreatures.Raven)
+            else if (type == HSEnums.CreatureType.Raven)
             {
                 temp.damageRestistances[Cold.index, 0] = 4 / 3f; // -25% damage
                 temp.damageRestistances[Cold.index, 1] = 2f;   // -50% stun
             }
-            else if (type == HailstormCreatures.PeachSpider)
+            else if (type == HSEnums.CreatureType.PeachSpider)
             {
                 temp.damageRestistances[Cold.index, 0] = 1.50f; // -33% damage
                 temp.damageRestistances[Cold.index, 1] = 1.25f; // -20% stun
             }
-            else if (type == HailstormCreatures.Cyanwing)
+            else if (type == HSEnums.CreatureType.Cyanwing)
             {
                 temp.damageRestistances[Cold.index, 0] = 0.8f;  // +25% damage
                 temp.damageRestistances[Cold.index, 1] = 0.5f;  // +100% stun
                                                                 // Stun is further increased by 1 second in Centipede.Violence.
             }
-            else if (type == HailstormCreatures.GorditoGreenie)
+            else if (type == HSEnums.CreatureType.GorditoGreenieLizard)
             {
                 temp.damageRestistances[Cold.index, 0] = 2f;  // -50% stun
                 temp.damageRestistances[Cold.index, 1] = 5f;  // -80% stun
@@ -234,12 +234,12 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Cold.index, 1] = 10f; // -90% stun
             }*/
 
-            else if (type == HailstormCreatures.Chillipede)
+            else if (type == HSEnums.CreatureType.Chillipede)
             {
                 temp.damageRestistances[Cold.index, 0] = 100f; // -99% damage
                 temp.damageRestistances[Cold.index, 1] = 100f; // -99% stun
             }
-            else if (type == HailstormCreatures.Luminescipede)
+            else if (type == HSEnums.CreatureType.Luminescipede)
             {
                 temp.damageRestistances[Cold.index, 0] = 4 / 3f; // -25% damage
                 temp.damageRestistances[Cold.index, 1] = 0.8f; // +25% stun
@@ -373,22 +373,22 @@ public static class CustomTemplateInfo
             }
             //____________________
             // Hailstorm creatures
-            else if (type == HailstormCreatures.InfantAquapede)
+            else if (type == HSEnums.CreatureType.InfantAquapede)
             {
                 temp.damageRestistances[Heat.index, 0] = 4f; // -75% damage
                 temp.damageRestistances[Heat.index, 1] = 4f; // -75% stun
             }
-            else if (temp.TopAncestor().type == HailstormCreatures.SnowcuttleTemplate)
+            else if (temp.TopAncestor().type == HSEnums.CreatureType.SnowcuttleTemplate)
             {
                 temp.damageRestistances[Heat.index, 0] = 1.5f; // -33% damage
                 temp.damageRestistances[Heat.index, 1] = 0.5f; // +100% stun
             }
-            else if (type == HailstormCreatures.PeachSpider)
+            else if (type == HSEnums.CreatureType.PeachSpider)
             {
                 temp.damageRestistances[Heat.index, 0] = 0.8f; // +25% damage
                 temp.damageRestistances[Heat.index, 1] = 0.8f; // +25% stun
             }
-            else if (type == HailstormCreatures.Cyanwing)
+            else if (type == HSEnums.CreatureType.Cyanwing)
             {
                 temp.damageRestistances[Heat.index, 0] = 4f; // -75% damage
                 temp.damageRestistances[Heat.index, 1] = 4f; // -75% stun
@@ -400,12 +400,12 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Heat.index, 1] = 1/3f; // +200% stun
             }*/
 
-            else if (type == HailstormCreatures.Chillipede)
+            else if (type == HSEnums.CreatureType.Chillipede)
             {
                 temp.damageRestistances[Heat.index, 0] = 0.5f;  // +100% damage
                 temp.damageRestistances[Heat.index, 1] = 0.25f; // +300% stun
             }
-            else if (type == HailstormCreatures.Luminescipede)
+            else if (type == HSEnums.CreatureType.Luminescipede)
             {
                 temp.damageRestistances[Heat.index, 0] = 1.25f; // -20% damage
                 temp.damageRestistances[Heat.index, 1] = 1.25f; // -20% stun
@@ -481,40 +481,40 @@ public static class CustomTemplateInfo
             }
             //_____________________
             // Hailstorm creatures
-            else if (temp.TopAncestor().type == HailstormCreatures.SnowcuttleTemplate)
+            else if (temp.TopAncestor().type == HSEnums.CreatureType.SnowcuttleTemplate)
             {
-                if (type == HailstormCreatures.SnowcuttleFemale)
+                if (type == HSEnums.CreatureType.SnowcuttleFemale)
                 {
                     temp.damageRestistances[Venom.index, 0] = 4f;   // -75% damage
                     temp.damageRestistances[Venom.index, 1] = 100f; // -99% stun
                 }
-                else if (type == HailstormCreatures.SnowcuttleMale)
+                else if (type == HSEnums.CreatureType.SnowcuttleMale)
                 {
                     temp.damageRestistances[Venom.index, 0] = 4 / 3f; // -25% damage
                     temp.damageRestistances[Venom.index, 1] = 1.5f; // -33% stun
                 }
             }
-            else if (type == HailstormCreatures.IcyBlue)
+            else if (type == HSEnums.CreatureType.IcyBlueLizard)
             {
                 temp.damageRestistances[Venom.index, 0] = 1.25f; // -20% damage
                 temp.damageRestistances[Venom.index, 1] = 1.25f; // -20% stun
             }
-            else if (type == HailstormCreatures.Freezer)
+            else if (type == HSEnums.CreatureType.FreezerLizard)
             {
                 temp.damageRestistances[Venom.index, 0] = 2f; // -50% damage
                 temp.damageRestistances[Venom.index, 1] = 2f; // -50% stun
             }
-            else if (type == HailstormCreatures.GorditoGreenie)
+            else if (type == HSEnums.CreatureType.GorditoGreenieLizard)
             {
                 temp.damageRestistances[Venom.index, 0] = 2f;   // -50% damage
                 temp.damageRestistances[Venom.index, 1] = 0.4f; // +150% stun
             }
-            else if (type == HailstormCreatures.PeachSpider)
+            else if (type == HSEnums.CreatureType.PeachSpider)
             {
                 temp.damageRestistances[Venom.index, 0] = 100f; // -99% damage
                 temp.damageRestistances[Venom.index, 1] = 100f; // -99% stun
             }
-            else if (type == HailstormCreatures.Cyanwing)
+            else if (type == HSEnums.CreatureType.Cyanwing)
             {
                 temp.damageRestistances[Venom.index, 0] = 100f; // -99% damage
                 temp.damageRestistances[Venom.index, 1] = 100f; // -99% stun
@@ -526,7 +526,7 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Venom.index, 1] = 2/3f; // +50% stun
             }*/
 
-            else if (type == HailstormCreatures.Chillipede)
+            else if (type == HSEnums.CreatureType.Chillipede)
             {
                 temp.damageRestistances[Venom.index, 0] = 2f;   // -50% damage
                 temp.damageRestistances[Venom.index, 1] = 0.5f; // +100% stun
@@ -583,7 +583,7 @@ public static class CustomTemplateInfo
             }
             //_____________________
             // Hailstorm lizards
-            else if (type == HailstormCreatures.IcyBlue)
+            else if (type == HSEnums.CreatureType.IcyBlueLizard)
             {
                 // Bite damage is unchanged
                 temp.damageRestistances[Creature.DamageType.Bite.index, 1] = 1.5f; // -33% stun
@@ -596,7 +596,7 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Venom.index, 0] = 1.5f; // -33% damage
                 temp.damageRestistances[Venom.index, 1] = 1.5f; // -33% stun
             }
-            else if (type == HailstormCreatures.Freezer)
+            else if (type == HSEnums.CreatureType.FreezerLizard)
             {
                 temp.damageRestistances[Creature.DamageType.Bite.index, 0] = 6f; // -83% damage
                 temp.damageRestistances[Creature.DamageType.Bite.index, 1] = 2f; // -50% stun
@@ -611,7 +611,7 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Venom.index, 0] = 3f; // -66% damage
                 temp.damageRestistances[Venom.index, 1] = 3f; // -66% stun
             }
-            else if (type == HailstormCreatures.GorditoGreenie)
+            else if (type == HSEnums.CreatureType.GorditoGreenieLizard)
             {
                 temp.damageRestistances[Creature.DamageType.Bite.index, 0] = 100f; // -99% damage
                 temp.damageRestistances[Creature.DamageType.Bite.index, 1] = 100f; // -99% damage
@@ -629,89 +629,89 @@ public static class CustomTemplateInfo
 
             if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan)
             {
-                if (dmgType == HailstormDamageTypes.Cold)
+                if (dmgType == HSEnums.DamageTypes.Cold)
                 {
                     return 2f;
                 }
-                if (dmgType == HailstormDamageTypes.Heat)
+                if (dmgType == HSEnums.DamageTypes.Heat)
                 {
                     return 0.25f;
                 }
             }
             else if (self.SlugCatClass == SlugcatStats.Name.Red)
             {
-                if (dmgType == HailstormDamageTypes.Cold)
+                if (dmgType == HSEnums.DamageTypes.Cold)
                 {
                     return 1.1f;
                 }
-                if (dmgType == HailstormDamageTypes.Heat)
+                if (dmgType == HSEnums.DamageTypes.Heat)
                 {
                     return 1.1f;
                 }
-                if (dmgType == HailstormDamageTypes.Venom)
+                if (dmgType == HSEnums.DamageTypes.Venom)
                 {
                     return 0.5f;
                 }
             }
             else if (self.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Gourmand)
             {
-                if (dmgType == HailstormDamageTypes.Cold)
+                if (dmgType == HSEnums.DamageTypes.Cold)
                 {
                     return 0.75f;
                 }
-                if (dmgType == HailstormDamageTypes.Heat)
+                if (dmgType == HSEnums.DamageTypes.Heat)
                 {
                     return 1.1f;
                 }
-                if (dmgType == HailstormDamageTypes.Venom)
+                if (dmgType == HSEnums.DamageTypes.Venom)
                 {
                     return 0.75f;
                 }
             }
             else if (self.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Artificer)
             {
-                if (dmgType == HailstormDamageTypes.Cold)
+                if (dmgType == HSEnums.DamageTypes.Cold)
                 {
                     return 0.8f;
                 }
-                if (dmgType == HailstormDamageTypes.Heat)
+                if (dmgType == HSEnums.DamageTypes.Heat)
                 {
                     return 1.2f;
                 }
-                if (dmgType == HailstormDamageTypes.Venom)
+                if (dmgType == HSEnums.DamageTypes.Venom)
                 {
                     return 1.5f;
                 }
             }
             else if (self.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Rivulet)
             {
-                if (dmgType == HailstormDamageTypes.Cold)
+                if (dmgType == HSEnums.DamageTypes.Cold)
                 {
                     return 1.2f;
                 }
-                if (dmgType == HailstormDamageTypes.Heat)
+                if (dmgType == HSEnums.DamageTypes.Heat)
                 {
                     return 0.8f;
                 }
-                if (dmgType == HailstormDamageTypes.Venom)
+                if (dmgType == HSEnums.DamageTypes.Venom)
                 {
                     return 2/3f;
                 }
             }
             else if (self.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Spear)
             {
-                if (dmgType == HailstormDamageTypes.Cold)
+                if (dmgType == HSEnums.DamageTypes.Cold)
                 {
                     return 1.2f;
                 }
-                if (dmgType == HailstormDamageTypes.Heat)
+                if (dmgType == HSEnums.DamageTypes.Heat)
                 {
                     return 0.8f;
                 }
             }
             else if (self.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Saint)
             {
-                if (dmgType == HailstormDamageTypes.Venom)
+                if (dmgType == HSEnums.DamageTypes.Venom)
                 {
                     return 1.5f;
                 }
@@ -803,7 +803,7 @@ public static class CustomTemplateInfo
             Hail.Add(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0);
 
             // HailResistantCreatures.Add(HailstormEnums.Raven, 0.75f);
-            Hail.Add(HailstormCreatures.GorditoGreenie, 0);
+            Hail.Add(HSEnums.CreatureType.GorditoGreenieLizard, 0);
 
         }
 
@@ -836,12 +836,12 @@ public static class CustomTemplateInfo
             Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0);
             Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0);
 
-            Wind.Add(HailstormCreatures.Cyanwing, 0.75f);
-            Wind.Add(HailstormCreatures.Chillipede, 0.5f);
-            Wind.Add(HailstormCreatures.Freezer, 0.5f);
+            Wind.Add(HSEnums.CreatureType.Cyanwing, 0.75f);
+            Wind.Add(HSEnums.CreatureType.Chillipede, 0.5f);
+            Wind.Add(HSEnums.CreatureType.FreezerLizard, 0.5f);
             // Wind.Add(HailstormEnums.BezanBud, 0.5f);
             // Wind.Add(HailstormEnums.Strobelegs, 0.25f);
-            Wind.Add(HailstormCreatures.GorditoGreenie, 0);
+            Wind.Add(HSEnums.CreatureType.GorditoGreenieLizard, 0);
         }
 
     }

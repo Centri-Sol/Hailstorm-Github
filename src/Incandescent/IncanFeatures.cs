@@ -418,7 +418,7 @@ public class IncanFeatures
             player.firefuel += 1200;
             self.Hypothermia -= 0.3f;
         }
-        else if (food is SLOracleSwarmer || food is SSOracleSwarmer)
+        else if (food is SLOracleSwarmer or SSOracleSwarmer)
         {
             player.firefuel += 4800;
         }
@@ -441,7 +441,7 @@ public class IncanFeatures
             {
                 fuel = 1600;
             }
-            else if (food is GlowWeed || (food is Centipede cnt1 && cnt1.Template.type == HailstormCreatures.InfantAquapede))
+            else if (food is GlowWeed || (food is Centipede cnt1 && cnt1.Template.type == HSEnums.CreatureType.InfantAquapede))
             {
                 fuel = 1200;
                 player.waterGlow += 1200;
@@ -478,7 +478,7 @@ public class IncanFeatures
     }
     public static int SaintNoYouCantEatTheseFuckOff_WaitNoPUTAWAYYOURASCENSIONPOWERSDONOTBLOWUPMYMINDLIKEPANCA(On.SlugcatStats.orig_NourishmentOfObjectEaten orig, SlugcatStats.Name slugcat, IPlayerEdible eatenobject)
     {
-        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob)
+        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob) 
             ? -1
             : orig(slugcat, eatenobject);
     }
@@ -521,7 +521,10 @@ public class IncanFeatures
                 );
                 c.Emit(OpCodes.Brtrue, label);
             }
-            else Plugin.logger.LogError("[Hailstorm] An IL hook for eating Glowweed underwater broke! Report this, would ya?");
+            else
+            {
+                Debug.LogError("[Hailstorm] An IL hook for eating Glowweed underwater broke! Report this, would ya?");
+            }
         };
 
         IL.Player.Update += IL => // Prevents Incan from getting exhausted from starvation 
@@ -538,21 +541,17 @@ public class IncanFeatures
                 c.Emit(OpCodes.Ldarg_0);
                 c.EmitDelegate((bool Malnourished, Player self) => Malnourished && (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) || !Incan.isIncan));
             }
-            else Plugin.logger.LogError("[Hailstorm] AN IL hook for Incan starve exhaustion broke! Lemme know about this!");
+            else
+            {
+                Debug.LogError("[Hailstorm] AN IL hook for Incan starve exhaustion broke! Lemme know about this!");
+            }
         };
 
     }
     public static void UpdateFood(Player self, IncanInfo Incan, bool wasMalnourished)
     {
         self.playerState.foodInStomach = Custom.IntClamp(Mathf.FloorToInt(Incan.floatFood), 0, self.slugcatStats.maxFood);
-        if (self.playerState.foodInStomach >= self.slugcatStats.maxFood)
-        {
-            self.playerState.quarterFoodPoints = 0;
-        }
-        else
-        {
-            self.playerState.quarterFoodPoints = Mathf.FloorToInt(Custom.Decimal(Incan.floatFood) * 4f);
-        }
+        self.playerState.quarterFoodPoints = self.playerState.foodInStomach >= self.slugcatStats.maxFood ? 0 : Mathf.FloorToInt(Custom.Decimal(Incan.floatFood) * 4f);
         while (Incan.FoodCounter >= 1f)
         {
             Incan.FoodCounter -= 1f;
@@ -890,8 +889,11 @@ public class IncanFeatures
         {
             if (canHarm)
             {
-                if (RainWorld.ShowLogs) Debug.Log("SLUGROLLED! Stun: " + 120f + " | Damage: " + 1);
-                
+                if (RainWorld.ShowLogs)
+                {
+                    Debug.Log("SLUGROLLED! Stun: " + 120f + " | Damage: " + 1);
+                }
+
                 self.room.ScreenMovement(self.bodyChunks[0].pos, self.mainBodyChunk.vel * self.bodyChunks[0].mass * 5f * 0.1f, Mathf.Max((self.bodyChunks[0].mass - 30f) / 50f, 0f));
                 self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
                 target.SetKillTag(self.abstractCreature);
@@ -900,9 +902,14 @@ public class IncanFeatures
                 self.mainBodyChunk.vel.Scale(new Vector2(-0.5f, -0.5f));
                 self.rollDirection = 0;
                 if ((target.State is HealthState targetHS && targetHS.ClampedHealth == 0f) || target.State.dead)
+                    {
                     self.room.PlaySound(SoundID.Spear_Stick_In_Creature, self.mainBodyChunk, loop: false, 1.7f, 1f);
+                }
                 
-                else self.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, self.mainBodyChunk, loop: false, 1.2f, 1f);
+                else
+                {
+                    self.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, self.mainBodyChunk, loop: false, 1.2f, 1f);
+                }
 
                 self.gourmandAttackNegateTime = 20;
             }
@@ -926,18 +933,29 @@ public class IncanFeatures
                             lastFallPos < 320f? dmg * 2f :
                                 lastFallPos < 600f? dmg * 3f : dmg * 5f;
             }
-            if (stn > 240) stn = 240;
-            
-            if (dmg < 0f) dmg = 0f;
-            
-            if (stn < 25) stn = 0;
-            
+            if (stn > 240)
+            {
+                stn = 240;
+            }
+
+            if (dmg < 0f)
+            {
+                dmg = 0f;
+            }
+
+            if (stn < 25)
+            {
+                stn = 0;
+            }
+
             if (dmg != 0f || stn != 0)
             {
                 if (!target.dead)
                 {
                     if (RainWorld.ShowLogs)
-                        Debug.Log("SLUGSMASH! Slide: " + (self.animation == Player.AnimationIndex.BellySlide || self.animation == Player.AnimationIndex.RocketJump) + " | Incoming speed: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Dist: " + (self.lastGroundY - self.firstChunk.pos.y) + " | Damage: " + dmg + " | Stun: " + stn/40 + "s");
+                        {
+                        Debug.Log("SLUGSMASH! Slide: " + (self.animation == Player.AnimationIndex.BellySlide || self.animation == Player.AnimationIndex.RocketJump) + " | Incoming speed: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Dist: " + (self.lastGroundY - self.firstChunk.pos.y) + " | Damage: " + dmg + " | Stun: " + stn / 40 + "s");
+                    }
                     
                     self.room.ScreenMovement(self.bodyChunks[0].pos, self.mainBodyChunk.vel * dmg * self.bodyChunks[0].mass * 0.1f, Mathf.Max((dmg * self.bodyChunks[0].mass - 30f) / 50f, 0f));
                     self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
@@ -949,11 +967,17 @@ public class IncanFeatures
                         bJelly.Die();
                     }
                     if (target.State is HealthState targHS2 && targHS2.ClampedHealth == 0f || target.State.dead)
+                        {
                         self.room.PlaySound(SoundID.Spear_Stick_In_Creature, self.mainBodyChunk, loop: false, 1.7f, 1f);
+                    }
                     
-                    else self.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, self.mainBodyChunk, loop: false, 1.2f, 1f);                    
+                    else {
+                        self.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, self.mainBodyChunk, loop: false, 1.2f, 1f);
+                    }                    
                 }
-                else self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
+                else {
+                    self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
+                }
                 
                 if (self.mainBodyChunk.vel.magnitude < 40f && !hitSmallCreature)
                 {
@@ -961,7 +985,10 @@ public class IncanFeatures
                     self.bodyChunks[0].vel = self.mainBodyChunk.vel;
                     self.bodyChunks[1].vel = self.mainBodyChunk.vel;
                 }
-                else self.mainBodyChunk.vel.Scale(new Vector2(0.9f, 0.9f));                
+                else
+                {
+                    self.mainBodyChunk.vel.Scale(new Vector2(0.9f, 0.9f));
+                }
             }
             if (self.animation == Player.AnimationIndex.BellySlide)
             {
@@ -1024,7 +1051,7 @@ public class IncanFeatures
         Creature.DamageType DMGTYPE;
         if (BURNTIME > 0)
         {
-            DMGTYPE = HailstormDamageTypes.Heat;
+            DMGTYPE = HSEnums.DamageTypes.Heat;
 
             self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 35f, Incan.FireColor, self.ShortCutColor()));
             self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 45f, Incan.FireColor, self.ShortCutColor()));
@@ -1055,16 +1082,9 @@ public class IncanFeatures
         Incan.fireSmoke ??= new HailstormFireSmokeCreator(self.room);
         for (int s = 0; s < 10; s++)
         {
-            Vector2 SmokeVel;
-            if (DMGTYPE == Creature.DamageType.Blunt)
-            {
-                SmokeVel = Custom.DegToVec(Custom.VecToDeg(self.mainBodyChunk.vel) + Random.Range(-15, 15));
-            }
-            else
-            {
-                SmokeVel = Custom.RNV() * Random.Range(8f, 12f);
-            }
-
+            Vector2 SmokeVel = DMGTYPE == Creature.DamageType.Blunt
+                ? Custom.DegToVec(Custom.VecToDeg(self.mainBodyChunk.vel) + Random.Range(-15, 15))
+                : Custom.RNV() * Random.Range(8f, 12f);
             if (Incan.Glow is not null &&
                 self.room.ViewedByAnyCamera(self.bodyChunks[1].pos, 300f) &&
                 Incan.fireSmoke.AddParticle(Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), SmokeVel, 40) is Smoke.FireSmoke.FireSmokeParticle bonkFireSmoke)
@@ -1214,7 +1234,7 @@ public class IncanFeatures
 
                 Vector2 hitVel = Custom.DirVec(tailEnd.pos, chunk.pos) * 2f;
                 target.SetKillTag(self.abstractCreature);
-                target.Violence(self.mainBodyChunk, new Vector2?(hitVel), chunk, null, HailstormDamageTypes.Heat, DAMAGE, STUN);
+                target.Violence(self.mainBodyChunk, new Vector2?(hitVel), chunk, null, HSEnums.DamageTypes.Heat, DAMAGE, STUN);
                 if (target is Player plr)
                 {
                     plr.playerState.permanentDamageTracking += 0.25f;
@@ -1228,7 +1248,7 @@ public class IncanFeatures
                     liz.Template.type != MoreSlugcatsEnums.CreatureTemplateType.TrainLizard)
                 {
                     liz.turnedByRockCounter =
-                        (liz.Template.type == HailstormCreatures.Freezer ||
+                        (liz.Template.type == HSEnums.CreatureType.FreezerLizard ||
                         liz.Template.type == CreatureTemplate.Type.GreenLizard ||
                         liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard) ? 20 : 40;
                     liz.turnedByRockDirection = (int)Mathf.Sign(chunk.pos.x - tailEnd.pos.x);
@@ -1252,7 +1272,9 @@ public class IncanFeatures
                 }
 
                 if (RainWorld.ShowLogs)
+                {
                     Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: 0.25 | Burn Time: 12.5s | Stun: 1.25s");
+                }
 
                 self.Hypothermia += HEATLOSS;
                 target.Hypothermia -= HEATLOSS * 0.75f;
@@ -1311,13 +1333,11 @@ public class IncanFeatures
                 otherHypo *= 1.25f;
                 selfHypo = 0;
             }
-            else if (other.Template.BlizzardAdapted)
-            {
-                selfHypo = Mathf.Lerp(self.Hypothermia, 0, 0.001f) - self.Hypothermia;
-            }
             else
             {
-                selfHypo = Mathf.Lerp(self.Hypothermia, other.Hypothermia, 0.001f) - self.Hypothermia;
+                selfHypo = other.Template.BlizzardAdapted
+                    ? Mathf.Lerp(self.Hypothermia, 0, 0.001f) - self.Hypothermia
+                    : Mathf.Lerp(self.Hypothermia, other.Hypothermia, 0.001f) - self.Hypothermia;
             }
 
             if (self.room?.blizzardGraphics is not null)
@@ -1342,11 +1362,11 @@ public class IncanFeatures
                 otherHypo *= 1.25f;
                 if (self.State is HealthState hp1)
                 {
-                    hp1.health -= 0.00125f / self.Template.baseDamageResistance / self.Template.damageRestistances[HailstormDamageTypes.Heat.index, 0];
+                    hp1.health -= 0.00125f / self.Template.baseDamageResistance / self.Template.damageRestistances[HSEnums.DamageTypes.Heat.index, 0];
                 }
                 if (other.State is HealthState hp2)
                 {
-                    hp2.health -= 0.00125f / other.Template.baseDamageResistance / other.Template.damageRestistances[HailstormDamageTypes.Cold.index, 0];
+                    hp2.health -= 0.00125f / other.Template.baseDamageResistance / other.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0];
                 }
             }
         }
@@ -1394,7 +1414,10 @@ public class EmberSprite : CosmeticSprite
         vel += Custom.RNV() * Random.value * 0.5f;
         lastLife = life;
         life -= 1f / lifeTime;
-        if (life < 0f) Destroy();
+        if (life < 0f)
+        {
+            Destroy();
+        }
     }
 
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
@@ -1418,7 +1441,7 @@ public class EmberSprite : CosmeticSprite
 
 public class FireSpikes : ExplosionSpikes
 {
-    Color color2;
+    private Color color2;
     public FireSpikes(Room room, Vector2 pos, int spikes, float innerRad, float lifeTime, float width, float length, Color color, Color color2) : base(room, pos, spikes, innerRad, lifeTime, width, length, color)
     {
         base.room = room;
@@ -1433,8 +1456,8 @@ public class FireSpikes : ExplosionSpikes
         float num = Random.value * 360f;
         for (int i = 0; i < spikes; i++)
         {
-            float num2 = (float)i / (float)spikes * 360f + num;
-            dirs[i] = Custom.DegToVec(num2 + Mathf.Lerp(-0.5f, 0.5f, Random.value) * 360f / (float)spikes);
+            float num2 = i / (float)spikes * 360f + num;
+            dirs[i] = Custom.DegToVec(num2 + Mathf.Lerp(-0.5f, 0.5f, Random.value) * 360f / spikes);
             if (room.GetTile(pos + dirs[i] * (innerRad + length * 0.4f)).Solid)
             {
                 values[i, 2] = lifeTime * Mathf.Lerp(0.5f, 1.5f, Random.value) * 0.5f;

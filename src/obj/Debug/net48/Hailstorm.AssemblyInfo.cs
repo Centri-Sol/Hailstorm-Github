@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Hailstorm")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e8446bd452c574f3830f1cf4bf76bbfdaa02a43")]
 [assembly: System.Reflection.AssemblyProductAttribute("Hailstorm")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Hailstorm")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -132,7 +132,7 @@ sealed class IceChunkFisob : IceFisobTemplate
 {
     public override Color IceColor => Custom.HSL2RGB(180/360f, 0.06f, 0.55f);
 
-    internal IceChunkFisob() : base(HailstormItems.IceChunk, HailstormUnlocks.IceChunk, MultiplayerUnlocks.SandboxUnlockID.Slugcat)
+    internal IceChunkFisob() : base(HSEnums.AbstractObjectType.IceChunk, HSEnums.SandboxUnlock.IceChunk, MultiplayerUnlocks.SandboxUnlockID.Slugcat)
     {
         Icon = new SimpleIcon("Icon_Ice_Chunk", IceColor);
     }
@@ -145,7 +145,7 @@ public class FreezerCrystalFisob : IceFisobTemplate
 {
     public override Color IceColor => Custom.HSL2RGB(211 / 360f, 1, 0.8f);
 
-    internal FreezerCrystalFisob() : base(HailstormItems.FreezerCrystal, HailstormUnlocks.FreezerCrystal, HailstormUnlocks.Freezer)
+    internal FreezerCrystalFisob() : base(HSEnums.AbstractObjectType.FreezerCrystal, HSEnums.SandboxUnlock.FreezerCrystal, HSEnums.SandboxUnlock.Freezer)
     {
         Icon = new SimpleIcon("Icon_Freezer_Crystal", IceColor);
     }

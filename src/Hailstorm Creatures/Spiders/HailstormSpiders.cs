@@ -288,7 +288,7 @@ internal class HailstormSpiders
             }
         }
 
-        if (bigSpd.Template.type == HailstormCreatures.PeachSpider)
+        if (bigSpd.Template.type == HSEnums.CreatureType.PeachSpider)
         {
             for (int b = 0; b < bigSpd.bodyChunks.Length; b++)
             {
@@ -362,7 +362,7 @@ internal class HailstormSpiders
             return;
         }
 
-        if (bigSpd.Template.type == HailstormCreatures.PeachSpider)
+        if (bigSpd.Template.type == HSEnums.CreatureType.PeachSpider)
         {
             if (bigSpd.jumpStamina < 0.2f)
             {
@@ -457,7 +457,7 @@ internal class HailstormSpiders
     }
     public static void WinterMotherCRONCH(On.BigSpider.orig_Collide orig, BigSpider bigSpd, PhysicalObject obj, int myChunk, int otherChunk)
     {
-        if (bigSpd?.AI is not null && bigSpd.Template.type == HailstormCreatures.PeachSpider && obj is Creature ctr)
+        if (bigSpd?.AI is not null && bigSpd.Template.type == HSEnums.CreatureType.PeachSpider && obj is Creature ctr)
         {
             bigSpd.AI.tracker.SeeCreature(ctr.abstractCreature);
             List<RelationshipTracker.DynamicRelationship> relationships = bigSpd.AI.relationshipTracker.relationships;
@@ -615,7 +615,7 @@ internal class HailstormSpiders
     public static void PeachSpiderShouldntRevive(On.BigSpiderAI.orig_TryAddReviveBuddy orig, BigSpiderAI AI, Tracker.CreatureRepresentation candidate)
     {
         orig(AI, candidate);
-        if (AI?.bug is not null && AI.bug.Template.type == HailstormCreatures.PeachSpider)
+        if (AI?.bug is not null && AI.bug.Template.type == HSEnums.CreatureType.PeachSpider)
         {
             AI.reviveBuddy = null;
         }
@@ -623,17 +623,17 @@ internal class HailstormSpiders
     public static void PeachSpiderGetsRevivedForLonger(On.BigSpider.orig_Revive orig, BigSpider bigSpd)
     {
         orig(bigSpd);
-        if (bigSpd is not null && bigSpd.Template.type == HailstormCreatures.PeachSpider)
+        if (bigSpd is not null && bigSpd.Template.type == HSEnums.CreatureType.PeachSpider)
         {
             bigSpd.borrowedTime += 500;
         }
     }
-    public static Color PeachSpiderShortcutColor(On.BigSpider.orig_ShortCutColor orig, BigSpider bigSpd) => bigSpd.Template.type == HailstormCreatures.PeachSpider ? bigSpd.yellowCol * 0.75f : orig(bigSpd);
+    public static Color PeachSpiderShortcutColor(On.BigSpider.orig_ShortCutColor orig, BigSpider bigSpd) => bigSpd.Template.type == HSEnums.CreatureType.PeachSpider ? bigSpd.yellowCol * 0.75f : orig(bigSpd);
 
     public static void PeachSpiderScales(On.BigSpiderGraphics.orig_ctor orig, BigSpiderGraphics bsg, PhysicalObject owner)
     {
         orig(bsg, owner);
-        if (bsg?.bug is not null && bsg.bug.Template.type == HailstormCreatures.PeachSpider)
+        if (bsg?.bug is not null && bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider)
         {
             Random.State state = Random.state;
             Random.InitState(bsg.bug.abstractCreature.ID.RandomSeed);
@@ -667,7 +667,7 @@ internal class HailstormSpiders
     public static void PeachSpiderColors(On.BigSpiderGraphics.orig_ApplyPalette orig, BigSpiderGraphics bsg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(bsg, sLeaser, rCam, palette);
-        if (bsg?.bug is not null && bsg.bug.Template.type == HailstormCreatures.PeachSpider)
+        if (bsg?.bug is not null && bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider)
         {
             Random.State state = Random.state;
             Random.InitState(bsg.bug.abstractCreature.ID.altSeed);
@@ -723,14 +723,14 @@ internal class HailstormSpiders
     public static void WinterSpiderSprites(On.BigSpiderGraphics.orig_InitiateSprites orig, BigSpiderGraphics bsg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(bsg, sLeaser, rCam);
-        if (bsg?.bug is not null && (bsg.bug.Template.type == HailstormCreatures.PeachSpider || (IsIncanStory(bsg.bug.room?.game) && bsg.bug.Template.type == CreatureTemplate.Type.BigSpider)))
+        if (bsg?.bug is not null && (bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider || (IsIncanStory(bsg.bug.room?.game) && bsg.bug.Template.type == CreatureTemplate.Type.BigSpider)))
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
                 if (sLeaser.sprites[s] is not TriangleMesh and not CustomFSprite)
                 {
                     sLeaser.sprites[s].scale *=
-                        bsg.bug.Template.type == HailstormCreatures.PeachSpider ? 0.2f : 1.15f;
+                        bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider ? 0.2f : 1.15f;
                 }
             }
         }
@@ -738,7 +738,7 @@ internal class HailstormSpiders
     public static void WinterSpiderVisuals(On.BigSpiderGraphics.orig_DrawSprites orig, BigSpiderGraphics bsg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(bsg, sLeaser, rCam, timeStacker, camPos);
-        if (bsg?.bug?.room is not null && (bsg.bug.Template.type == HailstormCreatures.PeachSpider || IsIncanStory(bsg.bug.room.game)))
+        if (bsg?.bug?.room is not null && (bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider || IsIncanStory(bsg.bug.room.game)))
         {
             if (bsg.bug.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider || bsg.bug.Template.type == CreatureTemplate.Type.BigSpider)
             {
@@ -769,7 +769,7 @@ internal class HailstormSpiders
                     sLeaser.sprites[bsg.FirstScaleSprite + l].SetPosition(sLeaser.sprites[bsg.FirstScaleSprite + l].GetPosition() + (distance * 0.15f));
                 }
             }
-            else if (bsg.bug.Template.type == HailstormCreatures.PeachSpider)
+            else if (bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider)
             {
                 for (int s = 0; s < sLeaser.sprites.Length; s++)
                 {
@@ -835,7 +835,7 @@ internal class HailstormSpiders
 
     public static RelationshipTracker.TrackedCreatureState LuminsGetTrackedByLizards(On.LizardAI.orig_IUseARelationshipTracker_CreateTrackedCreatureState orig, LizardAI lizAI, RelationshipTracker.DynamicRelationship rel) // Make sure you set up the code for lizards reacting to this when you add Icy liz reactions towards Lumins!
     {
-        return rel.trackerRep.representedCreature.creatureTemplate.type == HailstormCreatures.Luminescipede
+        return rel.trackerRep.representedCreature.creatureTemplate.type == HSEnums.CreatureType.Luminescipede
             ? new LizardAI.LizardTrackState()
             : orig(lizAI, rel);
     }

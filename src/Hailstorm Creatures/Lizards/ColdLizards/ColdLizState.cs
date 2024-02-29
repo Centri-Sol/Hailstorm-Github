@@ -17,7 +17,7 @@ public class ColdLizState : LizardState
     {
         crystals = new bool[3] { true, true, true };
         armored = !crystals.All(intact => !intact);
-        if (absLiz.creatureTemplate.type == HailstormCreatures.Freezer && spitCooldown == 0)
+        if (absLiz.creatureTemplate.type == HSEnums.CreatureType.FreezerLizard && spitCooldown == 0)
         {
             spitCooldown = Random.Range(320, 480);
         }

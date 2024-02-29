@@ -1,321 +1,131 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Linq;
 
 namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-public static class HailstormCreatures
+public static class HSEnums
 {
-    public readonly static List<CreatureTemplate.Type> Types = new()
+    public static readonly SlugcatStats.Name Incandescent = new("Incandescent");
+
+    public static void Init()
     {
-        InfantAquapede,
-        SnowcuttleFemale,
-        SnowcuttleMale,
-        SnowcuttleLe,
-        Raven,
-        IcyBlue,
-        Freezer,
-        PeachSpider,
-        Cyanwing,
-        GorditoGreenie,
-        //BezanBud,
-        Luminescipede,
-        //Strobelegs,
-        Chillipede
-    };
-
-
-    [AllowNull] public static CreatureTemplate.Type InfantAquapede = new("InfantAquapede", true);
-    [AllowNull] public static CreatureTemplate.Type SnowcuttleTemplate = new("SnowcuttleTemplate", true);
-    [AllowNull] public static CreatureTemplate.Type SnowcuttleFemale = new("SnowcuttleFemale", true);
-    [AllowNull] public static CreatureTemplate.Type SnowcuttleMale = new("SnowcuttleMale", true);
-    [AllowNull] public static CreatureTemplate.Type SnowcuttleLe = new("SnowcuttleLe", true);
-    [AllowNull] public static CreatureTemplate.Type Raven = new("Raven", true);
-    [AllowNull] public static CreatureTemplate.Type IcyBlue = new("IcyBlueLizard", true);
-    [AllowNull] public static CreatureTemplate.Type Freezer = new("FreezerLizard", true);
-    [AllowNull] public static CreatureTemplate.Type PeachSpider = new("PeachSpider", true);
-    [AllowNull] public static CreatureTemplate.Type Cyanwing = new("Cyanwing", true);
-    [AllowNull] public static CreatureTemplate.Type GorditoGreenie = new("GorditoGreenieLizard", true);
-    //[AllowNull] public static CreatureTemplate.Type BezanBud = new("BezanBud", true);
-    [AllowNull] public static CreatureTemplate.Type Chillipede = new("Chillipede", true);
-    [AllowNull] public static CreatureTemplate.Type Luminescipede = new("Luminescipede", true);
-    //[AllowNull] public static CreatureTemplate.Type Strobelegs = new("Strobelegs", true);
-
-    public static void UnregisterValues()
-    {
-
-        if (InfantAquapede is not null)
-        {
-            InfantAquapede.Unregister();
-            InfantAquapede = null;
-        }
-        if (SnowcuttleFemale is not null)
-        {
-            SnowcuttleFemale.Unregister();
-            SnowcuttleFemale = null;
-        }
-        if (SnowcuttleMale is not null)
-        {
-            SnowcuttleMale.Unregister();
-            SnowcuttleMale = null;
-        }
-        if (SnowcuttleLe is not null)
-        {
-            SnowcuttleLe.Unregister();
-            SnowcuttleLe = null;
-        }
-        /*
-        if (Raven is not null)
-        {
-            Raven.Unregister();
-            Raven = null;
-        }
-        */
-        if (IcyBlue is not null)
-        {
-            IcyBlue.Unregister();
-            IcyBlue = null;
-        }
-        if (Freezer is not null)
-        {
-            Freezer.Unregister();
-            Freezer = null;
-        }
-        if (PeachSpider is not null)
-        {
-            PeachSpider.Unregister();
-            PeachSpider = null;
-        }
-        if (Cyanwing is not null)
-        {
-            Cyanwing.Unregister();
-            Cyanwing = null;
-        }
-        if (GorditoGreenie is not null)
-        {
-            GorditoGreenie.Unregister();
-            GorditoGreenie = null;
-        }
-        /*
-        if (BezanBud is not null)
-        {
-            BezanBud.Unregister();
-            BezanBud = null;
-        }
-        */
-        if (Chillipede is not null)
-        {
-            Chillipede.Unregister();
-            Chillipede = null;
-        }
-        if (Luminescipede is not null)
-        {
-            Luminescipede.Unregister();
-            Luminescipede = null;
-        }
-        /*
-        if (Strobelegs is not null)
-        {
-            Strobelegs.Unregister();
-            Strobelegs = null;
-        }
-        */
-
+        RuntimeHelpers.RunClassConstructor(typeof(Sound).TypeHandle);
+        RuntimeHelpers.RunClassConstructor(typeof(CreatureType).TypeHandle);
+        RuntimeHelpers.RunClassConstructor(typeof(SandboxUnlock).TypeHandle);
+        RuntimeHelpers.RunClassConstructor(typeof(Color).TypeHandle);
+        RuntimeHelpers.RunClassConstructor(typeof(AbstractObjectType).TypeHandle);
+        RuntimeHelpers.RunClassConstructor(typeof(DamageTypes).TypeHandle);
     }
 
-}
-
-//----------------------------------------------------------------------------------
-
-public static class HailstormItems
-{
-    public readonly static List<AbstractPhysicalObject.AbstractObjectType> Types = new()
+    public static void UnregisterEnums(Type type)
     {
-        IceChunk,
-        FreezerCrystal
-    };
-
-
-    [AllowNull] public static AbstractPhysicalObject.AbstractObjectType IceChunk = new("IceChunk", true);
-    [AllowNull] public static AbstractPhysicalObject.AbstractObjectType FreezerCrystal = new("FreezerCrystal", true);
-    [AllowNull] public static AbstractPhysicalObject.AbstractObjectType BurnSpear = new("BurnSpear", true);
-
-
-    public static void UnregisterValues()
-    {
-        if (IceChunk is not null)
+        IEnumerable<FieldInfo> extEnums = type.GetFields(Static | Public).Where(x => x.FieldType.IsSubclassOf(typeof(ExtEnumBase)));
+        foreach ((FieldInfo extEnum, object obj) in from extEnum in extEnums
+                                                    let obj = extEnum.GetValue(null)
+                                                    where obj != null
+                                                    select (extEnum, obj))
         {
-            IceChunk.Unregister();
-            IceChunk = null;
-        }
-        if (FreezerCrystal is not null)
-        {
-            FreezerCrystal.Unregister();
-            FreezerCrystal = null;
-        }
-        if (BurnSpear is not null)
-        {
-            BurnSpear.Unregister();
-            BurnSpear = null;
+            obj.GetType().GetMethod("Unregister")!.Invoke(obj, null);
+            extEnum.SetValue(null, null);
         }
     }
 
-
-}
-
-//----------------------------------------------------------------------------------
-
-public static class HailstormUnlocks
-{
-
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID InfantAquapede = new("InfantAquapede", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleFemale = new("SnowcuttleFemale", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleMale = new("SnowcuttleMale", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleLe = new("SnowcuttleLe", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID Raven = new("Raven", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID IcyBlue = new("IcyBlueLizard", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID Freezer = new("FreezerLizard", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID PeachSpider = new("PeachSpider", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID Cyanwing = new("Cyanwing", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID GorditoGreenie = new("GorditoGreenieLizard", true);
-    //[AllowNull] public static MultiplayerUnlocks.SandboxUnlockID BezanBud = new("BezanBud", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID Luminescipede = new("Luminescipede", true);
-    //[AllowNull] public static MultiplayerUnlocks.SandboxUnlockID Strobelegs = new("Strobelegs", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID Chillipede = new("Chillipede", true);
-
-
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID IceChunk = new("IceChunk", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID FreezerCrystal = new("FreezerCrystal", true);
-    [AllowNull] public static MultiplayerUnlocks.SandboxUnlockID BurnSpear = new("BurnSpear", true);
-
-
-    public static void UnregisterValues()
+    public static void Unregister()
     {
-        if (InfantAquapede is not null)
-        {
-            InfantAquapede.Unregister();
-            InfantAquapede = null;
-        }
-        if (SnowcuttleFemale is not null)
-        {
-            SnowcuttleFemale.Unregister();
-            SnowcuttleFemale = null;
-        }
-        if (SnowcuttleMale is not null)
-        {
-            SnowcuttleMale.Unregister();
-            SnowcuttleMale = null;
-        }
-        if (SnowcuttleLe is not null)
-        {
-            SnowcuttleLe.Unregister();
-            SnowcuttleLe = null;
-        }
-        if (Raven is not null)
-        {
-            Raven.Unregister();
-            Raven = null;
-        }
-        if (IcyBlue is not null)
-        {
-            IcyBlue.Unregister();
-            IcyBlue = null;
-        }
-        if (Freezer is not null)
-        {
-            Freezer.Unregister();
-            Freezer = null;
-        }
-        if (PeachSpider is not null)
-        {
-            PeachSpider.Unregister();
-            PeachSpider = null;
-        }
-        if (Cyanwing is not null)
-        {
-            Cyanwing.Unregister();
-            Cyanwing = null;
-        }
-        if (GorditoGreenie is not null)
-        {
-            GorditoGreenie.Unregister();
-            GorditoGreenie = null;
-        }
-        /*
-        if (BezanBudUnlock is not null)
-        {
-            BezanBudUnlock.Unregister();
-            BezanBudUnlock = null;
-        }
-        */
-        if (Chillipede is not null)
-        {
-            Chillipede.Unregister();
-            Chillipede = null;
-        }
-        if (Luminescipede is not null)
-        {
-            Luminescipede.Unregister();
-            Luminescipede = null;
-        }
-        /*
-        if (StrobelegsUnlock is not null)
-        {
-            StrobelegsUnlock.Unregister();
-            StrobelegsUnlock = null;
-        }
-        */
-
-        if (IceChunk is not null)
-        {
-            IceChunk.Unregister();
-            IceChunk = null;
-        }
-        if (FreezerCrystal is not null)
-        {
-            FreezerCrystal.Unregister();
-            FreezerCrystal = null;
-        }
-        if (BurnSpear is not null)
-        {
-            BurnSpear.Unregister();
-            BurnSpear = null;
-        }
-
+        UnregisterEnums(typeof(Sound));
+        UnregisterEnums(typeof(CreatureType));
+        UnregisterEnums(typeof(SandboxUnlock));
+        UnregisterEnums(typeof(Color));
+        UnregisterEnums(typeof(AbstractObjectType));
+        UnregisterEnums(typeof(DamageTypes));
     }
 
-}
-
-//----------------------------------------------------------------------------------
-
-public static class HailstormDamageTypes
-{
-
-    [AllowNull] public static Creature.DamageType Cold = new("HailstormCold", true);
-    [AllowNull] public static Creature.DamageType Heat = new("HailstormHeat", true);
-    [AllowNull] public static Creature.DamageType Venom = new("HailstormVenom", true);
-
-    public static void UnregisterValues()
+    public static class Sound
     {
-        if (Cold is not null)
+    }
+
+    public static class CreatureType
+    {
+        public static CreatureTemplate.Type InfantAquapede = new(nameof(InfantAquapede), true);
+        public static CreatureTemplate.Type SnowcuttleTemplate = new(nameof(SnowcuttleTemplate), true);
+        public static CreatureTemplate.Type SnowcuttleFemale = new(nameof(SnowcuttleFemale), true);
+        public static CreatureTemplate.Type SnowcuttleMale = new(nameof(SnowcuttleMale), true);
+        public static CreatureTemplate.Type SnowcuttleLe = new(nameof(SnowcuttleLe), true);
+        public static CreatureTemplate.Type Raven = new(nameof(Raven), true);
+        public static CreatureTemplate.Type IcyBlueLizard = new(nameof(IcyBlueLizard), true);
+        public static CreatureTemplate.Type FreezerLizard = new(nameof(FreezerLizard), true);
+        public static CreatureTemplate.Type PeachSpider = new(nameof(PeachSpider), true);
+        public static CreatureTemplate.Type Cyanwing = new(nameof(Cyanwing), true);
+        public static CreatureTemplate.Type GorditoGreenieLizard = new(nameof(GorditoGreenieLizard), true);
+        //public static CreatureTemplate.Type BezanBud = new(nameof(BezanBud), true);
+        public static CreatureTemplate.Type Chillipede = new(nameof(Chillipede), true);
+        public static CreatureTemplate.Type Luminescipede = new(nameof(Luminescipede), true);
+        //public static CreatureTemplate.Type Strobelegs = new(nameof(Strobelegs), true);
+
+        public static CreatureTemplate.Type[] GetAllCreatureTypes()
         {
-            Cold.Unregister();
-            Cold = null;
-        }
-        if (Heat is not null)
-        {
-            Heat.Unregister();
-            Heat = null;
-        }
-        if (Venom is not null)
-        {
-            Venom.Unregister();
-            Venom = null;
+            return new CreatureTemplate.Type[]
+            {
+                InfantAquapede,
+                SnowcuttleTemplate,
+                SnowcuttleFemale,
+                SnowcuttleMale,
+                SnowcuttleLe,
+                Raven,
+                IcyBlueLizard,
+                FreezerLizard,
+                PeachSpider,
+                Cyanwing,
+                GorditoGreenieLizard,
+                //BezanBud,
+                Chillipede,
+                Luminescipede
+                //, Strobelegs
+            };
         }
     }
 
-}
+    public static class SandboxUnlock
+    {
+        public static MultiplayerUnlocks.SandboxUnlockID InfantAquapede = new(nameof(InfantAquapede), true);
+        public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleFemale = new(nameof(SnowcuttleFemale), true);
+        public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleMale = new(nameof(SnowcuttleMale), true);
+        public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleLe = new(nameof(SnowcuttleLe), true);
+        public static MultiplayerUnlocks.SandboxUnlockID Raven = new(nameof(Raven), true);
+        public static MultiplayerUnlocks.SandboxUnlockID IcyBlue = new(nameof(IcyBlue), true);
+        public static MultiplayerUnlocks.SandboxUnlockID Freezer = new(nameof(Freezer), true);
+        public static MultiplayerUnlocks.SandboxUnlockID PeachSpider = new(nameof(PeachSpider), true);
+        public static MultiplayerUnlocks.SandboxUnlockID Cyanwing = new(nameof(Cyanwing), true);
+        public static MultiplayerUnlocks.SandboxUnlockID GorditoGreenie = new(nameof(GorditoGreenie), true);
+        //[AllowNull] public static MultiplayerUnlocks.SandboxUnlockID BezanBud = new(nameof(BezanBud), true);
+        public static MultiplayerUnlocks.SandboxUnlockID Luminescipede = new(nameof(Luminescipede), true);
+        //[AllowNull] public static MultiplayerUnlocks.SandboxUnlockID Strobelegs = new(nameof(Strobelegs), true);
+        public static MultiplayerUnlocks.SandboxUnlockID Chillipede = new(nameof(Chillipede), true);
 
-//--------------------------------------------------------------------------------------------------------------------------
+
+        public static MultiplayerUnlocks.SandboxUnlockID IceChunk = new(nameof(IceChunk), true);
+        public static MultiplayerUnlocks.SandboxUnlockID FreezerCrystal = new(nameof(FreezerCrystal), true);
+        public static MultiplayerUnlocks.SandboxUnlockID BurnSpear = new(nameof(BurnSpear), true);
+    }
+
+    public static class Color
+    {
+    }
+
+    public static class DamageTypes
+    {
+        public static Creature.DamageType Cold = new(nameof(Cold), true);
+        public static Creature.DamageType Heat = new(nameof(Heat), true);
+        public static Creature.DamageType Venom = new(nameof(Venom), true);
+    }
+
+    public static class AbstractObjectType
+    {
+        public static AbstractPhysicalObject.AbstractObjectType IceChunk = new(nameof(IceChunk), true);
+        public static AbstractPhysicalObject.AbstractObjectType FreezerCrystal = new(nameof(FreezerCrystal), true);
+        public static AbstractPhysicalObject.AbstractObjectType BurnSpear = new(nameof(BurnSpear), true);
+    }
+
+    public static class PlacedObjectType
+    {
+    }
+}

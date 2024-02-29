@@ -8,12 +8,12 @@ sealed class InfantAquapedeCritob : Critob
 
     public Color InfantAquapedeColor = Custom.HSL2RGB(240/360f, 1, 0.63f);
 
-    internal InfantAquapedeCritob() : base(HailstormCreatures.InfantAquapede)
+    internal InfantAquapedeCritob() : base(HSEnums.CreatureType.InfantAquapede)
     {
         Icon = new SimpleIcon("Kill_InfantAquapede", InfantAquapedeColor);
         LoadedPerformanceCost = 10f;
         SandboxPerformanceCost = new(0.6f, 0.4f);
-        RegisterUnlock(KillScore.Configurable(2), HailstormUnlocks.InfantAquapede);
+        RegisterUnlock(KillScore.Configurable(2), HSEnums.SandboxUnlock.InfantAquapede);
     }
     public override int ExpeditionScore() => 2;
 
@@ -70,12 +70,12 @@ sealed class InfantAquapedeCritob : Critob
     }
     public override void EstablishRelationships()
     {
-        Relationships s = new(HailstormCreatures.InfantAquapede);
+        Relationships s = new(HSEnums.CreatureType.InfantAquapede);
 
         s.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.5f);
-        s.IsInPack(HailstormCreatures.InfantAquapede, 0.85f);
+        s.IsInPack(HSEnums.CreatureType.InfantAquapede, 0.85f);
 
-        s.Ignores(HailstormCreatures.Cyanwing);
+        s.Ignores(HSEnums.CreatureType.Cyanwing);
 
         s.FearedBy(CreatureTemplate.Type.Leech, 1);
         s.FearedBy(CreatureTemplate.Type.SeaLeech, 1);
@@ -83,8 +83,8 @@ sealed class InfantAquapedeCritob : Critob
         s.FearedBy(CreatureTemplate.Type.Hazer, 1);
 
         s.Fears(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0.33f);
-        s.Fears(HailstormCreatures.GorditoGreenie, 0.33f);
-        s.Fears(HailstormCreatures.Chillipede, 0.33f);
+        s.Fears(HSEnums.CreatureType.GorditoGreenieLizard, 0.33f);
+        s.Fears(HSEnums.CreatureType.Chillipede, 0.33f);
         s.Fears(CreatureTemplate.Type.Slugcat, 0.5f);
         s.Fears(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 0.5f);
         s.Fears(CreatureTemplate.Type.Salamander, 0.66f);

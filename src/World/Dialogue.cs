@@ -327,7 +327,7 @@ internal class Dialogue
             }
             return false;
         }
-        if (item is Lizard liz && (liz.Template.type == HailstormCreatures.Freezer || liz.Template.type == HailstormCreatures.IcyBlue))
+        if (item is Lizard liz && (liz.Template.type == HSEnums.CreatureType.FreezerLizard || liz.Template.type == HSEnums.CreatureType.IcyBlueLizard))
         {
             return false;
         }

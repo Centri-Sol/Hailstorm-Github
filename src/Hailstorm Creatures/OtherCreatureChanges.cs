@@ -136,7 +136,7 @@ internal class OtherCreatureChanges
         }
 
         if (absCtr is not null &&
-            (IsIncanStory(absCtr.world?.game) || HailstormCreatures.Types.Contains(temp.type)))
+            (IsIncanStory(absCtr.world?.game) || HSEnums.CreatureType.GetAllCreatureTypes().Contains(temp.type)))
         {
             CustomFlags(absCtr);
         }
@@ -151,7 +151,7 @@ internal class OtherCreatureChanges
     public static void CicadaH_iVars(On.Cicada.orig_GenerateIVars orig, Cicada sqt)
     {
         orig(sqt);
-        if (sqt is not null && sqt.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate)
+        if (sqt is not null && sqt.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
         {
             Random.State state = Random.state;
             Random.InitState(sqt.abstractCreature.ID.RandomSeed);
@@ -169,7 +169,7 @@ internal class OtherCreatureChanges
     public static void CicadaH_ctor(On.Cicada.orig_ctor orig, Cicada sqt, AbstractCreature absSqt, World world, bool gender)
     {
         orig(sqt, absSqt, world, gender);
-        if (sqt.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate)
+        if (sqt.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
         {
             absSqt.state.meatLeft = 1;
             sqt.buoyancy += 0.02f;
@@ -206,7 +206,7 @@ internal class OtherCreatureChanges
             if (self.grasps[i]?.grabbed is null ||
                 self.HeavyCarry(self.grasps[i].grabbed) ||
                 self.grasps[i].grabbed is not Cicada sqt ||
-                sqt.Template.ancestor.type != HailstormCreatures.SnowcuttleTemplate)
+                sqt.Template.ancestor.type != HSEnums.CreatureType.SnowcuttleTemplate)
             {
                 continue;
             }
@@ -253,7 +253,7 @@ internal class OtherCreatureChanges
             if (self.grasps[i]?.grabbed is null ||
                 self.HeavyCarry(self.grasps[i].grabbed) ||
                 self.grasps[i].grabbed is not Cicada sqt ||
-                sqt.Template.ancestor.type != HailstormCreatures.SnowcuttleTemplate)
+                sqt.Template.ancestor.type != HSEnums.CreatureType.SnowcuttleTemplate)
             {
                 continue;
             }
@@ -297,7 +297,7 @@ internal class OtherCreatureChanges
     }
     public static void CicadaH_Stamina(On.Cicada.orig_GrabbedByPlayer orig, Cicada sqt)
     {
-        if (sqt is not null && sqt.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate && sqt.currentlyLiftingPlayer)
+        if (sqt is not null && sqt.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate && sqt.currentlyLiftingPlayer)
         {
             sqt.stamina += 1f / (sqt.gender ? 160f : 150f);
             orig(sqt);
@@ -311,7 +311,7 @@ internal class OtherCreatureChanges
     public static void CicadaH_Palette(On.CicadaGraphics.orig_ApplyPalette orig, CicadaGraphics sg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(sg, sLeaser, rCam, palette);
-        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate)
+        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
         {
             bool whiteCicada = sg.cicada.gender;
 
@@ -349,7 +349,7 @@ internal class OtherCreatureChanges
     public static void WinterSquitSpriteSize(On.CicadaGraphics.orig_InitiateSprites orig, CicadaGraphics sg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(sg, sLeaser, rCam);
-        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate)
+        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
@@ -386,7 +386,7 @@ internal class OtherCreatureChanges
     public static void WinterSquitSpriteCondense(On.CicadaGraphics.orig_DrawSprites orig, CicadaGraphics sg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(sg, sLeaser, rCam, timeStacker, camPos);
-        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HailstormCreatures.SnowcuttleTemplate)
+        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
@@ -591,8 +591,8 @@ internal class OtherCreatureChanges
                                 type == CreatureTemplate.Type.DropBug ||
                                 type == CreatureTemplate.Type.RedCentipede ||
                                 type == CreatureTemplate.Type.RedLizard ||
-                                type == HailstormCreatures.Freezer ||
-                                type == HailstormCreatures.Cyanwing;
+                                type == HSEnums.CreatureType.FreezerLizard ||
+                                type == HSEnums.CreatureType.Cyanwing;
                             if (Random.value < 0.6f)
                             {
                                 dead = true;
@@ -859,7 +859,7 @@ internal class OtherCreatureChanges
                 StaticWorld.GetCreatureTemplate(regionSpawns[ctrNum]).baseStunResistance;
 
             if (regionSpawns[ctrNum] == CreatureTemplate.Type.RedCentipede ||
-                regionSpawns[ctrNum] == HailstormCreatures.Cyanwing)
+                regionSpawns[ctrNum] == HSEnums.CreatureType.Cyanwing)
             {
                 strength = 10;
             }
@@ -945,8 +945,8 @@ internal class OtherCreatureChanges
                                                         CreatureTemplate.Type.RedLizard,
                         1 => CreatureTemplate.Type.GreenLizard,
                         2 => Random.value < 0.75 ? CreatureTemplate.Type.BlueLizard :
-                                                        Random.value < 0.75 ? HailstormCreatures.IcyBlue :
-                                                        HailstormCreatures.Freezer,
+                                                        Random.value < 0.75 ? HSEnums.CreatureType.IcyBlueLizard :
+                                                        HSEnums.CreatureType.FreezerLizard,
                         3 => CreatureTemplate.Type.Salamander,
                         4 => MoreSlugcatsEnums.CreatureTemplateType.EelLizard,
                         5 => CreatureTemplate.Type.WhiteLizard,
@@ -988,7 +988,7 @@ internal class OtherCreatureChanges
                     ctrType =
                         ctrType == CreatureTemplate.Type.Centipede?
                         CreatureTemplate.Type.RedCentipede :
-                        HailstormCreatures.Cyanwing;
+                        HSEnums.CreatureType.Cyanwing;
                 }
             }
 
@@ -1514,7 +1514,7 @@ internal class OtherCreatureChanges
     {
         return ctr is Cyanwing ||
             ctr is Chillipede ||
-            ctr.Template.type == HailstormCreatures.PeachSpider
+            ctr.Template.type == HSEnums.CreatureType.PeachSpider
 || orig(self, ctr);
     }
 
@@ -1718,11 +1718,11 @@ internal class OtherCreatureChanges
                 otherHypo *= 1.25f;
                 if (self.State is HealthState hp1)
                 {
-                    hp1.health -= 0.00125f / self.Template.baseDamageResistance / self.Template.damageRestistances[HailstormDamageTypes.Heat.index, 0];
+                    hp1.health -= 0.00125f / self.Template.baseDamageResistance / self.Template.damageRestistances[HSEnums.DamageTypes.Heat.index, 0];
                 }
                 if (other.State is HealthState hp2)
                 {
-                    hp2.health -= 0.00125f / other.Template.baseDamageResistance / other.Template.damageRestistances[HailstormDamageTypes.Cold.index, 0];
+                    hp2.health -= 0.00125f / other.Template.baseDamageResistance / other.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0];
                 }
             }
         }
@@ -1775,8 +1775,8 @@ internal class OtherCreatureChanges
                     if (target is DropBug)
                     {
                         dmg *= 0.5f; // 2x HP
-                        if (dmgType == HailstormDamageTypes.Cold ||
-                            dmgType == HailstormDamageTypes.Heat)
+                        if (dmgType == HSEnums.DamageTypes.Cold ||
+                            dmgType == HSEnums.DamageTypes.Heat)
                         {
                             dmg *= 0.6f; // Usually weak to temperamental attacks, but this is flipped into a resistance in the Incandescent's time
                         }
@@ -1784,14 +1784,14 @@ internal class OtherCreatureChanges
                     else if (target is PoleMimic)
                     {
                         dmg *= 0.75f; // 1.33x HP
-                        if (dmgType == HailstormDamageTypes.Cold)
+                        if (dmgType == HSEnums.DamageTypes.Cold)
                         {
                             dmg *= 2/3f; // Usually weak to cold, but this is negated in the Incandescent's time
                         }
                     }
                     else if (target is TentaclePlant)
                     {
-                        if (dmgType == HailstormDamageTypes.Cold)
+                        if (dmgType == HSEnums.DamageTypes.Cold)
                         {
                             dmg *= 2/3f; // Usually weak to cold, but this is negated in the Incandescent's time
                         }
@@ -1805,7 +1805,7 @@ internal class OtherCreatureChanges
     {
         if (ctr is not null &&
             !ctr.dead &&
-            (ctr is ColdLizard || (ctr is Lizard liz && liz.Template.type == HailstormCreatures.GorditoGreenie)) &&
+            (ctr is ColdLizard || (ctr is Lizard liz && liz.Template.type == HSEnums.CreatureType.GorditoGreenieLizard)) &&
             (ctr as Lizard).animation != Lizard.Animation.Standard)
         {
             (ctr as Lizard).EnterAnimation(Lizard.Animation.Standard, forceAnimationChange: true);
@@ -1823,14 +1823,14 @@ internal class OtherCreatureChanges
     }
     public static bool LuminDenUpdate(On.AbstractCreature.orig_WantToStayInDenUntilEndOfCycle orig, AbstractCreature absCtr)
     {
-        return (absCtr is null || absCtr.creatureTemplate.type != HailstormCreatures.Luminescipede || Luminescipede.WantToHideInDen(absCtr))
+        return (absCtr is null || absCtr.creatureTemplate.type != HSEnums.CreatureType.Luminescipede || Luminescipede.WantToHideInDen(absCtr))
 && orig(absCtr);
     }
     public static void ActivateCustomFlags(On.AbstractCreature.orig_setCustomFlags orig, AbstractCreature absCtr)
     {
         orig(absCtr);
         if (absCtr is not null &&
-            (IsIncanStory(absCtr.world?.game) || HailstormCreatures.Types.Contains(absCtr.creatureTemplate.type)))
+            (IsIncanStory(absCtr.world?.game) || HSEnums.CreatureType.GetAllCreatureTypes().Contains(absCtr.creatureTemplate.type)))
         {
             CustomFlags(absCtr);
         }
@@ -1869,7 +1869,7 @@ internal class OtherCreatureChanges
             
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook to IL.AbstractCreature.InDenUpdate ain't workin'.");
+                Debug.LogError("[Hailstorm] Hook to IL.AbstractCreature.InDenUpdate ain't workin'.");
             }
         };
 
@@ -1890,7 +1890,7 @@ internal class OtherCreatureChanges
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #1 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #1 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
 
             ILCursor c2 = new(IL);
@@ -1904,13 +1904,13 @@ internal class OtherCreatureChanges
                 x => x.MatchBgeUn(out label)))
             {
                 c2.Emit(OpCodes.Ldarg_0);
-                c2.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type != HailstormCreatures.Cyanwing);
+                c2.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type != HSEnums.CreatureType.Cyanwing);
                 c2.Emit(OpCodes.Brfalse, label);
                 // Cyanwings will not go back to their dens if they're low on health.
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #2 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #2 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
 
             ILCursor c3 = new(IL);
@@ -1924,7 +1924,7 @@ internal class OtherCreatureChanges
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #3 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #3 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
 
             ILCursor c4 = new(IL);
@@ -1944,7 +1944,7 @@ internal class OtherCreatureChanges
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #4 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #4 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
 
             ILCursor c5 = new(IL);
@@ -1960,7 +1960,7 @@ internal class OtherCreatureChanges
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #5 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #5 to IL.AbstractCreature.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
         };
 
@@ -1982,7 +1982,7 @@ internal class OtherCreatureChanges
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #1 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #1 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
 
             ILCursor c2 = new(IL);
@@ -1997,12 +1997,12 @@ internal class OtherCreatureChanges
                 x => x.MatchBgeUn(out label)))
             {
                 c2.Emit(OpCodes.Ldarg_0);
-                c2.EmitDelegate((AbstractCreatureAI absCtrAI) => absCtrAI.parent.creatureTemplate.type != HailstormCreatures.Cyanwing);
+                c2.EmitDelegate((AbstractCreatureAI absCtrAI) => absCtrAI.parent.creatureTemplate.type != HSEnums.CreatureType.Cyanwing);
                 c2.Emit(OpCodes.Brfalse, label);
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #2 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #2 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
 
             ILCursor c3 = new(IL);
@@ -2019,7 +2019,7 @@ internal class OtherCreatureChanges
             }
             else
             {
-                Plugin.logger.LogError("[Hailstorm] Hook #3 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
+                Debug.LogError("[Hailstorm] Hook #3 to IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle is absolutely not working.");
             }
         };
     }
@@ -2227,7 +2227,7 @@ internal class OtherCreatureChanges
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.EelLizard ||
-                ctrType == HailstormCreatures.InfantAquapede))
+                ctrType == HSEnums.CreatureType.InfantAquapede))
         {
             aI.FogAvoider = true;
         }
@@ -2444,7 +2444,7 @@ internal class OtherCreatureChanges
 
     public static float OverseerHailstormCreatureInterest(On.OverseerAbstractAI.orig_HowInterestingIsCreature orig, OverseerAbstractAI ovrAbsAI, AbstractCreature absCtr)
     {
-        if (absCtr is null || absCtr.creatureTemplate.smallCreature || !ovrAbsAI.safariOwner || !HailstormCreatures.Types.Contains(absCtr.creatureTemplate.type))
+        if (absCtr is null || absCtr.creatureTemplate.smallCreature || !ovrAbsAI.safariOwner || !HSEnums.CreatureType.GetAllCreatureTypes().Contains(absCtr.creatureTemplate.type))
         {
             return orig(ovrAbsAI, absCtr);
         }
@@ -2452,13 +2452,13 @@ internal class OtherCreatureChanges
         {
             float num;
             CreatureTemplate.Type ctrType = absCtr.creatureTemplate.type;
-            if (ctrType == HailstormCreatures.InfantAquapede)
+            if (ctrType == HSEnums.CreatureType.InfantAquapede)
             {
                 return orig(ovrAbsAI, absCtr);
             }
             else
-            if (ctrType == HailstormCreatures.PeachSpider ||
-                ctrType == HailstormCreatures.Chillipede)
+            if (ctrType == HSEnums.CreatureType.PeachSpider ||
+                ctrType == HSEnums.CreatureType.Chillipede)
             {
                 num = 0.2f;
             }
@@ -2469,14 +2469,14 @@ internal class OtherCreatureChanges
             }
             */
             else
-            if (ctrType == HailstormCreatures.IcyBlue ||
-                ctrType == HailstormCreatures.GorditoGreenie)
+            if (ctrType == HSEnums.CreatureType.IcyBlueLizard ||
+                ctrType == HSEnums.CreatureType.GorditoGreenieLizard)
             {
                 num = 0.6f;
             }
             else
-            if (ctrType == HailstormCreatures.Freezer ||
-                ctrType == HailstormCreatures.Cyanwing)
+            if (ctrType == HSEnums.CreatureType.FreezerLizard ||
+                ctrType == HSEnums.CreatureType.Cyanwing)
             {
                 num = 0.75f;
             }

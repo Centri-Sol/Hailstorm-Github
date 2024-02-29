@@ -4,11 +4,11 @@
 
 sealed class BurnSpearFisob : Fisob
 {
-    internal BurnSpearFisob() : base(HailstormItems.BurnSpear)
+    internal BurnSpearFisob() : base(HSEnums.AbstractObjectType.BurnSpear)
     {
         Icon = new SimpleIcon("Icon_Burn_Spear", Custom.hexToColor("FF3232"));
         SandboxPerformanceCost = new(0.3f, 0f);
-        RegisterUnlock(HailstormUnlocks.BurnSpear, parent: HailstormUnlocks.Freezer);
+        RegisterUnlock(HSEnums.SandboxUnlock.BurnSpear, parent: HSEnums.SandboxUnlock.Freezer);
     }
 
     public override AbstractPhysicalObject Parse(World world, EntitySaveData entitySaveData, SandboxUnlock unlock)
@@ -72,7 +72,7 @@ public class AbstractBurnSpear : AbstractSpear
 
     public AbstractBurnSpear(World world, Spear realizedObject, WorldCoordinate pos, EntityID ID, bool explosive, float heat, Color spearColor, Color fireFadeColor) : base(world, realizedObject, pos, ID, explosive)
     {
-        type = HailstormItems.BurnSpear;
+        type = HSEnums.AbstractObjectType.BurnSpear;
         this.spearColor = spearColor;
         this.fireFadeColor = fireFadeColor;
         this.heat = heat;
@@ -92,7 +92,7 @@ public class AbstractBurnSpear : AbstractSpear
     public override void Realize()
     {
         base.Realize();
-        if (realizedObject is null && type == HailstormItems.BurnSpear)
+        if (realizedObject is null && type == HSEnums.AbstractObjectType.BurnSpear)
         {
             realizedObject = new Spear(this, world);
         }

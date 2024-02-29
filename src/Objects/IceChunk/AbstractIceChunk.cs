@@ -15,11 +15,11 @@ public class AbstractIceChunk : AbstractPhysicalObject
 
     public FrozenObject frozenObject;
 
-    public AbstractIceChunk(World world, WorldCoordinate pos, EntityID ID, AbstractObjectType objType = null) : base(world, objType ?? HailstormItems.IceChunk, null, pos, ID)
+    public AbstractIceChunk(World world, WorldCoordinate pos, EntityID ID, AbstractObjectType objType = null) : base(world, objType ?? HSEnums.AbstractObjectType.IceChunk, null, pos, ID)
     {
         bool isFreezerCrystal =
             objType is not null &&
-            objType == HailstormItems.FreezerCrystal;
+            objType == HSEnums.AbstractObjectType.FreezerCrystal;
 
         Random.State state = Random.state;
         Random.InitState(ID.RandomSeed);

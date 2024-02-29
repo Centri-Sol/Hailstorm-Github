@@ -96,17 +96,11 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     public int nullpreyCounter;
     public int lastNullpreyCounter;
     public int PreyVisualCounter => GlowState.timeSincePreyLastSeen;
-    public virtual float CurrentPreyRelationIntensity
-    {
-        get
-        {
-            return currentPrey?.abstractPhysicalObject is not null
+    public virtual float CurrentPreyRelationIntensity => currentPrey?.abstractPhysicalObject is not null
                 ? currentPrey.abstractPhysicalObject is AbstractCreature absCtr
                     ? Mathf.Clamp(AI.DynamicRelationship(absCtr).intensity, 0, 1)
                     : Mathf.Clamp(AI.ObjRelationship(currentPrey.abstractPhysicalObject).intensity, 0, 1)
                 : 0;
-        }
-    }
 
 
     public PhysicalObject fearSource;
@@ -252,13 +246,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             return visBonus;
         }
     }
-    public virtual float LightExposure
-    {
-        get
-        {
-            return room is not null ? Mathf.Min(1, (LuminLightSourceExposure(DangerPos) + (1 - room.Darkness(DangerPos))) / 2f) : 0;
-        }
-    } // Only used to affect Juice regen.
+    public virtual float LightExposure => room is not null ? Mathf.Min(1, (LuminLightSourceExposure(DangerPos) + (1 - room.Darkness(DangerPos))) / 2f) : 0; // Only used to affect Juice regen.
 
     public float flickeringFac;
     public float flicker;
@@ -1679,7 +1667,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         float dmgFac = Mathf.Clamp(dmg, 0, 5);
 
-        if (type == DamageType.Electric || type == HailstormDamageTypes.Heat)
+        if (type == DamageType.Electric || type == HSEnums.DamageTypes.Heat)
         {
             GlowState.juice += dmgFac / 4f;
             if (Behavior == Overloaded)
@@ -2774,13 +2762,7 @@ public abstract class LuminMass
     public Room room;
     public Color color = Custom.HSL2RGB(Random.value, 1f, 0.5f);
 
-    public virtual Luminescipede FirstLumin
-    {
-        get
-        {
-            return lumins.Count == 0 ? null : lumins[0];
-        }
-    }
+    public virtual Luminescipede FirstLumin => lumins.Count == 0 ? null : lumins[0];
 
     public LuminMass(Luminescipede firstLumin, Room room)
     {

@@ -65,7 +65,7 @@ public class IcyCosmetics
     public static void BumpHawkNegation(On.LizardCosmetics.BumpHawk.orig_ctor orig, BumpHawk BH, LizardGraphics liz, int startSprite)
     {
         orig(BH, liz, startSprite);
-        if (liz.lizard.Template.type == HailstormCreatures.Freezer || liz.lizard.Template.type == HailstormCreatures.IcyBlue)
+        if (liz.lizard.Template.type == HSEnums.CreatureType.FreezerLizard || liz.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             BH.numberOfSprites = 0;
         }
@@ -73,7 +73,7 @@ public class IcyCosmetics
     public static void SpineSpikeNegation(On.LizardCosmetics.SpineSpikes.orig_ctor orig, SpineSpikes SS, LizardGraphics liz, int startSprite)
     {
         orig(SS, liz, startSprite);
-        if (liz.lizard.Template.type == HailstormCreatures.Freezer || liz.lizard.Template.type == HailstormCreatures.IcyBlue)
+        if (liz.lizard.Template.type == HSEnums.CreatureType.FreezerLizard || liz.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             SS.numberOfSprites = 0;
             SS.bumps = 0;
@@ -82,7 +82,7 @@ public class IcyCosmetics
     public static void TailTuftNegation(On.LizardCosmetics.TailTuft.orig_ctor orig, TailTuft TT, LizardGraphics liz, int startSprite)
     {
         orig(TT, liz, startSprite);
-        if (liz.lizard.Template.type == HailstormCreatures.Freezer || liz.lizard.Template.type == HailstormCreatures.IcyBlue)
+        if (liz.lizard.Template.type == HSEnums.CreatureType.FreezerLizard || liz.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             Array.Resize(ref TT.scaleObjects, TT.scaleObjects.Length - TT.scalesPositions.Length);
             Array.Resize(ref TT.scalesPositions, TT.scalesPositions.Length - (TT.colored ? TT.numberOfSprites / 2 : TT.numberOfSprites));
@@ -95,7 +95,7 @@ public class IcyCosmetics
         orig(LHS, sLeaser, rCam, timeStacker, camPos);
         _ = LHS.lGraphics.lizard.abstractCreature.ID.number % 2 == 0;
 
-        if (LHS.lGraphics.lizard.Template.type == HailstormCreatures.Freezer || LHS.lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue)
+        if (LHS.lGraphics.lizard.Template.type == HSEnums.CreatureType.FreezerLizard || LHS.lGraphics.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             for (int num = LHS.startSprite + LHS.scalesPositions.Length - 1; num >= LHS.startSprite; num--)
             {
@@ -113,8 +113,8 @@ public class IcyCosmetics
     public static void ShortBodyScaleNegation(On.LizardCosmetics.ShortBodyScales.orig_ctor orig, ShortBodyScales SBS, LizardGraphics liz, int startSprite)
     {
         orig(SBS, liz, startSprite);
-        if (SBS.lGraphics.lizard.Template.type == HailstormCreatures.Freezer ||
-            SBS.lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue)
+        if (SBS.lGraphics.lizard.Template.type == HSEnums.CreatureType.FreezerLizard ||
+            SBS.lGraphics.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             Array.Resize(ref SBS.scalesPositions, SBS.scalesPositions.Length - SBS.numberOfSprites);
             SBS.numberOfSprites = 0;
@@ -138,8 +138,8 @@ public class IcyCosmetics
         orig(LBS, sLeaser, rCam);
 
         bool icyCheck =
-            LBS.lGraphics.lizard.Template.type == HailstormCreatures.Freezer ||
-            (LBS.lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue && Random.value < (0.2f + ((LBS.lGraphics.lizard.TotalMass - 1.4f) * 4)));
+            LBS.lGraphics.lizard.Template.type == HSEnums.CreatureType.FreezerLizard ||
+            (LBS.lGraphics.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard && Random.value < (0.2f + ((LBS.lGraphics.lizard.TotalMass - 1.4f) * 4)));
 
         if (icyCheck)
         {
@@ -166,7 +166,7 @@ public class IcyCosmetics
     public static void IcyLongBodyScaleColors(On.LizardCosmetics.LongBodyScales.orig_DrawSprites orig, LongBodyScales LBS, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(LBS, sLeaser, rCam, timeStacker, camPos);
-        if (LBS.lGraphics.lizard.Template.type == HailstormCreatures.Freezer || LBS.lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue)
+        if (LBS.lGraphics.lizard.Template.type == HSEnums.CreatureType.FreezerLizard || LBS.lGraphics.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             for (int num = LBS.startSprite + LBS.scalesPositions.Length - 1; num >= LBS.startSprite; num--)
             {
@@ -259,7 +259,7 @@ public class ArmorIceSpikes : Template
     {
         liz = lGraphics.owner as Lizard;
         spritesOverlap = SpritesOverlap.BehindHead;
-        spikeLength = lGraphics.BodyAndTailLength * (liz.Template.type == HailstormCreatures.Freezer ? 0.3f : 0.5f);
+        spikeLength = lGraphics.BodyAndTailLength * (liz.Template.type == HSEnums.CreatureType.FreezerLizard ? 0.3f : 0.5f);
 
         // Ice spike size range and colors
         scaleFac = 1;
@@ -269,13 +269,13 @@ public class ArmorIceSpikes : Template
         {
             sizeRangeMax = 1f;
         }
-        if (liz.Template.type == HailstormCreatures.Freezer)
+        if (liz.Template.type == HSEnums.CreatureType.FreezerLizard)
         {
             sizeRangeMin = 0.8f;
             sizeRangeMax = 0.8f;
             dualColored = 1;
         }
-        else if (liz.Template.type == HailstormCreatures.IcyBlue)
+        else if (liz.Template.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             float sizeMult = Mathf.Lerp(0.5f, 0.66f, Mathf.InverseLerp(1.4f, 1.6f, liz.TotalMass));
 
@@ -406,7 +406,7 @@ public class ArmorIceSpikes : Template
         Vector2 lizHeadAngle = (liz.bodyChunks[1].pos - liz.bodyChunks[0].pos).normalized;
         float rotationSide = Random.Range(1.5f, 3f) * ((lizHeadAngle.x > 0) ? 1 : -1);
 
-        AbstractIceChunk absIce = new(liz.room.world, liz.abstractCreature.pos, liz.room.game.GetNewID(), HailstormItems.FreezerCrystal)
+        AbstractIceChunk absIce = new(liz.room.world, liz.abstractCreature.pos, liz.room.game.GetNewID(), HSEnums.AbstractObjectType.FreezerCrystal)
         {
             freshness = 2f,
             sprite = crystalType,
@@ -432,8 +432,8 @@ public class IceSpikeTuft : LongBodyScales
     public IceSpikeTuft(LizardGraphics lGraphics, int startSprite) : base(lGraphics, startSprite)
     {
         //------------------------------------------------------
-        bool icyBlue = lGraphics.lizard.Template.type == HailstormCreatures.IcyBlue;
-        bool freezer = lGraphics.lizard.Template.type == HailstormCreatures.Freezer;
+        bool icyBlue = lGraphics.lizard.Template.type == HSEnums.CreatureType.IcyBlueLizard;
+        bool freezer = lGraphics.lizard.Template.type == HSEnums.CreatureType.FreezerLizard;
         rigor = 0f;
 
         if ((freezer && Random.value < 0.85f) || (icyBlue && Random.value < 0.3f) || Random.value < 0.15f)
@@ -493,11 +493,11 @@ public class IceSpikeTuft : LongBodyScales
         float num = Mathf.Lerp(startPoint + 0.1f, Mathf.Max(startPoint + 0.2f, maxLength), Random.value);
         float num2 = num * lGraphics.BodyAndTailLength;
         float num3 = Mathf.Lerp(7f, 13f, Random.value);
-        if (lGraphics.lizard.abstractCreature.creatureTemplate.type == HailstormCreatures.Freezer)
+        if (lGraphics.lizard.abstractCreature.creatureTemplate.type == HSEnums.CreatureType.FreezerLizard)
         {
             num3 = (randomValue < 0.25f) ? 6.25f : 7.5f;
         }
-        if (lGraphics.lizard.abstractCreature.creatureTemplate.type == HailstormCreatures.IcyBlue)
+        if (lGraphics.lizard.abstractCreature.creatureTemplate.type == HSEnums.CreatureType.IcyBlueLizard)
         {
             num3 = (randomValue < 0.25f) ? 8.25f : 11.25f;
         }
@@ -547,13 +547,13 @@ public class IcyRhinestones : BodyScales
 
         lizType = lGraphics.lizard.Template.type;
 
-        if (Random.value < (lizType == HailstormCreatures.Freezer ? 0.6f : 0.4f))
+        if (Random.value < (lizType == HSEnums.CreatureType.FreezerLizard ? 0.6f : 0.4f))
         {
             stoneType = "pixel";
         }
 
         int num = Random.Range(0, 2);
-        if (lizType == HailstormCreatures.Freezer)
+        if (lizType == HSEnums.CreatureType.FreezerLizard)
         {
             num = Random.Range(0, 4);
         }

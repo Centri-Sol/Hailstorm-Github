@@ -7,9 +7,9 @@ internal class CentiHooks
     public static void Apply()
     {
         // Main Centi Functions
-        new Hook(typeof(Centipede).GetMethod("get_Centiwing", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HailstormCreatures.Cyanwing       || orig(cnt));
-        new Hook(typeof(Centipede).GetMethod("get_Small", Public | NonPublic | Instance),     (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HailstormCreatures.InfantAquapede || orig(cnt));
-        new Hook(typeof(Centipede).GetMethod("get_AquaCenti", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HailstormCreatures.InfantAquapede || orig(cnt));
+        new Hook(typeof(Centipede).GetMethod("get_Centiwing", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.Cyanwing       || orig(cnt));
+        new Hook(typeof(Centipede).GetMethod("get_Small", Public | NonPublic | Instance),     (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
+        new Hook(typeof(Centipede).GetMethod("get_AquaCenti", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
 
         On.Centipede.ctor += WinterCentipedes;
 
@@ -58,7 +58,7 @@ internal class CentiHooks
 
         CreatureTemplate.Type type = absCnt.creatureTemplate.type;
 
-        if (type == HailstormCreatures.InfantAquapede)
+        if (type == HSEnums.CreatureType.InfantAquapede)
         {
             if (meatNotSetYet)
             {
@@ -67,7 +67,7 @@ internal class CentiHooks
             }
             return;
         }
-        else if (type == HailstormCreatures.Cyanwing)
+        else if (type == HSEnums.CreatureType.Cyanwing)
         {
             if (meatNotSetYet)
             {
@@ -75,7 +75,7 @@ internal class CentiHooks
             }
             return;
         }
-        else if (type == HailstormCreatures.Chillipede)
+        else if (type == HSEnums.CreatureType.Chillipede)
         {
             Random.State state = Random.state;
             Random.InitState(absCnt.ID.RandomSeed);
@@ -393,7 +393,7 @@ internal class CentiHooks
 
         orig(cnt, source, dirAndMomentum, hitChunk, hitAppen, dmgType, damage, bonusStun);
 
-        if (dmgType == HailstormDamageTypes.Cold &&
+        if (dmgType == HSEnums.DamageTypes.Cold &&
             cnt is not null &&
             cnt is not Chillipede &&
             !cnt.AquaCenti)
@@ -530,14 +530,14 @@ internal class CentiHooks
                     x => x.MatchBlt(out _)))
                 {
                     c.Emit(OpCodes.Ldarg_0);
-                    c.EmitDelegate((Centipede cnt) => cnt.Template.type != HailstormCreatures.Cyanwing && cnt.Template.type != HailstormCreatures.Chillipede);
+                    c.EmitDelegate((Centipede cnt) => cnt.Template.type != HSEnums.CreatureType.Cyanwing && cnt.Template.type != HSEnums.CreatureType.Chillipede);
                     c.Emit(OpCodes.Brfalse, label);
                 }
                 else
-                    Plugin.logger.LogError("[Hailstorm] A Cyanwing IL anti-stun hook (part 2) got totally beaned! Report this, would ya?");
+                    Debug.LogError("[Hailstorm] A Cyanwing IL anti-stun hook (part 2) got totally beaned! Report this, would ya?");
             }
             else
-                Plugin.logger.LogError("[Hailstorm] A Cyanwing IL anti-stun hook (part 1) got totally beaned! Report this, would ya?");
+                Debug.LogError("[Hailstorm] A Cyanwing IL anti-stun hook (part 1) got totally beaned! Report this, would ya?");
         };
         
         IL.CentipedeAI.Update += IL =>
@@ -552,11 +552,11 @@ internal class CentiHooks
                 x => x.MatchBrtrue(out label)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((CentipedeAI cntAI) => cntAI.centipede.Template.type != HailstormCreatures.Cyanwing);
+                c.EmitDelegate((CentipedeAI cntAI) => cntAI.centipede.Template.type != HSEnums.CreatureType.Cyanwing);
                 c.Emit(OpCodes.Brfalse, label);
             }
             else
-                Plugin.logger.LogError("[Hailstorm] A Cyanwing IL hook for prey-tracking is busted! Tell me about it, please!");
+                Debug.LogError("[Hailstorm] A Cyanwing IL hook for prey-tracking is busted! Tell me about it, please!");
         };
 
         IL.Centipede.UpdateGrasp += IL =>
@@ -570,11 +570,11 @@ internal class CentiHooks
                 x => x.MatchBrtrue(out label)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((Centipede cnt) => cnt.Template.type != HailstormCreatures.Cyanwing);
+                c.EmitDelegate((Centipede cnt) => cnt.Template.type != HSEnums.CreatureType.Cyanwing);
                 c.Emit(OpCodes.Brtrue, label);
             }
             else
-                Plugin.logger.LogError("[Hailstorm] A Cyanwing grasp-related IL hook got totally beaned! Report this, would ya?");
+                Debug.LogError("[Hailstorm] A Cyanwing grasp-related IL hook got totally beaned! Report this, would ya?");
         };
 
         IL.Centipede.Act += IL =>
@@ -594,11 +594,11 @@ internal class CentiHooks
                     x => x.MatchBrtrue(out label)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((Centipede cnt) => cnt.AI.run > 0 && (cnt.Template.type == HailstormCreatures.Cyanwing || cnt.Template.type == HailstormCreatures.Chillipede));
+                c.EmitDelegate((Centipede cnt) => cnt.AI.run > 0 && (cnt.Template.type == HSEnums.CreatureType.Cyanwing || cnt.Template.type == HSEnums.CreatureType.Chillipede));
                 c.Emit(OpCodes.Brtrue, label);
             }
             else
-                Plugin.logger.LogError("[Hailstorm] A Cyanwing IL hook for their crawling stopped functioning! Tell me about this, would ya?");
+                Debug.LogError("[Hailstorm] A Cyanwing IL hook for their crawling stopped functioning! Tell me about this, would ya?");
         };
 
         IL.Centipede.Violence += IL =>
@@ -616,7 +616,7 @@ internal class CentiHooks
                 c.Emit(OpCodes.Brfalse, label);
             }
             else
-                Plugin.logger.LogError("[Hailstorm] A Chillipede Violence IL hook is broken! Tell me about this, please.");
+                Debug.LogError("[Hailstorm] A Chillipede Violence IL hook is broken! Tell me about this, please.");
         };
 
     }

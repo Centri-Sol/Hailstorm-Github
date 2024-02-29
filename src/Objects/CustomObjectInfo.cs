@@ -29,7 +29,7 @@ public class CustomObjectInfo
             { MoreSlugcatsEnums.AbstractObjectType.SingularityBomb, true },
             { MoreSlugcatsEnums.AbstractObjectType.Spearmasterpearl, true },
 
-            //{ HailstormItems.BezanNut, true },
+            //{ HSEnums.AbstractObjectType.BezanNut, true },
         };
     }
 

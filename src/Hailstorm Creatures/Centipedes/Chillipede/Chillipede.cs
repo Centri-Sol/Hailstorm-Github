@@ -116,7 +116,7 @@ public class Chillipede : Centipede
 
     public virtual void AssignSize(AbstractCreature absChl)
     {
-        if (Template.type == HailstormCreatures.Chillipede)
+        if (Template.type == HSEnums.CreatureType.Chillipede)
         {
             size = 0.5f;
         }
@@ -503,7 +503,7 @@ public class Chillipede : Centipede
                 if (shell.health > 0)
                 {
                     if (dmgType == DamageType.Blunt ||
-                        dmgType == HailstormDamageTypes.Heat)
+                        dmgType == HSEnums.DamageTypes.Heat)
                     {
                         damage *= Mathf.Clamp(3 - shell.health, 0, 1);
                         shellDamage += (int)Mathf.Max(1, 3f * damage);
@@ -512,7 +512,7 @@ public class Chillipede : Centipede
                 else if (shell.health < 3)
                 {
                     if (dmgType == DamageType.Water ||
-                        dmgType == HailstormDamageTypes.Cold)
+                        dmgType == HSEnums.DamageTypes.Cold)
                     {
                         shellDamage -= (int)Mathf.Max(1, 3f * damage);
                     }
@@ -670,17 +670,17 @@ public class Chillipede : Centipede
 
         if (victim is Player)
         {
-            ColdResistances[0] /= CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(victim as Player, HailstormDamageTypes.Cold);
+            ColdResistances[0] /= CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(victim as Player, HSEnums.DamageTypes.Cold);
         }
         else
         {
-            if (victim.Template.damageRestistances[HailstormDamageTypes.Cold.index, 0] > 0)
+            if (victim.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0] > 0)
             {
-                ColdResistances[0] *= victim.Template.damageRestistances[HailstormDamageTypes.Cold.index, 0];
+                ColdResistances[0] *= victim.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0];
             }
-            if (victim.Template.damageRestistances[HailstormDamageTypes.Cold.index, 1] > 0)
+            if (victim.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 1] > 0)
             {
-                ColdResistances[1] *= victim.Template.damageRestistances[HailstormDamageTypes.Cold.index, 1];
+                ColdResistances[1] *= victim.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 1];
             }
         }
 
@@ -708,14 +708,14 @@ public class Chillipede : Centipede
 
         if (victim.State is ColdLizState lS && !lS.crystals.All(intact => intact))
         {
-            if (victim.Template.type == HailstormCreatures.IcyBlue)
+            if (victim.Template.type == HSEnums.CreatureType.IcyBlueLizard)
             {
                 for (int s = 0; s < lS.crystals.Length; s++)
                 {
                     lS.crystals[s] = true;
                 }
             }
-            else if (victim.Template.type == HailstormCreatures.Freezer)
+            else if (victim.Template.type == HSEnums.CreatureType.FreezerLizard)
             {
                 for (int s = Random.Range(0, lS.crystals.Length); /**/ ; /**/ )
                 {
@@ -833,11 +833,11 @@ public class Chillipede : Centipede
         float ChillResistance = collateral.abstractCreature.HypothermiaImmune ? 4 : 1;
         if (collateral is Player)
         {
-            ChillResistance /= CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(collateral as Player, HailstormDamageTypes.Cold);
+            ChillResistance /= CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(collateral as Player, HSEnums.DamageTypes.Cold);
         }
-        else if (collateral.Template.damageRestistances[HailstormDamageTypes.Cold.index, 0] > 0)
+        else if (collateral.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0] > 0)
         {
-            ChillResistance *= collateral.Template.damageRestistances[HailstormDamageTypes.Cold.index, 0];
+            ChillResistance *= collateral.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0];
         }
         collateral.Hypothermia += 1 / ChillResistance * Mathf.InverseLerp(FreezeRadius, FreezeRadius/5f, Custom.Dist(HeadChunk.pos, collateral.DangerPos));
         collateral.killTag = abstractCreature;

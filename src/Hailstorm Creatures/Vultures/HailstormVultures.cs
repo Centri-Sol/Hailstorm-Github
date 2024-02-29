@@ -47,7 +47,7 @@ internal class HailstormVultures
     public static ConditionalWeakTable<Vulture, VultureInfo> VulData = new();
     public static bool AddVultureToCWT(Vulture vul, AbstractCreature absVul, World world)
     {
-        if (vul.Template.type == HailstormCreatures.Raven)
+        if (vul.Template.type == HSEnums.CreatureType.Raven)
         {
             return true;
         }
@@ -162,7 +162,7 @@ internal class HailstormVultures
                 }
                 else
                 if (dmgType == Creature.DamageType.Electric || dmgType == Creature.DamageType.Water ||
-                    dmgType == HailstormDamageTypes.Heat || dmgType == HailstormDamageTypes.Cold)
+                    dmgType == HSEnums.DamageTypes.Heat || dmgType == HSEnums.DamageTypes.Cold)
                 {
                     dmg /= 2f;
                 }
@@ -170,7 +170,7 @@ internal class HailstormVultures
             }
             else if (vi.King)
             {
-                if (dmgType == HailstormDamageTypes.Cold)
+                if (dmgType == HSEnums.DamageTypes.Cold)
                 {
                     dmg /= 2f;
                     bonusStun /= 2f;
@@ -237,7 +237,7 @@ internal class HailstormVultures
                 _ = c.Emit(OpCodes.Brfalse, label);
             }
             else
-                Plugin.logger.LogError("[Hailstorm] An IL hook for Auroric Miros Vultures exploded! And by that I mean it stopped working! Tell me about this, please.");
+                Debug.LogError("[Hailstorm] An IL hook for Auroric Miros Vultures exploded! And by that I mean it stopped working! Tell me about this, please.");
         };
     }
     public static bool HailstormVultureWingResizing(VultureTentacle wing)
@@ -264,7 +264,7 @@ internal class HailstormVultures
         SharedPhysics.CollisionResult collisionResult = SharedPhysics.TraceProjectileAgainstBodyChunks(tusk, tusk.room, val, ref pos, 5f, 1, tusk.owner.vulture, hitAppendages: false);
         if (TuskData.TryGetValue(tusk, out TuskInfo tI) && !floatRect.HasValue && collisionResult.chunk?.owner is not null && collisionResult.chunk.owner is Lizard liz && liz.LizardState is ColdLizState lS && lS.armored)
         {
-            int stun = (liz.Template.type == HailstormCreatures.Freezer) ? 0 : 30;
+            int stun = (liz.Template.type == HSEnums.CreatureType.FreezerLizard) ? 0 : 30;
             tusk.mode = KingTusks.Tusk.Mode.Dangling;
             tI.bounceOffSpeed = tusk.shootDir * speed * 0.5f;
             liz.room.PlaySound(SoundID.Spear_Bounce_Off_Creauture_Shell, liz.bodyChunks[1].pos, 1.5f, 0.75f);

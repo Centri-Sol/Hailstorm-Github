@@ -7,12 +7,12 @@ sealed class IcyBlueCritob : Critob
 {
     public Color IcyBlueColor = new (138/255f, 151/255f, 193/255f);
 
-    internal IcyBlueCritob() : base(HailstormCreatures.IcyBlue)
+    internal IcyBlueCritob() : base(HSEnums.CreatureType.IcyBlueLizard)
     {
         Icon = new SimpleIcon("Kill_Icy_Blue_Lizard", IcyBlueColor);
         LoadedPerformanceCost = 50f;
         SandboxPerformanceCost = new(0.6f, 0.6f);
-        RegisterUnlock(KillScore.Configurable(12), HailstormUnlocks.IcyBlue);
+        RegisterUnlock(KillScore.Configurable(12), HSEnums.SandboxUnlock.IceChunk);
     }
     public override int ExpeditionScore() => 12;
 
@@ -31,7 +31,7 @@ sealed class IcyBlueCritob : Critob
         return new[] { "icyblue", "IcyBlue" };
     }
 
-    public override CreatureTemplate CreateTemplate() => LizardBreeds.BreedTemplate(HailstormCreatures.IcyBlue, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
+    public override CreatureTemplate CreateTemplate() => LizardBreeds.BreedTemplate(HSEnums.CreatureType.IcyBlueLizard, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
     public override void EstablishRelationships()
     {
         // Relationship types that work with Lizard AI:
@@ -40,7 +40,7 @@ sealed class IcyBlueCritob : Critob
         // * Fears ("Afraid" in the game's code) - Actively flees from targets.
         // * Rivals ("AggressiveRival" in the game's code) - May fight targets if they get in the way, though typically not to the death.
         // Any relationship types not listed are not supported by base-game or DLC code, and will act like Ignores without new code.
-        Relationships icyBlue = new(HailstormCreatures.IcyBlue);
+        Relationships icyBlue = new(HSEnums.CreatureType.IcyBlueLizard);
         icyBlue.Eats(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 1);
         icyBlue.Eats(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 1);
         icyBlue.Eats(CreatureTemplate.Type.Scavenger, 1);
@@ -51,13 +51,13 @@ sealed class IcyBlueCritob : Critob
         icyBlue.Eats(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 0.85f);
         icyBlue.Eats(CreatureTemplate.Type.CicadaA, 0.85f);
         icyBlue.Eats(CreatureTemplate.Type.CicadaB, 0.85f);
-        icyBlue.Eats(HailstormCreatures.SnowcuttleTemplate, 0.66f);
+        icyBlue.Eats(HSEnums.CreatureType.SnowcuttleTemplate, 0.66f);
         icyBlue.Eats(CreatureTemplate.Type.EggBug, 0.66f);
         icyBlue.Eats(CreatureTemplate.Type.DropBug, 0.5f);
         icyBlue.Eats(CreatureTemplate.Type.BigNeedleWorm, 0.5f);
         icyBlue.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.5f);
-        icyBlue.Eats(HailstormCreatures.InfantAquapede, 0.5f);
-        icyBlue.Eats(HailstormCreatures.Luminescipede, 0.5f);
+        icyBlue.Eats(HSEnums.CreatureType.InfantAquapede, 0.5f);
+        icyBlue.Eats(HSEnums.CreatureType.Luminescipede, 0.5f);
         icyBlue.Eats(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.4f);
         icyBlue.Eats(CreatureTemplate.Type.BigSpider, 0.33f);
         icyBlue.Eats(CreatureTemplate.Type.SpitterSpider, 0.33f);
@@ -84,8 +84,8 @@ sealed class IcyBlueCritob : Critob
         icyBlue.Fears(CreatureTemplate.Type.TentaclePlant, 0.2f);
 
         // Does nothing on its own.
-        icyBlue.IsInPack(HailstormCreatures.IcyBlue, 1);
-        icyBlue.IsInPack(HailstormCreatures.Freezer, 1);
+        icyBlue.IsInPack(HSEnums.CreatureType.IcyBlueLizard, 1);
+        icyBlue.IsInPack(HSEnums.CreatureType.FreezerLizard, 1);
         icyBlue.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.75f);
         icyBlue.IsInPack(CreatureTemplate.Type.BlueLizard, 0.66f);
 
@@ -93,17 +93,17 @@ sealed class IcyBlueCritob : Critob
         icyBlue.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 0.5f);
         icyBlue.HasDynamicRelationship(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 0.5f);
 
-        icyBlue.Ignores(HailstormCreatures.Chillipede);
+        icyBlue.Ignores(HSEnums.CreatureType.Chillipede);
 
         //  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
         icyBlue.EatenBy(CreatureTemplate.Type.Vulture, 0.6f);
         icyBlue.EatenBy(CreatureTemplate.Type.KingVulture, 0.6f);
-        icyBlue.EatenBy(HailstormCreatures.Raven, 0.6f);
+        icyBlue.EatenBy(HSEnums.CreatureType.Raven, 0.6f);
         icyBlue.EatenBy(CreatureTemplate.Type.MirosBird, 0.6f);
         icyBlue.EatenBy(CreatureTemplate.Type.BrotherLongLegs, 0.6f);
         icyBlue.EatenBy(CreatureTemplate.Type.RedCentipede, 0.6f);
-        icyBlue.EatenBy(HailstormCreatures.Cyanwing, 0.6f);
+        icyBlue.EatenBy(HSEnums.CreatureType.Cyanwing, 0.6f);
         icyBlue.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.5f);
         icyBlue.EatenBy(CreatureTemplate.Type.CyanLizard, 0.5f);
         icyBlue.EatenBy(CreatureTemplate.Type.Centipede, 0.4f);
@@ -127,7 +127,7 @@ sealed class IcyBlueCritob : Critob
         icyBlue.FearedBy(CreatureTemplate.Type.SpitterSpider, 0.15f);
         icyBlue.FearedBy(CreatureTemplate.Type.JetFish, 0.15f);
 
-        icyBlue.IgnoredBy(HailstormCreatures.Chillipede);
+        icyBlue.IgnoredBy(HSEnums.CreatureType.Chillipede);
 
         // Fun Fact 1: If you set multiple relationship types with the same creature, the last one you set will overwrite the rest.
 
@@ -151,12 +151,12 @@ sealed class FreezerCritob : Critob
 
     public Color FreezerColor = new (129f/255f, 200f/255f, 236f/255f);
 
-    internal FreezerCritob() : base(HailstormCreatures.Freezer)
+    internal FreezerCritob() : base(HSEnums.CreatureType.FreezerLizard)
     {
         Icon = new SimpleIcon("Kill_Freezer_Lizard", FreezerColor);
         LoadedPerformanceCost = 50f;
         SandboxPerformanceCost = new(0.7f, 0.7f);
-        RegisterUnlock(KillScore.Configurable(25), HailstormUnlocks.Freezer);
+        RegisterUnlock(KillScore.Configurable(25), HSEnums.SandboxUnlock.Freezer);
     }
     public override int ExpeditionScore() => 25;
 
@@ -202,7 +202,7 @@ sealed class FreezerCritob : Critob
 
     public override CreatureTemplate CreateTemplate()
     {
-        return LizardBreeds.BreedTemplate(HailstormCreatures.Freezer, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
+        return LizardBreeds.BreedTemplate(HSEnums.CreatureType.FreezerLizard, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
     }
     public override void EstablishRelationships()
     {
@@ -212,7 +212,7 @@ sealed class FreezerCritob : Critob
         // * Fears ("Afraid" in the game's code) - Actively flees from targets.
         // * Rivals ("AggressiveRival" in the game's code) - May fight targets if they get in the way, though typically not to the death.
         // Any relationship types not listed are not supported by base-game or DLC code, and will act like Ignores without new code.
-        Relationships Freezer = new (HailstormCreatures.Freezer);
+        Relationships Freezer = new (HSEnums.CreatureType.FreezerLizard);
 
         Freezer.Eats(CreatureTemplate.Type.Slugcat, 1);
         Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 1);
@@ -220,7 +220,7 @@ sealed class FreezerCritob : Critob
         Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 1);
         Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 1);
         Freezer.Eats(CreatureTemplate.Type.RedCentipede, 1);
-        Freezer.Eats(HailstormCreatures.Cyanwing, 1);
+        Freezer.Eats(HSEnums.CreatureType.Cyanwing, 1);
         Freezer.Eats(CreatureTemplate.Type.EggBug, 1);
         Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1.1f);
         Freezer.Eats(CreatureTemplate.Type.Centipede, 0.95f);
@@ -235,15 +235,15 @@ sealed class FreezerCritob : Critob
         Freezer.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.75f);
         Freezer.Eats(CreatureTemplate.Type.BigNeedleWorm, 0.75f);
         Freezer.Eats(CreatureTemplate.Type.DropBug, 0.75f);
-        Freezer.Eats(HailstormCreatures.SnowcuttleTemplate, 0.66f);
-        Freezer.Eats(HailstormCreatures.Luminescipede, 0.6f);
+        Freezer.Eats(HSEnums.CreatureType.SnowcuttleTemplate, 0.66f);
+        Freezer.Eats(HSEnums.CreatureType.Luminescipede, 0.6f);
         Freezer.Eats(CreatureTemplate.Type.LizardTemplate, 0.5f);
         Freezer.Eats(CreatureTemplate.Type.SmallCentipede, 0.5f);
         Freezer.Eats(CreatureTemplate.Type.VultureGrub, 0.4f);
         Freezer.Eats(CreatureTemplate.Type.JetFish, 0.4f);
         Freezer.Eats(CreatureTemplate.Type.Hazer, 0.35f);
         Freezer.Eats(CreatureTemplate.Type.TubeWorm, 0.2f);
-        Freezer.Eats(HailstormCreatures.InfantAquapede, 0.1f);
+        Freezer.Eats(HSEnums.CreatureType.InfantAquapede, 0.1f);
         Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.1f);
         Freezer.Attacks(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.5f);
 
@@ -264,14 +264,14 @@ sealed class FreezerCritob : Critob
         Freezer.HasDynamicRelationship(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 0.5f);
 
         // Does nothing on its own.
-        Freezer.IsInPack(HailstormCreatures.IcyBlue, 1);
-        Freezer.IsInPack(HailstormCreatures.Freezer, 1);
+        Freezer.IsInPack(HSEnums.CreatureType.IcyBlueLizard, 1);
+        Freezer.IsInPack(HSEnums.CreatureType.FreezerLizard, 1);
         Freezer.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.75f);
         Freezer.IsInPack(CreatureTemplate.Type.BlueLizard, 0.66f);
 
         Freezer.Ignores(CreatureTemplate.Type.Spider);
         Freezer.Ignores(CreatureTemplate.Type.PoleMimic);
-        Freezer.Ignores(HailstormCreatures.Chillipede);
+        Freezer.Ignores(HSEnums.CreatureType.Chillipede);
 
         //  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
@@ -281,7 +281,7 @@ sealed class FreezerCritob : Critob
         Freezer.EatenBy(CreatureTemplate.Type.DaddyLongLegs, 0.5f);
         Freezer.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
         Freezer.EatenBy(CreatureTemplate.Type.RedCentipede, 0.25f);
-        Freezer.EatenBy(HailstormCreatures.Cyanwing, 0.25f);
+        Freezer.EatenBy(HSEnums.CreatureType.Cyanwing, 0.25f);
         Freezer.EatenBy(CreatureTemplate.Type.KingVulture, 0.25f);
         Freezer.EatenBy(CreatureTemplate.Type.BrotherLongLegs, 0.25f);
 
@@ -312,7 +312,7 @@ sealed class FreezerCritob : Critob
 
         Freezer.IgnoredBy(CreatureTemplate.Type.PoleMimic);
         Freezer.IgnoredBy(CreatureTemplate.Type.TentaclePlant);
-        Freezer.IgnoredBy(HailstormCreatures.Chillipede);
+        Freezer.IgnoredBy(HSEnums.CreatureType.Chillipede);
 
     }
 
@@ -321,7 +321,7 @@ sealed class FreezerCritob : Critob
     public override CreatureState CreateState(AbstractCreature absFrz) => new ColdLizState(absFrz);
 
     #nullable enable
-    public override CreatureTemplate.Type? ArenaFallback() => HailstormCreatures.IcyBlue;
+    public override CreatureTemplate.Type? ArenaFallback() => HSEnums.CreatureType.IcyBlueLizard;
     #nullable disable
 }
 

@@ -942,13 +942,13 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
         if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.GooieDuck ||
                 absObj.type == MoreSlugcatsEnums.AbstractObjectType.FireEgg ||
-                    absObj.type == HailstormItems.BurnSpear)
+                    absObj.type == HSEnums.AbstractObjectType.BurnSpear)
         {
             return new ObjectRelationship(UncomfortableAround, 0.5f);
         }
         if (absObj.type == AbstractPhysicalObject.AbstractObjectType.SporePlant ||
                 absObj.type == MoreSlugcatsEnums.AbstractObjectType.SingularityBomb ||
-                    absObj.type == HailstormItems.IceChunk)
+                    absObj.type == HSEnums.AbstractObjectType.IceChunk)
         {
             return new ObjectRelationship(UncomfortableAround, 1);
         }

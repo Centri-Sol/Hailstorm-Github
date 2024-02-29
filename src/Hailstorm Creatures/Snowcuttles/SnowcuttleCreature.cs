@@ -143,11 +143,11 @@
 
         public SnowcuttleCreature(AbstractCreature absSnwctl, World world) : base(absSnwctl, world)
         {
-            if (absSnwctl.creatureTemplate.type == HailstormCreatures.SnowcuttleFemale)
+            if (absSnwctl.creatureTemplate.type == HSEnums.CreatureType.SnowcuttleFemale)
             {
                 gender = true;
             }
-            else if (absSnwctl.creatureTemplate.type == HailstormCreatures.SnowcuttleMale)
+            else if (absSnwctl.creatureTemplate.type == HSEnums.CreatureType.SnowcuttleMale)
             {
                 gender = false;
             }

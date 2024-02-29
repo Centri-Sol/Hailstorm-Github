@@ -68,7 +68,7 @@ public class VultureInfo
             {
                 Miros = true;
             }
-            else if (vul.Template.type == HailstormCreatures.Raven)
+            else if (vul.Template.type == HSEnums.CreatureType.Raven)
             {
                 Raven = true;
             }
@@ -145,7 +145,7 @@ public class AbsCtrInfo
         }
         else if (target is Creature ctr)
         {
-            debuffDuration = (int)(debuffDuration / ctr.Template.damageRestistances[HailstormDamageTypes.Heat.index, 0]);
+            debuffDuration = (int)(debuffDuration / ctr.Template.damageRestistances[HSEnums.DamageTypes.Heat.index, 0]);
         }
 
         debuffs.Add(new Burn(burnSource, hitChunk, debuffDuration, baseColor, fadeColor));

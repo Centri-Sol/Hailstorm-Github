@@ -586,7 +586,7 @@ internal class ObjectChanges
         if (spr.mode == Weapon.Mode.StuckInCreature &&
             spr.stuckInObject is not null &&
             spr.stuckInObject is Creature stabbedCtr &&
-            (stabbedCtr.Template.type == HailstormCreatures.GorditoGreenie || stabbedCtr.Template.type == HailstormCreatures.Chillipede))
+            (stabbedCtr.Template.type == HSEnums.CreatureType.GorditoGreenieLizard || stabbedCtr.Template.type == HSEnums.CreatureType.Chillipede))
         {
             spr.deerCounter++;
             if (spr.deerCounter > 30)
@@ -620,7 +620,7 @@ internal class ObjectChanges
     // Electric Spears
     public static bool ChillipedeAintElectric(On.MoreSlugcats.ElectricSpear.orig_CheckElectricCreature orig, ElectricSpear elcSpr, Creature target)
     {
-        if (target is not null && target.Template.type == HailstormCreatures.Chillipede)
+        if (target is not null && target.Template.type == HSEnums.CreatureType.Chillipede)
         {
             return false;
         }
@@ -812,11 +812,11 @@ internal class ObjectChanges
         {
             if (target is Player)
             {
-                float HeatDamageMult = CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(target as Player, HailstormDamageTypes.Heat);
+                float HeatDamageMult = CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(target as Player, HSEnums.DamageTypes.Heat);
                 spr.spearDamageBonus *= HeatDamageMult;
                 cI.heatTimer = (int)(20 * HeatDamageMult);
             }
-            else if (target.Template.damageRestistances[HailstormDamageTypes.Heat.index, 0] is float heatRes && heatRes != 1)
+            else if (target.Template.damageRestistances[HSEnums.DamageTypes.Heat.index, 0] is float heatRes && heatRes != 1)
             {
                 spr.spearDamageBonus /= heatRes;
                 cI.heatTimer = (int)(20 / heatRes);

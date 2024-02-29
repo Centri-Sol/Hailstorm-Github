@@ -7,13 +7,13 @@ sealed class GorditoGreenieCritob : Critob
 {
     public Color GorditoGreenieColor = Custom.HSL2RGB(135/360f, 0.5f, 0.7f);
 
-    internal GorditoGreenieCritob() : base(HailstormCreatures.GorditoGreenie)
+    internal GorditoGreenieCritob() : base(HSEnums.CreatureType.GorditoGreenieLizard)
     {
         Icon = new SimpleIcon("Kill_Gordito_Greenie_Lizard", GorditoGreenieColor);
         LoadedPerformanceCost = 50f;
         SandboxPerformanceCost = new(0.7f, 0.6f);
         ShelterDanger = ShelterDanger.TooLarge;
-        RegisterUnlock(KillScore.Configurable(20), HailstormUnlocks.GorditoGreenie);
+        RegisterUnlock(KillScore.Configurable(20), HSEnums.SandboxUnlock.GorditoGreenie);
     }
     public override int ExpeditionScore() => 20;
 
@@ -33,7 +33,7 @@ sealed class GorditoGreenieCritob : Critob
     }
     public override CreatureTemplate CreateTemplate()
     {
-        return LizardBreeds.BreedTemplate(HailstormCreatures.GorditoGreenie, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
+        return LizardBreeds.BreedTemplate(HSEnums.CreatureType.GorditoGreenieLizard, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate), null, null, null);
     }
     public override void EstablishRelationships()
     {
@@ -43,7 +43,7 @@ sealed class GorditoGreenieCritob : Critob
         // * Fears ("Afraid" in the game's code) - Actively flees from targets.
         // * Rivals ("AggressiveRival" in the game's code) - May fight targets if they get in the way, though typically not to the death.
         // Any relationship types not listed are not supported by base-game or DLC code, and will act like Ignores without new code.
-        Relationships elGordito = new(HailstormCreatures.GorditoGreenie);
+        Relationships elGordito = new(HSEnums.CreatureType.GorditoGreenieLizard);
 
         elGordito.Eats(CreatureTemplate.Type.Slugcat, 1);
         elGordito.Eats(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 1);
@@ -55,8 +55,8 @@ sealed class GorditoGreenieCritob : Critob
         elGordito.Eats(CreatureTemplate.Type.Centipede, 1);
         elGordito.Eats(CreatureTemplate.Type.RedCentipede, 1);
         elGordito.Eats(CreatureTemplate.Type.Centiwing, 1);
-        elGordito.Eats(HailstormCreatures.Cyanwing, 1);
-        elGordito.Eats(HailstormCreatures.InfantAquapede, 1);
+        elGordito.Eats(HSEnums.CreatureType.Cyanwing, 1);
+        elGordito.Eats(HSEnums.CreatureType.InfantAquapede, 1);
         elGordito.Eats(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 1);
         elGordito.Eats(CreatureTemplate.Type.Hazer, 1);
         elGordito.Eats(CreatureTemplate.Type.Snail, 1);
@@ -67,7 +67,7 @@ sealed class GorditoGreenieCritob : Critob
         elGordito.Eats(CreatureTemplate.Type.BigSpider, 1);
         elGordito.Eats(CreatureTemplate.Type.SpitterSpider, 1);
         elGordito.Eats(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 1);
-        elGordito.Eats(HailstormCreatures.Luminescipede, 1);
+        elGordito.Eats(HSEnums.CreatureType.Luminescipede, 1);
         elGordito.Eats(CreatureTemplate.Type.LanternMouse, 1);
         elGordito.Eats(CreatureTemplate.Type.TubeWorm, 1);
         elGordito.Eats(CreatureTemplate.Type.Scavenger, 1);
@@ -75,10 +75,10 @@ sealed class GorditoGreenieCritob : Critob
         elGordito.Eats(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 1);
         elGordito.Eats(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 1);
         elGordito.Eats(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
-        elGordito.Eats(HailstormCreatures.Chillipede, 1);
+        elGordito.Eats(HSEnums.CreatureType.Chillipede, 1);
         elGordito.Eats(CreatureTemplate.Type.BlueLizard, 0.5f);
         elGordito.Eats(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.5f);
-        elGordito.Eats(HailstormCreatures.Raven, 0.5f);
+        elGordito.Eats(HSEnums.CreatureType.Raven, 0.5f);
 
         elGordito.Attacks(CreatureTemplate.Type.MirosBird, 1);
         elGordito.Attacks(CreatureTemplate.Type.KingVulture, 1);
@@ -86,7 +86,7 @@ sealed class GorditoGreenieCritob : Critob
         elGordito.Attacks(CreatureTemplate.Type.BrotherLongLegs, 0.5f);
         elGordito.Attacks(MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy, 0.5f);
 
-        elGordito.Rivals(HailstormCreatures.GorditoGreenie, 1);
+        elGordito.Rivals(HSEnums.CreatureType.GorditoGreenieLizard, 1);
         elGordito.Rivals(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 1);
         elGordito.Rivals(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
         elGordito.Rivals(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.5f);
@@ -109,7 +109,7 @@ sealed class GorditoGreenieCritob : Critob
         elGordito.Ignores(CreatureTemplate.Type.Leech);
         elGordito.Ignores(CreatureTemplate.Type.SeaLeech);
         elGordito.Ignores(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech);
-        elGordito.Ignores(HailstormCreatures.PeachSpider);
+        elGordito.Ignores(HSEnums.CreatureType.PeachSpider);
 
         //  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 

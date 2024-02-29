@@ -8,13 +8,13 @@ sealed class RavenCritob : Critob
 
     public Color RavenColor = Color.white; // Custom.HSL2RGB(248 / 360f, 0.15f, 0.17f);
 
-    internal RavenCritob() : base(HailstormCreatures.Raven)
+    internal RavenCritob() : base(HSEnums.CreatureType.Raven)
     {
         Icon = new SimpleIcon("Kill_Raven", RavenColor);
         LoadedPerformanceCost = 10f;
         SandboxPerformanceCost = new(0.6f, 0.4f);
         ShelterDanger = ShelterDanger.TooLarge;
-        RegisterUnlock(KillScore.Configurable(10), HailstormUnlocks.Raven);
+        RegisterUnlock(KillScore.Configurable(10), HSEnums.SandboxUnlock.Raven);
     }
     public override int ExpeditionScore() => 10;
 
@@ -23,16 +23,26 @@ sealed class RavenCritob : Critob
         if (connection.type == MovementConnection.MovementType.ShortCut)
         {
             if (connection.startCoord.TileDefined && map.room.shortcutData(connection.StartTile).shortCutType == ShortcutData.Type.Normal)
+            {
                 allow = true;
+            }
+
             if (connection.destinationCoord.TileDefined && map.room.shortcutData(connection.DestTile).shortCutType == ShortcutData.Type.Normal)
+            {
                 allow = true;
+            }
         }
         else if (connection.type == MovementConnection.MovementType.BigCreatureShortCutSqueeze)
         {
             if (map.room.GetTile(connection.startCoord).Terrain == Room.Tile.TerrainType.ShortcutEntrance && map.room.shortcutData(connection.StartTile).shortCutType == ShortcutData.Type.Normal)
+            {
                 allow = true;
+            }
+
             if (map.room.GetTile(connection.destinationCoord).Terrain == Room.Tile.TerrainType.ShortcutEntrance && map.room.shortcutData(connection.DestTile).shortCutType == ShortcutData.Type.Normal)
+            {
                 allow = true;
+            }
         }
     }
 
@@ -113,9 +123,9 @@ sealed class RavenCritob : Critob
         // * Eats - Grabs prey and brings it back to its den.
         // * Attacks - Will seek out their target and stay in a room as long as necessary to hunt them down. Will deal enough damage with its bites to kill Slugcats, but will not hold onto their target.
         // Any relationship types not listed are not supported by base-game or DLC code, and will act like Ignores without new code.
-        Relationships Raven = new(HailstormCreatures.Raven);
+        Relationships Raven = new(HSEnums.CreatureType.Raven);
 
-        Raven.IsInPack(HailstormCreatures.Raven, 1);
+        Raven.IsInPack(HSEnums.CreatureType.Raven, 1);
     }
 
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absVul) => new VultureAI(absVul, absVul.world);
@@ -135,13 +145,13 @@ sealed class PeachSpiderCritob : Critob
 
     public Color PeachSpiderColor = Custom.HSL2RGB(209 / 360f, 0.9f, 0.75f);
 
-    internal PeachSpiderCritob() : base(HailstormCreatures.PeachSpider)
+    internal PeachSpiderCritob() : base(HSEnums.CreatureType.PeachSpider)
     {
         Icon = new SimpleIcon("Kill_Peach_Spider", PeachSpiderColor);
         LoadedPerformanceCost = 40f;
         SandboxPerformanceCost = new(0.6f, 0.6f);
         ShelterDanger = ShelterDanger.Hostile;
-        RegisterUnlock(KillScore.Configurable(2), HailstormUnlocks.PeachSpider);
+        RegisterUnlock(KillScore.Configurable(2), HSEnums.SandboxUnlock.PeachSpider);
     }
     public override int ExpeditionScore() => 2;
 
@@ -214,20 +224,20 @@ sealed class PeachSpiderCritob : Critob
         // * Both Eats and Attacks - Lunges at prey and brings it back to its den.
         // * Afraid - Runs away from the target.
         // Any relationship types not listed are not supported by base-game or DLC code, and will act like Ignores without new code.
-        Relationships pchSpd = new(HailstormCreatures.PeachSpider);
+        Relationships pchSpd = new(HSEnums.CreatureType.PeachSpider);
 
         pchSpd.Eats(CreatureTemplate.Type.Spider, 0.7f);
         pchSpd.Eats(CreatureTemplate.Type.Fly, 0.7f);
-        pchSpd.Eats(HailstormCreatures.SnowcuttleTemplate, 0.4f);
+        pchSpd.Eats(HSEnums.CreatureType.SnowcuttleTemplate, 0.4f);
         pchSpd.Eats(CreatureTemplate.Type.SmallCentipede, 0.4f);
         pchSpd.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.225f);
         pchSpd.Eats(CreatureTemplate.Type.BigNeedleWorm, 0.225f);
 		pchSpd.Eats(CreatureTemplate.Type.VultureGrub, 0.2f);
         pchSpd.Eats(CreatureTemplate.Type.Hazer, 0.2f);
 
-        pchSpd.Fears(HailstormCreatures.Raven, 1);
-        pchSpd.Fears(HailstormCreatures.Luminescipede, 1);
-        pchSpd.Fears(HailstormCreatures.Cyanwing, 1);
+        pchSpd.Fears(HSEnums.CreatureType.Raven, 1);
+        pchSpd.Fears(HSEnums.CreatureType.Luminescipede, 1);
+        pchSpd.Fears(HSEnums.CreatureType.Cyanwing, 1);
         pchSpd.Fears(CreatureTemplate.Type.RedCentipede, 1);
         pchSpd.Fears(CreatureTemplate.Type.SpitterSpider, 1);
         pchSpd.Fears(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 1);
@@ -235,7 +245,7 @@ sealed class PeachSpiderCritob : Critob
         pchSpd.Fears(CreatureTemplate.Type.Centipede, 0.5f);
         pchSpd.Fears(CreatureTemplate.Type.BigSpider, 0.5f);
 
-        pchSpd.Ignores(HailstormCreatures.PeachSpider);
+        pchSpd.Ignores(HSEnums.CreatureType.PeachSpider);
 
         //  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
@@ -263,12 +273,12 @@ sealed class LuminescipedeCritob : Critob
 
     public Color LuminescipedeColor = Custom.hexToColor("DCCCFF");
 
-    internal LuminescipedeCritob() : base(HailstormCreatures.Luminescipede)
+    internal LuminescipedeCritob() : base(HSEnums.CreatureType.Luminescipede)
     {
         Icon = new SimpleIcon("Kill_Luminescipede", LuminescipedeColor);
         LoadedPerformanceCost = 10f;
         SandboxPerformanceCost = new(0.4f, 0.6f);
-        RegisterUnlock(KillScore.Configurable(2), HailstormUnlocks.Luminescipede);
+        RegisterUnlock(KillScore.Configurable(2), HSEnums.SandboxUnlock.Luminescipede);
     }
     public override int ExpeditionScore() => 2;
 
@@ -357,7 +367,7 @@ sealed class LuminescipedeCritob : Critob
     }
     public override void EstablishRelationships()
     {
-        Relationships Lumin = new(HailstormCreatures.Luminescipede);
+        Relationships Lumin = new(HSEnums.CreatureType.Luminescipede);
 
         // Hunts down and chomps away at these creatures with the help of other Lumins, whittling them down over time.
         // If the creature is dead, the Lumins carry it to their den.
@@ -365,7 +375,7 @@ sealed class LuminescipedeCritob : Critob
         Lumin.Eats(CreatureTemplate.Type.CicadaB, 0.75f);
         Lumin.Eats(CreatureTemplate.Type.Centiwing, 0.75f);
         Lumin.Eats(CreatureTemplate.Type.JetFish, 0.50f);
-        Lumin.Eats(HailstormCreatures.SnowcuttleTemplate, 0.50f);
+        Lumin.Eats(HSEnums.CreatureType.SnowcuttleTemplate, 0.50f);
         Lumin.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.25f);
         Lumin.Eats(CreatureTemplate.Type.BigNeedleWorm, 0.25f);
         Lumin.Eats(CreatureTemplate.Type.TubeWorm, 0.25f);
@@ -383,7 +393,7 @@ sealed class LuminescipedeCritob : Critob
 
         // Moves away from these creatures if they get too close.
         Lumin.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
-        Lumin.IntimidatedBy(HailstormCreatures.Chillipede, 0.75f);
+        Lumin.IntimidatedBy(HSEnums.CreatureType.Chillipede, 0.75f);
         Lumin.IntimidatedBy(CreatureTemplate.Type.Snail, 0.50f);
 
         // Flees from these creatures on sight, dropping anything that will weigh them down and using items to defend themselves.
@@ -394,12 +404,12 @@ sealed class LuminescipedeCritob : Critob
         Lumin.Fears(MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy, 1);
         Lumin.Fears(CreatureTemplate.Type.RedLizard, 1);
         Lumin.Fears(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
-        Lumin.Fears(HailstormCreatures.GorditoGreenie, 1);
-        Lumin.Fears(HailstormCreatures.Freezer, 1);
+        Lumin.Fears(HSEnums.CreatureType.GorditoGreenieLizard, 1);
+        Lumin.Fears(HSEnums.CreatureType.FreezerLizard, 1);
         Lumin.Fears(CreatureTemplate.Type.MirosBird, 0.5f);
 
         // Socializes with these creatures, and works with them to hunt down prey.
-        Lumin.IsInPack(HailstormCreatures.Luminescipede, 1);
+        Lumin.IsInPack(HSEnums.CreatureType.Luminescipede, 1);
         //s.IsInPack(HailstormEnums.StrobeLegs, 1);
 
         Lumin.Ignores(CreatureTemplate.Type.Overseer);
@@ -413,13 +423,13 @@ sealed class LuminescipedeCritob : Critob
         Lumin.EatenBy(CreatureTemplate.Type.LizardTemplate, 0.5f);
         Lumin.EatenBy(CreatureTemplate.Type.BlackLizard, 1);
         Lumin.EatenBy(CreatureTemplate.Type.BigEel, 1);
-        Lumin.EatenBy(HailstormCreatures.GorditoGreenie, 1);
+        Lumin.EatenBy(HSEnums.CreatureType.GorditoGreenieLizard, 1);
         Lumin.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.9f);
         Lumin.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.8f);
         Lumin.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.7f);
         Lumin.EatenBy(CreatureTemplate.Type.BigSpider, 0.6f);
-        Lumin.EatenBy(HailstormCreatures.Freezer, 0.6f);
-        Lumin.EatenBy(HailstormCreatures.Raven, 0.6f);
+        Lumin.EatenBy(HSEnums.CreatureType.FreezerLizard, 0.6f);
+        Lumin.EatenBy(HSEnums.CreatureType.Raven, 0.6f);
         Lumin.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
         Lumin.EatenBy(CreatureTemplate.Type.GreenLizard, 0.3f);
         Lumin.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.3f);
@@ -435,9 +445,9 @@ sealed class LuminescipedeCritob : Critob
         Lumin.FearedBy(CreatureTemplate.Type.Scavenger, 0.5f);
         Lumin.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 0.5f);
         Lumin.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.5f);
-        Lumin.FearedBy(HailstormCreatures.PeachSpider, 0.5f);
+        Lumin.FearedBy(HSEnums.CreatureType.PeachSpider, 0.5f);
         Lumin.FearedBy(CreatureTemplate.Type.SmallNeedleWorm, 0.25f);
-        Lumin.FearedBy(HailstormCreatures.InfantAquapede, 0.25f);
+        Lumin.FearedBy(HSEnums.CreatureType.InfantAquapede, 0.25f);
 
         Lumin.IgnoredBy(CreatureTemplate.Type.WhiteLizard);
     }

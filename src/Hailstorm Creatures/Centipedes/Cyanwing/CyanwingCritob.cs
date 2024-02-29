@@ -8,13 +8,13 @@ sealed class CyanwingCritob : Critob
 
     public Color CyanwingColor = Custom.HSL2RGB(180/360f, 0.88f, 0.4f);
 
-    internal CyanwingCritob() : base(HailstormCreatures.Cyanwing)
+    internal CyanwingCritob() : base(HSEnums.CreatureType.Cyanwing)
     {
         Icon = new SimpleIcon("Kill_Cyanwing", CyanwingColor);
         LoadedPerformanceCost = 15f;
         SandboxPerformanceCost = new(1.15f, 0.75f);
         ShelterDanger = ShelterDanger.TooLarge;
-        RegisterUnlock(KillScore.Configurable(25), HailstormUnlocks.Cyanwing);
+        RegisterUnlock(KillScore.Configurable(25), HSEnums.SandboxUnlock.Cyanwing);
     }
     public override int ExpeditionScore() => 25;
 
@@ -102,12 +102,12 @@ sealed class CyanwingCritob : Critob
     }
     public override void EstablishRelationships()
     {
-        Relationships s = new(HailstormCreatures.Cyanwing);
+        Relationships s = new(HSEnums.CreatureType.Cyanwing);
 
         s.IsInPack(CreatureTemplate.Type.Centiwing, 1);
 
         s.Ignores(CreatureTemplate.Type.TentaclePlant);
-        s.Ignores(HailstormCreatures.InfantAquapede);
+        s.Ignores(HSEnums.CreatureType.InfantAquapede);
 
         // "IgnoredBy" makes the given creatures ignore this one.
         s.IgnoredBy(CreatureTemplate.Type.Centipede);
@@ -157,8 +157,8 @@ sealed class CyanwingCritob : Critob
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.75f);
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 1);
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
-        s.FearedBy(HailstormCreatures.Luminescipede, 1);
-        s.FearedBy(HailstormCreatures.Chillipede, 1);
+        s.FearedBy(HSEnums.CreatureType.Luminescipede, 1);
+        s.FearedBy(HSEnums.CreatureType.Chillipede, 1);
 
         // "Eaten By" makes other creatures prey on this one.
         s.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
