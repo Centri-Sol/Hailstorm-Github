@@ -1,6 +1,6 @@
 ﻿namespace Hailstorm;
 
-internal class OtherCreatureChanges
+public class OtherCreatureChanges
 {
 
     public static void Hooks()
@@ -92,7 +92,7 @@ internal class OtherCreatureChanges
 
         if (!CWT.CreatureData.TryGetValue(ctr, out _))
         {
-            CWT.CreatureData.Add(ctr, new CreatureInfo(ctr));
+            CWT.CreatureData.Add(ctr, new CWT.CreatureInfo(ctr));
         }
 
         if (absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.BigJelly && ctr.grasps is null)
@@ -132,7 +132,7 @@ internal class OtherCreatureChanges
 
         if (!CWT.AbsCtrData.TryGetValue(absCtr, out _))
         {
-            CWT.AbsCtrData.Add(absCtr, new AbsCtrInfo(absCtr));
+            CWT.AbsCtrData.Add(absCtr, new CWT.AbsCtrInfo(absCtr));
         }
 
         if (absCtr is not null &&
@@ -507,7 +507,7 @@ internal class OtherCreatureChanges
             if (!stwAwyAI.activeThisCycle)
             {
                 stwAwyAI.activeThisCycle = !Weather.FogPrecycle;
-                stwAwyAI.behavior = Weather.FogPrecycle?
+                stwAwyAI.behavior = Weather.FogPrecycle ?
                     StowawayBugAI.Behavior.EscapeRain : StowawayBugAI.Behavior.Idle;
             }
         }
@@ -515,13 +515,13 @@ internal class OtherCreatureChanges
     public static void StowawayUpdate(On.MoreSlugcats.StowawayBug.orig_Update orig, StowawayBug stwAwy, bool eu)
     {
         orig(stwAwy, eu);
-        if (stwAwy is not null && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out AbsCtrInfo aI) && aI.ctrList is not null)
+        if (stwAwy is not null && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
         {
             if (aI.ctrList.Count > 4)
             {
                 aI.ctrList.RemoveAt(0);
             }
-            if (stwAwy.State.dead && CWT.CreatureData.TryGetValue(stwAwy, out CreatureInfo cI))
+            if (stwAwy.State.dead && CWT.CreatureData.TryGetValue(stwAwy, out CWT.CreatureInfo cI))
             {
                 if (aI.functionTimer == -1 && stwAwy.State is StowawayBugState SBS && SBS.digestionLength > 0 && aI.ctrList.Count > 0)
                 {
@@ -658,7 +658,7 @@ internal class OtherCreatureChanges
     }
     public static void StowFoodAway(On.MoreSlugcats.StowawayBug.orig_Eat orig, StowawayBug stwAwy, bool eu)
     {
-        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out AbsCtrInfo aI) && aI.ctrList is not null)
+        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
         {
             for (int i = stwAwy.eatObjects.Count - 1; i >= 0; i--)
             {
@@ -672,7 +672,7 @@ internal class OtherCreatureChanges
     }
     public static void StowawayProvidesFood(On.MoreSlugcats.StowawayBug.orig_Die orig, StowawayBug stwAwy)
     {
-        if (stwAwy is not null && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.CreatureData.TryGetValue(stwAwy, out CreatureInfo cI) && cI.impactCooldown >= 0)
+        if (stwAwy is not null && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.CreatureData.TryGetValue(stwAwy, out CWT.CreatureInfo cI) && cI.impactCooldown >= 0)
         {
             cI.impactCooldown = Random.Range(-130, -40);
         }
@@ -681,7 +681,7 @@ internal class OtherCreatureChanges
     public static void EATFASTERDAMNIT(On.MoreSlugcats.StowawayBugState.orig_StartDigestion orig, StowawayBugState sbs, int cycleTime)
     {
         orig(sbs, cycleTime);
-        if (sbs?.creature is not null && (IsIncanStory(sbs.creature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(sbs.creature, out AbsCtrInfo aI))
+        if (sbs?.creature is not null && (IsIncanStory(sbs.creature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(sbs.creature, out CWT.AbsCtrInfo aI))
         {
             aI.functionTimer = -1;
         }
@@ -695,7 +695,7 @@ internal class OtherCreatureChanges
                 dmg = 0.02f; // Gives Stowaways protection against icy lizard bites, and only their bites. (Spit from Freezers bypasses this)
                 stun = 0;
             }
-            if (CWT.CreatureData.TryGetValue(stwAwy, out CreatureInfo cI) && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true)) // I know adding "== true" is redundant, but I'm doing it here for clarity's sake.
+            if (CWT.CreatureData.TryGetValue(stwAwy, out CWT.CreatureInfo cI) && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true)) // I know adding "== true" is redundant, but I'm doing it here for clarity's sake.
             {
                 dmg /= HSRemix.StowawayHPMultiplier.Value;
                 if (hitAppen is null)
@@ -711,7 +711,7 @@ internal class OtherCreatureChanges
                     else if (!dirAndMomentum.HasValue || Mathf.Abs(dirAndMomentum.Value.y) < Mathf.Abs(dirAndMomentum.Value.x * 3))
                     {
                         cI.hitDeflected = HSRemix.StowawayToughSides.Value;
-                        dmg *= cI.hitDeflected ?  0 : 0.75f;
+                        dmg *= cI.hitDeflected ? 0 : 0.75f;
                         if (cI.hitDeflected && source is not null && hitChunk is not null)
                         {
                             for (int num = 10; num > 0; num--)
@@ -744,7 +744,7 @@ internal class OtherCreatureChanges
     }
     public static bool StowawayToughSides(On.Creature.orig_SpearStick orig, Creature victim, Weapon source, float dmg, BodyChunk chunk, PhysicalObject.Appendage.Pos appen, Vector2 direction)
     {
-        if (victim?.room is not null && victim is StowawayBug && CWT.CreatureData.TryGetValue(victim, out CreatureInfo cI) && cI.hitDeflected)
+        if (victim?.room is not null && victim is StowawayBug && CWT.CreatureData.TryGetValue(victim, out CWT.CreatureInfo cI) && cI.hitDeflected)
         {
             cI.hitDeflected = false;
             return false;
@@ -756,7 +756,7 @@ internal class OtherCreatureChanges
     public static bool StoreCreatureInsteadOfDestroy(StowawayBug stwAwy)
     {
         Vector2 pos = stwAwy.firstChunk.pos;
-        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out AbsCtrInfo aI) && aI.ctrList is not null)
+        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
         {
             for (int i = stwAwy.eatObjects.Count - 1; i >= 0; i--)
             {
@@ -821,7 +821,7 @@ internal class OtherCreatureChanges
         if (regionSpawns is not null && regionSpawns.Count > 0 && stwAwy.AI is not null)
         {
             int smallCreatures = 0;
-            if (CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out AbsCtrInfo aI) && aI.ctrList is not null)
+            if (CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
             {
                 for (int i = 0; i < aI.ctrList.Count; i++)
                 {
@@ -986,7 +986,7 @@ internal class OtherCreatureChanges
                 else if (Random.value < 0.03f)
                 {
                     ctrType =
-                        ctrType == CreatureTemplate.Type.Centipede?
+                        ctrType == CreatureTemplate.Type.Centipede ?
                         CreatureTemplate.Type.RedCentipede :
                         HSEnums.CreatureType.Cyanwing;
                 }
@@ -1030,7 +1030,7 @@ internal class OtherCreatureChanges
     public static void ErraticWindPoleHide(On.PoleMimic.orig_Update orig, PoleMimic pol, bool eu)
     {
         float? extended = null;
-        if (Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval] && pol?.room?.blizzardGraphics is not null && CWT.AbsCtrData.TryGetValue(pol.abstractCreature, out AbsCtrInfo aI))
+        if (Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval] && pol?.room?.blizzardGraphics is not null && CWT.AbsCtrData.TryGetValue(pol.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             if (aI.destinationLocked || pol.room.blizzardGraphics.GetBlizzardPixel((int)(pol.DangerPos.x / 20f), (int)(pol.DangerPos.y / 20f)).g > 0)
             {
@@ -1063,7 +1063,7 @@ internal class OtherCreatureChanges
     public static void WinterPolePlantDifferences(On.PoleMimicGraphics.orig_ApplyPalette orig, PoleMimicGraphics pmg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(pmg, sLeaser, rCam, palette);
-        if (pmg?.pole?.room is not null && pmg.pole.abstractCreature.Winterized && (IsIncanStory(pmg.pole.room.game) || HSRemix.PolePlantColorsEverywhere.Value is true) && CWT.CreatureData.TryGetValue(pmg.pole, out CreatureInfo cI))
+        if (pmg?.pole?.room is not null && pmg.pole.abstractCreature.Winterized && (IsIncanStory(pmg.pole.room.game) || HSRemix.PolePlantColorsEverywhere.Value is true) && CWT.CreatureData.TryGetValue(pmg.pole, out CWT.CreatureInfo cI))
         {
             Random.State state = Random.state;
             Random.InitState(pmg.pole.abstractCreature.ID.RandomSeed);
@@ -1076,24 +1076,24 @@ internal class OtherCreatureChanges
     public static void PolePlantColors(On.PoleMimicGraphics.orig_DrawSprites orig, PoleMimicGraphics pmg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(pmg, sLeaser, rCam, timeStacker, camPos);
-        if (pmg?.pole?.room is not null && (IsIncanStory(pmg.pole.room.game) || HSRemix.PolePlantColorsEverywhere.Value is true) && CWT.CreatureData.TryGetValue(pmg.pole, out CreatureInfo cI))
+        if (pmg?.pole?.room is not null && (IsIncanStory(pmg.pole.room.game) || HSRemix.PolePlantColorsEverywhere.Value is true) && CWT.CreatureData.TryGetValue(pmg.pole, out CWT.CreatureInfo cI))
         {
             Random.State state = Random.state;
             Random.InitState(pmg.pole.abstractCreature.ID.RandomSeed);
             Color col1 =
                     pmg.pole.abstractCreature.Winterized ?
-                    Custom.HSL2RGB(Random.Range(190/360f, 250/360f), 1, Custom.ClampedRandomVariation(0.9f, 0.10f, 0.4f)) : // Winter colors
+                    Custom.HSL2RGB(Random.Range(190 / 360f, 250 / 360f), 1, Custom.ClampedRandomVariation(0.9f, 0.10f, 0.4f)) : // Winter colors
                     pmg.pole.abstractCreature.world.region is not null &&
                     pmg.pole.abstractCreature.world.region.name == "OE" ?
                     Random.ColorHSV(40 / 360f, 140 / 360f, 1, 1, 0.5f, 0.6f) : // Outer Expanse colors
-                    Custom.HSL2RGB(Random.Range(-40/360f, 40/360f), 1, Custom.ClampedRandomVariation(0.6f, 0.15f, 0.2f)); // Default colors
+                    Custom.HSL2RGB(Random.Range(-40 / 360f, 40 / 360f), 1, Custom.ClampedRandomVariation(0.6f, 0.15f, 0.2f)); // Default colors
             Color col2 =
                     pmg.pole.abstractCreature.Winterized ?
                     Custom.HSL2RGB(Random.Range(190 / 360f, 250 / 360f), 1, Custom.ClampedRandomVariation(0.9f, 0.10f, 0.4f)) : // Winter colors
                     pmg.pole.abstractCreature.world.region is not null &&
                     pmg.pole.abstractCreature.world.region.name == "OE" ?
-                    Random.ColorHSV(40/360f, 140/360f, 1, 1, 0.5f, 0.6f) : // Outer Expanse colors
-                    Custom.HSL2RGB(Random.Range(-40/360f, 40/360f), 1, Custom.ClampedRandomVariation(0.6f, 0.15f, 0.2f)); // Default colors
+                    Random.ColorHSV(40 / 360f, 140 / 360f, 1, 1, 0.5f, 0.6f) : // Outer Expanse colors
+                    Custom.HSL2RGB(Random.Range(-40 / 360f, 40 / 360f), 1, Custom.ClampedRandomVariation(0.6f, 0.15f, 0.2f)); // Default colors
 
             float gradientSkew = Random.Range(0, 3) switch
             {
@@ -1115,7 +1115,7 @@ internal class OtherCreatureChanges
                         return;
                     }
 
-                    Color leafColor = Color.Lerp(col1, col2, Mathf.Pow(Mathf.InverseLerp(0, pmg.leafPairs/3f, i), gradientSkew));
+                    Color leafColor = Color.Lerp(col1, col2, Mathf.Pow(Mathf.InverseLerp(0, pmg.leafPairs / 3f, i), gradientSkew));
 
                     sLeaser.sprites[pmg.LeafDecorationSprite(i, j)].color =
                         Color.Lerp(leafColor, val, Mathf.Pow(Mathf.InverseLerp(pmg.decoratedLeafPairs / 2f, pmg.decoratedLeafPairs, i), 0.6f));
@@ -1132,7 +1132,7 @@ internal class OtherCreatureChanges
     public static void ErraticWindKelpHide(On.TentaclePlant.orig_Update orig, TentaclePlant klp, bool eu)
     {
         float? extended = null;
-        if (Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval] && klp?.room?.blizzardGraphics is not null && CWT.AbsCtrData.TryGetValue(klp.abstractCreature, out AbsCtrInfo aI))
+        if (Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval] && klp?.room?.blizzardGraphics is not null && CWT.AbsCtrData.TryGetValue(klp.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             if (aI.destinationLocked || klp.room.blizzardGraphics.GetBlizzardPixel((int)(klp.DangerPos.x / 20f), (int)(klp.DangerPos.y / 20f)).g > 0)
             {
@@ -1162,19 +1162,19 @@ internal class OtherCreatureChanges
             Random.InitState(mkg.plant.abstractCreature.ID.RandomSeed);
             Color col1 =
                 mkg.plant.abstractCreature.Winterized ?
-                Custom.HSL2RGB(Random.Range(200f, 300f)/360f, Random.Range(0.825f, 1), Custom.WrappedRandomVariation(0.875f, 0.125f, 0.2f)) : // Winter colors
+                Custom.HSL2RGB(Random.Range(200f, 300f) / 360f, Random.Range(0.825f, 1), Custom.WrappedRandomVariation(0.875f, 0.125f, 0.2f)) : // Winter colors
                 mkg.plant.abstractCreature.world.region is not null &&
                 mkg.plant.abstractCreature.world.region.name == "OE" ?
-                Random.ColorHSV(30/360f, 170/360f, 1, 1, 0.4f, 0.7f) : // Outer Expanse colors
-                Random.ColorHSV(-60/360f, 20/360f, 1, 1, 0.45f, 0.65f); // Default colors
+                Random.ColorHSV(30 / 360f, 170 / 360f, 1, 1, 0.4f, 0.7f) : // Outer Expanse colors
+                Random.ColorHSV(-60 / 360f, 20 / 360f, 1, 1, 0.45f, 0.65f); // Default colors
 
             Color col2 =
                 mkg.plant.abstractCreature.Winterized ?
                 Custom.HSL2RGB(Random.Range(200f, 300f) / 360f, Random.Range(0.825f, 1), Custom.WrappedRandomVariation(0.875f, 0.125f, 0.2f)) : // Winter colors
                 mkg.plant.abstractCreature.world.region is not null &&
                 mkg.plant.abstractCreature.world.region.name == "OE" ?
-                Random.ColorHSV(30/360f, 170/360f, 1, 1, 0.4f, 0.7f) : // Outer Expanse colors
-                Random.ColorHSV(-60/360f, 20/360f, 1, 1, 0.45f, 0.65f); // Default colors
+                Random.ColorHSV(30 / 360f, 170 / 360f, 1, 1, 0.4f, 0.7f) : // Outer Expanse colors
+                Random.ColorHSV(-60 / 360f, 20 / 360f, 1, 1, 0.45f, 0.65f); // Default colors
 
             float gradientSkew = Random.Range(0, 3) switch
             {
@@ -1200,7 +1200,7 @@ internal class OtherCreatureChanges
 
     #region Big Jellyfish
 
-    public static void BigJellyCRONCH(On.MoreSlugcats.BigJellyFish.orig_Collide orig, BigJellyFish bigJelly, PhysicalObject physObj, int myChunk, int otherChunk) 
+    public static void BigJellyCRONCH(On.MoreSlugcats.BigJellyFish.orig_Collide orig, BigJellyFish bigJelly, PhysicalObject physObj, int myChunk, int otherChunk)
     {
         bool cntConsumed = physObj is not null && physObj is Centipede eated && bigJelly.consumedCreatures.Contains(eated);
 
@@ -1225,8 +1225,8 @@ internal class OtherCreatureChanges
             physObj is not null &&
             physObj is Creature victim &&
             victim.bodyChunks[otherChunk].contactPoint.y > 0 &&
-            CWT.CreatureData.TryGetValue(bigJelly, out CreatureInfo jI) &&
-            CWT.CreatureData.TryGetValue(victim, out CreatureInfo vI) &&
+            CWT.CreatureData.TryGetValue(bigJelly, out CWT.CreatureInfo jI) &&
+            CWT.CreatureData.TryGetValue(victim, out CWT.CreatureInfo vI) &&
             (jI.impactCooldown == 0 || vI.impactCooldown == 0))
         {
             jI.impactCooldown = 40;
@@ -1376,7 +1376,7 @@ internal class OtherCreatureChanges
             Random.InitState(absYeek.ID.RandomSeed);
 
             HSLColor accColor =
-                absYeek.Winterized?
+                absYeek.Winterized ?
                 new(Random.Range(160 / 360f, 280 / 360f), Random.value < 0.1 ? 0 : Random.Range(0.75f, 1), Random.value < 0.1f ? Random.Range(0.45f, 0.55f) : Random.Range(0.55f, 0.70f)) : // Winter colors
                 absYeek.world.region is not null &&
                 absYeek.world.region.name == "OE" ?
@@ -1384,8 +1384,8 @@ internal class OtherCreatureChanges
                 new(Random.value, Random.Range(0.85f, 1), Custom.WrappedRandomVariation(0.66f, 0.11f, 0.1f)); // Default colors
 
             yGrph.tailHighlightColor = Color.HSVToRGB(accColor.hue, accColor.saturation, accColor.lightness);
-            yGrph.featherColor = Color.HSVToRGB(Custom.ClampedRandomVariation(accColor.hue, 20/360f, 0.2f), accColor.saturation + 0.075f, accColor.lightness - 0.15f);
-        
+            yGrph.featherColor = Color.HSVToRGB(Custom.ClampedRandomVariation(accColor.hue, 20 / 360f, 0.2f), accColor.saturation + 0.075f, accColor.lightness - 0.15f);
+
             if (Random.value < 0.01f)
             {
                 (yGrph.featherColor, yGrph.tailHighlightColor) = (yGrph.tailHighlightColor, yGrph.featherColor);
@@ -1401,7 +1401,7 @@ internal class OtherCreatureChanges
                 Color.Lerp(val, Color.white, absYeek.personality.nervous * 0.5f);
 
             yGrph.furColor = Color.Lerp(val, yGrph.furColor, absYeek.personality.sympathy);
-            yGrph.furColor = Color.Lerp(yGrph.furColor, Color.white, Random.Range(0.6f, 0.75f) + (absYeek.Winterized? 0.15f : 0));
+            yGrph.furColor = Color.Lerp(yGrph.furColor, Color.white, Random.Range(0.6f, 0.75f) + (absYeek.Winterized ? 0.15f : 0));
             yGrph.HeadfurColor = Color.Lerp(yGrph.furColor + new Color(0.1f, 0.1f, 0.1f), yGrph.furColor + new Color(0.3f, 0.15f, 0.15f), absYeek.personality.bravery);
             yGrph.HeadfurColor = Color.Lerp(yGrph.furColor, yGrph.HeadfurColor, absYeek.personality.dominance);
             yGrph.beakColor = Color.Lerp(yGrph.furColor, new Color(0.81f, 0.53f, 0.34f), 0.6f + (absYeek.personality.dominance / 3f));
@@ -1539,7 +1539,7 @@ internal class OtherCreatureChanges
     public static void CreatureTimersAndMechanics(On.Creature.orig_Update orig, Creature ctr, bool eu)
     {
         orig(ctr, eu);
-        if (ctr is null || !CWT.CreatureData.TryGetValue(ctr, out CreatureInfo cI))
+        if (ctr is null || !CWT.CreatureData.TryGetValue(ctr, out CWT.CreatureInfo cI))
         {
             return;
         }
@@ -1567,7 +1567,7 @@ internal class OtherCreatureChanges
         // This effectively lets me assign both new AND pre-existing objects as IProvideWarmth, and with MAXIMUM CUSTOMIZABILITY!!!
         if (ctr.room is not null)
         {
-            if (CWT.AbsCtrData.TryGetValue(ctr.abstractCreature, out AbsCtrInfo aI) && aI.debuffs is not null)
+            if (CWT.AbsCtrData.TryGetValue(ctr.abstractCreature, out CWT.AbsCtrInfo aI) && aI.debuffs is not null)
             {
                 for (int b = aI.debuffs.Count - 1; b >= 0; b--)
                 {
@@ -1763,7 +1763,7 @@ internal class OtherCreatureChanges
                     Incan.isIncan &&
                     dirAndMomentum.HasValue &&
                     dirAndMomentum.Value.y > Mathf.Abs(dirAndMomentum.Value.x) * 3)
-                    // If the source of damage is a weapon thrown upwards by the Incandescent...
+                // If the source of damage is a weapon thrown upwards by the Incandescent...
                 {
                     stun += 30; // ...the target gets almost an extra second of stun.
                 }
@@ -1786,14 +1786,14 @@ internal class OtherCreatureChanges
                         dmg *= 0.75f; // 1.33x HP
                         if (dmgType == HSEnums.DamageTypes.Cold)
                         {
-                            dmg *= 2/3f; // Usually weak to cold, but this is negated in the Incandescent's time
+                            dmg *= 2 / 3f; // Usually weak to cold, but this is negated in the Incandescent's time
                         }
                     }
                     else if (target is TentaclePlant)
                     {
                         if (dmgType == HSEnums.DamageTypes.Cold)
                         {
-                            dmg *= 2/3f; // Usually weak to cold, but this is negated in the Incandescent's time
+                            dmg *= 2 / 3f; // Usually weak to cold, but this is negated in the Incandescent's time
                         }
                     }
                 }
@@ -1840,7 +1840,9 @@ internal class OtherCreatureChanges
         IL.AbstractCreature.InDenUpdate += IL =>
         {
             ILCursor c = new(IL);
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = IL.DefineLabel();
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             c.Emit(OpCodes.Ldarg_0);
             c.Emit(OpCodes.Ldarg_1);
             c.EmitDelegate((AbstractCreature absCtr, int time) =>
@@ -1863,10 +1865,10 @@ internal class OtherCreatureChanges
             {
                 c1.Emit(OpCodes.Ldarg_0);
                 c1.EmitDelegate((bool flag, AbstractCreature absCtr) => flag && !(IsIncanStory(absCtr?.world.game) && Weather.FogPrecycle));
-                                                                                // Prevents normal Precycle creatures from spawning if a special precycle type becomes active in the Incandescent's campaign.
+                // Prevents normal Precycle creatures from spawning if a special precycle type becomes active in the Incandescent's campaign.
             }
-            
-            
+
+
             else
             {
                 Debug.LogError("[Hailstorm] Hook to IL.AbstractCreature.InDenUpdate ain't workin'.");
@@ -1876,7 +1878,9 @@ internal class OtherCreatureChanges
         IL.AbstractCreature.WantToStayInDenUntilEndOfCycle += IL =>
         {
             ILCursor c1 = new(IL);
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = null;
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             if (c1.TryGotoNext(
                 MoveType.After,
                 x => x.MatchLdarg(0),
@@ -1884,7 +1888,7 @@ internal class OtherCreatureChanges
                 x => x.MatchBrtrue(out label)))
             {
                 c1.Emit(OpCodes.Ldarg_0);
-                c1.EmitDelegate((AbstractCreature absCtr) => !IsIncanStory(absCtr?.world?.game) || !CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) || !aI.LateBlizzardRoamer);
+                c1.EmitDelegate((AbstractCreature absCtr) => !IsIncanStory(absCtr?.world?.game) || !CWT.AbsCtrData.TryGetValue(absCtr, out CWT.AbsCtrInfo aI) || !aI.LateBlizzardRoamer);
                 c1.Emit(OpCodes.Brfalse, label);
                 // Allows late blizzard roamers to stay outside of their dens in the Incandescent's campaign.
             }
@@ -1920,7 +1924,7 @@ internal class OtherCreatureChanges
                 x => x.MatchLdfld<AbstractCreature>(nameof(AbstractCreature.preCycle))))
             {
                 c3.Emit(OpCodes.Ldarg_0);
-                c3.EmitDelegate((bool flag, AbstractCreature absCtr) => flag || (IsIncanStory(absCtr?.world.game) && CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) && aI.FogRoamer));
+                c3.EmitDelegate((bool flag, AbstractCreature absCtr) => flag || (IsIncanStory(absCtr?.world.game) && CWT.AbsCtrData.TryGetValue(absCtr, out CWT.AbsCtrInfo aI) && aI.FogRoamer));
             }
             else
             {
@@ -1939,7 +1943,7 @@ internal class OtherCreatureChanges
                 ))
             {
                 c4.Emit(OpCodes.Ldarg_0);
-                c4.EmitDelegate((bool flag, AbstractCreature absCtr) => flag || (IsIncanStory(absCtr?.world.game) && ((absCtr.preCycle && Weather.FogPrecycle) || (CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) && aI.FogRoamer && !Weather.FogPrecycle))));
+                c4.EmitDelegate((bool flag, AbstractCreature absCtr) => flag || (IsIncanStory(absCtr?.world.game) && ((absCtr.preCycle && Weather.FogPrecycle) || (CWT.AbsCtrData.TryGetValue(absCtr, out CWT.AbsCtrInfo aI) && aI.FogRoamer && !Weather.FogPrecycle))));
                 //c4.Emit(OpCodes.Brfalse, label);
             }
             else
@@ -1966,7 +1970,9 @@ internal class OtherCreatureChanges
 
         IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle += IL =>
         {
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = null;
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
 
             ILCursor c1 = new(IL);
             if (c1.TryGotoNext(
@@ -1977,7 +1983,7 @@ internal class OtherCreatureChanges
                 x => x.MatchBrtrue(out label)))
             {
                 c1.Emit(OpCodes.Ldarg_0);
-                c1.EmitDelegate((AbstractCreatureAI absCtrAI) => !(IsIncanStory(absCtrAI?.parent?.world?.game) && CWT.AbsCtrData.TryGetValue(absCtrAI.parent, out AbsCtrInfo aI) && aI.LateBlizzardRoamer));
+                c1.EmitDelegate((AbstractCreatureAI absCtrAI) => !(IsIncanStory(absCtrAI?.parent?.world?.game) && CWT.AbsCtrData.TryGetValue(absCtrAI.parent, out CWT.AbsCtrInfo aI) && aI.LateBlizzardRoamer));
                 c1.Emit(OpCodes.Brtrue, label);
             }
             else
@@ -2029,7 +2035,7 @@ internal class OtherCreatureChanges
 
     public static void CustomFlags(AbstractCreature absCtr)
     {
-        if (!CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI))
+        if (!CWT.AbsCtrData.TryGetValue(absCtr, out CWT.AbsCtrInfo aI))
         {
             return;
         }
@@ -2256,7 +2262,7 @@ internal class OtherCreatureChanges
     public static bool HailstormDenUpdate(AbstractCreature absCtr, int time)
     {
         if (IsIncanStory(absCtr?.world?.game) &&
-            CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) &&
+            CWT.AbsCtrData.TryGetValue(absCtr, out CWT.AbsCtrInfo aI) &&
             (aI.HasHSCustomFlag || aI.destinationLocked || Weather.ErraticWindFearers.Contains(absCtr.creatureTemplate.type)))
         {
             if (aI.destinationLocked)
@@ -2294,7 +2300,7 @@ internal class OtherCreatureChanges
 
     public static bool AdverseToCurrentCycle(AbstractCreature absCtr)
     {
-        return CWT.AbsCtrData.TryGetValue(absCtr, out AbsCtrInfo aI) && Weather.ErraticWindCycle && aI.ErraticWindAvoider;
+        return CWT.AbsCtrData.TryGetValue(absCtr, out CWT.AbsCtrInfo aI) && Weather.ErraticWindCycle && aI.ErraticWindAvoider;
     }
 
     public static void HailstormHeatsourceUpdate(Creature target)
@@ -2506,53 +2512,3 @@ internal class OtherCreatureChanges
     }
 
 }
-
-
-#region Slime Mold Devtool Stuff
-public class AbstractSlimeMold : AbstractConsumable
-{
-    public bool big;
-
-    public AbstractSlimeMold(World world, AbstractObjectType objType, PhysicalObject realizedObject, WorldCoordinate pos, EntityID ID, int originRoom, int placedObjectIndex, PlacedObject.ConsumableObjectData slmData, bool big)
-        : base(world, objType, realizedObject, pos, ID, originRoom, placedObjectIndex, slmData)
-    {
-        this.big = big;
-    }
-
-    public string BaseToString()
-    {
-        return string.Format(CultureInfo.InvariantCulture, "{0}<oA>{1}<oA>{2}<oA>{3}<oA>{4}<oA>{5}", ID.ToString(), type.ToString(), pos.SaveToString(), originRoom, placedObjectIndex, big ? 1 : 0);
-    }
-
-    public override string ToString()
-    {
-        return SaveUtils.AppendUnrecognizedStringAttrs(BaseToString(), "<oA>", unrecognizedAttributes);
-    }
-}
-
-public class SlimeMoldData : PlacedObject.ConsumableObjectData
-{
-    public bool big;
-
-    public SlimeMoldData(PlacedObject owner) : base(owner)
-    {
-    }
-
-    public override void FromString(string s)
-    {
-        base.FromString(s);
-        string[] array = Regex.Split(s, "~");
-        if (array.Length >= 5)
-        {
-            big = int.Parse(array[4], NumberStyles.Any, CultureInfo.InvariantCulture) > 0;
-            unrecognizedAttributes = SaveUtils.PopulateUnrecognizedStringAttrs(array, 5);
-        }
-    }
-
-    public override string ToString()
-    {
-        return SaveUtils.AppendUnrecognizedStringAttrs(BaseSaveString() + string.Format(CultureInfo.InvariantCulture, "~{0}", big ? 1 : 0), "~", unrecognizedAttributes);
-    }
-}
-
-#endregion

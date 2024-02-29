@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class GlowSpiderState : HealthState
 {
     public class Behavior : ExtEnum<Behavior>
@@ -76,7 +74,7 @@ public class GlowSpiderState : HealthState
     }
     public IndividualVariations ivars;
 
-    public GlowSpiderState(AbstractCreature absLmn) : base (absLmn)
+    public GlowSpiderState(AbstractCreature absLmn) : base(absLmn)
     {
         juice = 1;
         behavior = Idle;
@@ -127,7 +125,7 @@ public class GlowSpiderState : HealthState
 
         if (dead)
         {
-            if (timeSincePreyLastSeen != 0 || darknessCounter != 0 || rushPreyCounter != 0 || behavior != Behavior.Idle || suppressedState is not null || stateTimeLimit != -1)
+            if (timeSincePreyLastSeen != 0 || darknessCounter != 0 || rushPreyCounter != 0 || behavior != Idle || suppressedState is not null || stateTimeLimit != -1)
             {
                 Reset();
             }
@@ -139,14 +137,14 @@ public class GlowSpiderState : HealthState
             stateTimeLimit--;
             if (stateTimeLimit == 0)
             {
-                Behavior newState = Behavior.Idle;
+                Behavior newState = Idle;
                 if (suppressedState is not null)
                 {
                     newState = suppressedState;
                 }
-                else if (behavior == Behavior.Aggravated)
+                else if (behavior == Aggravated)
                 {
-                    newState = Behavior.Hunt;
+                    newState = Hunt;
                 }
                 ChangeBehavior(newState, 1);
             }
@@ -155,7 +153,7 @@ public class GlowSpiderState : HealthState
     }
     public virtual void ChangeBehavior(Behavior newState, int stubborness)
     {
-        if (newState is null || newState == behavior || (dead && newState != Behavior.Idle) || (behavior == Overloaded && Stunned))
+        if (newState is null || newState == behavior || (dead && newState != Idle) || (behavior == Overloaded && Stunned))
         {
             return;
         }
@@ -174,5 +172,3 @@ public class GlowSpiderState : HealthState
     //-----------------------------------------
 
 }
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------

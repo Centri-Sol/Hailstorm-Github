@@ -1,8 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
 public class ColorableZapFlash : CosmeticSprite
 {
     private LightSource lightsource;
@@ -18,7 +15,7 @@ public class ColorableZapFlash : CosmeticSprite
     public ColorableZapFlash(Vector2 initPos, float size, Color color)
     {
         this.size = size;
-        lifeTime = Mathf.Lerp(1f, 4f, Random.value) + 2f * size;
+        lifeTime = Mathf.Lerp(1f, 4f, Random.value) + (2f * size);
         life = 1f;
         lastLife = 1f;
         pos = initPos;
@@ -81,9 +78,7 @@ public class ColorableZapFlash : CosmeticSprite
         sLeaser.sprites[0].scale = Mathf.Lerp(0.5f, 1f, Random.value * lifespanFac * size) * 500f / 16f;
         sLeaser.sprites[0].alpha = lifespanFac * Random.value * 0.75f;
 
-        sLeaser.sprites[1].scale = Mathf.Lerp(0.5f, 1f, (0.5f + 0.5f * Random.value) * lifespanFac * size) * 400f / 16f;
+        sLeaser.sprites[1].scale = Mathf.Lerp(0.5f, 1f, (0.5f + (0.5f * Random.value)) * lifespanFac * size) * 400f / 16f;
         sLeaser.sprites[1].alpha = lifespanFac * Random.value * 0.75f;
     }
 }
-
-//----------------------------------------------------------------------------------

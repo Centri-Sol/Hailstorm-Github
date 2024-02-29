@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-namespace Hailstorm;
+﻿namespace Hailstorm;
 
 
 [BepInPlugin(MOD_ID, "The Incandescent", "0.3.0")]
@@ -26,8 +24,6 @@ public class Plugin : BaseUnityPlugin
 
             LoadAtlases();
 
-            SoundEffects.RegisterValues();
-
             IncanFeatures.Hooks();
             IncanVisuals.Hooks();
 
@@ -35,17 +31,6 @@ public class Plugin : BaseUnityPlugin
             Weather.Hooks();
             Dialogue.Hooks();
             MiscWorldChanges.Hooks();
-
-            LizardHooks.Hooks();
-            CentiHooks.Apply();
-            HailstormSpiders.Hooks();
-            HailstormVultures.Hooks();
-            OtherCreatureChanges.Hooks();
-
-            CustomTemplateInfo.ApplyWeatherResistances();
-            CustomObjectInfo.AddFreezableObjects();
-
-            ObjectChanges.Hooks();
 
             JollyCoopFixes.Hooks();
 
@@ -66,6 +51,12 @@ public class Plugin : BaseUnityPlugin
 
     private void ApplyCreatures()
     {
+        LizardHooks.Hooks();
+        CentiHooks.Apply();
+        HailstormSpiders.Hooks();
+        HailstormVultures.Hooks();
+        OtherCreatureChanges.Hooks();
+
         Content.Register(
             new InfantAquapedeCritob(),
             new SnowcuttleTemplate(HSEnums.CreatureType.SnowcuttleTemplate, null, null),
@@ -84,6 +75,10 @@ public class Plugin : BaseUnityPlugin
 
     private void ApplyItems()
     {
+        CustomTemplateInfo.ApplyWeatherResistances();
+        CustomObjectInfo.AddFreezableObjects();
+        ObjectChanges.Hooks();
+
         Content.Register(
             new IceChunkFisob(),
             new FreezerCrystalFisob(),

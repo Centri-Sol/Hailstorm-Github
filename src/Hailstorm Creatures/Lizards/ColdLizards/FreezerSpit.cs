@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class FreezerSpit : UpdatableAndDeletable, IDrawable
 {
     public Vector2 pos;
@@ -45,22 +43,15 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
         slime = new Vector2[(int)Mathf.Lerp(8f, 15f, Random.value), 4];
         for (int i = 0; i < slime.GetLength(0); i++)
         {
-            slime[i, 0] = startPos + Custom.RNV() * 4f * Random.value;
+            slime[i, 0] = startPos + (Custom.RNV() * 4f * Random.value);
             slime[i, 1] = slime[i, 0];
-            slime[i, 2] = startVel + Custom.RNV() * 4f * Random.value;
+            slime[i, 2] = startVel + (Custom.RNV() * 4f * Random.value);
             int num = (i != 0 && Random.value < 0.7f) ? (Random.value < 0.3f ? Random.Range(0, slime.GetLength(0)) : i - 1) : -1;
             slime[i, 3] = new Vector2(num, Mathf.Lerp(3, 8, Random.value));
         }
         killtag = liz.abstractCreature;
         color1 = liz.effectColor;
-        if (liz is ColdLizard cLiz)
-        {
-            color2 = cLiz.effectColor2;
-        }
-        else
-        {
-            color2 = new Color(0.1f, 0.1f, 0.1f);
-        }
+        color2 = liz is ColdLizard cLiz ? cLiz.effectColor2 : new Color(0.1f, 0.1f, 0.1f);
     }
 
     //--------------------------------------------------------------------------------
@@ -83,9 +74,9 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
                 Vector2 travelDir = Custom.DirVec(slime[i, 0], pos);
                 float distBetweenPoints = Vector2.Distance(slime[i, 0], pos);
                 ref Vector2 reference3 = ref slime[i, 0];
-                reference3 -= travelDir * (slime[i, 3].y * massLeft - distBetweenPoints) * 0.9f;
+                reference3 -= travelDir * ((slime[i, 3].y * massLeft) - distBetweenPoints) * 0.9f;
                 ref Vector2 reference4 = ref slime[i, 2];
-                reference4 -= travelDir * (slime[i, 3].y * massLeft - distBetweenPoints) * 0.9f;
+                reference4 -= travelDir * ((slime[i, 3].y * massLeft) - distBetweenPoints) * 0.9f;
                 pos += travelDir * (slime[i, 3].y - distBetweenPoints) * 0.1f;
                 vel += travelDir * (slime[i, 3].y - distBetweenPoints) * 0.1f;
             }
@@ -94,13 +85,13 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
                 Vector2 val3 = Custom.DirVec(slime[i, 0], slime[(int)slime[i, 3].x, 0]);
                 float num2 = Vector2.Distance(slime[i, 0], slime[(int)slime[i, 3].x, 0]);
                 ref Vector2 reference5 = ref slime[i, 0];
-                reference5 -= val3 * (slime[i, 3].y * massLeft - num2) * 0.5f;
+                reference5 -= val3 * ((slime[i, 3].y * massLeft) - num2) * 0.5f;
                 ref Vector2 reference6 = ref slime[i, 2];
-                reference6 -= val3 * (slime[i, 3].y * massLeft - num2) * 0.5f;
+                reference6 -= val3 * ((slime[i, 3].y * massLeft) - num2) * 0.5f;
                 ref Vector2 reference7 = ref slime[(int)slime[i, 3].x, 0];
-                reference7 += val3 * (slime[i, 3].y * massLeft - num2) * 0.5f;
+                reference7 += val3 * ((slime[i, 3].y * massLeft) - num2) * 0.5f;
                 ref Vector2 reference8 = ref slime[(int)slime[i, 3].x, 2];
-                reference8 += val3 * (slime[i, 3].y * massLeft - num2) * 0.5f;
+                reference8 += val3 * ((slime[i, 3].y * massLeft) - num2) * 0.5f;
             }
         }
         bool collision = false;
@@ -170,11 +161,9 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
 
     private Vector2 StuckPosOfSlime(int s, float timeStacker)
     {
-        if ((int)slime[s, 3].x < 0 || (int)slime[s, 3].x >= slime.GetLength(0))
-        {
-            return Vector2.Lerp(lastPos, pos, timeStacker);
-        }
-        return Vector2.Lerp(slime[(int)slime[s, 3].x, 1], slime[(int)slime[s, 3].x, 0], timeStacker);
+        return (int)slime[s, 3].x < 0 || (int)slime[s, 3].x >= slime.GetLength(0)
+            ? Vector2.Lerp(lastPos, pos, timeStacker)
+            : Vector2.Lerp(slime[(int)slime[s, 3].x, 1], slime[(int)slime[s, 3].x, 0], timeStacker);
     }
 
     public void Explode()
@@ -201,7 +190,7 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
                     continue;
                 }
 
-                distFac = Mathf.InverseLerp(ExplosionRadius, ExplosionRadius/5f, Custom.Dist(pos, ctr.DangerPos));
+                distFac = Mathf.InverseLerp(ExplosionRadius, ExplosionRadius / 5f, Custom.Dist(pos, ctr.DangerPos));
                 if (distFac <= 0)
                 {
                     continue;
@@ -218,7 +207,7 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
             {
                 PhysicalObject obj = absObj.realizedObject;
 
-                distFac = Mathf.InverseLerp(ExplosionRadius, ExplosionRadius/5f, Custom.Dist(pos, obj.firstChunk.pos));
+                distFac = Mathf.InverseLerp(ExplosionRadius, ExplosionRadius / 5f, Custom.Dist(pos, obj.firstChunk.pos));
                 if (distFac <= 0)
                 {
                     continue;
@@ -275,7 +264,7 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
         }
         for (int j = 0; j < 60; j++)
         {
-            room.AddObject(new FreezerMist(lastPos, (Custom.RNV() * Random.value * 10f), color1, color2, 1, killtag, smallInsects, true));
+            room.AddObject(new FreezerMist(lastPos, Custom.RNV() * Random.value * 10f, color1, color2, 1, killtag, smallInsects, true));
             if (j < 12)
             {
                 room.AddObject(j % 2 == 1 ? // Creates snowflakes on odd numbers, and "ice shards" on even ones.
@@ -373,6 +362,3 @@ public class FreezerSpit : UpdatableAndDeletable, IDrawable
         }
     }
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

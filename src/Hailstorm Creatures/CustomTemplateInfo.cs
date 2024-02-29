@@ -1,33 +1,19 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
 public static class CustomTemplateInfo
 {
     public static bool IsColdCreature(CreatureTemplate.Type creatureType)
     {
-        if (creatureType == HSEnums.CreatureType.IcyBlueLizard ||
+        return creatureType == HSEnums.CreatureType.IcyBlueLizard ||
             creatureType == HSEnums.CreatureType.FreezerLizard ||
-            creatureType == HSEnums.CreatureType.Chillipede)
-        {
-            return true;
-        }
-        return false;
+            creatureType == HSEnums.CreatureType.Chillipede;
     }
     public static bool IsFireCreature(Creature creature)
     {
-        if (creature is Player player &&
+        return (creature is Player player &&
             IncanInfo.IncanData.TryGetValue(player, out IncanInfo Incan) &&
             Incan.isIncan)
-        {
-            return true;
-        }
-        if (creature.Template.type == MoreSlugcatsEnums.CreatureTemplateType.FireBug)
-        {
-            return true;
-        }
-        return false;
+|| creature.Template.type == MoreSlugcatsEnums.CreatureTemplateType.FireBug;
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -285,8 +271,8 @@ public static class CustomTemplateInfo
             }
             else if (type == CreatureTemplate.Type.SmallCentipede)
             {
-                temp.damageRestistances[Heat.index, 0] = 4/3f; // -33% damage
-                temp.damageRestistances[Heat.index, 1] = 4/3f; // -33% stun
+                temp.damageRestistances[Heat.index, 0] = 4 / 3f; // -33% damage
+                temp.damageRestistances[Heat.index, 1] = 4 / 3f; // -33% stun
             }
             else if (type == CreatureTemplate.Type.Centipede)
             {
@@ -588,11 +574,11 @@ public static class CustomTemplateInfo
                 // Bite damage is unchanged
                 temp.damageRestistances[Creature.DamageType.Bite.index, 1] = 1.5f; // -33% stun
                 temp.damageRestistances[Creature.DamageType.Electric.index, 0] = 3f;   // -66% damage
-                temp.damageRestistances[Creature.DamageType.Electric.index, 1] = 4/3f; // -25% stun
+                temp.damageRestistances[Creature.DamageType.Electric.index, 1] = 4 / 3f; // -25% stun
                 temp.damageRestistances[Cold.index, 0] = 10f; // -90% damage
                 temp.damageRestistances[Cold.index, 1] = 10f; // -90% stun
-                temp.damageRestistances[Heat.index, 0] = 2/3f; // +50% damage
-                temp.damageRestistances[Heat.index, 1] = 2/3f; // +50% stun
+                temp.damageRestistances[Heat.index, 0] = 2 / 3f; // +50% damage
+                temp.damageRestistances[Heat.index, 1] = 2 / 3f; // +50% stun
                 temp.damageRestistances[Venom.index, 0] = 1.5f; // -33% damage
                 temp.damageRestistances[Venom.index, 1] = 1.5f; // -33% stun
             }
@@ -615,8 +601,8 @@ public static class CustomTemplateInfo
             {
                 temp.damageRestistances[Creature.DamageType.Bite.index, 0] = 100f; // -99% damage
                 temp.damageRestistances[Creature.DamageType.Bite.index, 1] = 100f; // -99% damage
-                temp.damageRestistances[Creature.DamageType.Electric.index, 0] = 2/3f; // +50% damage
-                temp.damageRestistances[Creature.DamageType.Electric.index, 1] = 2/3f; // +50% damage
+                temp.damageRestistances[Creature.DamageType.Electric.index, 0] = 2 / 3f; // +50% damage
+                temp.damageRestistances[Creature.DamageType.Electric.index, 1] = 2 / 3f; // +50% damage
             }
         }
 
@@ -695,7 +681,7 @@ public static class CustomTemplateInfo
                 }
                 if (dmgType == HSEnums.DamageTypes.Venom)
                 {
-                    return 2/3f;
+                    return 2 / 3f;
                 }
             }
             else if (self.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Spear)
@@ -847,6 +833,3 @@ public static class CustomTemplateInfo
     }
 
 }
-
-//--------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------

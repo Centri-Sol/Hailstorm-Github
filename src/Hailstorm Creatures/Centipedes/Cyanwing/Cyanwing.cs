@@ -29,9 +29,9 @@ public class Cyanwing : Centipede
         absCyn.state.meatLeft = 12;
         AssignSize();
         offcolor = Random.value < 0.07f;
-        minHue = 160/360f + Mathf.Pow((50/360f * Random.value), 2f);
+        minHue = (160 / 360f) + Mathf.Pow(50 / 360f * Random.value, 2f);
         Random.state = state;
-        maxHue = minHue + (50/360f);
+        maxHue = minHue + (50 / 360f);
         saturation = 1;
         bodyColor = new HSLColor(0, 0, 0.8f).rgb;
 
@@ -46,7 +46,7 @@ public class Cyanwing : Centipede
                     Mathf.Pow(Mathf.Clamp(Mathf.Sin(Mathf.PI * bodyLengthProgression), 0, 1), Mathf.Lerp(0.7f, 0.3f, size)));
             chunkRad += 0.3f;
 
-            float chunkMass = Mathf.Lerp(3/70f, 11/34f, Mathf.Pow(size, 1.4f));
+            float chunkMass = Mathf.Lerp(3 / 70f, 11 / 34f, Mathf.Pow(size, 1.4f));
 
             chunkMass += 0.02f + (0.08f * Mathf.Clamp01(Mathf.Sin(Mathf.InverseLerp(0f, bodyChunks.Length - 1, c) * Mathf.PI)) * 0.5f);
 
@@ -290,7 +290,7 @@ public class Cyanwing : Centipede
         emitSparkCounter++;
         float sparkFac = SelfDestructCountdown > 20 ?
             Custom.LerpMap(SelfDestructCountdown, 320, 20, 70, 15) :
-            Custom.LerpMap(SelfDestructCountdown,  20,  0,  5,  1);
+            Custom.LerpMap(SelfDestructCountdown, 20, 0, 5, 1);
         if (emitSparkCounter > sparkFac && Random.value < 0.3f)
         {
             float boomFac = 0.33f + Mathf.InverseLerp(640, 0, SelfDestructCountdown);
@@ -303,7 +303,7 @@ public class Cyanwing : Centipede
         }
         if (SelfDestructCountdown == 40)
         {
-            room.PlaySound(SoundEffects.CyanwingDeath, mainBodyChunk);
+            room.PlaySound(HSEnums.Sound.CyanwingDeath, mainBodyChunk);
         }
         if (SelfDestructCountdown < 1)
         {
@@ -348,7 +348,7 @@ public class Cyanwing : Centipede
             }
             if (moving)
             {
-                int bodyDir = (!bodyDirection ? 1 : -1);
+                int bodyDir = !bodyDirection ? 1 : -1;
                 if (AccessibleTile(room.GetTilePosition(bodyChunks[b + bodyDir].pos)))
                 {
                     chunk.vel += Custom.DirVec(chunk.pos, bodyChunks[b + bodyDir].pos) * 1.5f * Mathf.Lerp(0.5f, 1.5f, size);
@@ -362,11 +362,11 @@ public class Cyanwing : Centipede
             Vector2 finalMoveDir = (moveAngle + moveDir.normalized) / 2f;
             if (Mathf.Abs(finalMoveDir.x) > 0.5f)
             {
-                chunk.vel.y -= (chunk.pos.y - (room.MiddleOfTile(chunk.pos).y + VerticalSitSurface(chunk.pos) * (10f - chunk.rad))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(size, 1.2f));
+                chunk.vel.y -= (chunk.pos.y - (room.MiddleOfTile(chunk.pos).y + (VerticalSitSurface(chunk.pos) * (10f - chunk.rad)))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(size, 1.2f));
             }
             if (Mathf.Abs(finalMoveDir.y) > 0.5f)
             {
-                chunk.vel.x -= (chunk.pos.x - (room.MiddleOfTile(chunk.pos).x + HorizontalSitSurface(chunk.pos) * (10f - chunk.rad))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(size, 1.2f));
+                chunk.vel.x -= (chunk.pos.x - (room.MiddleOfTile(chunk.pos).x + (HorizontalSitSurface(chunk.pos) * (10f - chunk.rad)))) * Mathf.Lerp(0.01f, 0.6f, Mathf.Pow(size, 1.2f));
             }
         }
         if (segmentsAppliedForceTo > 0)
@@ -392,7 +392,7 @@ public class Cyanwing : Centipede
             {
                 bodyLengthProgress = 1f - bodyLengthProgress;
             }
-            float bodyWaveFac = Mathf.Sin((bodyWave - bodyLengthProgress * Mathf.Lerp(12f, 28f, size)) * Mathf.PI * 0.11f);
+            float bodyWaveFac = Mathf.Sin((bodyWave - (bodyLengthProgress * Mathf.Lerp(12f, 28f, size))) * Mathf.PI * 0.11f);
             bodyChunks[i].vel *= 0.9f;
             bodyChunks[i].vel.y += gravity * wingsStartedUp;
             if (i <= 0 || i >= bodyChunks.Length - 1)
@@ -406,7 +406,7 @@ public class Cyanwing : Centipede
         }
         if (room.aimap.getAItile(moveToPos).terrainProximity > 2)
         {
-            HeadChunk.vel += Custom.DirVec(HeadChunk.pos, moveToPos + Custom.DegToVec(bodyWave * 10f) * 60f) * 4f * Mathf.Lerp(0.7f, 1.3f, size);
+            HeadChunk.vel += Custom.DirVec(HeadChunk.pos, moveToPos + (Custom.DegToVec(bodyWave * 10f) * 60f)) * 4f * Mathf.Lerp(0.7f, 1.3f, size);
         }
         else
         {
@@ -438,7 +438,7 @@ public class Cyanwing : Centipede
                 }
             }
 
-            damage *= 4/3f; // Without this, Cyanwing max HP would sit at about 13.33. This effectively brings the HP down to around 10, matching the Red Centipede.
+            damage *= 4 / 3f; // Without this, Cyanwing max HP would sit at about 13.33. This effectively brings the HP down to around 10, matching the Red Centipede.
         }
 
         base.Violence(source, dirAndMomentum, hitChunk, hitAppen, dmgType, damage, bonusStun);
@@ -870,7 +870,7 @@ public class Cyanwing : Centipede
 
     public override Color ShortCutColor()
     {
-        return Custom.HSL2RGB((minHue + maxHue)/2f, saturation, 0.5f);
+        return Custom.HSL2RGB((minHue + maxHue) / 2f, saturation, 0.5f);
     }
 
     // - - - - - - - - - - - - - - - - - - - -
@@ -881,6 +881,3 @@ public class Cyanwing : Centipede
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class ChillipedeGraphics : CentipedeGraphics
 {
     public Chillipede chl;
@@ -11,7 +9,7 @@ public class ChillipedeGraphics : CentipedeGraphics
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    public ChillipedeGraphics (PhysicalObject owner)  : base(owner)
+    public ChillipedeGraphics(PhysicalObject owner) : base(owner)
     {
         chl = owner as Chillipede;
 
@@ -19,8 +17,8 @@ public class ChillipedeGraphics : CentipedeGraphics
         Random.InitState(chl.abstractCreature.ID.RandomSeed);
         hue = Random.Range(180 / 360f, 240 / 360f);
         saturation = 1;
-        ChillState.topShellColor = Custom.HSL2RGB(hue, saturation, 0.7f + hue / 5f);
-        ChillState.bottomShellColor = Custom.HSL2RGB(hue + 30 / 360f, 0.65f, 0.45f + hue / 4f);
+        ChillState.topShellColor = Custom.HSL2RGB(hue, saturation, 0.7f + (hue / 5f));
+        ChillState.bottomShellColor = Custom.HSL2RGB(hue + (30 / 360f), 0.65f, 0.45f + (hue / 4f));
         Random.state = state;
     }
 
@@ -197,8 +195,8 @@ public class ChillipedeGraphics : CentipedeGraphics
         base.AddToContainer(sLeaser, rCam, newContainer);
         if (sLeaser.sprites.Length > TotalSprites)
         {
-            var foregroundContainer = rCam.ReturnFContainer("Foreground");
-            var midgroundContainer = rCam.ReturnFContainer("Midground");
+            FContainer foregroundContainer = rCam.ReturnFContainer("Foreground");
+            FContainer midgroundContainer = rCam.ReturnFContainer("Midground");
 
             for (int s = TotalSprites; s < sLeaser.sprites.Length; s++)
             {
@@ -220,6 +218,3 @@ public class ChillipedeGraphics : CentipedeGraphics
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

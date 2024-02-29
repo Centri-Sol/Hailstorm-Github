@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//------------------------------------------------------
-
 public class IcyCosmetics
 {
     public static void Init()
@@ -214,7 +212,7 @@ public class IcyCosmetics
         num = Mathf.Lerp(num, Mathf.Pow(Mathf.Max(0f, Mathf.Lerp(liz.lastVoiceVisualization, liz.voiceVisualization, timeStacker)), 0.75f), Mathf.Lerp(liz.lastVoiceVisualizationIntensity, liz.voiceVisualizationIntensity, timeStacker));
 
         Color scaleCol = liz.effectColor;
-        if (liz.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && CWT.AbsCtrData.TryGetValue(liz.lizard.abstractCreature, out AbsCtrInfo aI))
+        if (liz.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && CWT.AbsCtrData.TryGetValue(liz.lizard.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             Vector3 e = Custom.RGB2HSL(scaleCol);
             float skew = aI.functionTimer / 1000f;
@@ -228,8 +226,6 @@ public class IcyCosmetics
     }
 
 }
-
-//------------------------------------------------------
 
 public class ArmorIceSpikes : Template
 {

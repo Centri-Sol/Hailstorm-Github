@@ -1,11 +1,9 @@
 namespace Hailstorm;
 
-//------------------------------------------------------------------------
-
-internal class LizardHooks
+public class LizardHooks
 {
 
-    public static ConditionalWeakTable<Lizard, LizardInfo> LizardData = new();
+    public static ConditionalWeakTable<Lizard, CWT.LizardInfo> LizardData = new();
 
     public static void Hooks()
     {
@@ -56,72 +54,72 @@ internal class LizardHooks
 
     #region Basic Lizard Info
 
-    public static void OverseerILHook()
-    {
-        // I guess this tells Overseers how dangerous these lizards are.        
-        IL.OverseerAbstractAI.HowInterestingIsCreature += il =>
-        {
-            ILCursor c = new(il);
-            ILLabel? label = null;
-            if (c.TryGotoNext(
-                x => x.MatchLdarg(1),
-                x => x.MatchLdfld<AbstractCreature>(nameof(AbstractCreature.creatureTemplate)),
-                x => x.MatchLdfld<CreatureTemplate>(nameof(CreatureTemplate.type)),
-                x => x.MatchLdsfld<CreatureTemplate.Type>(nameof(CreatureTemplate.Type.RedLizard)),
-                x => x.MatchCall(out _),
-                x => x.MatchBrfalse(out label))
-            && label is not null)
-            {
-                c.Emit(OpCodes.Ldarg_1);
-                c.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type == HSEnums.CreatureType.FreezerLizard);
-                c.Emit(OpCodes.Brfalse, label);
-            }
-            else
-            {
-                Debug.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Freezer Lizards!");
-            }
+    //public static void OverseerILHook()
+    //{
+    //    // I guess this tells Overseers how dangerous these lizards are.        
+    //    IL.OverseerAbstractAI.HowInterestingIsCreature += il =>
+    //    {
+    //        ILCursor c = new(il);
+    //        ILLabel? label = null;
+    //        if (c.TryGotoNext(
+    //            x => x.MatchLdarg(1),
+    //            x => x.MatchLdfld<AbstractCreature>(nameof(AbstractCreature.creatureTemplate)),
+    //            x => x.MatchLdfld<CreatureTemplate>(nameof(CreatureTemplate.type)),
+    //            x => x.MatchLdsfld<CreatureTemplate.Type>(nameof(CreatureTemplate.Type.RedLizard)),
+    //            x => x.MatchCall(out _),
+    //            x => x.MatchBrfalse(out label))
+    //        && label is not null)
+    //        {
+    //            c.Emit(OpCodes.Ldarg_1);
+    //            c.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type == HSEnums.CreatureType.FreezerLizard);
+    //            c.Emit(OpCodes.Brfalse, label);
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Freezer Lizards!");
+    //        }
 
-            ILCursor c2 = new(il);
-            ILLabel? label2 = null;
-            if (c2.TryGotoNext(
-                x => x.MatchLdarg(1),
-                x => x.MatchLdfld<AbstractCreature>(nameof(AbstractCreature.creatureTemplate)),
-                x => x.MatchLdfld<CreatureTemplate>(nameof(CreatureTemplate.type)),
-                x => x.MatchLdsfld<CreatureTemplate.Type>(nameof(CreatureTemplate.Type.YellowLizard)),
-                x => x.MatchCall(out _),
-                x => x.MatchBrtrue(out label2))
-            && label is not null)
-            {
-                c2.Emit(OpCodes.Ldarg_1);
-                c2.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type == HSEnums.CreatureType.IcyBlueLizard);
-                c2.Emit(OpCodes.Brtrue, label2);
-            }
-            else
-            {
-                Debug.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Icy Blue Lizards!");
-            }
+    //        ILCursor c2 = new(il);
+    //        ILLabel? label2 = null;
+    //        if (c2.TryGotoNext(
+    //            x => x.MatchLdarg(1),
+    //            x => x.MatchLdfld<AbstractCreature>(nameof(AbstractCreature.creatureTemplate)),
+    //            x => x.MatchLdfld<CreatureTemplate>(nameof(CreatureTemplate.type)),
+    //            x => x.MatchLdsfld<CreatureTemplate.Type>(nameof(CreatureTemplate.Type.YellowLizard)),
+    //            x => x.MatchCall(out _),
+    //            x => x.MatchBrtrue(out label2))
+    //        && label is not null)
+    //        {
+    //            c2.Emit(OpCodes.Ldarg_1);
+    //            c2.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type == HSEnums.CreatureType.IcyBlueLizard);
+    //            c2.Emit(OpCodes.Brtrue, label2);
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Icy Blue Lizards!");
+    //        }
 
-            ILCursor c3 = new(il);
-            ILLabel? label3 = null;
-            if (c2.TryGotoNext(
-                x => x.MatchLdarg(1),
-                x => x.MatchLdfld<AbstractCreature>(nameof(AbstractCreature.creatureTemplate)),
-                x => x.MatchLdfld<CreatureTemplate>(nameof(CreatureTemplate.type)),
-                x => x.MatchLdsfld<CreatureTemplate.Type>(nameof(CreatureTemplate.Type.GreenLizard)),
-                x => x.MatchCall(out _),
-                x => x.MatchBrfalse(out label3))
-            && label is not null)
-            {
-                c2.Emit(OpCodes.Ldarg_1);
-                c2.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type == HSEnums.CreatureType.GorditoGreenieLizard);
-                c2.Emit(OpCodes.Brfalse, label3);
-            }
-            else
-            {
-                Debug.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Gorditio Greenie Lizards!");
-            }
-        };
-    }
+    //        ILCursor c3 = new(il);
+    //        ILLabel? label3 = null;
+    //        if (c2.TryGotoNext(
+    //            x => x.MatchLdarg(1),
+    //            x => x.MatchLdfld<AbstractCreature>(nameof(AbstractCreature.creatureTemplate)),
+    //            x => x.MatchLdfld<CreatureTemplate>(nameof(CreatureTemplate.type)),
+    //            x => x.MatchLdsfld<CreatureTemplate.Type>(nameof(CreatureTemplate.Type.GreenLizard)),
+    //            x => x.MatchCall(out _),
+    //            x => x.MatchBrfalse(out label3))
+    //        && label is not null)
+    //        {
+    //            c2.Emit(OpCodes.Ldarg_1);
+    //            c2.EmitDelegate((AbstractCreature absCtr) => absCtr.creatureTemplate.type == HSEnums.CreatureType.GorditoGreenieLizard);
+    //            c2.Emit(OpCodes.Brfalse, label3);
+    //        }
+    //        else
+    //        {
+    //            Debug.LogError("Couldn't ILHook OverseerAbstractAI.HowInterestingIsCreature for Gorditio Greenie Lizards!");
+    //        }
+    //    };
+    //}
 
     public static void HailstormLizLegSFX(On.LizardLimb.orig_ctor orig, LizardLimb lizLimb, GraphicsModule owner, BodyChunk connectionChunk, int num, float rad, float sfFric, float aFric, float huntSpeed, float quickness, LizardLimb otherLimbInPair)
     {
@@ -621,7 +619,7 @@ internal class LizardHooks
 
         if (!LizardData.TryGetValue(liz, out _))
         {
-            LizardData.Add(liz, new LizardInfo(liz));
+            LizardData.Add(liz, new CWT.LizardInfo(liz));
         }
 
         if (liz is not null &&
@@ -646,7 +644,7 @@ internal class LizardHooks
                 liz.effectColor = Custom.HSL2RGB(Custom.ClampedRandomVariation(340 / 360f, 20 / 360f, 0.25f), Random.Range(0.7f, 0.8f), 0.4f);
                 Random.state = state;
             }
-            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && (IsIncanStory(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(absLiz, out AbsCtrInfo aI))
+            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && (IsIncanStory(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(absLiz, out CWT.AbsCtrInfo aI))
             {
                 Random.State state = Random.state;
                 Random.InitState(absLiz.ID.RandomSeed);
@@ -1247,7 +1245,7 @@ internal class LizardHooks
             {
                 c.Emit(OpCodes.Ldarg_0);
                 c.EmitDelegate((LizardJumpModule ljm) => !(Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval]));
-                _ = c.Emit(OpCodes.Brfalse, label);
+                c.Emit(OpCodes.Brfalse, label);
             }
             else
             {
@@ -1571,6 +1569,3 @@ internal class LizardHooks
     #endregion
 
 }
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------

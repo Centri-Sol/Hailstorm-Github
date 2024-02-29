@@ -16,9 +16,6 @@ public class IncanVisuals
         On.PlayerGraphics.Update += RollAnimationUpdate;
     }
 
-    //----------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------
-
     public static bool incSad;
 
     public static bool incLookPointReset;
@@ -96,7 +93,7 @@ public class IncanVisuals
         if (self.lightSource is not null && self.lightSource.alpha != 0)
         {
             self.lightSource.alpha = 0; // Makes the normal Neuron glow invisible for the Incandescent.
-        }  
+        }
 
         Player incan = self.owner as Player;
 
@@ -123,7 +120,7 @@ public class IncanVisuals
          */
 
         // Sad head and faces.
-        if (!headSprites.element.name.Contains("incanSad") && (!player.ReadyToMoveOn || player.ReadyToMoveOn && incSad))
+        if (!headSprites.element.name.Contains("incanSad") && (!player.ReadyToMoveOn || (player.ReadyToMoveOn && incSad)))
         {
             if (headSprites.element.name.StartsWith("HeadC"))
             {
@@ -146,7 +143,7 @@ public class IncanVisuals
         }
 
         if (incan is not null)
-        {            
+        {
             if (incLookDown)
             {
                 self.objectLooker.lookAtPoint = !self.objectLooker.lookAtPoint.HasValue ?
@@ -173,7 +170,7 @@ public class IncanVisuals
                 incLookPointReset = false;
                 self.objectLooker.lookAtPoint = null;
             }
-        }       
+        }
 
 
         // Cheek fluff sprites.
@@ -198,9 +195,11 @@ public class IncanVisuals
                 case "7":
                     cheekFluffOffsetY = -3.5f;
                     break;
+                default:
+                    break;
             }
 
-            Vector2 cheekFluffPos = new (sLeaser.sprites[3].x + cheekFluffOffsetX, sLeaser.sprites[3].y + cheekFluffOffsetY);
+            Vector2 cheekFluffPos = new(sLeaser.sprites[3].x + cheekFluffOffsetX, sLeaser.sprites[3].y + cheekFluffOffsetY);
 
             sLeaser.sprites[player.cheekFluffSprite].scaleX = sLeaser.sprites[3].scaleX;
             sLeaser.sprites[player.cheekFluffSprite].scaleY = 1f;
@@ -209,9 +208,10 @@ public class IncanVisuals
             sLeaser.sprites[player.cheekFluffSprite].y = cheekFluffPos.y;
             sLeaser.sprites[player.cheekFluffSprite].color = player.FireColor;
 
-            if (headSpriteNames.StartsWith("HeadA")) sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("incanCheekfluff" + headSpriteNames);
-
-            else if (headSpriteNames.StartsWith("HeadC")) sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("incanCheekfluff" + headSpriteNames);
+            if (headSpriteNames.StartsWith("HeadA") || headSpriteNames.StartsWith("HeadC"))
+            {
+                sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("incanCheekfluff" + headSpriteNames);
+            }
 
             player.lastCheekfluffPos = new Vector2(sLeaser.sprites[player.cheekFluffSprite].x, sLeaser.sprites[player.cheekFluffSprite].y);
         }
@@ -220,10 +220,10 @@ public class IncanVisuals
         if (!string.IsNullOrWhiteSpace(bodySprites.element.name))
         {
 
-            var waistbandOffsetX = 0f;
-            var waistbandOffsetY = -1f;
+            float waistbandOffsetX = 0f;
+            float waistbandOffsetY = -1f;
 
-            Vector2 waistbandPos = new (sLeaser.sprites[1].x + waistbandOffsetX, sLeaser.sprites[1].y + waistbandOffsetY);
+            Vector2 waistbandPos = new(sLeaser.sprites[1].x + waistbandOffsetX, sLeaser.sprites[1].y + waistbandOffsetY);
 
             sLeaser.sprites[player.waistbandSprite].scaleX = sLeaser.sprites[1].scaleX;
             sLeaser.sprites[player.waistbandSprite].scaleY = 1f;
@@ -242,7 +242,7 @@ public class IncanVisuals
             float tailflameOffsetX = camPos.x;
             float tailflameOffsetY = camPos.y;
 
-            Vector2 tailflamePos = new (Mathf.Lerp(self.tail[3].pos.x, self.tail[2].pos.x, 0.2f) - tailflameOffsetX,
+            Vector2 tailflamePos = new(Mathf.Lerp(self.tail[3].pos.x, self.tail[2].pos.x, 0.2f) - tailflameOffsetX,
                                             Mathf.Lerp(self.tail[3].pos.y, self.tail[2].pos.y, 0.2f) - tailflameOffsetY);
             Vector2 tailAngle = (self.tail[3].pos - self.tail[2].pos).normalized;
             int rotationSide = (tailAngle.x > 0) ? 1 : -1;
@@ -365,13 +365,25 @@ public class IncanVisuals
 
             if (player.FireColorBase.Equals(Color.clear))
             {
-                if (customColors.Length > 0) player.FireColorBase = customColors[2].GetColor(playerNumber);
-                else ColorUtility.TryParseHtmlString("#FB8602", out player.FireColorBase);
+                if (customColors.Length > 0)
+                {
+                    player.FireColorBase = customColors[2].GetColor(playerNumber);
+                }
+                else
+                {
+                    ColorUtility.TryParseHtmlString("#FB8602", out player.FireColorBase);
+                }
             }
             if (player.WaistbandColor.Equals(Color.clear))
             {
-                if (customColors.Length > 0) player.WaistbandColor = customColors[3].GetColor(playerNumber);
-                else ColorUtility.TryParseHtmlString("#281714", out player.WaistbandColor);
+                if (customColors.Length > 0)
+                {
+                    player.WaistbandColor = customColors[3].GetColor(playerNumber);
+                }
+                else
+                {
+                    ColorUtility.TryParseHtmlString("#281714", out player.WaistbandColor);
+                }
             }
         }
 
@@ -404,7 +416,7 @@ public class IncanVisuals
      * HOWEVER, if you don't want to recolor any tail vertices?This is useless for you, so don't worry about it. */
     public static void InitiateSprites_1(ILContext il)
     {
-        var cursor = new ILCursor(il);
+        ILCursor cursor = new(il);
 
         if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdstr("Futile_White"), i => i.MatchLdloc(0)))
         {
@@ -442,6 +454,4 @@ public class IncanVisuals
             }
         }
     }
-
-    //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }

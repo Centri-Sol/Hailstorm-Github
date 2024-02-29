@@ -136,7 +136,7 @@
 //        {
 //            CustomFlags(absCtr);
 //        }
-        
+
 //    }
 
 //    //----------------------------------------------------------------------------------
@@ -1599,7 +1599,7 @@
 
 //            yGrph.tailHighlightColor = Color.HSVToRGB(accColor.hue, accColor.saturation, accColor.lightness);
 //            yGrph.featherColor = Color.HSVToRGB(Custom.ClampedRandomVariation(accColor.hue, 20/360f, 0.2f), accColor.saturation + 0.075f, accColor.lightness - 0.15f);
-            
+
 //            if (Random.value < 0.01f)
 //            {
 //                Color c = yGrph.tailHighlightColor;
@@ -1830,7 +1830,7 @@
 //        {
 //            cI.impactCooldown--; // Used for the IncanCollision method in IncanFeatures.
 //        }
-        
+
 //        if (cI.chillTimer > 0)
 //        {
 //            ctr.Hypothermia += 0.05f;
@@ -2026,7 +2026,7 @@
 //                        ctr.Hypothermia -= 0.0007f;
 //                    }
 //                }
-                
+
 //                // Freezer Lizard chill
 //                if (tempSource is Lizard && HailstormLizards.LizardData.TryGetValue(tempSource as Lizard, out LizardInfo lI) && lI.isFreezerOrIcyBlue && distance < lI.auraRadius)
 //                {
@@ -2060,7 +2060,7 @@
 //            ctr.Hypothermia += (selfIsIncan ? 0.005f : 0.004f);
 //            return true;
 //        }
-        
+
 //        if (other.Template.type == HailstormEnums.IcyBlue || other.Template.type == HailstormEnums.Freezer)
 //        {
 //            ctr.Hypothermia += Mathf.Lerp(0.0018f, 0.0036f, Mathf.InverseLerp(1.4f, 1.7f, other.TotalMass)) * (selfIsIncan ? 1.25f : 1);

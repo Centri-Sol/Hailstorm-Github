@@ -34,7 +34,7 @@ public class IncanFeatures
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
     }
 
     //----------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ public class IncanFeatures
             {
                 spr.firstChunk.vel.x *= 0.875f;
             }
-        }        
+        }
     }
 
     //----------------------------------------------------------------------------------
@@ -179,9 +179,9 @@ public class IncanFeatures
             }
             else
             {
-                self.bodyChunks[0].vel.x *= starving ? 2.2f  : 1.8f;
-                self.bodyChunks[1].vel.x *= starving ? 1.7f  : 1.48f;
-                self.bodyChunks[0].vel.y *= starving ? 1.35f  : 1.25f;
+                self.bodyChunks[0].vel.x *= starving ? 2.2f : 1.8f;
+                self.bodyChunks[1].vel.x *= starving ? 1.7f : 1.48f;
+                self.bodyChunks[0].vel.y *= starving ? 1.35f : 1.25f;
             }
         }
         else if (!player.longJumping)
@@ -245,7 +245,7 @@ public class IncanFeatures
             FlipSingeCollisionCheck(self, player);
         }
     }
-    
+
     public static void IncanOtherMobility(On.Player.orig_UpdateBodyMode orig, Player self)
     {
         orig(self);
@@ -271,9 +271,9 @@ public class IncanFeatures
         }
         else if (self.animation == Player.AnimationIndex.Roll)
         {
-            self.bodyChunks[0].vel *= starving? 1.11f : 1.1f;
-            self.bodyChunks[1].vel *= starving? 1.11f : 1.1f;
-            if (self.rollCounter > 15 && player.rollExtender < (starving? 75 : 60) && self.input[0].downDiagonal != 0) // Extends roll duration.
+            self.bodyChunks[0].vel *= starving ? 1.11f : 1.1f;
+            self.bodyChunks[1].vel *= starving ? 1.11f : 1.1f;
+            if (self.rollCounter > 15 && player.rollExtender < (starving ? 75 : 60) && self.input[0].downDiagonal != 0) // Extends roll duration.
             {
                 player.rollExtender++;
                 self.rollCounter--;
@@ -478,7 +478,7 @@ public class IncanFeatures
     }
     public static int SaintNoYouCantEatTheseFuckOff_WaitNoPUTAWAYYOURASCENSIONPOWERSDONOTBLOWUPMYMINDLIKEPANCA(On.SlugcatStats.orig_NourishmentOfObjectEaten orig, SlugcatStats.Name slugcat, IPlayerEdible eatenobject)
     {
-        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob) 
+        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob)
             ? -1
             : orig(slugcat, eatenobject);
     }
@@ -486,9 +486,11 @@ public class IncanFeatures
     public static void IncanILHooks()
     {
 
-        IL.Player.GrabUpdate += IL => // Makes Glowweed edible underwater in Incan's campaign.
+        IL.Player.GrabUpdate += IL =>
         {
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = null;
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILCursor c = new(IL);
             if (c.TryGotoNext(
                 MoveType.After,
@@ -902,10 +904,10 @@ public class IncanFeatures
                 self.mainBodyChunk.vel.Scale(new Vector2(-0.5f, -0.5f));
                 self.rollDirection = 0;
                 if ((target.State is HealthState targetHS && targetHS.ClampedHealth == 0f) || target.State.dead)
-                    {
+                {
                     self.room.PlaySound(SoundID.Spear_Stick_In_Creature, self.mainBodyChunk, loop: false, 1.7f, 1f);
                 }
-                
+
                 else
                 {
                     self.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, self.mainBodyChunk, loop: false, 1.2f, 1f);
@@ -928,10 +930,10 @@ public class IncanFeatures
                 float lastFallPos = self.lastGroundY - self.firstChunk.pos.y;
                 stn *= Mathf.Floor(Mathf.Abs(self.mainBodyChunk.vel.magnitude) / 7f);
                 dmg =
-                    lastFallPos < 100f? dmg * 0.5f :
-                        lastFallPos < 200f? dmg :
-                            lastFallPos < 320f? dmg * 2f :
-                                lastFallPos < 600f? dmg * 3f : dmg * 5f;
+                    lastFallPos < 100f ? dmg * 0.5f :
+                        lastFallPos < 200f ? dmg :
+                            lastFallPos < 320f ? dmg * 2f :
+                                lastFallPos < 600f ? dmg * 3f : dmg * 5f;
             }
             if (stn > 240)
             {
@@ -953,11 +955,11 @@ public class IncanFeatures
                 if (!target.dead)
                 {
                     if (RainWorld.ShowLogs)
-                        {
-                        Debug.Log("SLUGSMASH! Slide: " + (self.animation == Player.AnimationIndex.BellySlide || self.animation == Player.AnimationIndex.RocketJump) + " | Incoming speed: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Dist: " + (self.lastGroundY - self.firstChunk.pos.y) + " | Damage: " + dmg + " | Stun: " + stn / 40 + "s");
+                    {
+                        Debug.Log("SLUGSMASH! Slide: " + (self.animation == Player.AnimationIndex.BellySlide || self.animation == Player.AnimationIndex.RocketJump) + " | Incoming speed: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Dist: " + (self.lastGroundY - self.firstChunk.pos.y) + " | Damage: " + dmg + " | Stun: " + (stn / 40) + "s");
                     }
-                    
-                    self.room.ScreenMovement(self.bodyChunks[0].pos, self.mainBodyChunk.vel * dmg * self.bodyChunks[0].mass * 0.1f, Mathf.Max((dmg * self.bodyChunks[0].mass - 30f) / 50f, 0f));
+
+                    self.room.ScreenMovement(self.bodyChunks[0].pos, self.mainBodyChunk.vel * dmg * self.bodyChunks[0].mass * 0.1f, Mathf.Max(((dmg * self.bodyChunks[0].mass) - 30f) / 50f, 0f));
                     self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
                     target.SetKillTag(self.abstractCreature);
                     target.Violence(self.mainBodyChunk, (Vector2?)new Vector2(self.mainBodyChunk.vel.x, self.mainBodyChunk.vel.y), otherObject.bodyChunks[otherChunk], null, Creature.DamageType.Blunt, dmg, (int)stn);
@@ -966,19 +968,21 @@ public class IncanFeatures
                         hitSmallCreature = true;
                         bJelly.Die();
                     }
-                    if (target.State is HealthState targHS2 && targHS2.ClampedHealth == 0f || target.State.dead)
-                        {
+                    if ((target.State is HealthState targHS2 && targHS2.ClampedHealth == 0f) || target.State.dead)
+                    {
                         self.room.PlaySound(SoundID.Spear_Stick_In_Creature, self.mainBodyChunk, loop: false, 1.7f, 1f);
                     }
-                    
-                    else {
+
+                    else
+                    {
                         self.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, self.mainBodyChunk, loop: false, 1.2f, 1f);
-                    }                    
+                    }
                 }
-                else {
+                else
+                {
                     self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
                 }
-                
+
                 if (self.mainBodyChunk.vel.magnitude < 40f && !hitSmallCreature)
                 {
                     self.mainBodyChunk.vel.Scale(new Vector2(-0.5f, -0.5f));
@@ -1002,7 +1006,7 @@ public class IncanFeatures
 
         orig(self, otherObject, myChunk, otherChunk);
 
-        if (CWT.CreatureData.TryGetValue(target, out CreatureInfo cI) &&
+        if (CWT.CreatureData.TryGetValue(target, out CWT.CreatureInfo cI) &&
             IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan)
         {
             if (canHarm && (cI.impactCooldown == 0 || Incan.impactCooldown == 0))
@@ -1016,7 +1020,7 @@ public class IncanFeatures
         }
 
     }
-    public static void IncanCollision(Player self, IncanInfo Incan, Creature target, CreatureInfo cI, int myChunk, int otherChunk, bool hitSmallCreature)
+    public static void IncanCollision(Player self, IncanInfo Incan, Creature target, CWT.CreatureInfo cI, int myChunk, int otherChunk, bool hitSmallCreature)
     {
         if (!Incan.CollisionDamageValues(self, out float DMG, out float STUN, out float HEATLOSS, out int BURNTIME))
         {
@@ -1043,7 +1047,7 @@ public class IncanFeatures
             Incan.impactCooldown = 20;
         }
 
-        
+
         self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk);
         target.SetKillTag(self.abstractCreature);
 
@@ -1056,14 +1060,14 @@ public class IncanFeatures
             self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 35f, Incan.FireColor, self.ShortCutColor()));
             self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 45f, Incan.FireColor, self.ShortCutColor()));
 
-            if (target.SpearStick(null, DMG, target.bodyChunks[otherChunk], null, self.mainBodyChunk.vel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out AbsCtrInfo aI))
+            if (target.SpearStick(null, DMG, target.bodyChunks[otherChunk], null, self.mainBodyChunk.vel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out CWT.AbsCtrInfo aI))
             {
                 aI.AddBurn(self.abstractCreature, target, otherChunk, BURNTIME, Incan.FireColor, self.ShortCutColor());
             }
 
             if (RainWorld.ShowLogs)
             {
-                Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: " + DMG + " | Burn Time: " + BURNTIME / 40f + "s | Stun: " + STUN / 40f + "s");
+                Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: " + DMG + " | Burn Time: " + (BURNTIME / 40f) + "s | Stun: " + (STUN / 40f) + "s");
             }
         }
         else
@@ -1075,7 +1079,7 @@ public class IncanFeatures
 
             if (RainWorld.ShowLogs)
             {
-                Debug.Log("Player " + (self.playerState.playerNumber + 1) + " BONKED something! | Damage: " + DMG + " | Stun: " + STUN / 40f + "s | Impact velocity: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Distance: " + (self.lastGroundY - self.firstChunk.pos.y));
+                Debug.Log("Player " + (self.playerState.playerNumber + 1) + " BONKED something! | Damage: " + DMG + " | Stun: " + (STUN / 40f) + "s | Impact velocity: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Distance: " + (self.lastGroundY - self.firstChunk.pos.y));
             }
         }
 
@@ -1183,7 +1187,7 @@ public class IncanFeatures
                 (powerFlameWheel && !smallCreature) || (!Incan.ReadyToMoveOn && smallCreature) ||
                 (ModManager.CoopAvailable && target is Player && !Custom.rainWorld.options.friendlyFire) ||
                 target.abstractCreature.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC ||
-                !CWT.CreatureData.TryGetValue(target, out CreatureInfo cI) ||
+                !CWT.CreatureData.TryGetValue(target, out CWT.CreatureInfo cI) ||
                 !(cI.impactCooldown == 0 || Incan.impactCooldown == 0))
             {
                 continue;
@@ -1253,7 +1257,7 @@ public class IncanFeatures
                         liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard) ? 20 : 40;
                     liz.turnedByRockDirection = (int)Mathf.Sign(chunk.pos.x - tailEnd.pos.x);
                 }
-                if (target.SpearStick(null, 0.25f, chunk, null, hitVel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out AbsCtrInfo aI))
+                if (target.SpearStick(null, 0.25f, chunk, null, hitVel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out CWT.AbsCtrInfo aI))
                 {
                     aI.AddBurn(self.abstractCreature, target, chunk.index, BURNTIME, Incan.FireColor, self.ShortCutColor());
                 }
@@ -1261,7 +1265,7 @@ public class IncanFeatures
                 self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 35f, Incan.FireColor, self.ShortCutColor()));
                 self.room.AddObject(new FireSpikes(self.room, Vector2.Lerp(self.mainBodyChunk.pos, target.mainBodyChunk.pos, 0.5f), Random.Range(4, 6), 2f, 10f, 10f, 45f, Incan.FireColor, self.ShortCutColor()));
                 self.room.PlaySound(SoundID.Slugcat_Terrain_Impact_Hard, self.mainBodyChunk.pos, 1.2f, 1);
-                if (target.State is HealthState targetHP && targetHP.ClampedHealth == 0f || target.State.dead)
+                if ((target.State is HealthState targetHP && targetHP.ClampedHealth == 0f) || target.State.dead)
                 {
                     self.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, self.DangerPos, 0.75f, Random.Range(1.75f, 2));
                     self.room.PlaySound(SoundID.Rock_Hit_Creature, self.mainBodyChunk.pos, 1.7f, 1f);
@@ -1384,153 +1388,4 @@ public class IncanFeatures
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-}
-
-public class EmberSprite : CosmeticSprite
-{
-    public float lifeTime;
-    public float life;
-    public float lastLife;
-    public Color color;
-    public float size;
-
-
-    public EmberSprite(Vector2 pos, Color color, float size)
-    {
-        base.pos = pos;
-        this.color = color;
-        this.size = size;
-        lastPos = pos;
-        vel = Custom.RNV() * 1.5f * Random.value;
-        life = 1f;
-        lifeTime = Mathf.Lerp(10f, 40f, Random.value);
-    }
-
-    public override void Update(bool eu)
-    {
-        base.Update(eu);
-        vel *= 0.8f;
-        vel.y += 0.4f;
-        vel += Custom.RNV() * Random.value * 0.5f;
-        lastLife = life;
-        life -= 1f / lifeTime;
-        if (life < 0f)
-        {
-            Destroy();
-        }
-    }
-
-    public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
-    {
-        sLeaser.sprites = new FSprite[1];
-        sLeaser.sprites[0] = new FSprite("deerEyeB");
-        AddToContainer(sLeaser, rCam, null);
-        base.InitiateSprites(sLeaser, rCam);
-    }
-
-    public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
-    {
-        sLeaser.sprites[0].x = Mathf.Lerp(lastPos.x, pos.x, timeStacker) - camPos.x;
-        sLeaser.sprites[0].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) - camPos.y;
-        float lifetimeMult = Mathf.Lerp(lastLife, life, timeStacker);
-        sLeaser.sprites[0].scale = size * lifetimeMult;
-        sLeaser.sprites[0].color = color;
-        base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
-    }
-}
-
-public class FireSpikes : ExplosionSpikes
-{
-    private Color color2;
-    public FireSpikes(Room room, Vector2 pos, int spikes, float innerRad, float lifeTime, float width, float length, Color color, Color color2) : base(room, pos, spikes, innerRad, lifeTime, width, length, color)
-    {
-        base.room = room;
-        this.innerRad = innerRad;
-        base.pos = pos;
-        this.color = color;
-        this.color2 = color2;
-        this.lifeTime = lifeTime;
-        base.spikes = spikes;
-        values = new float[spikes, 3];
-        dirs = (Vector2[])(object)new Vector2[spikes];
-        float num = Random.value * 360f;
-        for (int i = 0; i < spikes; i++)
-        {
-            float num2 = i / (float)spikes * 360f + num;
-            dirs[i] = Custom.DegToVec(num2 + Mathf.Lerp(-0.5f, 0.5f, Random.value) * 360f / spikes);
-            if (room.GetTile(pos + dirs[i] * (innerRad + length * 0.4f)).Solid)
-            {
-                values[i, 2] = lifeTime * Mathf.Lerp(0.5f, 1.5f, Random.value) * 0.5f;
-                values[i, 0] = length * Mathf.Lerp(0.6f, 1.4f, Random.value) * 0.5f;
-            }
-            else
-            {
-                values[i, 2] = lifeTime * Mathf.Lerp(0.5f, 1.5f, Random.value);
-                values[i, 0] = length * Mathf.Lerp(0.6f, 1.4f, Random.value);
-            }
-            values[i, 1] = width * Mathf.Lerp(0.6f, 1.4f, Random.value);
-        }
-    }
-
-    public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
-    {
-        sLeaser.sprites = new FSprite[1];
-        TriangleMesh.Triangle[] array = new TriangleMesh.Triangle[spikes];
-        for (int i = 0; i < array.Length; i++)
-        {
-            array[i] = new TriangleMesh.Triangle(i * 3, i * 3 + 1, i * 3 + 2);
-        }
-        TriangleMesh triangleMesh = new ("Futile_White", array, customColor: true);
-        sLeaser.sprites[0] = triangleMesh;
-        AddToContainer(sLeaser, rCam, null);
-    }
-
-    public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
-    {
-        base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
-        float num = time + timeStacker;
-        TriangleMesh tMesh = sLeaser.sprites[0] as TriangleMesh;
-        for (int i = 0; i < spikes; i++)
-        {
-            float num2 = Mathf.InverseLerp(0f, values[i, 2], num);
-            float num3 = ((time == 0) ? timeStacker : Mathf.InverseLerp(values[i, 2], 0f, num));
-            float num4 = Mathf.Lerp(values[i, 0] * 0.1f, values[i, 0], Mathf.Pow(num2, 0.45f));
-            float num5 = values[i, 1] * (0.5f + 0.5f * Mathf.Sin(num2 * Mathf.PI)) * Mathf.Pow(num3, 0.3f);
-            Vector2 val = pos + dirs[i] * (innerRad + num4);
-            if (room != null && room.GetTile(val).Solid)
-            {
-                num3 *= 0.5f;
-            }
-            Vector2 val2 = pos + dirs[i] * (innerRad + num4 * 0.1f);
-            Vector2 val3 = Custom.PerpendicularVector(val, val2);
-            tMesh.MoveVertice(i * 3, val - camPos);
-            tMesh.MoveVertice(i * 3 + 1, val2 - val3 * num5 * 0.5f - camPos);
-            tMesh.MoveVertice(i * 3 + 2, val2 + val3 * num5 * 0.5f - camPos);
-            tMesh.verticeColors[i * 3] = Custom.RGB2RGBA(color2, Mathf.Pow(num3, 0.6f));
-            tMesh.verticeColors[i * 3 + 1] = Custom.RGB2RGBA(color, 0);
-            tMesh.verticeColors[i * 3 + 2] = Custom.RGB2RGBA(color, 0);
-        }
-    }
-}
-
-public class HailstormFireSmokeCreator : Smoke.FireSmoke
-{
-
-    public HailstormFireSmokeCreator(Room room) : base(room)
-    {
-    }
-
-    public override SmokeSystemParticle CreateParticle()
-    {
-        return new HailstormFireSmoke();
-    }
-
-    public class HailstormFireSmoke : FireSmokeParticle
-    {
-
-        public override void ApplyPalette(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
-        {
-        }
-
-    }
 }

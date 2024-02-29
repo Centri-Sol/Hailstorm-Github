@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class FreezerMist : CosmeticSprite
 {
     public float life;
@@ -41,8 +39,8 @@ public class FreezerMist : CosmeticSprite
         this.killTag = killTag;
         this.smallInsects = smallInsects;
         getToPos = pos + new Vector2(Mathf.Lerp(-50f, 50f, Random.value), Mathf.Lerp(-100f, 400f, Random.value));
-        base.pos = pos + vel.normalized * 60f * Random.value;
-        rad = Mathf.Lerp(1.2f, 1.5f, Random.value) * (1 + (size * 0.1f)) * (dangerous? 1f : 0.75f);
+        base.pos = pos + (vel.normalized * 60f * Random.value);
+        rad = Mathf.Lerp(1.2f, 1.5f, Random.value) * (1 + (size * 0.1f)) * (dangerous ? 1f : 0.75f);
         rotation = Random.value * 360f;
         lastRotation = rotation;
         rotVel = Mathf.Lerp(-6f, 6f, Random.value);
@@ -109,7 +107,7 @@ public class FreezerMist : CosmeticSprite
                     continue;
                 }
                 Creature ctr = absCtr.realizedCreature;
-                if (room == ctr.room && Custom.DistLess(pos, ctr.firstChunk.pos, 100) && CWT.CreatureData.TryGetValue(ctr, out CreatureInfo cI))
+                if (room == ctr.room && Custom.DistLess(pos, ctr.firstChunk.pos, 100) && CWT.CreatureData.TryGetValue(ctr, out CWT.CreatureInfo cI))
                 {
                     cI.freezerChill +=
                         cI.freezerChill == 0 ? 0.04f :
@@ -156,7 +154,7 @@ public class FreezerMist : CosmeticSprite
         {
             gradientLerpFlip = false;
         }
-        gradient += gradientLerpFlip? -gradientSpeed : gradientSpeed;
+        gradient += gradientLerpFlip ? -gradientSpeed : gradientSpeed;
 
         base.Update(eu);
     }
@@ -181,12 +179,12 @@ public class FreezerMist : CosmeticSprite
         sLeaser.sprites[0].rotation = Mathf.Lerp(lastRotation, rotation, timeStacker);
         sLeaser.sprites[0].scale = 7f * rad * ((num > 0.5f) ? Custom.LerpMap(num, 1f, 0.5f, 0.5f, 1f) : Mathf.Sin(num * Mathf.PI));
         sLeaser.sprites[0].alpha = Mathf.Lerp(1, 0, Mathf.InverseLerp(0.2f, 0, lastLife));
-        sLeaser.sprites[0].color = Color.Lerp(lizEffectColor2, lizEffectColor1, Mathf.InverseLerp(-20, 140, gradient));        
+        sLeaser.sprites[0].color = Color.Lerp(lizEffectColor2, lizEffectColor1, Mathf.InverseLerp(-20, 140, gradient));
         base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
     }
 
     public override void ApplyPalette(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
-    {        
+    {
     }
 
     public override void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
@@ -194,6 +192,3 @@ public class FreezerMist : CosmeticSprite
         base.AddToContainer(sLeaser, rCam, newContatiner);
     }
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

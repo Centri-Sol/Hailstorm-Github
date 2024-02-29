@@ -1,6 +1,6 @@
 ﻿namespace Hailstorm;
 
-internal class Regions
+public class Regions
 {
     public static void Hooks()
     {
@@ -12,9 +12,9 @@ internal class Regions
         On.Room.SlugcatGamemodeUniqueRoomSettings += Incan_RoomSettings;
         //On.Room.Loaded += IceCrystalSpawnChance;
         On.Region.RegionColor += SubmergedSuperstructureColor;
-        new Hook(typeof(RainCycle).GetMethod("get_RegionHidesTimer", Public | NonPublic | Instance), (Func<RainCycle, bool> orig, RainCycle cycle) => IsIncanStory(cycle.world.game) || orig(cycle));
-        new Hook(typeof(RainCycle).GetMethod("get_MusicAllowed", Public | NonPublic | Instance), (Func<RainCycle, bool> orig, RainCycle cycle) => IsIncanStory(cycle.world.game) || orig(cycle));
-    
+        _ = new Hook(typeof(RainCycle).GetMethod("get_RegionHidesTimer", Public | NonPublic | Instance), (Func<RainCycle, bool> orig, RainCycle cycle) => IsIncanStory(cycle.world.game) || orig(cycle));
+        _ = new Hook(typeof(RainCycle).GetMethod("get_MusicAllowed", Public | NonPublic | Instance), (Func<RainCycle, bool> orig, RainCycle cycle) => IsIncanStory(cycle.world.game) || orig(cycle));
+
     }
 
     //----------------------------------------------------------------------------------
@@ -22,7 +22,7 @@ internal class Regions
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
@@ -58,14 +58,12 @@ internal class Regions
     }
     public static string[] Incan_StoryRegions(On.SlugcatStats.orig_getSlugcatStoryRegions orig, SlugcatStats.Name saveFile)
     {
-        if (saveFile.value == IncanInfo.Incandescent.value)
-        {
-            return new string[12]
+        return saveFile.value == IncanInfo.Incandescent.value
+            ? (new string[12]
             {
                 "MS", "SL", "CL", "GW", "HI", "UG", "SU", "CC", "VS", "SI", "LF", "SB"
-            };
-        }
-        return orig(saveFile);
+            })
+            : orig(saveFile);
     }
     public static void Incan_SleepScreenRegionUnlocks(On.MoreSlugcats.CollectiblesTracker.orig_ctor orig, CollectiblesTracker cTracker, Menu.Menu menu, Menu.MenuObject owner, Vector2 pos, FContainer container, SlugcatStats.Name saveSlot)
     {
@@ -77,10 +75,10 @@ internal class Regions
             cTracker.collectionData = cTracker.MineForSaveData(menu.manager, saveSlot);
             string[] slugcatOptionalRegions = SlugcatStats.getSlugcatOptionalRegions(saveSlot);
             cTracker.collectionData ??= new()
-                {
-                    currentRegion = "??",
-                    regionsVisited = new List<string>()
-                };
+            {
+                currentRegion = "??",
+                regionsVisited = new List<string>()
+            };
             for (int i = 0; i < cTracker.displayRegions.Count; i++)
             {
                 cTracker.displayRegions[i] = cTracker.displayRegions[i].ToLowerInvariant();
@@ -102,18 +100,13 @@ internal class Regions
             cTracker.regionIcons = new FSprite[cTracker.displayRegions.Count];
             for (int l = 0; l < cTracker.displayRegions.Count; l++)
             {
-                if (cTracker.collectionData is not null && cTracker.displayRegions[l] == cTracker.collectionData.currentRegion)
-                {
-                    cTracker.regionIcons[l] = new FSprite("keyShiftB")
+                cTracker.regionIcons[l] = cTracker.collectionData is not null && cTracker.displayRegions[l] == cTracker.collectionData.currentRegion
+                    ? new FSprite("keyShiftB")
                     {
                         rotation = 180f,
                         scale = 0.5f
-                    };
-                }
-                else
-                {
-                    cTracker.regionIcons[l] = new FSprite("Circle4");
-                }
+                    }
+                    : new FSprite("Circle4");
                 cTracker.regionIcons[l].color = Color.Lerp(Region.RegionColor(cTracker.displayRegions[l]), Color.white, 0.25f);
                 container.AddChild(cTracker.regionIcons[l]);
                 cTracker.sprites[cTracker.displayRegions[l]] = new List<FSprite>();
@@ -233,76 +226,11 @@ internal class Regions
     }
     public static Color SubmergedSuperstructureColor(On.Region.orig_RegionColor orig, string regionName)
     {
-        if (RainWorld.lastActiveSaveSlot.value == IncanInfo.Incandescent.value && Region.EquivalentRegion(regionName, "MS"))
-        {
-            return new Color(0.8f, 0.8f, 1f);
-        }
-        return orig(regionName);
+        return RainWorld.lastActiveSaveSlot.value == IncanInfo.Incandescent.value && Region.EquivalentRegion(regionName, "MS")
+            ? new Color(0.8f, 0.8f, 1f)
+            : orig(regionName);
     }
 
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-}
-
-public class RegionInfo
-{
-    public float freezingFogInsteadOfHailChance;
-    public float erraticWindChance;
-    public float erraticWindDandelionChance;
-    public float erraticWindWrongDandelionTypeChance;
-    public int lateBlizzardStartTimeAfterCycleEnds = 1000000;
-
-    public RegionInfo(string regionName, SlugcatStats.Name campaign)
-    {
-        string[] propertiesText = new string[1] { "" };
-        string scugName = "-" + campaign.value;
-        string[] propertiesDirectory = new string[7] { "World", null, null, null, null, null, null };
-        string directorySeparatorChar = Path.DirectorySeparatorChar.ToString();
-        propertiesDirectory[1] = directorySeparatorChar;
-        propertiesDirectory[2] = regionName;
-        propertiesDirectory[3] = directorySeparatorChar;
-        propertiesDirectory[4] = "properties";
-        propertiesDirectory[5] = scugName;
-        propertiesDirectory[6] = ".txt";
-        string path = AssetManager.ResolveFilePath(string.Concat(propertiesDirectory));
-        if (!File.Exists(path))
-        {
-            string[] propertiesDirecTry2 = new string[5] { "World", null, null, null, null };
-            propertiesDirecTry2[1] = directorySeparatorChar;
-            propertiesDirecTry2[2] = regionName;
-            propertiesDirecTry2[3] = directorySeparatorChar;
-            propertiesDirecTry2[4] = "properties.txt";
-            path = AssetManager.ResolveFilePath(string.Concat(propertiesDirecTry2));
-        }
-        if (File.Exists(path))
-        {
-            propertiesText = File.ReadAllLines(path);
-        }
-        for (int i = 0; i < propertiesText.Length; i++)
-        {
-            string[] property = Regex.Split(Custom.ValidateSpacedDelimiter(propertiesText[i], ":"), ": ");
-            if (property.Length < 2)
-            {
-                continue;
-            }
-            switch (property[0])
-            {
-                case "freezingFogInsteadOfHailChance":
-                    freezingFogInsteadOfHailChance = float.Parse(property[1], NumberStyles.Any, CultureInfo.InvariantCulture);
-                    break;
-                case "erraticWindChance":
-                    erraticWindChance = float.Parse(property[1], NumberStyles.Any, CultureInfo.InvariantCulture);
-                    break;
-                case "erraticWindDandelionChance":
-                    erraticWindDandelionChance = float.Parse(property[1], NumberStyles.Any, CultureInfo.InvariantCulture);
-                    break;
-                case "erraticWindWrongDandelionTypeChance":
-                    erraticWindWrongDandelionTypeChance = float.Parse(property[1], NumberStyles.Any, CultureInfo.InvariantCulture);
-                    break;
-                case "lateBlizzardStartTimeAfterCycleEnds":
-                    lateBlizzardStartTimeAfterCycleEnds = int.Parse(property[1], NumberStyles.Any, CultureInfo.InvariantCulture);
-                    break;
-            }
-        }
-    }
 }

@@ -1,8 +1,6 @@
 ﻿namespace Hailstorm;
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-internal class HailstormSpiders
+public class HailstormSpiders
 {
     public static void Hooks()
     {
@@ -111,12 +109,12 @@ internal class HailstormSpiders
         if (vel.HasValue)
         {
             vel = spd.mainBodyChunk.vel - vel;
-            spd.mainBodyChunk.vel += vel.Value/2f;
+            spd.mainBodyChunk.vel += vel.Value / 2f;
         }
     }
     public static bool WinterCoalescipedeHigherMassLimit(On.Spider.orig_ConsiderPrey orig, Spider spd, Creature ctr)
     {
-        return spd is not null && IsWinterCoalescipede(spd) && ctr.TotalMass <= 6.72f && spd.Template.CreatureRelationship(ctr.Template).type == CreatureTemplate.Relationship.Type.Eats && !ctr.leechedOut
+        return (spd is not null && IsWinterCoalescipede(spd) && ctr.TotalMass <= 6.72f && spd.Template.CreatureRelationship(ctr.Template).type == CreatureTemplate.Relationship.Type.Eats && !ctr.leechedOut)
 || orig(spd, ctr);
     }
 
@@ -125,7 +123,7 @@ internal class HailstormSpiders
         IL.Spider.Centipede.Update += IL =>
         {
             ILCursor c = new(IL);
-            ILLabel? label = IL.DefineLabel();
+            ILLabel label = IL.DefineLabel();
             _ = c.Emit(OpCodes.Ldarg_0);
             c.Emit(OpCodes.Ldarg_1);
             c.EmitDelegate((Spider.Centipede cls, bool eu) =>
@@ -282,7 +280,7 @@ internal class HailstormSpiders
                     bigSpd.bodyChunks[b].rad *= 1.33f;
                 }
             }
-            if (CWT.AbsCtrData.TryGetValue(absSpd, out AbsCtrInfo aI))
+            if (CWT.AbsCtrData.TryGetValue(absSpd, out CWT.AbsCtrInfo aI))
             {
                 aI.functionTimer = 450 + (int)(HSRemix.MotherSpiderEvenMoreSpiders.Value * 10);
             }
@@ -301,7 +299,7 @@ internal class HailstormSpiders
                 (Random.value < 0.8f) ? 209 :
                 (Random.value < 0.8f) ? (0.209f + Custom.ClampedRandomVariation(0, 0.151f, 0.33f)) * 1000 : 1;
             hue /= 360f;
-            float sat = Mathf.Lerp(0.39f, 0.6f, Mathf.InverseLerp(209/360f, 1, hue));
+            float sat = Mathf.Lerp(0.39f, 0.6f, Mathf.InverseLerp(209 / 360f, 1, hue));
             float bri = 0.55f + Random.Range(-0.05f, 0.05f);
             bigSpd.yellowCol = Custom.HSL2RGB(hue, sat, bri);
             Random.state = state;
@@ -316,7 +314,7 @@ internal class HailstormSpiders
                     bigSpd.bodyChunks[b].rad *= 1.15f;
                 }
             }
-            
+
             if (bigSpd.Template.type == CreatureTemplate.Type.BigSpider)
             {
                 Random.State state = Random.state;
@@ -373,7 +371,7 @@ internal class HailstormSpiders
                 bigSpd.canCling = 0;
             }
         }
-        else if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out AbsCtrInfo aI))
+        else if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             // Partially counteracts the Mother Spider's regeneration, or else it would be WAY too fast thanks to the health increase that Mother Spiders get (it's pretty much percentage-based).
             if (bigSpd.State.health is > 0 and < 1)
@@ -481,8 +479,8 @@ internal class HailstormSpiders
             (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) &&
             bigSpd.bodyChunks[myChunk].vel.magnitude >= 12.5f &&
             bigSpd.TotalMass > target.TotalMass &&
-            CWT.CreatureData.TryGetValue(bigSpd, out CreatureInfo jI) &&
-            CWT.CreatureData.TryGetValue(target, out CreatureInfo vI) &&
+            CWT.CreatureData.TryGetValue(bigSpd, out CWT.CreatureInfo jI) &&
+            CWT.CreatureData.TryGetValue(target, out CWT.CreatureInfo vI) &&
             (jI.impactCooldown == 0 || vI.impactCooldown == 0))
         {
             jI.impactCooldown = 40;
@@ -513,7 +511,7 @@ internal class HailstormSpiders
         {
             dmg /= 2f; // x2 HP
             stun *= 0.4f;
-            if (source?.owner is not null && source.owner is Creature ctr && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out AbsCtrInfo abI) && abI.ctrList is not null && !abI.ctrList.Contains(ctr.abstractCreature))
+            if (source?.owner is not null && source.owner is Creature ctr && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo abI) && abI.ctrList is not null && !abI.ctrList.Contains(ctr.abstractCreature))
             {
                 abI.ctrList.Add(ctr.abstractCreature);
             }
@@ -526,7 +524,7 @@ internal class HailstormSpiders
     }
     public static void WinterMotherSpiderBabyPuff(On.BigSpider.orig_Die orig, BigSpider bigSpd)
     {
-        if (bigSpd?.room is not null && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out AbsCtrInfo aI))
+        if (bigSpd?.room is not null && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider)
             {
@@ -596,7 +594,7 @@ internal class HailstormSpiders
         if (AI?.bug?.room is not null &&
             AI.bug.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider &
             (IsIncanStory(AI.bug.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) &&
-            CWT.AbsCtrData.TryGetValue(AI.bug.abstractCreature, out AbsCtrInfo aI))
+            CWT.AbsCtrData.TryGetValue(AI.bug.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             foreach (AbstractCreature absCtr in aI.ctrList)
             {
@@ -717,7 +715,7 @@ internal class HailstormSpiders
                     sLeaser.sprites[bsg.FirstScaleSprite + (int)bsg.scales[scale][part, 3].x].color = Color.Lerp(bsg.blackColor, bsg.yellowCol, colLerp);
                 }
             }
-            
+
         }
     }
     public static void WinterSpiderSprites(On.BigSpiderGraphics.orig_InitiateSprites orig, BigSpiderGraphics bsg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
@@ -842,5 +840,3 @@ internal class HailstormSpiders
 
 
 }
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------

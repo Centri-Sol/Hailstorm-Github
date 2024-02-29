@@ -1,15 +1,13 @@
 ﻿namespace Hailstorm;
 
-//------------------------------------------------------------------------
-
-internal class CentiHooks
+public class CentiHooks
 {
     public static void Apply()
     {
         // Main Centi Functions
-        new Hook(typeof(Centipede).GetMethod("get_Centiwing", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.Cyanwing       || orig(cnt));
-        new Hook(typeof(Centipede).GetMethod("get_Small", Public | NonPublic | Instance),     (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
-        new Hook(typeof(Centipede).GetMethod("get_AquaCenti", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
+        _ = new Hook(typeof(Centipede).GetMethod("get_Centiwing", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.Cyanwing || orig(cnt));
+        _ = new Hook(typeof(Centipede).GetMethod("get_Small", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
+        _ = new Hook(typeof(Centipede).GetMethod("get_AquaCenti", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
 
         On.Centipede.ctor += WinterCentipedes;
 
@@ -35,17 +33,13 @@ internal class CentiHooks
 
     }
 
-    //----------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------
-
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
     }
 
-    //-----------------------------------------
+    public static ConditionalWeakTable<Centipede, CWT.CentiInfo> CentiData = new();
 
-    public static ConditionalWeakTable<Centipede, CentiInfo> CentiData = new();
     public static void WinterCentipedes(On.Centipede.orig_ctor orig, Centipede cnt, AbstractCreature absCnt, World world)
     {
         bool meatNotSetYet = false;
@@ -92,7 +86,7 @@ internal class CentiHooks
         {
             return;
         }
-        
+
         if (type == CreatureTemplate.Type.RedCentipede ||
             type == CreatureTemplate.Type.Centiwing ||
             type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
@@ -168,7 +162,7 @@ internal class CentiHooks
                         Mathf.Lerp(4f, 6.5f, cnt.size),
                         Mathf.Pow(Mathf.Clamp(Mathf.Sin(Mathf.PI * bodyLengthProgress), 0f, 1f), Mathf.Lerp(0.7f, 0.3f, cnt.size)));
                 float chunkMass =
-                    Mathf.Lerp(3/70f, 11/34f, Mathf.Pow(cnt.size, 1.4f));
+                    Mathf.Lerp(3 / 70f, 11 / 34f, Mathf.Pow(cnt.size, 1.4f));
 
                 if (type == CreatureTemplate.Type.RedCentipede)
                 {
@@ -216,19 +210,17 @@ internal class CentiHooks
             cnt is not Cyanwing &&
             cnt is not Chillipede)
         {
-            CentiData.Add(cnt, new CentiInfo(cnt));
+            CentiData.Add(cnt, new CWT.CentiInfo(cnt));
         }
-        
+
     }
 
-    //----------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------
 
     #region Main Centi Functions
     //----Update----//
     public static void HailstormCentiUpdate(On.Centipede.orig_Update orig, Centipede cnt, bool eu)
     {
-        if (cnt is null || !CentiData.TryGetValue(cnt, out CentiInfo cI))
+        if (cnt is null || !CentiData.TryGetValue(cnt, out CWT.CentiInfo cI))
         {
             orig(cnt, eu);
             return;
@@ -240,7 +232,7 @@ internal class CentiHooks
             PhysicalObject target = null;
             if (cnt.grabbedBy.Count > 0 && !cnt.dead && cnt.Small)
             {
-                cI.Charge += 1/60f;
+                cI.Charge += 1 / 60f;
                 if (cI.Charge >= 1 && cnt.grabbedBy[0].grabber is not null)
                 {
                     target = cnt.grabbedBy[0].grabber;
@@ -262,7 +254,7 @@ internal class CentiHooks
                         {
                             continue;
                         }
-                        cI.Charge += 1/Mathf.Lerp(100f, 5f, cnt.size);
+                        cI.Charge += 1 / Mathf.Lerp(100f, 5f, cnt.size);
                         if (cI.Charge >= 1)
                         {
                             target = grabbed;
@@ -272,10 +264,10 @@ internal class CentiHooks
             }
             if (target is not null)
             {
-                cnt.shockCharge = 0; 
-                if (cnt is not InfantAquapede &&
-                    cnt is not Cyanwing &&
-                    cnt is not Chillipede)
+                cnt.shockCharge = 0;
+                if (cnt is not InfantAquapede and
+                    not Cyanwing and
+                    not Chillipede)
                 {
                     Fry(cnt, target);
                 }
@@ -289,12 +281,12 @@ internal class CentiHooks
         {
             cnt.lungs = 1;
         }
-        
+
     }
     public static void ModifiedCentiCrawling(On.Centipede.orig_Crawl orig, Centipede cnt)
     {
-        if (cnt is null ||
-            (cnt is not Cyanwing && cnt is not Chillipede))
+        if (cnt is null or
+            (not Cyanwing and not Chillipede))
         {
             orig(cnt);
             return;
@@ -325,8 +317,8 @@ internal class CentiHooks
     }
     public static void ModifiedCentiSwimmingAndFlying(On.Centipede.orig_Fly orig, Centipede cnt)
     {
-        if (cnt is null || 
-            (cnt is not InfantAquapede && cnt is not Cyanwing))
+        if (cnt is null or
+            (not InfantAquapede and not Cyanwing))
         {
             orig(cnt);
             return;
@@ -451,7 +443,7 @@ internal class CentiHooks
         }
 
         if (cnt.Template.type == CreatureTemplate.Type.SmallCentipede && cnt.abstractCreature.superSizeMe &&
-            CWT.AbsCtrData.TryGetValue(cnt.abstractCreature, out AbsCtrInfo aI) &&
+            CWT.AbsCtrData.TryGetValue(cnt.abstractCreature, out CWT.AbsCtrInfo aI) &&
             aI.ctrList is not null && aI.ctrList.Count > 0 &&
             aI.ctrList[0]?.abstractAI is not null &&
             cnt.killTag is not null &&
@@ -512,7 +504,7 @@ internal class CentiHooks
 
     public static void ModifiedCentiStuff()
     {
-        
+
         IL.Centipede.Stun += IL =>
         {
             ILCursor c = new(IL);
@@ -539,7 +531,7 @@ internal class CentiHooks
             else
                 Debug.LogError("[Hailstorm] A Cyanwing IL anti-stun hook (part 1) got totally beaned! Report this, would ya?");
         };
-        
+
         IL.CentipedeAI.Update += IL =>
         {
             ILCursor c = new(IL);
@@ -612,7 +604,7 @@ internal class CentiHooks
                     x => x.MatchBrtrue(out label)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((Centipede cnt) => cnt is not Chillipede && cnt is not Cyanwing);
+                c.EmitDelegate((Centipede cnt) => cnt is not Chillipede and not Cyanwing);
                 c.Emit(OpCodes.Brfalse, label);
             }
             else
@@ -733,7 +725,7 @@ internal class CentiHooks
 
         if (shockee.Submersion > 0f)
         {
-            cnt.room.AddObject(new UnderwaterShock(cnt.room, cnt, cnt.HeadChunk.pos, 14, Mathf.Lerp(ModManager.MMF ? 0f : 200f, 1200f, cnt.size), 0.2f + 1.9f * cnt.size, cnt, new Color(0.7f, 0.7f, 1f)));
+            cnt.room.AddObject(new UnderwaterShock(cnt.room, cnt, cnt.HeadChunk.pos, 14, Mathf.Lerp(ModManager.MMF ? 0f : 200f, 1200f, cnt.size), 0.2f + (1.9f * cnt.size), cnt, new Color(0.7f, 0.7f, 1f)));
         }
     }
 
@@ -762,7 +754,7 @@ internal class CentiHooks
         }
 
         if (absCnt.creatureTemplate.type == CreatureTemplate.Type.SmallCentipede && absCnt.superSizeMe &&
-            CWT.AbsCtrData.TryGetValue(absCnt, out AbsCtrInfo aI) && (aI.ctrList is null || aI.ctrList.Count < 1))
+            CWT.AbsCtrData.TryGetValue(absCnt, out CWT.AbsCtrInfo aI) && (aI.ctrList is null || aI.ctrList.Count < 1))
         {
             FindBabyCentiwingMother(absCnt, world, aI);
         }
@@ -783,12 +775,12 @@ internal class CentiHooks
         Centipede cnt = cntAI.centipede;
 
         orig(cntAI);
-        
-        if (cnt.Template.type == CreatureTemplate.Type.SmallCentipede && cntAI.creature.superSizeMe && CWT.AbsCtrData.TryGetValue(cntAI.creature, out AbsCtrInfo aI) && (aI.ctrList is null || aI.ctrList.Count < 1 || aI.ctrList[0].state.dead))
+
+        if (cnt.Template.type == CreatureTemplate.Type.SmallCentipede && cntAI.creature.superSizeMe && CWT.AbsCtrData.TryGetValue(cntAI.creature, out CWT.AbsCtrInfo aI) && (aI.ctrList is null || aI.ctrList.Count < 1 || aI.ctrList[0].state.dead))
         {
             FindBabyCentiwingMother(cntAI.creature, cntAI.creature.world, aI);
         }
-        
+
     }
     public static CreatureTemplate.Relationship CentiwingBravery(On.CentipedeAI.orig_IUseARelationshipTracker_UpdateDynamicRelationship orig, CentipedeAI cntAI, RelationshipTracker.DynamicRelationship dynamRelat)
     {
@@ -826,7 +818,7 @@ internal class CentiHooks
 
     //------------------------------------------
 
-    public static void FindBabyCentiwingMother(AbstractCreature absCnt, World world, AbsCtrInfo aI)
+    public static void FindBabyCentiwingMother(AbstractCreature absCnt, World world, CWT.AbsCtrInfo aI)
     {
         if (absCnt is null || world is null) return;
 
@@ -951,5 +943,3 @@ internal class CentiHooks
 
     #endregion
 }
-
-//------------------------------------------------------------------------

@@ -1,11 +1,8 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-sealed class GorditoGreenieCritob : Critob
+internal sealed class GorditoGreenieCritob : Critob
 {
-    public Color GorditoGreenieColor = Custom.HSL2RGB(135/360f, 0.5f, 0.7f);
+    public Color GorditoGreenieColor = Custom.HSL2RGB(135 / 360f, 0.5f, 0.7f);
 
     internal GorditoGreenieCritob() : base(HSEnums.CreatureType.GorditoGreenieLizard)
     {
@@ -157,21 +154,21 @@ sealed class GorditoGreenieCritob : Critob
 
     public override void TileIsAllowed(AImap map, IntVector2 tilePos, ref bool? allow)
     {
-        if (map.getAItile(tilePos).acc == AItile.Accessibility.Climb ||
-            map.getAItile(tilePos).acc == AItile.Accessibility.Corridor ||
-            map.getAItile(tilePos).acc == AItile.Accessibility.Wall)
+        if (map.getAItile(tilePos).acc is AItile.Accessibility.Climb or
+            AItile.Accessibility.Corridor or
+            AItile.Accessibility.Wall)
         {
             allow = false;
         }
-        if (map.getAItile(tilePos).terrainProximity != 0 && map.getAItile(tilePos).narrowSpace) 
+        if (map.getAItile(tilePos).terrainProximity != 0 && map.getAItile(tilePos).narrowSpace)
         {
             allow = false;
         }
     }
     public override void ConnectionIsAllowed(AImap map, MovementConnection connection, ref bool? allow)
     {
-        if (connection.type == MovementConnection.MovementType.ShortCut ||
-            connection.type == MovementConnection.MovementType.BetweenRooms)
+        if (connection.type is MovementConnection.MovementType.ShortCut or
+            MovementConnection.MovementType.BetweenRooms)
         {
             allow = false;
         }
@@ -184,10 +181,5 @@ sealed class GorditoGreenieCritob : Critob
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absLiz) => new LizardAI(absLiz, absLiz.world);
     public override Creature CreateRealizedCreature(AbstractCreature absLiz) => new GorditoGreenie(absLiz, absLiz.world);
     public override CreatureState CreateState(AbstractCreature absLiz) => new LizardState(absLiz);
-
-    #nullable enable
-    public override CreatureTemplate.Type? ArenaFallback() => CreatureTemplate.Type.GreenLizard;
-#nullable disable
+    public override CreatureTemplate.Type ArenaFallback() => CreatureTemplate.Type.GreenLizard;
 }
-
-//----------------------------------------------------------------------------------

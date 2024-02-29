@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class AbstractIceChunk : AbstractPhysicalObject
 {
     public IceChunk realIce;
@@ -26,7 +24,7 @@ public class AbstractIceChunk : AbstractPhysicalObject
         sprite = Random.Range(0, 6);
         HSLColor col = new
         (
-            isFreezerCrystal ? Custom.WrappedRandomVariation(220/360f, 40/360f, 0.35f) : Custom.WrappedRandomVariation(180/360f, 40/360f, 1f),
+            isFreezerCrystal ? Custom.WrappedRandomVariation(220 / 360f, 40 / 360f, 0.35f) : Custom.WrappedRandomVariation(180 / 360f, 40 / 360f, 1f),
             isFreezerCrystal ? 0.60f : 0.06f,
             isFreezerCrystal ? Custom.ClampedRandomVariation(0.75f, 0.05f, 0.2f) : 0.55f
         );
@@ -54,7 +52,7 @@ public class AbstractIceChunk : AbstractPhysicalObject
         base.Update(time);
         if (freshness != 0)
         {
-            freshness = Mathf.Max(freshness - 1/2400f, 0);
+            freshness = Mathf.Max(freshness - (1 / 2400f), 0);
             if (realIce is not null & Random.value < 0.03f * Mathf.Min(1, freshness))
             {
                 InsectCoordinator smallInsects = null;
@@ -90,57 +88,3 @@ public class AbstractIceChunk : AbstractPhysicalObject
         return this.SaveToString(saveData);
     }
 }
-
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-public struct FrozenObject
-{
-    public AbstractPhysicalObject obj;
-
-    public float TotalMass;
-    public float AddedRad;
-
-    public float waterFriction;
-    public float airFriction;
-
-    public float buoyancy;
-    public float bounce;
-
-    public FrozenObject(AbstractPhysicalObject absObj)
-    {
-        if (absObj is null)
-        {
-            return;
-        }
-
-        obj = absObj;
-
-        bool wasNull = false;
-        if (obj.realizedObject is null)
-        {
-            wasNull = true;
-            obj.Realize();
-        }
-        PhysicalObject Obj = obj.realizedObject;
-
-        TotalMass = Obj.TotalMass;
-        for (int i = 0; i < Obj.bodyChunks.Length; i++)
-        {
-            AddedRad += Obj.bodyChunks[i].rad;
-        }
-        AddedRad /= (float)Obj.bodyChunks.Length;
-        waterFriction = Obj.waterFriction;
-        airFriction = Obj.airFriction;
-        buoyancy = Obj.buoyancy;
-        bounce = Obj.bounce;
-
-        if (wasNull)
-        {
-            obj.realizedObject = null;
-        }
-
-    }
-}
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,12 +1,8 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class ChillipedeAI : CentipedeAI, IUseARelationshipTracker
 {
     public Chillipede chl;
-
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     public ChillipedeAI(AbstractCreature creature, World world) : base(creature, world)
     {
@@ -14,17 +10,13 @@ public class ChillipedeAI : CentipedeAI, IUseARelationshipTracker
     }
     AIModule IUseARelationshipTracker.ModuleToTrackRelationship(CreatureTemplate.Relationship relationship)
     {
-        if (relationship.type == CreatureTemplate.Relationship.Type.Afraid ||
-            relationship.type == CreatureTemplate.Relationship.Type.StayOutOfWay)
-        {
-            return threatTracker;
-        }
-        if (relationship.type == CreatureTemplate.Relationship.Type.Eats ||
-            relationship.type == CreatureTemplate.Relationship.Type.Antagonizes)
-        {
-            return preyTracker;
-        }
-        return null;
+        return relationship.type == CreatureTemplate.Relationship.Type.Afraid ||
+            relationship.type == CreatureTemplate.Relationship.Type.StayOutOfWay
+            ? threatTracker
+            : relationship.type == CreatureTemplate.Relationship.Type.Eats ||
+            relationship.type == CreatureTemplate.Relationship.Type.Antagonizes
+            ? preyTracker
+            : (AIModule)null;
     }
 
     //--------------------------------------------------------------------------------
@@ -221,8 +213,6 @@ public class ChillipedeAI : CentipedeAI, IUseARelationshipTracker
         }
     }
 
-    // - - - - - - - - - - - - - - - - - - - -
-
     CreatureTemplate.Relationship IUseARelationshipTracker.UpdateDynamicRelationship(RelationshipTracker.DynamicRelationship relat)
     {
         CreatureTemplate.Relationship result = StaticRelationship(relat.trackerRep.representedCreature);
@@ -234,26 +224,19 @@ public class ChillipedeAI : CentipedeAI, IUseARelationshipTracker
         {
             Creature target = relat.trackerRep.representedCreature.realizedCreature;
 
-            if (target.dead)
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Ignores, 0);
-            }
-
-            if (result.type == CreatureTemplate.Relationship.Type.Eats && target.TotalMass < chl.TotalMass)
-            {
-                if (target.Hypothermia >= 2)
-                {
-                    return new CreatureTemplate.Relationship
-                        (CreatureTemplate.Relationship.Type.Ignores, 0);
-                }
-                return new CreatureTemplate.Relationship
+            return target.dead
+                ? new CreatureTemplate.Relationship
+                    (CreatureTemplate.Relationship.Type.Ignores, 0)
+                : result.type == CreatureTemplate.Relationship.Type.Eats && target.TotalMass < chl.TotalMass
+                ? target.Hypothermia >= 2
+                    ? new CreatureTemplate.Relationship
+                        (CreatureTemplate.Relationship.Type.Ignores, 0)
+                    : new CreatureTemplate.Relationship
                     (CreatureTemplate.Relationship.Type.Eats,
-                        MassFac(target) * ColdFac(target) * Mathf.Clamp(result.intensity, 0, 1));
-            }
-            return new CreatureTemplate.Relationship
+                        MassFac(target) * ColdFac(target) * Mathf.Clamp(result.intensity, 0, 1))
+                : new CreatureTemplate.Relationship
                 (CreatureTemplate.Relationship.Type.Afraid,
-                    0.2f + 0.8f * Mathf.InverseLerp(chl.TotalMass, chl.TotalMass * 1.5f, target.TotalMass));
+                    0.2f + (0.8f * Mathf.InverseLerp(chl.TotalMass, chl.TotalMass * 1.5f, target.TotalMass)));
         }
         return result;
     }
@@ -268,6 +251,3 @@ public class ChillipedeAI : CentipedeAI, IUseARelationshipTracker
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

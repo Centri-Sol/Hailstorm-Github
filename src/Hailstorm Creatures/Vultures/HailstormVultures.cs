@@ -1,6 +1,6 @@
 ﻿namespace Hailstorm;
 
-internal class HailstormVultures
+public class HailstormVultures
 {
 
     public static void Hooks()
@@ -39,38 +39,31 @@ internal class HailstormVultures
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
     }
 
     //---------------------------------------
 
-    public static ConditionalWeakTable<Vulture, VultureInfo> VulData = new();
+    public static ConditionalWeakTable<Vulture, CWT.VultureInfo> VulData = new();
     public static bool AddVultureToCWT(Vulture vul, AbstractCreature absVul, World world)
     {
-        if (vul.Template.type == HSEnums.CreatureType.Raven)
-        {
-            return true;
-        }
-        if (IsIncanStory(world.game) && (
+        return absVul is null
+            ? throw new ArgumentNullException(nameof(absVul))
+            : vul.Template.type == HSEnums.CreatureType.Raven
+|| (IsIncanStory(world.game) && (
                 vul.Template.type == CreatureTemplate.Type.KingVulture ||
                 vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture))
-        {
-            return true;
-        }
-        if (vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture && HSRemix.AuroricMirosEverywhere.Value)
-        {
-            return true;
-        }
-        return false;
+|| (vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture && HSRemix.AuroricMirosEverywhere.Value);
     }
+
     public static void HailstormVulturesSetup(On.Vulture.orig_ctor orig, Vulture vul, AbstractCreature absVul, World world)
     {
         orig(vul, absVul, world);
         if (!VulData.TryGetValue(vul, out _) && AddVultureToCWT(vul, absVul, world))
         {
-            VulData.Add(vul, new VultureInfo(vul));
+            VulData.Add(vul, new CWT.VultureInfo(vul));
         }
-        if (!VulData.TryGetValue(vul, out VultureInfo vi))
+        if (!VulData.TryGetValue(vul, out CWT.VultureInfo vi))
         {
             return;
         }
@@ -80,7 +73,7 @@ internal class HailstormVultures
 
         vi.albino = Random.value < (
             vi.Miros ? 0.001f :
-            vi.King  ? 0.003f :
+            vi.King ? 0.003f :
                        0.009f);
 
         if (world.region is not null &&
@@ -150,7 +143,7 @@ internal class HailstormVultures
 
         bool ActivateNewLaser = false;
 
-        if (vul is not null && VulData.TryGetValue(vul, out VultureInfo vi))
+        if (vul is not null && VulData.TryGetValue(vul, out CWT.VultureInfo vi))
         {
             if (vi.Miros)
             {
@@ -190,7 +183,7 @@ internal class HailstormVultures
 
         orig(vul, source, dirAndMomentum, hitChunk, appPos, dmgType, dmg, bonusStun);
 
-        if (vul is null || !VulData.TryGetValue(vul, out VultureInfo vI))
+        if (vul is null || !VulData.TryGetValue(vul, out CWT.VultureInfo vI))
         {
             return;
         }
@@ -210,7 +203,7 @@ internal class HailstormVultures
         IL.KingTusks.Tusk.ShootUpdate += IL =>
         {
             ILCursor c = new(IL);
-            ILLabel? label = IL.DefineLabel();
+            ILLabel label = IL.DefineLabel();
             _ = c.Emit(OpCodes.Ldarg_0);
             _ = c.Emit(OpCodes.Ldarg_1);
             _ = c.EmitDelegate((KingTusks.Tusk tusk, float speed) =>
@@ -232,18 +225,20 @@ internal class HailstormVultures
                 x => x.MatchLdcI4(0),
                 x => x.MatchBle(out label)))
             {
-                _ = c.Emit(OpCodes.Ldarg_0);
+                c.Emit(OpCodes.Ldarg_0);
                 c.EmitDelegate((VultureTentacle wing) => HailstormVultureWingResizing(wing));
-                _ = c.Emit(OpCodes.Brfalse, label);
+                c.Emit(OpCodes.Brfalse, label);
             }
             else
+            {
                 Debug.LogError("[Hailstorm] An IL hook for Auroric Miros Vultures exploded! And by that I mean it stopped working! Tell me about this, please.");
+            }
         };
     }
     public static bool HailstormVultureWingResizing(VultureTentacle wing)
     {
         if (wing?.vulture is not null &&
-            VulData.TryGetValue(wing.vulture, out VultureInfo vi))
+            VulData.TryGetValue(wing.vulture, out CWT.VultureInfo vi))
         {
             if (vi.Raven)
             {
@@ -258,11 +253,11 @@ internal class HailstormVultures
     }
     public static bool KingtuskTargetIsArmored(KingTusks.Tusk tusk, float speed)
     {
-        Vector2 val = tusk.chunkPoints[0, 0] + tusk.shootDir * 20f;
-        Vector2 pos = tusk.chunkPoints[0, 0] + tusk.shootDir * (20f + speed);
+        Vector2 val = tusk.chunkPoints[0, 0] + (tusk.shootDir * 20f);
+        Vector2 pos = tusk.chunkPoints[0, 0] + (tusk.shootDir * (20f + speed));
         FloatRect? floatRect = SharedPhysics.ExactTerrainRayTrace(tusk.room, val, pos);
         SharedPhysics.CollisionResult collisionResult = SharedPhysics.TraceProjectileAgainstBodyChunks(tusk, tusk.room, val, ref pos, 5f, 1, tusk.owner.vulture, hitAppendages: false);
-        if (TuskData.TryGetValue(tusk, out TuskInfo tI) && !floatRect.HasValue && collisionResult.chunk?.owner is not null && collisionResult.chunk.owner is Lizard liz && liz.LizardState is ColdLizState lS && lS.armored)
+        if (TuskData.TryGetValue(tusk, out CWT.TuskInfo tI) && !floatRect.HasValue && collisionResult.chunk?.owner is not null && collisionResult.chunk.owner is Lizard liz && liz.LizardState is ColdLizState lS && lS.armored)
         {
             int stun = (liz.Template.type == HSEnums.CreatureType.FreezerLizard) ? 0 : 30;
             tusk.mode = KingTusks.Tusk.Mode.Dangling;
@@ -278,15 +273,15 @@ internal class HailstormVultures
 
     //---------------------------------------
     // King-specific
-    public static ConditionalWeakTable<KingTusks.Tusk, TuskInfo> TuskData = new();
+    public static ConditionalWeakTable<KingTusks.Tusk, CWT.TuskInfo> TuskData = new();
     public static void KingtuskCWT(On.KingTusks.Tusk.orig_ctor orig, KingTusks.Tusk tusk, KingTusks owner, int side)
     {
         orig(tusk, owner, side);
         if (!TuskData.TryGetValue(tusk, out _))
         {
-            TuskData.Add(tusk, new TuskInfo(tusk));
+            TuskData.Add(tusk, new CWT.TuskInfo(tusk));
         }
-        
+
     }
     public static void KingtuskDeflectMomentum(On.KingTusks.Tusk.orig_Update orig, KingTusks.Tusk tusk)
     {
@@ -310,12 +305,12 @@ internal class HailstormVultures
             {
                 if (tusk.currWireLength > 0f)
                 {
-                    tusk.currWireLength = Mathf.Max(0f, tusk.currWireLength - KingTusks.Tusk.maxWireLength/45f);
+                    tusk.currWireLength = Mathf.Max(0f, tusk.currWireLength - (KingTusks.Tusk.maxWireLength / 45f));
                 }
             }
         }
 
-        if (tusk is not null && TuskData.TryGetValue(tusk, out TuskInfo tI))
+        if (tusk is not null && TuskData.TryGetValue(tusk, out CWT.TuskInfo tI))
         {
             if (tusk.mode == KingTusks.Tusk.Mode.ShootingOut && tI.bounceOffSpeed != new Vector2(0, 0))
             {
@@ -346,7 +341,10 @@ internal class HailstormVultures
                 }
             }
         }
-        else orig(tusk);
+        else
+        {
+            orig(tusk);
+        }
 
         if (Weather.ErraticWindCycle && Weather.ExtremeWindIntervals[Weather.WindInterval] && tusk?.room?.blizzardGraphics is not null && tusk.mode == KingTusks.Tusk.Mode.Dangling)
         {
@@ -395,12 +393,9 @@ internal class HailstormVultures
     }
     public static bool ErraticWindTuskWait(On.KingTusks.orig_WantToShoot orig, KingTusks kt, bool checkVisualOnAnyTargetChunk, bool checkMinDistance)
     {
-        if (Weather.ErraticWindCycle &&
-            Weather.ExtremeWindIntervals[Weather.WindInterval])
-        {
-            return false;
-        }
-        return orig(kt, checkVisualOnAnyTargetChunk, checkMinDistance);
+        return (!Weather.ErraticWindCycle ||
+!Weather.ExtremeWindIntervals[Weather.WindInterval])
+&& orig(kt, checkVisualOnAnyTargetChunk, checkMinDistance);
     }
 
     //---------------------------------------
@@ -408,14 +403,14 @@ internal class HailstormVultures
     public static void AuroricMirosLaser(On.Vulture.orig_Update orig, Vulture vul, bool eu)
     {
         orig(vul, eu);
-        if (vul?.room is null || !VulData.TryGetValue(vul, out VultureInfo vi))
+        if (vul?.room is null || !VulData.TryGetValue(vul, out CWT.VultureInfo vi))
         {
             return;
         }
 
         if (vi.King)
         {
-            vi.wingGlowFadeTimer += 
+            vi.wingGlowFadeTimer +=
                (vul.AI.behavior == VultureAI.Behavior.Hunt ||
                 vul.AI.behavior == VultureAI.Behavior.ReturnPrey ||
                 vul.AI.behavior == VultureAI.Behavior.EscapeRain) ? 2 : 1;
@@ -443,7 +438,7 @@ internal class HailstormVultures
             {
                 vul.room.AddObject(new Explosion(
                     room: vul.room,
-                    sourceObject: vul, 
+                    sourceObject: vul,
                     pos: vul.mainBodyChunk.pos,
                     lifeTime: 7,
                     rad: vi.albino ? 160 : 240,
@@ -511,11 +506,9 @@ internal class HailstormVultures
         if (vul.laserCounter > 0 && vul.AI?.preyTracker?.MostAttractivePrey is not null)
         {
             Tracker.CreatureRepresentation mostAttractivePrey = vul.AI.preyTracker.MostAttractivePrey;
-            if (mostAttractivePrey.TicksSinceSeen < 40 && mostAttractivePrey.representedCreature?.realizedCreature is not null)
-            {
-                vi.currentPrey = mostAttractivePrey.representedCreature.realizedCreature;
-            }
-            else vi.currentPrey = null;
+            vi.currentPrey = mostAttractivePrey.TicksSinceSeen < 40 && mostAttractivePrey.representedCreature?.realizedCreature is not null
+                ? mostAttractivePrey.representedCreature.realizedCreature
+                : null;
         }
         else if (vi.currentPrey is not null)
         {
@@ -531,7 +524,7 @@ internal class HailstormVultures
     {
         if (vul?.room?.abstractRoom?.creatures is not null &&
             vul.bodyChunks is not null &&
-            VulData.TryGetValue(vul, out VultureInfo vi) &
+            VulData.TryGetValue(vul, out CWT.VultureInfo vi) &
             vi.Miros)
         {
             for (int i = 0; i < vul.room.abstractRoom.creatures.Count; i++)
@@ -558,7 +551,7 @@ internal class HailstormVultures
                         break;
                     }
                     Vector2 headDirection = Custom.DirVec(vul.neck.Tip.pos, vul.Head().pos);
-                    if (!Custom.DistLess(vul.Head().pos + headDirection * 20f, ctr.bodyChunks[j].pos, 20f + ctr.bodyChunks[j].rad) || !vul.room.VisualContact(vul.Head().pos, ctr.bodyChunks[j].pos))
+                    if (!Custom.DistLess(vul.Head().pos + (headDirection * 20f), ctr.bodyChunks[j].pos, 20f + ctr.bodyChunks[j].rad) || !vul.room.VisualContact(vul.Head().pos, ctr.bodyChunks[j].pos))
                     {
                         continue;
                     }
@@ -573,7 +566,7 @@ internal class HailstormVultures
     {
         // Causes Miros Vultures to attack and eat ANYTHING that isn't flagged as inedible to them
         if (vultureAI?.vulture is not null &&
-            VulData.TryGetValue(vultureAI.vulture, out VultureInfo vi) &&
+            VulData.TryGetValue(vultureAI.vulture, out CWT.VultureInfo vi) &&
             vi.Miros)
         {
             CreatureTemplate.Type ctrType = dynamRelat.trackerRep.representedCreature.creatureTemplate.type;
@@ -633,7 +626,7 @@ internal class HailstormVultures
     public static void HailstormVulFeathers(On.VultureGraphics.orig_ctor orig, VultureGraphics vg, Vulture owner)
     {
         orig(vg, owner);
-        if (vg?.vulture is null || !VulData.TryGetValue(vg.vulture, out VultureInfo vi))
+        if (vg?.vulture is null || !VulData.TryGetValue(vg.vulture, out CWT.VultureInfo vi))
         {
             return;
         }
@@ -685,10 +678,10 @@ internal class HailstormVultures
                 bool RNG = Random.value < 0.025f;
                 if (Random.value < 1 / featherDamageFac || (RNG && Random.value < 0.5f))
                 {
-                    vg.wings[w, f].lose = 1f - Random.value * Random.value * Random.value;
+                    vg.wings[w, f].lose = 1f - (Random.value * Random.value * Random.value);
                     if (Random.value < 0.4f)
                     {
-                        vg.wings[w, f].brokenColor = 1f - Random.value * Random.value;
+                        vg.wings[w, f].brokenColor = 1f - (Random.value * Random.value);
                     }
                 }
                 if (Random.value < 1f / shriveledFeatherFac)
@@ -708,7 +701,7 @@ internal class HailstormVultures
                 }
             }
         }
-        
+
 
         Random.state = state;
 
@@ -716,7 +709,7 @@ internal class HailstormVultures
     public static void HailstormVultureSprites(On.VultureGraphics.orig_InitiateSprites orig, VultureGraphics vg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(vg, sLeaser, rCam);
-        if (vg?.vulture is null || !VulData.TryGetValue(vg.vulture, out VultureInfo vi))
+        if (vg?.vulture is null || !VulData.TryGetValue(vg.vulture, out CWT.VultureInfo vi))
         {
             return;
         }
@@ -758,7 +751,7 @@ internal class HailstormVultures
     public static void AuroricMirosBeakMesh(On.VultureGraphics.BeakGraphic.orig_InitiateSprites orig, VultureGraphics.BeakGraphic bg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(bg, sLeaser, rCam);
-        if (bg?.owner?.vulture is null || !VulData.TryGetValue(bg.owner.vulture, out VultureInfo vi) || !vi.Miros)
+        if (bg?.owner?.vulture is null || !VulData.TryGetValue(bg.owner.vulture, out CWT.VultureInfo vi) || !vi.Miros)
         {
             return;
         }
@@ -772,7 +765,7 @@ internal class HailstormVultures
     public static void AuroricMirosSpriteLayering(On.VultureGraphics.orig_AddToContainer orig, VultureGraphics vg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContainer)
     {
         orig(vg, sLeaser, rCam, newContainer);
-        if (vg?.vulture is null || !VulData.TryGetValue(vg.vulture, out VultureInfo vi) || !vi.Miros)
+        if (vg?.vulture is null || !VulData.TryGetValue(vg.vulture, out CWT.VultureInfo vi) || !vi.Miros)
         {
             return;
         }
@@ -796,7 +789,7 @@ internal class HailstormVultures
     public static void HailstormVulturePalettes(On.VultureGraphics.orig_ApplyPalette orig, VultureGraphics vg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(vg, sLeaser, rCam, palette);
-        if (vg?.vulture?.room is null || !VulData.TryGetValue(vg.vulture, out VultureInfo vi))
+        if (vg?.vulture?.room is null || !VulData.TryGetValue(vg.vulture, out CWT.VultureInfo vi))
         {
             return;
         }
@@ -832,7 +825,7 @@ internal class HailstormVultures
             vi.ColorA = !vi.albino ?
                 new HSLColor(Random.Range(0.475f, 0.525f), Random.Range(0.50f, 0.60f), Random.Range(0.35f, 0.45f)) :
                 new HSLColor(Random.Range(0.860f, 0.940f), Random.Range(0.25f, 0.33f), Random.Range(0.60f, 0.70f));
-            vi.eyeCol = new HSLColor(vi.ColorA.hue, (!vi.albino ? 1f : 0.6f), (!vi.albino ? 0.5f : 0.75f));
+            vi.eyeCol = new HSLColor(vi.ColorA.hue, !vi.albino ? 1f : 0.6f, !vi.albino ? 0.5f : 0.75f);
             vi.wingColor = vi.ColorA;
             vi.featherColor1 = vi.eyeCol;
             vi.featherColor2 = new HSLColor(vi.ColorA.hue, 0.75f, 0.75f);
@@ -841,15 +834,23 @@ internal class HailstormVultures
                     new HSLColor(Random.Range(170 / 360f, 210 / 360f), 0.4f, 0.8f) :
                     new HSLColor(Random.Range(240 / 360f, 280 / 360f), 0.4f, 0.8f);
             float hue = vi.smokeCol1.hue + (Random.value < 0.5f ? -20 / 360f : 20 / 360f);
-            if (hue < (!vi.albino ? 170 / 360f : 240 / 360f)) hue += 40 / 360f;
-            if (hue > (!vi.albino ? 240 / 360f : 280 / 360f)) hue -= 40 / 360f;
+            if (hue < (!vi.albino ? 170 / 360f : 240 / 360f))
+            {
+                hue += 40 / 360f;
+            }
+
+            if (hue > (!vi.albino ? 240 / 360f : 280 / 360f))
+            {
+                hue -= 40 / 360f;
+            }
+
             vi.smokeCol2 = new HSLColor(hue, vi.smokeCol1.saturation + 0.4f, vi.smokeCol1.lightness - 0.4f);
         }
         else if (vi.Miros)
         {
             vi.featherColor1 = vi.eyeCol;
 
-            float h = !vi.albino ? Random.Range(0.3f, 0.7f) : Random.Range(280/360f, 560/360f);
+            float h = !vi.albino ? Random.Range(0.3f, 0.7f) : Random.Range(280 / 360f, 560 / 360f);
             float l = h / (!vi.albino ? 3f : 10f);
             vi.featherColor2 = new HSLColor(h, 0.75f - l, Custom.WrappedRandomVariation(0.55f + l, 0.1f, 0.5f));
             if (Random.value < 0.5f)
@@ -875,11 +876,11 @@ internal class HailstormVultures
     public static void HailstormVultureVisuals(On.VultureGraphics.orig_DrawSprites orig, VultureGraphics vg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(vg, sLeaser, rCam, timeStacker, camPos);
-        if (vg?.vulture?.room is null || !VulData.TryGetValue(vg.vulture, out VultureInfo vi))
+        if (vg?.vulture?.room is null || !VulData.TryGetValue(vg.vulture, out CWT.VultureInfo vi))
         {
             return;
         }
-        
+
         if (!vi.Miros && !vg.shadowMode)
         {
             if (vi.King)
@@ -932,7 +933,7 @@ internal class HailstormVultures
             Laser.MoveVertice(3, vi.currentPrey.mainBodyChunk.pos - (endOfNeckPos * 4f) + (Custom.PerpendicularVector(endOfNeckPos) * 0.5f) - camPos);
         }
     }
-    public static void RavenColors(VultureGraphics vg, VultureInfo vi, RoomCamera.SpriteLeaser sLeaser)
+    public static void RavenColors(VultureGraphics vg, CWT.VultureInfo vi, RoomCamera.SpriteLeaser sLeaser)
     {
         float darkness = vg.darkness;
         Color blackColor = vg.palette.blackColor;
@@ -966,7 +967,7 @@ internal class HailstormVultures
             for (int f = 0; f < vg.feathersPerWing; f++)
             {
                 sLeaser.sprites[vg.FeatherSprite(w, f)].color = Color.Lerp(vi.ColorB.rgb, blackColor, darkness);
-                float lerpReversePoint = (vg.feathersPerWing - 1)/3f;
+                float lerpReversePoint = (vg.feathersPerWing - 1) / 3f;
                 float featherColorFac = (f < lerpReversePoint) ?
                     Mathf.InverseLerp(0, lerpReversePoint, f) :
                     Mathf.InverseLerp(lerpReversePoint, vg.feathersPerWing - 1, f);
@@ -990,7 +991,7 @@ internal class HailstormVultures
             }
         }
     }
-    public static void FlurryKingColors(VultureGraphics vg, VultureInfo vi, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
+    public static void FlurryKingColors(VultureGraphics vg, CWT.VultureInfo vi, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         float darkness = vg.darkness;
         Color blackColor = vg.palette.blackColor;
@@ -1008,13 +1009,13 @@ internal class HailstormVultures
             sLeaser.sprites[vg.MaskArrowSprite].color = Color.Lerp(vi.MiscColor.rgb, blackColor, darkness);
         }
         //----Wings----//
-        float wingGlowFac = vi.wingGlowFadeTimer/160f;
+        float wingGlowFac = vi.wingGlowFadeTimer / 160f;
         for (int w = 0; w < vg.vulture.tentacles.Length; w++)
         {
             TriangleMesh wing = sLeaser.sprites[vg.TentacleSprite(w)] as TriangleMesh;
             for (int t = 0; t < wing.verticeColors.Length; t++)
             {
-                float wingDistFac = Mathf.InverseLerp(0, wing.verticeColors.Length -1, t);
+                float wingDistFac = Mathf.InverseLerp(0, wing.verticeColors.Length - 1, t);
                 float glowFac = Mathf.InverseLerp(0.125f, 0, Mathf.Abs(wingDistFac - wingGlowFac));
                 wing.verticeColors[t] = Color.Lerp(Color.Lerp(vi.ColorB.rgb, blackColor, darkness), vi.wingColor.rgb, glowFac);
             }
@@ -1029,8 +1030,8 @@ internal class HailstormVultures
         //----Back Shields----//
         for (int s = 0; s < 2; s++)
         {
-            sLeaser.sprites[vg.BackShieldSprite(s)].color = Color.Lerp(vi.ColorA.rgb, blackColor, darkness/2f);
-            sLeaser.sprites[vg.FrontShieldSprite(s)].color = Color.Lerp(vi.eyeCol.rgb, blackColor, darkness/2f);
+            sLeaser.sprites[vg.BackShieldSprite(s)].color = Color.Lerp(vi.ColorA.rgb, blackColor, darkness / 2f);
+            sLeaser.sprites[vg.FrontShieldSprite(s)].color = Color.Lerp(vi.eyeCol.rgb, blackColor, darkness / 2f);
         }
         //----Danglies----//
         for (int d = 0; d < 2; d++)
@@ -1046,7 +1047,7 @@ internal class HailstormVultures
     public static void FlurryKingLaserColor(On.KingTusks.Tusk.orig_DrawSprites orig, KingTusks.Tusk tusk, VultureGraphics vg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(tusk, vg, sLeaser, rCam, timeStacker, camPos);
-        if (vg?.vulture?.room is null || !VulData.TryGetValue(vg.vulture, out VultureInfo vi) || !vi.King)
+        if (vg?.vulture?.room is null || !VulData.TryGetValue(vg.vulture, out CWT.VultureInfo vi) || !vi.King)
         {
             return;
         }
@@ -1062,7 +1063,7 @@ internal class HailstormVultures
             laser.verticeColors[3] = Custom.RGB2RGBA(eyeCol, Mathf.Pow(alpha, 2f) * (tusk.mode == KingTusks.Tusk.Mode.Charging ? 1f : 0.5f));
         }
     }
-    public static void AuroricMirosColors(VultureGraphics vg, VultureInfo vi, RoomCamera.SpriteLeaser sLeaser)
+    public static void AuroricMirosColors(VultureGraphics vg, CWT.VultureInfo vi, RoomCamera.SpriteLeaser sLeaser)
     {
         float darkness = vg.darkness;
         Color blackColor = vg.palette.blackColor;
@@ -1126,7 +1127,7 @@ internal class HailstormVultures
     public static void HailstormVultureSmokeColoring1(On.Vulture.VultureThruster.orig_StartSmoke orig, Vulture.VultureThruster thruster)
     {
         orig(thruster);
-        if (thruster?.vulture is null || !VulData.TryGetValue(thruster.vulture, out VultureInfo vi))
+        if (thruster?.vulture is null || !VulData.TryGetValue(thruster.vulture, out CWT.VultureInfo vi))
         {
             return;
         }
@@ -1135,7 +1136,7 @@ internal class HailstormVultures
     }
     public static void HailstormVultureSmokeColoring2(On.KingTusks.Tusk.orig_Shoot orig, KingTusks.Tusk tusk, Vector2 tuskHangPos)
     {
-        if (tusk?.owner?.vulture is null || !VulData.TryGetValue(tusk.vulture, out VultureInfo vi))
+        if (tusk?.owner?.vulture is null || !VulData.TryGetValue(tusk.vulture, out CWT.VultureInfo vi))
         {
             orig(tusk, tuskHangPos);
             return;
@@ -1154,7 +1155,7 @@ internal class HailstormVultures
     public static void HailstormVultureMaskColoring(On.Vulture.orig_DropMask orig, Vulture vul, Vector2 violenceDir)
     {
         if (vul?.room is not null &&
-            VulData.TryGetValue(vul, out VultureInfo vi) &&
+            VulData.TryGetValue(vul, out CWT.VultureInfo vi) &&
             vul.State is not null &&
             vul.State is Vulture.VultureState vs &&
             vs.mask)
@@ -1196,15 +1197,8 @@ internal class HailstormVultures
             mg.attachedTo is Vulture vul &&
             VulData.TryGetValue(vul, out _))
         {
-            Vector2 pos = Vector2.zero;
-            if (mg.overrideDrawVector.HasValue)
-            {
-                pos = mg.overrideDrawVector.Value;
-            }
-            else
-            {
-                pos = Vector2.Lerp(mg.attachedTo.firstChunk.lastPos, mg.attachedTo.firstChunk.pos, timeStacker);
-            }
+            _ = Vector2.zero;
+            Vector2 pos = mg.overrideDrawVector ?? Vector2.Lerp(mg.attachedTo.firstChunk.lastPos, mg.attachedTo.firstChunk.pos, timeStacker);
             float darkness = rCam.room.Darkness(pos) * (1 - rCam.room.LightSourceExposure(pos)) * 0.8f * (1 - mg.fallOffVultureMode);
             Color maskColor = Color.Lerp(Color.Lerp(mg.ColorA.rgb, Color.white, 0.35f * mg.fallOffVultureMode), mg.blackColor, Mathf.Lerp(0.2f, 1, Mathf.Pow(darkness, 2f)));
             sLeaser.sprites[mg.firstSprite].color = maskColor;
@@ -1220,390 +1214,4 @@ internal class HailstormVultures
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-}
-
-public class MirosBomb : UpdatableAndDeletable, IDrawable
-{
-    //----------------------------------------------------------------------------------
-
-    public Vector2 lastPos;
-    public Vector2 pos;
-    public Vector2 vel;
-    private Color color;
-    private Color explodeColor;
-    private readonly float rad;
-    private Vector2 rotation;
-    public float burn;
-    public float Submersion
-    {
-        get
-        {
-            if (room is null)
-            {
-                return 0f;
-            }
-            if (room.waterInverted)
-            {
-                return 1f - Mathf.InverseLerp(pos.y - rad, pos.y + rad, room.FloatWaterLevel(pos.x));
-            }
-            float floatWaterLvl = room.FloatWaterLevel(pos.x);
-            if (!MMF.cfgVanillaExploits.Value && floatWaterLvl > (room.abstractRoom.size.y + 20) * 20)
-            {
-                return 1f;
-            }
-            return Mathf.InverseLerp(pos.y - rad, pos.y + rad, floatWaterLvl);
-        }
-    }
-
-    public PhysicalObject source;
-
-    public float[] spikes;
-    public Smoke.BombSmoke smoke;
-
-    //----------------------------------------------------------------------------------
-
-    public MirosBomb(Vector2 startingPos, Vector2 baseVel, PhysicalObject bombCreator, Color bombColor)
-    {
-        lastPos = startingPos;
-        vel = baseVel;
-        pos = startingPos + baseVel;
-        source = bombCreator;
-        explodeColor = bombColor;
-        rotation = Custom.RNV();
-        rad = 4;
-        spikes = new float[Random.Range(3, 8)];
-        for (int i = 0; i < spikes.Length; i++)
-        {
-            spikes[i] = (i + Random.value) * (360f / (float)spikes.Length);
-        }
-    }
-
-    //---------------------------------------
-
-    public override void Update(bool eu)
-    {
-        if (Submersion > 0)
-        {
-            vel.y = Mathf.Lerp(vel.y, 0, Submersion / 100f);
-            vel.x = Mathf.Lerp(vel.x, 0, Submersion / 200f);
-        }
-        if (vel.y + vel.x < 8 && burn == 0)
-        {
-            burn += 1/30f;
-        }
-        int updates = Mathf.Max(1, Mathf.CeilToInt(vel.magnitude / rad));
-        for (int m = 0; m < updates; m++)
-        {
-            lastPos = pos;
-            pos += vel / (float)updates;
-
-            Vector2 outerRad = pos + vel.normalized * rad;
-            FloatRect? floatRect = SharedPhysics.ExactTerrainRayTrace(room, outerRad, pos - vel.normalized * rad);
-            Vector2 terrainTraceArea = default;
-            if (floatRect.HasValue)
-            {
-                terrainTraceArea = new(floatRect.Value.left, floatRect.Value.bottom);
-            }
-            SharedPhysics.CollisionResult collisionResult = SharedPhysics.TraceProjectileAgainstBodyChunks(null, room, lastPos, ref pos, rad, 1, source, false);
-            if (floatRect.HasValue && collisionResult.chunk is not null)
-            {
-                if (Vector2.Distance(outerRad, terrainTraceArea) < Vector2.Distance(outerRad, collisionResult.collisionPoint))
-                {
-                    collisionResult.chunk = null;
-                }
-                else
-                {
-                    floatRect = null;
-                }
-            }
-            if (floatRect.HasValue ||
-                (collisionResult.chunk?.owner is not null && (collisionResult.chunk.owner is not Creature ctr || ctr.Template.type != MoreSlugcatsEnums.CreatureTemplateType.MirosVulture)))
-            {
-                Explode(collisionResult.chunk);
-            }
-        }
-
-        if (burn > 0f)
-        {
-            if (Submersion > 0 && !room.waterObject.WaterIsLethal)
-            {
-                burn = 0f;
-            }
-            for (int i = 0; i < 3; i++)
-            {
-                room.AddObject(new Spark(Vector2.Lerp(lastPos, pos, Random.value), vel * 0.1f + Custom.RNV() * 3.2f * Random.value, explodeColor, null, 7, 30));
-            }
-            if (smoke is null)
-            {
-                smoke = new Smoke.BombSmoke(room, pos, null, explodeColor);
-                room.AddObject(smoke);
-            }
-        }
-        else
-        {
-            smoke?.Destroy();
-            smoke = null;
-        }
-
-        if (burn > 0f || !room.IsPositionInsideBoundries(room.GetTilePosition(pos)))
-        {
-            burn += 1/30f;
-            if (burn > 1)
-            {
-                Explode(null);
-            }
-        }
-        if (burn <= 0f)
-        {
-            Explode(null);
-        }
-
-        base.Update(eu);
-    }
-    public void Explode(BodyChunk hitChunk)
-    {
-        if (slatedForDeletetion)
-        {
-            return;
-        }
-        Creature killtag = null;
-        if (source is not null and Creature)
-        {
-            killtag = source as Creature;
-        }
-        room.AddObject(new SootMark(room, pos, 100, bigSprite: true));
-        room.AddObject(new Explosion(room, source, pos, 2, 200, 7, 2.5f, 240, 0, killtag, 0, 120, 0.5f));
-        room.AddObject(new Explosion.ExplosionLight(pos, 400, 1, 7, explodeColor));
-        room.AddObject(new Explosion.ExplosionLight(pos, 400, 1, 3, Color.white));
-        room.AddObject(new ExplosionSpikes(room, pos, 16, 32, 12, 8, 200, explodeColor));
-        room.AddObject(new ShockWave(pos, 360, 0.05f, 6));
-        for (int i = 0; i < 25; i++)
-        {
-            Vector2 angle = Custom.RNV();
-            if (room.GetTile(pos + angle * 20f).Solid)
-            {
-                angle = (room.GetTile(pos - angle * 20f).Solid ? Custom.RNV() : (angle * -1f));
-            }
-            for (int j = 0; j < 3; j++)
-            {
-                room.AddObject(new Spark(pos + angle * Mathf.Lerp(30f, 60f, Random.value), angle * Mathf.Lerp(7f, 38f, Random.value) + Custom.RNV() * 20f * Random.value, Color.Lerp(explodeColor, new Color(1f, 1f, 1f), Random.value), null, 11, 28));
-            }
-            room.AddObject(new Explosion.FlashingSmoke(pos + angle * 40f * Random.value, angle * Mathf.Lerp(4f, 20f, Mathf.Pow(Random.value, 2f)), 1f + 0.05f * Random.value, new Color(1f, 1f, 1f), explodeColor, Random.Range(3, 11)));
-        }
-        if (smoke is not null)
-        {
-            for (int k = 0; k < 8; k++)
-            {
-                smoke.EmitWithMyLifeTime(pos + Custom.RNV(), Custom.RNV() * Random.value * 17f);
-            }
-        }
-        for (int l = 0; l < 6; l++)
-        {
-            room.AddObject(new ScavengerBomb.BombFragment(pos, Custom.DegToVec((l + Random.value) / 6f * 360f) * Mathf.Lerp(18f, 38f, Random.value)));
-        }
-        room.ScreenMovement(pos, default, 1.3f);
-        room.PlaySound(SoundID.Bomb_Explode, pos);
-        room.InGameNoise(new Noise.InGameNoise(pos, 9000, null, 1));
-        bool smokeTime = hitChunk is not null;
-        for (int n = 0; n < 5; n++)
-        {
-            if (room.GetTile(pos + Custom.fourDirectionsAndZero[n].ToVector2() * 20f).Solid)
-            {
-                smokeTime = true;
-                break;
-            }
-        }
-        if (smokeTime)
-        {
-            if (smoke is null)
-            {
-                smoke = new Smoke.BombSmoke(room, pos, null, explodeColor);
-                room.AddObject(smoke);
-            }
-            if (hitChunk is not null)
-            {
-                smoke.chunk = hitChunk;
-            }
-            else
-            {
-                smoke.chunk = null;
-                smoke.fadeIn = 1f;
-            }
-            smoke.pos = pos;
-            smoke.stationary = true;
-            smoke.DisconnectSmoke();
-        }
-        else
-        {
-            smoke?.Destroy();
-        }
-        Destroy();
-    }
-
-    //---------------------------------------
-
-    public void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
-    {
-        sLeaser.sprites = new FSprite[spikes.Length + 4];
-        for (int i = 0; i < 2; i++)
-        {
-            sLeaser.sprites[i] = new FSprite("pixel")
-            {
-                scaleX = Mathf.Lerp(1, 2, Mathf.Pow(Random.value, 1.8f)),
-                scaleY = Mathf.Lerp(4, 7, Random.value)
-            };
-        }
-        for (int j = 0; j < spikes.Length; j++)
-        {
-            sLeaser.sprites[2 + j] = new FSprite("pixel")
-            {
-                scaleX = Mathf.Lerp(2, 3, Random.value),
-                scaleY = Mathf.Lerp(5, 7, Random.value),
-                anchorY = 0f
-            };
-        }
-        sLeaser.sprites[spikes.Length + 2] = new FSprite("Futile_White")
-        {
-            shader = rCam.game.rainWorld.Shaders["JaggedCircle"],
-            scale = (rad + 0.75f) / 10f,
-            alpha = Mathf.Lerp(0.2f, 0.4f, Random.value)
-        };
-        TriangleMesh.Triangle[] tris = new TriangleMesh.Triangle[1]
-        {
-            new(0, 1, 2)
-        };
-        TriangleMesh triangleMesh = new("Futile_White", tris, customColor: true);
-        sLeaser.sprites[spikes.Length + 3] = triangleMesh;
-        AddToContainer(sLeaser, rCam, null);
-    }
-    public void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
-    {
-        sLeaser.sprites[2].rotation = Custom.AimFromOneVectorToAnother(new Vector2(0f, 0f), rotation);
-        sLeaser.sprites[spikes.Length + 2].x = pos.x - camPos.x;
-        sLeaser.sprites[spikes.Length + 2].y = pos.y - camPos.y;
-        for (int i = 0; i < spikes.Length; i++)
-        {
-            sLeaser.sprites[2 + i].x = pos.x - camPos.x;
-            sLeaser.sprites[2 + i].y = pos.y - camPos.y;
-            sLeaser.sprites[2 + i].rotation = Custom.VecToDeg(rotation) + spikes[i];
-        }
-        Color val3 = Color.Lerp(explodeColor, Color.red, 0.5f + 0.2f * Mathf.Pow(Random.value, 0.2f));
-        val3 = Color.Lerp(val3, Color.white, Mathf.Pow(Random.value, 3));
-        for (int j = 0; j < 2; j++)
-        {
-            sLeaser.sprites[j].x = pos.x - camPos.x;
-            sLeaser.sprites[j].y = pos.y - camPos.y;
-            sLeaser.sprites[j].rotation = Custom.VecToDeg(rotation) + (j * 90);
-            sLeaser.sprites[j].color = val3;
-        }
-        sLeaser.sprites[spikes.Length + 3].isVisible = true;
-        Vector2 posDifference = pos - lastPos;
-        Vector2 perpAngleIthinkIDK = Custom.PerpendicularVector(posDifference.normalized);
-        (sLeaser.sprites[spikes.Length + 3] as TriangleMesh).MoveVertice(0, pos + perpAngleIthinkIDK * 2f - camPos);
-        (sLeaser.sprites[spikes.Length + 3] as TriangleMesh).MoveVertice(1, pos - perpAngleIthinkIDK * 2f - camPos);
-        (sLeaser.sprites[spikes.Length + 3] as TriangleMesh).MoveVertice(2, lastPos - camPos);
-        (sLeaser.sprites[spikes.Length + 3] as TriangleMesh).verticeColors[0] = color;
-        (sLeaser.sprites[spikes.Length + 3] as TriangleMesh).verticeColors[1] = color;
-        (sLeaser.sprites[spikes.Length + 3] as TriangleMesh).verticeColors[2] = explodeColor;
-
-        if (sLeaser.sprites[spikes.Length + 2].color != color)
-        {
-            UpdateColor(sLeaser, color);
-        }
-        if (slatedForDeletetion || room != rCam.room)
-        {
-            sLeaser.CleanSpritesAndRemove();
-        }
-    }
-    public void ApplyPalette(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
-    {
-        color = palette.blackColor;
-        UpdateColor(sLeaser, color);
-    }
-    public virtual void UpdateColor(RoomCamera.SpriteLeaser sLeaser, Color col)
-    {
-        sLeaser.sprites[spikes.Length + 2].color = col;
-        for (int i = 0; i < spikes.Length; i++)
-        {
-            sLeaser.sprites[2 + i].color = col;
-        }
-    }
-
-    public void AddToContainer(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContatiner)
-    {
-        newContatiner ??= rCam.ReturnFContainer("Items");
-        for (int i = 0; i < sLeaser.sprites.Length; i++)
-        {
-            sLeaser.sprites[i].RemoveFromContainer();
-            newContatiner.AddChild(sLeaser.sprites[i]);
-        }
-    }
-
-    //----------------------------------------------------------------------------------
-}
-
-public class HailstormVultureSmoke : Smoke.NewVultureSmoke
-{
-
-    public Color startColor;
-    public Color endColor;
-
-    public bool King;
-    public bool Miros;
-
-    public HailstormVultureSmoke(Room room, Vector2 pos, Vulture vul, Color smokeColA, Color smokeColB) : base (room, pos, vul)
-    {
-        startColor = smokeColA;
-        endColor = smokeColB;
-        King = vul.IsKing;
-        Miros = vul.IsMiros;
-    }
-    
-    new public void EmitSmoke(Vector2 vel, float power)
-    {
-        float lifetime = Mathf.Lerp(120f, 200f, Random.value);
-        if (Miros)
-        {
-            lifetime *= 1.5f;
-        }
-        else if (!King)
-        {
-            lifetime *= 3f;
-        }
-        if (AddParticle(pos, vel * power, Custom.LerpMap(power, 0.3f, 0f, Mathf.Lerp(20f, 60f, Random.value), lifetime)) is HailstormVultureSmokeSegment smoke)
-        {
-            smoke.power = power;
-        }
-    }
-    public override SmokeSystemParticle CreateParticle()
-    {
-        return new HailstormVultureSmokeSegment(this);
-    }
-
-    public class HailstormVultureSmokeSegment : NewVultureSmokeSegment
-    {
-        public HailstormVultureSmoke creator;
-
-        public HailstormVultureSmokeSegment(HailstormVultureSmoke creator) : base()
-        {
-            this.creator = creator;
-        }
-
-        public override Color MyColor(float timeStacker)
-        {
-            float lerp = Mathf.InverseLerp(5, 25 + (10f * power), age + timeStacker);
-            return Color.Lerp(creator.startColor, creator.endColor, lerp);
-        }
-
-        public override float MyRad(float timeStacker)
-        {
-            float rad = Mathf.Min(Custom.LerpMap(Mathf.Lerp(lastLife, life, timeStacker), 1f, 0.7f, 4f, 20f, 3f) + Mathf.Sin(Mathf.InverseLerp(0.7f, 0f, Mathf.Lerp(lastLife, life, timeStacker)) * Mathf.PI) * 8f, 5f + 25f * power) * (2f - MyOpactiy(timeStacker));
-            if (!creator.Miros)
-            {
-                rad *= 2f;
-            }
-            return rad;
-        }
-
-    }
 }

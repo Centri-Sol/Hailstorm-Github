@@ -32,5 +32,4 @@ public class CustomObjectInfo
             //{ HSEnums.AbstractObjectType.BezanNut, true },
         };
     }
-
 }

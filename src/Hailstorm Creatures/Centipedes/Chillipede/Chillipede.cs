@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class Chillipede : Centipede
 {
     public ChillipedeState ChillState => abstractCreature.state as ChillipedeState;
@@ -10,7 +8,7 @@ public class Chillipede : Centipede
     public virtual int MaxShellHP => 3;
 
     public virtual bool SmallSize => bodyChunks.Length <= 3;
-    public virtual bool NormalSize => bodyChunks.Length > 3 && bodyChunks.Length < 7;
+    public virtual bool NormalSize => bodyChunks.Length is > 3 and < 7;
     public virtual bool LargeSize => bodyChunks.Length >= 7;
     public virtual float DefaultTerrainCollisionMult => 0.9f;
 
@@ -116,25 +114,11 @@ public class Chillipede : Centipede
 
     public virtual void AssignSize(AbstractCreature absChl)
     {
-        if (Template.type == HSEnums.CreatureType.Chillipede)
-        {
-            size = 0.5f;
-        }
-        else
-        {
-            size = Custom.WrappedRandomVariation(0.5f, 0.5f, 0.2f);
-        }
+        size = Template.type == HSEnums.CreatureType.Chillipede ? 0.5f : Custom.WrappedRandomVariation(0.5f, 0.5f, 0.2f);
     }
     public virtual void InitiateFoodPips(AbstractCreature absChl)
     {
-        if (absChl.creatureTemplate.meatPoints <= 1)
-        {
-            abstractCreature.state.meatLeft = Mathf.RoundToInt(Mathf.Lerp(2.5f, 13.5f, size));
-        }
-        else
-        {
-            abstractCreature.state.meatLeft = Template.meatPoints;
-        }
+        abstractCreature.state.meatLeft = absChl.creatureTemplate.meatPoints <= 1 ? Mathf.RoundToInt(Mathf.Lerp(2.5f, 13.5f, size)) : Template.meatPoints;
         ChillState.meatInitated = true;
     }
 
@@ -146,7 +130,7 @@ public class Chillipede : Centipede
 
         base.Update(eu);
 
-        if (room is null || 
+        if (room is null ||
             graphicsModule is null ||
             graphicsModule is not ChillipedeGraphics)
         {
@@ -276,7 +260,7 @@ public class Chillipede : Centipede
     }
     public virtual void RegenerateHealth(ChillipedeState.Shell shell)
     {
-        float HPgain = (RegenPerShell/40f) * (shell.health / MaxShellHP);
+        float HPgain = RegenPerShell / 40f * (shell.health / MaxShellHP);
         ChillState.health = Mathf.Min(1, ChillState.health + HPgain);
     }
     public virtual void ManageCharge()
@@ -382,7 +366,7 @@ public class Chillipede : Centipede
                 if (IsAccessibleTile(room.GetTilePosition(bodyChunks[b + bodyDir].pos)) || ChillipedeTileLeniency > 0)
                 {
                     // Gets pulled forward if the chunk in front of it is on accessible terrain.
-                    chunk.vel +=    Custom.DirVec(chunk.pos, bodyChunks[b + bodyDir].pos) * Mathf.Lerp(0.7f, 1.4f, size * ChillState.ClampedHealth) * MovementSpeed;
+                    chunk.vel += Custom.DirVec(chunk.pos, bodyChunks[b + bodyDir].pos) * Mathf.Lerp(0.7f, 1.4f, size * ChillState.ClampedHealth) * MovementSpeed;
                 }
                 // Gets pushed forward by the chunk behind it.
                 chunk.vel -= Custom.DirVec(chunk.pos, bodyChunks[b + (bodyDir * -1)].pos) * Mathf.Lerp(0.9f, 1.2f, size * ChillState.ClampedHealth) * 0.5f * MovementSpeed;
@@ -394,11 +378,11 @@ public class Chillipede : Centipede
             Vector2 chunkDirection = (dirToCurrentChunk + chunkDifference.normalized) / 2f;
             if (Mathf.Abs(chunkDirection.x) > 0.5f)
             {
-                chunk.vel.y -= (chunk.pos.y - (room.MiddleOfTile(chunk.pos).y +   VerticalSitSurface(chunk.pos) * (10 - chunk.rad/3f))) * Mathf.Lerp(0.05f, 0.55f, Mathf.Pow(size * ChillState.ClampedHealth, 1.2f));
+                chunk.vel.y -= (chunk.pos.y - (room.MiddleOfTile(chunk.pos).y + (VerticalSitSurface(chunk.pos) * (10 - (chunk.rad / 3f))))) * Mathf.Lerp(0.05f, 0.55f, Mathf.Pow(size * ChillState.ClampedHealth, 1.2f));
             }
             if (Mathf.Abs(chunkDirection.y) > 0.5f)
             {
-                chunk.vel.x -= (chunk.pos.x - (room.MiddleOfTile(chunk.pos).x + HorizontalSitSurface(chunk.pos) * (10 - chunk.rad/3f))) * Mathf.Lerp(0.05f, 0.55f, Mathf.Pow(size * ChillState.ClampedHealth, 1.2f));
+                chunk.vel.x -= (chunk.pos.x - (room.MiddleOfTile(chunk.pos).x + (HorizontalSitSurface(chunk.pos) * (10 - (chunk.rad / 3f))))) * Mathf.Lerp(0.05f, 0.55f, Mathf.Pow(size * ChillState.ClampedHealth, 1.2f));
             }
         }
 
@@ -434,14 +418,10 @@ public class Chillipede : Centipede
     }
     public bool IsClimbableTile(IntVector2 testPos)
     {
-        if (room.GetTile(testPos).wallbehind ||
+        return room.GetTile(testPos).wallbehind ||
             room.GetTile(testPos).verticalBeam ||
             room.GetTile(testPos).horizontalBeam ||
-            room.aimap.getAItile(testPos).terrainProximity < 3)
-        {
-            return true;
-        }
-        return false;
+            room.aimap.getAItile(testPos).terrainProximity < 3;
     }
 
     // - - - - - - - - - - - - - - - - - - - -
@@ -574,11 +554,11 @@ public class Chillipede : Centipede
                     for (int k = 0; k < 3; k++)
                     {
                         Vector2 vel = (attacker is not null) ?
-                            attacker.vel * Random.Range(-0.2f, -0.4f) + Custom.DegToVec(Custom.VecToDeg(attacker.vel) + Random.Range(-75f, 75f)) * attacker.vel.magnitude * -0.1f :
+                            (attacker.vel * Random.Range(-0.2f, -0.4f)) + (Custom.DegToVec(Custom.VecToDeg(attacker.vel) + Random.Range(-75f, 75f)) * attacker.vel.magnitude * -0.1f) :
                             Custom.RNV() * Random.Range(5f, 10f);
 
                         room.AddObject(new Spark(
-                            deflectPos + Custom.DegToVec(Random.value * 360f) * Random.value * 5f,
+                            deflectPos + (Custom.DegToVec(Random.value * 360f) * Random.value * 5f),
                             vel, Color.white, null, 15, 120));
                     }
                     room.AddObject(new StationaryEffect(deflectPos, Color.white, null, StationaryEffect.EffectType.FlashingOrb));
@@ -604,7 +584,7 @@ public class Chillipede : Centipede
                         break;
                     default:
                         EmitSnowflake(bodyChunks[shell.index].pos, particleVel * 1.5f);
-                        EmitIceshard( bodyChunks[shell.index].pos, particleVel, 0.75f, 0.1f, Random.Range(1.3f, 1.7f));
+                        EmitIceshard(bodyChunks[shell.index].pos, particleVel, 0.75f, 0.1f, Random.Range(1.3f, 1.7f));
                         break;
                 }
             }
@@ -839,7 +819,7 @@ public class Chillipede : Centipede
         {
             ChillResistance *= collateral.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0];
         }
-        collateral.Hypothermia += 1 / ChillResistance * Mathf.InverseLerp(FreezeRadius, FreezeRadius/5f, Custom.Dist(HeadChunk.pos, collateral.DangerPos));
+        collateral.Hypothermia += 1 / ChillResistance * Mathf.InverseLerp(FreezeRadius, FreezeRadius / 5f, Custom.Dist(HeadChunk.pos, collateral.DangerPos));
         collateral.killTag = abstractCreature;
         collateral.killTagCounter = 400;
     }
@@ -851,7 +831,7 @@ public class Chillipede : Centipede
             return;
         }
 
-        float distFac = Mathf.InverseLerp(FreezeRadius, FreezeRadius/5f, Custom.Dist(HeadChunk.pos, collateral.firstChunk.pos));
+        float distFac = Mathf.InverseLerp(FreezeRadius, FreezeRadius / 5f, Custom.Dist(HeadChunk.pos, collateral.firstChunk.pos));
 
         if (collateral is IceChunk ice)
         {
@@ -894,11 +874,7 @@ public class Chillipede : Centipede
 
     public override Color ShortCutColor()
     {
-        if (ChillState is not null)
-        {
-            return ChillState.topShellColor;
-        }
-        return base.ShortCutColor();
+        return ChillState is not null ? ChillState.topShellColor : base.ShortCutColor();
     }
 
     // - - - - - - - - - - - - - - - - - - - -
@@ -913,7 +889,7 @@ public class Chillipede : Centipede
     }
     public virtual void EmitIceshard(Vector2 pos, Vector2 vel, float scale, float shardVolume, float shardPitch)
     {
-        Color shardColor = Random.value < 2/3f ?
+        Color shardColor = Random.value < 2 / 3f ?
                         ChillState.topShellColor :
                         ChillState.bottomShellColor;
         room.AddObject(new Shard(pos, vel, shardVolume, scale, shardPitch, shardColor, true));
@@ -925,6 +901,3 @@ public class Chillipede : Centipede
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,19 +1,17 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class InfantAquapede : Centipede, IPlayerEdible
 {
     public InfantAquapedeState AquababyState => CentiState as InfantAquapedeState;
-    new public int FoodPoints => Template.meatPoints;
-    new public bool Edible => true;
-    new public bool AutomaticPickUp => false;
+    public new int FoodPoints => Template.meatPoints;
+    public new bool Edible => true;
+    public new bool AutomaticPickUp => false;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     public float babyCharge;
 
-    public InfantAquapede (AbstractCreature absBA, World world) : base(absBA, world)
+    public InfantAquapede(AbstractCreature absBA, World world) : base(absBA, world)
     {
         size = 0.1f;
 
@@ -28,7 +26,7 @@ public class InfantAquapede : Centipede, IPlayerEdible
                     Mathf.Lerp(4, 6.5f, size),
                     Mathf.Pow(Mathf.Clamp(Mathf.Sin(Mathf.PI * bodyLengthProgress), 0, 1), Mathf.Lerp(0.7f, 0.3f, size)));
             float chunkMass = (i >= bodyChunks.Length - AquababyState.remainingBites) ?
-                Mathf.Lerp(3/70f, 11/34f, Mathf.Pow(size, 1.4f)) : 0.01f;
+                Mathf.Lerp(3 / 70f, 11 / 34f, Mathf.Pow(size, 1.4f)) : 0.01f;
 
             bodyChunks[i] = new(this, i, default, chunkRad, chunkMass);
 
@@ -112,7 +110,7 @@ public class InfantAquapede : Centipede, IPlayerEdible
     {
         if (bites < bodyChunks.Length * 0.8f)
         {
-            AquababyState.health -= 0.01f/2400f * (bodyChunks.Length - bites);
+            AquababyState.health -= 0.01f / 2400f * (bodyChunks.Length - bites);
             // Loses 1% HP/min for every segment eaten.
         }
     }
@@ -130,7 +128,7 @@ public class InfantAquapede : Centipede, IPlayerEdible
             {
                 bodylengthProgress = 1f - bodylengthProgress;
             }
-            float bodyWaveFac = Mathf.Sin((bodyWave - bodylengthProgress * Mathf.Lerp(12f, 28f, size)) * Mathf.PI * 0.11f);
+            float bodyWaveFac = Mathf.Sin((bodyWave - (bodylengthProgress * Mathf.Lerp(12f, 28f, size))) * Mathf.PI * 0.11f);
             chunk.vel *= 0.9f;
             chunk.vel.y += gravity * wingsStartedUp;
             if (i <= 0 || i >= bodyChunks.Length - 1)
@@ -154,8 +152,8 @@ public class InfantAquapede : Centipede, IPlayerEdible
         {
             HeadChunk.vel +=
                 AquacentiSwim ?
-                Custom.DirVec(HeadChunk.pos, moveToPos + Custom.DegToVec(bodyWave * 5f) * 10f) * 5f * Mathf.Lerp(0.7f, 1.3f, size) * 0.7f :
-                Custom.DirVec(HeadChunk.pos, moveToPos + Custom.DegToVec(bodyWave * 10f) * 60f) * 4f * Mathf.Lerp(0.7f, 1.3f, size);
+                Custom.DirVec(HeadChunk.pos, moveToPos + (Custom.DegToVec(bodyWave * 5f) * 10f)) * 5f * Mathf.Lerp(0.7f, 1.3f, size) * 0.7f :
+                Custom.DirVec(HeadChunk.pos, moveToPos + (Custom.DegToVec(bodyWave * 10f) * 60f)) * 4f * Mathf.Lerp(0.7f, 1.3f, size);
         }
         else
         {
@@ -227,7 +225,7 @@ public class InfantAquapede : Centipede, IPlayerEdible
 
     // - - - - - - - - - - - - - - - - - - - -
 
-    new public void BitByPlayer(Grasp grasp, bool eu)
+    public new void BitByPlayer(Grasp grasp, bool eu)
     {
         killTag = (grasp.grabber as Player).abstractCreature;
         killTagCounter += 240;
@@ -249,6 +247,3 @@ public class InfantAquapede : Centipede, IPlayerEdible
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

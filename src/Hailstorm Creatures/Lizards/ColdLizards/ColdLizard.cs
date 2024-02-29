@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class ColdLizard : Lizard
 {
     public ColdLizAI ColdAI => AI as ColdLizAI;
@@ -29,8 +27,8 @@ public class ColdLizard : Lizard
             Random.InitState(absLiz.ID.RandomSeed);
             float SizeMult = Random.Range(1, 1.2f);
             crystalSprite = Random.Range(0, 6);
-            HSLColor col = new (
-                    Custom.WrappedRandomVariation(220/360f, 40/360f, 0.66f), // hue
+            HSLColor col = new(
+                    Custom.WrappedRandomVariation(220 / 360f, 40 / 360f, 0.66f), // hue
                     Custom.LerpMap(SizeMult, 1, 1.2f, 0.7f, 0.45f), // saturation
                     Custom.LerpMap(SizeMult, 1, 1.2f, 0.6f, 0.8f)); // lightness
             Random.state = state;
@@ -39,7 +37,7 @@ public class ColdLizard : Lizard
 
             effectColor = col.rgb;
             col.hue *= 1 - (Mathf.Lerp(0, 0.1136f, Mathf.InverseLerp(1.35f, 1.65f, lizardParams.bodyMass)) * ((lizardParams.bodyMass % 0.02f == 0) ? 1 : -1));
-            col.lightness -= lizardParams.bodyMass/16f;
+            col.lightness -= lizardParams.bodyMass / 16f;
             effectColor2 = col.rgb;
 
         }
@@ -49,7 +47,7 @@ public class ColdLizard : Lizard
             Random.State state = Random.state;
             Random.InitState(absLiz.ID.RandomSeed);
             crystalSprite = Random.Range(0, 6);
-            HSLColor col = new (Custom.WrappedRandomVariation(220/360f, 40/360f, 0.15f), 0.55f, Custom.ClampedRandomVariation(0.75f, 0.05f, 0.2f));
+            HSLColor col = new(Custom.WrappedRandomVariation(220 / 360f, 40 / 360f, 0.15f), 0.55f, Custom.ClampedRandomVariation(0.75f, 0.05f, 0.2f));
             Random.state = state;
 
             effectColor = col.rgb;
@@ -225,7 +223,7 @@ public class ColdLizard : Lizard
     }
     public virtual void GrabbedUpdate()
     {
-        
+
         foreach (AbstractCreature absCtr in room.abstractRoom.creatures)
         {
             Creature ctr = absCtr.realizedCreature;
@@ -247,8 +245,8 @@ public class ColdLizard : Lizard
                     continue;
                 }
 
-                if (ctr is Leech ||
-                    ctr is Spider)
+                if (ctr is Leech or
+                    Spider)
                 {
                     grasp.Release();
                     ctr.Stun((int)Mathf.Lerp(0, 400, Mathf.InverseLerp(1.2f, 1.7f, TotalMass)));
@@ -271,7 +269,7 @@ public class ColdLizard : Lizard
                 // ^ Briefly stuns grabber and makes them let go if they toucha da lizor's armor.    
             }
         }
-        
+
     }
     public virtual void ChillCreature(Creature victim)
     {
@@ -398,12 +396,12 @@ public class ColdLizard : Lizard
             return false;
         }
 
-        if (target is Player ||
-            target is EggBug ||
-            target is Scavenger ||
-            target is BigSpider ||
-            target is DaddyLongLegs ||
-            target is MirosBird)
+        if (target is Player or
+            EggBug or
+            Scavenger or
+            BigSpider or
+            DaddyLongLegs or
+            MirosBird)
         {
             return true;
         }
@@ -413,12 +411,12 @@ public class ColdLizard : Lizard
         {
             return distance > 100;
         }
-        if (target is Cicada ||
-            target is DropBug ||
-            target is NeedleWorm ||
-            target is BigNeedleWorm ||
-            target is StowawayBug ||
-            target is Luminescipede)
+        if (target is Cicada or
+            DropBug or
+            NeedleWorm or
+            BigNeedleWorm or
+            StowawayBug or
+            Luminescipede)
         {
             bool preyHighEnough = Mathf.Abs(target.DangerPos.y - DangerPos.y) > 100;
 
@@ -453,7 +451,7 @@ public class ColdLizard : Lizard
         if (ColdState.spitWindup == 80 &&
             ColdState.spitAimChunk is not null)
         {
-            Vector2 val1 = bodyChunks[0].pos + Custom.DirVec(bodyChunks[1].pos, bodyChunks[0].pos) * 10f;
+            Vector2 val1 = bodyChunks[0].pos + (Custom.DirVec(bodyChunks[1].pos, bodyChunks[0].pos) * 10f);
             Vector2 val2 = Custom.DirVec(val1, ColdState.spitAimChunk.pos);
             if (Vector2.Dot(val2, Custom.DirVec(bodyChunks[1].pos, bodyChunks[0].pos)) > 0.3f || safariControlled)
             {
@@ -509,7 +507,7 @@ public class ColdLizard : Lizard
 
                 float breathSize =
                     (dead ? 0.1f : 0.15f) * Mathf.Lerp(2f, 2.5f, Mathf.InverseLerp(0, 60, iceBreathTimer));
-                
+
                 finalBreathDir *= dead ? Random.Range(15f, 19f) : Random.Range(18f, 23f);
 
                 EmitFreezerMist(DangerPos + finalBreathDir, finalBreathDir, breathSize, smallInsects, true);
@@ -522,11 +520,8 @@ public class ColdLizard : Lizard
 
     public override bool SpearStick(Weapon source, float DMG, BodyChunk hitChunk, Appendage.Pos onAppendagePos, Vector2 direction)
     {
-        if (ColdState.armored && (hitChunk.index == 1 || hitChunk.index == 2))
-        {
-            return false;
-        }
-        return base.SpearStick(source, DMG, hitChunk, onAppendagePos, direction);
+        return (!ColdState.armored || (hitChunk.index != 1 && hitChunk.index != 2))
+&& base.SpearStick(source, DMG, hitChunk, onAppendagePos, direction);
     }
     public override void Violence(BodyChunk source, Vector2? directionAndMomentum, BodyChunk hitChunk, Appendage.Pos onAppendagePos, DamageType dmgType, float DMG, float XSTUN)
     {
@@ -626,7 +621,7 @@ public class ColdLizard : Lizard
         if (Freezer)
         {
             bool drop = false;
-            for (int i = Random.Range(0, ColdState.crystals.Length - 1); CrystalsToBreak > 0 && !ColdState.crystals.All(intact => !intact); )
+            for (int i = Random.Range(0, ColdState.crystals.Length - 1); CrystalsToBreak > 0 && !ColdState.crystals.All(intact => !intact);)
             {
                 if (ColdState.crystals[i])
                 {
@@ -652,7 +647,7 @@ public class ColdLizard : Lizard
                         if (j % 2 == 1)
                         {
                             EmitSnowflake(hitChunk.pos, particleVel);
-                            EmitFreezerMist(hitChunk.pos, particleVel * 2/3f, 0.2f, smallInsects, false);
+                            EmitFreezerMist(hitChunk.pos, particleVel * 2 / 3f, 0.2f, smallInsects, false);
                         }
                         else if (!drop)
                         {
@@ -693,7 +688,7 @@ public class ColdLizard : Lizard
                     if (j % 2 == 1)
                     {
                         EmitSnowflake(hitChunk.pos, particleVel);
-                        EmitFreezerMist(hitChunk.pos, particleVel * 2/3f, 0.2f, smallInsects, false);
+                        EmitFreezerMist(hitChunk.pos, particleVel * 2 / 3f, 0.2f, smallInsects, false);
                     }
                     else
                     {
@@ -715,7 +710,7 @@ public class ColdLizard : Lizard
             }
             if (ColdState.health < 0.5f)
             {
-                stun = (int)(stun / (1 + Mathf.InverseLerp(0.75f, 0, ColdState.health) * 1.5f));
+                stun = (int)(stun / (1 + (Mathf.InverseLerp(0.75f, 0, ColdState.health) * 1.5f)));
             }
         }
         base.Stun(st);
@@ -734,7 +729,7 @@ public class ColdLizard : Lizard
     }
     public virtual void EmitIceshard(Vector2 pos, Vector2 vel, float scale, float shardVolume, float shardPitch)
     {
-        Color shardColor = Random.value < 2/3f ?
+        Color shardColor = Random.value < 2 / 3f ?
                         effectColor :
                         effectColor2;
         room.AddObject(new Shard(pos, vel, shardVolume, scale, shardPitch, shardColor, true));
@@ -748,6 +743,3 @@ public class ColdLizard : Lizard
 
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

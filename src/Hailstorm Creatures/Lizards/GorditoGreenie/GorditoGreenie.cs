@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class GorditoGreenie : Lizard
 {
     public GorditoGraphics GorditoGraphics => graphicsModule as GorditoGraphics;
@@ -27,7 +25,7 @@ public class GorditoGreenie : Lizard
     {
         Random.State state = Random.state;
         Random.InitState(absLiz.ID.RandomSeed);
-        HSLColor col = new(Custom.WrappedRandomVariation(140/360f, 30/360f, 0.2f), Random.Range(0.45f, 0.9f), Custom.WrappedRandomVariation(0.8f, 0.1f, 0.33f));
+        HSLColor col = new(Custom.WrappedRandomVariation(140 / 360f, 30 / 360f, 0.2f), Random.Range(0.45f, 0.9f), Custom.WrappedRandomVariation(0.8f, 0.1f, 0.33f));
         Random.state = state;
         effectColor = col.rgb;
         col.saturation += 0.1f;
@@ -158,11 +156,11 @@ public class GorditoGreenie : Lizard
                     }
                 }
                 BounceDir *= -1;
-                Vector2 sparkPos = bodyChunks[myChunk].pos + bodyChunks[myChunk].vel.normalized * bodyChunks[myChunk].vel.magnitude;
+                Vector2 sparkPos = bodyChunks[myChunk].pos + (bodyChunks[myChunk].vel.normalized * bodyChunks[myChunk].vel.magnitude);
                 int sparkCount = Mathf.Min(10, (int)speed / 2);
                 for (int i = sparkCount; i >= 0; i--)
                 {
-                    EmitSpark(sparkPos + Custom.RNV() * 20f * Random.value, bodyChunks[myChunk].vel + Custom.RNV() * speed * 0.25f);
+                    EmitSpark(sparkPos + (Custom.RNV() * 20f * Random.value), bodyChunks[myChunk].vel + (Custom.RNV() * speed * 0.25f));
                 }
 
             }
@@ -180,11 +178,11 @@ public class GorditoGreenie : Lizard
 
                     chunk.vel.y *= -1.4f;
 
-                    Vector2 sparkPos = chunk.pos + chunk.vel.normalized * chunk.vel.magnitude;
+                    Vector2 sparkPos = chunk.pos + (chunk.vel.normalized * chunk.vel.magnitude);
                     int sparkCount = Mathf.Min(10, (int)speed / 2);
                     for (int i = sparkCount; i >= 0; i--)
                     {
-                        EmitSpark(sparkPos + Custom.RNV() * 20f * Random.value, chunk.vel + Custom.RNV() * speed * 0.25f);
+                        EmitSpark(sparkPos + (Custom.RNV() * 20f * Random.value), chunk.vel + (Custom.RNV() * speed * 0.25f));
                     }
 
                     if (chunk.vel.y < minBounceVel)
@@ -196,14 +194,14 @@ public class GorditoGreenie : Lizard
         }
 
         base.TerrainImpact(myChunk, direction, speed, firstContact);
-        
+
     }
 
     public override void Collide(PhysicalObject victim, int myChunk, int otherChunk)
     {
         if (victim is not null &&
             victim is Creature ctr &&
-            CWT.CreatureData.TryGetValue(ctr, out CreatureInfo vI) &&
+            CWT.CreatureData.TryGetValue(ctr, out CWT.CreatureInfo vI) &&
             CanCRONCH(ctr, impactCooldown, vI.impactCooldown))
         {
             stun = 20;
@@ -286,7 +284,7 @@ public class GorditoGreenie : Lizard
 
     public virtual void EmitSpark(Vector2 pos, Vector2 vel)
     {
-        Color col = (Random.value < 1/3f) ? effectColor2 : effectColor;
+        Color col = (Random.value < 1 / 3f) ? effectColor2 : effectColor;
         room.AddObject(new Spark(pos, vel, col, null, 10, 40));
     }
 
@@ -294,6 +292,3 @@ public class GorditoGreenie : Lizard
 
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

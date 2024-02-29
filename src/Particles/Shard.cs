@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//--------------------------------------------------------------------------------
-
 public class Shard : CosmeticSprite
 {
     public float scale = 1;
@@ -17,7 +15,7 @@ public class Shard : CosmeticSprite
 
     public Shard(Vector2 pos, Vector2 vel, float scale, float impactSoundVolume, float impactSoundPitch, Color? col = null, bool icy = false)
     {
-        base.pos = pos + vel * 2f;
+        base.pos = pos + (vel * 2f);
         lastPos = pos;
         base.vel = vel;
         rotation = Random.value * 360f;
@@ -137,5 +135,3 @@ public class Shard : CosmeticSprite
         base.AddToContainer(sLeaser, rCam, newContatiner);
     }
 }
-
-//--------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 ﻿namespace Hailstorm;
 
-internal class JollyCoopFixes
+public class JollyCoopFixes
 {
     public static void Hooks()
     {
@@ -19,7 +19,7 @@ internal class JollyCoopFixes
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-    public static ConditionalWeakTable<SymbolButtonTogglePupButton, PupButtonInfo> PupButtonData = new();
+    public static ConditionalWeakTable<SymbolButtonTogglePupButton, CWT.PupButtonInfo> PupButtonData = new();
 
     //--------------------------------------------
 
@@ -92,11 +92,18 @@ internal class JollyCoopFixes
     public static void WaistbandJollyColorArray(On.PlayerGraphics.orig_PopulateJollyColorArray orig, SlugcatStats.Name slugcat)
     {
         orig(slugcat);
-        if (slugcat != IncanInfo.Incandescent) return;
+        if (slugcat != IncanInfo.Incandescent)
+        {
+            return;
+        }
 
         for (int i = 0; i < PlayerGraphics.jollyColors.Length; i++)
         {
-            if (PlayerGraphics.jollyColors[i].Length < 4) Array.Resize(ref PlayerGraphics.jollyColors[i], 4);
+            if (PlayerGraphics.jollyColors[i].Length < 4)
+            {
+                Array.Resize(ref PlayerGraphics.jollyColors[i], 4);
+            }
+
             if (Custom.rainWorld.options.jollyColorMode == Options.JollyColorMode.AUTO)
             {
                 JollyCustom.Log("Generating AUTO colors for Incandescent (Player " + (i + 1) + ")");
@@ -147,17 +154,13 @@ internal class JollyCoopFixes
     public static string IncanJollyCoopPupButton(On.JollyCoop.JollyMenu.JollyPlayerSelector.orig_GetPupButtonOffName orig, JollyPlayerSelector JPS)
     {
         SlugcatStats.Name slugName = JPS.JollyOptions(JPS.index).playerClass;
-        if (slugName is not null && slugName.value.Equals("Incandescent"))
-        {
-            return "incandescent_pup_off";
-        }
-        return orig(JPS);
+        return slugName is not null && slugName.value.Equals("Incandescent") ? "incandescent_pup_off" : orig(JPS);
     }
     public static void WaistbandColorUpdate(On.JollyCoop.JollyMenu.JollyPlayerSelector.orig_Update orig, JollyPlayerSelector JPS)
     {
         bool dirty = JPS.dirty;
         orig(JPS);
-        if (dirty && JPS.pupButton is not null && PupButtonData.TryGetValue(JPS.pupButton, out PupButtonInfo pbI))
+        if (dirty && JPS.pupButton is not null && PupButtonData.TryGetValue(JPS.pupButton, out CWT.PupButtonInfo pbI))
         {
             pbI.uniqueTintColor2 = JollyUnique2ColorMenu(JollyCustom.SlugClassMenu(JPS.index, JPS.dialog.currentSlugcatPageName), JPS.JollyOptions(0).playerClass, JPS.index);
             if (pbI.uniqueSymbol2 is not null)
@@ -170,7 +173,7 @@ internal class JollyCoopFixes
     public static void WaistbandDarken(On.JollyCoop.JollyMenu.JollyPlayerSelector.orig_GrafUpdate orig, JollyPlayerSelector JPS, float timeStacker)
     {
         orig(JPS, timeStacker);
-        if (JPS.pupButton is not null && PupButtonData.TryGetValue(JPS.pupButton, out PupButtonInfo pbI) && pbI.uniqueSymbol2 is not null)
+        if (JPS.pupButton is not null && PupButtonData.TryGetValue(JPS.pupButton, out CWT.PupButtonInfo pbI) && pbI.uniqueSymbol2 is not null)
         {
             pbI.uniqueTintColor2 = JPS.FadePortraitSprite(pbI.uniqueTintColor2, timeStacker);
             pbI.uniqueSymbol2.sprite.color = pbI.uniqueTintColor2;
@@ -180,10 +183,10 @@ internal class JollyCoopFixes
     public static void IncanJollyWaistbandSprite(On.JollyCoop.JollyMenu.SymbolButtonTogglePupButton.orig_ctor orig, SymbolButtonTogglePupButton pupButton, Menu.Menu menu, Menu.MenuObject owner, string signal, Vector2 pos, Vector2 size, string symbolNameOn, string symbolNameOff, bool isOn, string stringLabelOn = null, string stringLabelOff = null)
     {
         orig(pupButton, menu, owner, signal, pos, size, symbolNameOn, symbolNameOff, isOn, stringLabelOn, stringLabelOff);
-        PupButtonData.Add(pupButton, new PupButtonInfo(pupButton));
+        PupButtonData.Add(pupButton, new CWT.PupButtonInfo(pupButton));
         if (pupButton.symbolNameOff == "incandescent_pup_off")
         {
-            if (PupButtonData.TryGetValue(pupButton, out PupButtonInfo pbI) && pupButton.owner is JollyPlayerSelector JPS)
+            if (PupButtonData.TryGetValue(pupButton, out CWT.PupButtonInfo pbI) && pupButton.owner is JollyPlayerSelector)
             {
                 pbI.uniqueSymbol2 = new Menu.MenuIllustration(pupButton.menu, pupButton, "", "unique2_incandescent_pup_off", pupButton.size / 2f, crispPixels: true, anchorCenter: true);
                 pupButton.subObjects.Add(pbI.uniqueSymbol2);
@@ -197,11 +200,7 @@ internal class JollyCoopFixes
     }
     public static bool IncanJollyFireSprite(On.JollyCoop.JollyMenu.SymbolButtonTogglePupButton.orig_HasUniqueSprite orig, SymbolButtonTogglePupButton pupButton)
     {
-        if (pupButton.symbolNameOff.Contains("incandescent"))
-        {
-            return true;
-        }
-        return orig(pupButton);
+        return pupButton.symbolNameOff.Contains("incandescent") || orig(pupButton);
     }
     public static void LoadIcon(On.JollyCoop.JollyMenu.SymbolButtonTogglePupButton.orig_LoadIcon orig, SymbolButtonTogglePupButton pupButton)
     {
@@ -243,7 +242,7 @@ internal class JollyCoopFixes
             pupButton.uniqueSymbol.sprite.SetElementByName(pupButton.uniqueSymbol.fileName);
             pupButton.uniqueSymbol.pos.y = pupButton.size.y / 2f;
         }
-        if (PupButtonData.TryGetValue(pupButton, out PupButtonInfo pbI) && pbI.uniqueSymbol2 is not null && pupButton.uniqueSymbol is not null && pupButton.uniqueSymbol.fileName.Contains("unique_incandescent_pup"))
+        if (PupButtonData.TryGetValue(pupButton, out CWT.PupButtonInfo pbI) && pbI.uniqueSymbol2 is not null && pupButton.uniqueSymbol is not null && pupButton.uniqueSymbol.fileName.Contains("unique_incandescent_pup"))
         {
             pbI.uniqueSymbol2.fileName = "unique2_" + pupButton.symbol.fileName;
             pbI.uniqueSymbol2.LoadFile();

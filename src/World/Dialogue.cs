@@ -1,6 +1,6 @@
 ﻿namespace Hailstorm;
 
-internal class Dialogue
+public class Dialogue
 {
     public static void Hooks()
     {
@@ -27,14 +27,14 @@ internal class Dialogue
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
     }
 
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
     public static void NewEchoConversations(On.GhostConversation.orig_AddEvents orig, GhostConversation gConv)
-    {            
+    {
         orig(gConv);
         if (gConv.currentSaveFile == IncanInfo.Incandescent && (gConv.id == MoreSlugcatsEnums.ConversationID.Ghost_MS || gConv.id == Conversation.ID.Ghost_CC || gConv.id == Conversation.ID.Ghost_SI || gConv.id == Conversation.ID.Ghost_LF || gConv.id == Conversation.ID.Ghost_SB))
         {
@@ -89,9 +89,9 @@ internal class Dialogue
     //----------------------------------------------------------------------------------
 
     // Dialogue changes related to Moon in the Incandescent's campaign.
-    static int noticeBlizzardDelay;
-    static bool blizzardNoticed;
-    static int postCycleTime;
+    private static int noticeBlizzardDelay;
+    private static bool blizzardNoticed;
+    private static int postCycleTime;
 
     private static readonly SLOracleBehaviorHasMark.MiscItemType IceChunk = new("IceChunk", register: true);
     private static readonly SLOracleBehaviorHasMark.MiscItemType IceChunk_BrokenMidtalk = new("IceChunk_BrokenMidtalk", register: true);
@@ -229,27 +229,28 @@ internal class Dialogue
 
                             moon.currentConversation ??= new SLOracleBehaviorHasMark.MoonConversation(Conversation.ID.None, moon, SLOracleBehaviorHasMark.MiscItemType.NA);
 
-                            if (musicPearlStolenBackCount == 1)
+                            switch (musicPearlStolenBackCount)
                             {
-                                moon.currentConversation.Interrupt("Little flame, this is mean!", 120);
-                                moon.State.InfluenceLike(-0.5f);
-                            }
-                            else if (musicPearlStolenBackCount == 2)
-                            {
-                                moon.currentConversation.Interrupt("Little one, come back with that!", 130);
-                                moon.State.InfluenceLike(-1.1f);
-                            }
-                            else if (musicPearlStolenBackCount == 3)
-                            {
-                                moon.currentConversation.Interrupt("How could you be so cruel?! I cannot forgive this.", 140);
-                                moon.State.InfluenceLike(-1.4f);
-                                moon.NoLongerOnSpeakingTerms();
-                            }
-                            else if (musicPearlStolenBackCount == 4)
-                            {
-                                moon.currentConversation.Interrupt("You are a terrible little beast. Do not come back.", 150);
-                                moon.State.likesPlayer = -1;
-                                moon.NoLongerOnSpeakingTerms();
+                                case 1:
+                                    moon.currentConversation.Interrupt("Little flame, this is mean!", 120);
+                                    moon.State.InfluenceLike(-0.5f);
+                                    break;
+                                case 2:
+                                    moon.currentConversation.Interrupt("Little one, come back with that!", 130);
+                                    moon.State.InfluenceLike(-1.1f);
+                                    break;
+                                case 3:
+                                    moon.currentConversation.Interrupt("How could you be so cruel?! I cannot forgive this.", 140);
+                                    moon.State.InfluenceLike(-1.4f);
+                                    moon.NoLongerOnSpeakingTerms();
+                                    break;
+                                case 4:
+                                    moon.currentConversation.Interrupt("You are a terrible little beast. Do not come back.", 150);
+                                    moon.State.likesPlayer = -1;
+                                    moon.NoLongerOnSpeakingTerms();
+                                    break;
+                                default:
+                                    break;
                             }
                             musicPearlStolenBackCount++;
                             moon.State.increaseLikeOnSave = false;
@@ -257,7 +258,7 @@ internal class Dialogue
                         }
                     }
                 }
-            }  
+            }
         }
     }
 
@@ -276,7 +277,7 @@ internal class Dialogue
                         break;
                     }
                 }
-            }  
+            }
 
             alreadyTalkedAbout = false;
             if (moon.State.HaveIAlreadyDescribedThisItem(obj.abstractPhysicalObject.ID))
@@ -287,7 +288,7 @@ internal class Dialogue
                 moon.State.alreadyTalkedAboutItems.Contains(obj.abstractPhysicalObject.ID) &&
                 obj is HalcyonPearl && (moon.holdingObject is null || (moon.holdingObject is not null && moon.holdingObject == obj)))
             {
-                moon.State.alreadyTalkedAboutItems.Remove(obj.abstractPhysicalObject.ID);
+                _ = moon.State.alreadyTalkedAboutItems.Remove(obj.abstractPhysicalObject.ID);
             }
 
             hasTalkedAboutFadedPearls = false;
@@ -305,9 +306,9 @@ internal class Dialogue
                 if (SGS.saveState.miscWorldSaveData.SLOracleState.totalPearlsBrought > readablePearlsRead)
                 {
                     hasTalkedAboutFadedPearls = true;
-                }                        
-            }                         
-        }     
+                }
+            }
+        }
 
         orig(moon, obj);
 
@@ -319,19 +320,10 @@ internal class Dialogue
 
     public static bool MoonItemInspection(On.SLOracleBehaviorHasMark.orig_WillingToInspectItem orig, SLOracleBehaviorHasMark moon, PhysicalObject item)
     {
-        if (firstCycleSeeingMusicPearl > 0)
-        {
-            if (item is HalcyonPearl && item != moon.holdingObject && musicPearlStolenBackCount <= 3)
-            {
-                return true;
-            }
-            return false;
-        }
-        if (item is Lizard liz && (liz.Template.type == HSEnums.CreatureType.FreezerLizard || liz.Template.type == HSEnums.CreatureType.IcyBlueLizard))
-        {
-            return false;
-        }
-        return orig(moon, item);
+        return firstCycleSeeingMusicPearl > 0
+            ? item is HalcyonPearl && item != moon.holdingObject && musicPearlStolenBackCount <= 3
+            : (item is not Lizard liz || (liz.Template.type != HSEnums.CreatureType.FreezerLizard && liz.Template.type != HSEnums.CreatureType.IcyBlueLizard))
+&& orig(moon, item);
     }
 
     public static void StealingMusicPearlBack(On.SLOracleBehaviorHasMark.orig_PlayerInterruptByTakingItem orig, SLOracleBehaviorHasMark moon)
@@ -349,7 +341,7 @@ internal class Dialogue
             if (musicPearlStolenBackCount == 0)
             {
                 moon.currentConversation.Interrupt("Wha-", 0);
-                AddDialogue(moon.currentConversation, 0, "No, incandescent, please! Bring that back!", 60);                    
+                AddDialogue(moon.currentConversation, 0, "No, incandescent, please! Bring that back!", 60);
             }
             else if (musicPearlStolenBackCount == 1)
             {
@@ -386,18 +378,10 @@ internal class Dialogue
     }
 
     public static SLOracleBehaviorHasMark.MiscItemType NewMoonConversationTypes(On.SLOracleBehaviorHasMark.orig_TypeOfMiscItem orig, SLOracleBehaviorHasMark moon, PhysicalObject item)
-    {         
-        if (moon.currentConversation is SLOracleBehaviorHasMark.MoonConversation mConv && mConv.describeItem == IceChunk && item == null)
-        {
-            return IceChunk_BrokenMidtalk;
-        }
-
-        if (item is IceChunk)
-        {
-            return IceChunk;                    
-        }
-
-        return orig(moon, item);
+    {
+        return moon.currentConversation is SLOracleBehaviorHasMark.MoonConversation mConv && mConv.describeItem == IceChunk && item == null
+            ? IceChunk_BrokenMidtalk
+            : item is IceChunk ? IceChunk : orig(moon, item);
     }
 
     public static void NewMoonDialogue(On.SLOracleBehaviorHasMark.MoonConversation.orig_AddEvents orig, SLOracleBehaviorHasMark.MoonConversation mConv)
@@ -533,7 +517,7 @@ internal class Dialogue
                     {
                         AddDialogue(mConv, 0, "...", 40);
                         AddDialogue(mConv, 0, "...Where... did you get this?..", 80);
-                    }                   
+                    }
                 }
                 else if (mConv.State.neuronGiveConversationCounter >= 1)
                 {
@@ -547,13 +531,13 @@ internal class Dialogue
                     {
                         AddDialogue(mConv, 0, "..I... do not know how I... feel about accepting these.", 80);
                         AddDialogue(mConv, 0, "Little one, where are you getting them from?", 80);
-                    }                   
+                    }
                 }
             }
             else if (mConv.describeItem == IceChunk)
             {
 
-                RemoveEvents(mConv);                   
+                RemoveEvents(mConv);
 
                 if (alreadyTalkedAbout)
                 {
@@ -579,7 +563,7 @@ internal class Dialogue
                     }
                 }
             }
-        }       
+        }
         else if (mConv.describeItem == IceChunk)
         {
             RemoveEvents(mConv);
@@ -597,7 +581,7 @@ internal class Dialogue
                 {
                     AddDialogue(mConv, 0, "What a peculiar crystal. I must send some of my Overseers out to<LINE>study them. Thank you, friend.", 10);
                 }
-            }               
+            }
         }
     }
 
@@ -615,17 +599,17 @@ internal class Dialogue
             mConv ??= new SLOracleBehaviorHasMark.MoonConversation(Conversation.ID.None, moon, SLOracleBehaviorHasMark.MiscItemType.NA);
 
             moon.State.likesPlayer = LP - 0.3f;
-            moon.respondToNeuronFromNoSpeakMode = RFSN;            
+            moon.respondToNeuronFromNoSpeakMode = RFSN;
 
             if (firstCycleSeeingMusicPearl == 0)
-            {                
+            {
 
                 bool moonLikes = moon.State.GetOpinion == SLOrcacleState.PlayerOpinion.Likes;
 
                 switch (Random.Range(0, 2))
                 {
                     case 0:
-                        mConv.Interrupt((moonLikes? "INCANDESCENT!" : "FIERY ONE!") + " Do not do that again! I will not allow you to treat me like that!", 40);
+                        mConv.Interrupt((moonLikes ? "INCANDESCENT!" : "FIERY ONE!") + " Do not do that again! I will not allow you to treat me like that!", 40);
                         break;
                     case 1:
                         if (moonLikes)
@@ -635,7 +619,7 @@ internal class Dialogue
                         else
                         {
                             mConv.Interrupt("Stop that! What have I done to deserve this, fiery one?", 10);
-                        }                       
+                        }
                         break;
                     case 2:
                         if (moonLikes)
@@ -645,7 +629,9 @@ internal class Dialogue
                         else
                         {
                             mConv.Interrupt("Little one, what is your explanation for this?! You know I mean you no harm!", 0);
-                        }                        
+                        }
+                        break;
+                    default:
                         break;
                 }
             }
@@ -667,28 +653,29 @@ internal class Dialogue
             {
                 if (!alreadyTalkedAbout)
                 {
-                    if (events.Count == 11 && events[0].age == 120)
+                    switch (events.Count)
                     {
-                        IncanVisuals.incSad = true;
-                    }
-                    else if (events.Count == 10 && events[0].age == 80)
-                    {
-                        IncanVisuals.incLookDown = true;
-                    }
-                    else if (events.Count == 8 && events[0].age == 50)
-                    {
-                        IncanVisuals.incLookDown = false;
-                        IncanVisuals.incLookAtMoon = true;
-                        firstCycleSeeingMusicPearl++;
-                    }
-                    else if (events.Count == 1 && events[0].IsOver)
-                    {
-                        IncanVisuals.incLookAtMoon = false;
-                        firstCycleSeeingMusicPearl++;
+                        case 11 when events[0].age == 120:
+                            IncanVisuals.incSad = true;
+                            break;
+                        case 10 when events[0].age == 80:
+                            IncanVisuals.incLookDown = true;
+                            break;
+                        case 8 when events[0].age == 50:
+                            IncanVisuals.incLookDown = false;
+                            IncanVisuals.incLookAtMoon = true;
+                            firstCycleSeeingMusicPearl++;
+                            break;
+                        case 1 when events[0].IsOver:
+                            IncanVisuals.incLookAtMoon = false;
+                            firstCycleSeeingMusicPearl++;
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
-        }           
+        }
         orig(dEvent);
     }
 
@@ -701,7 +688,7 @@ internal class Dialogue
     {
         for (int i = conv.events.Count - 1; i >= 0; i--)
         {
-            conv.events.Remove(conv.events[i]);
+            _ = conv.events.Remove(conv.events[i]);
         }
     }
 
@@ -716,8 +703,11 @@ internal class Dialogue
         int slugpupCount = 0;
         foreach (AbstractCreature absCtr in moon.oracle.room.abstractRoom.creatures)
         {
-            bool isSlugpup = (absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC && absCtr.state.alive);
-            if (isSlugpup) slugpupCount++;
+            bool isSlugpup = absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC && absCtr.state.alive;
+            if (isSlugpup)
+            {
+                slugpupCount++;
+            }
         }
         return slugpupCount;
     }
@@ -736,7 +726,10 @@ internal class Dialogue
                 absCtr.creatureTemplate.type != CreatureTemplate.Type.Fly &&
                 absCtr.creatureTemplate.type != CreatureTemplate.Type.Overseer;
 
-            if (isValidCreature) creatureCount++;
+            if (isValidCreature)
+            {
+                creatureCount++;
+            }
         }
         return creatureCount;
     }
@@ -746,7 +739,7 @@ internal class Dialogue
     public static void NoticeBlizzard(SLOracleBehaviorHasMark moon)
     {
         DialogBox speak = moon.dialogBox;
-        bool company = (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 0);
+        bool company = AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 0;
         bool MoonLikesYou = moon.State.GetOpinion == SLOrcacleState.PlayerOpinion.Likes;
         bool MoonIsNeutralToYou = moon.State.GetOpinion == SLOrcacleState.PlayerOpinion.Neutral;
         bool MoonDislikesYou = moon.State.GetOpinion == SLOrcacleState.PlayerOpinion.Dislikes;
@@ -761,34 +754,54 @@ internal class Dialogue
             case >= 6: // Six or more neurons
                 if (MoonLikesYou)
                 {
-                    speak.NewMessage(moon.Translate("Oh, it sounds like the blizzard has arrived!<LINE>Little incandescent, do you still wish to stay?"), (company ? 20 : 40));
+                    speak.NewMessage(moon.Translate("Oh, it sounds like the blizzard has arrived!<LINE>Little incandescent, do you still wish to stay?"), company ? 20 : 40);
                     if (company)
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("If you do, be sure that your friends don't freeze!"), 20);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("If you do, be sure that your friends don't freeze!"), 20);
+                                break;
+                            default:
+                                if (AreSlugpupsInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("If you do, take care that your little friend doesn't freeze!<LINE>They don't have a fiery tail like you do!"), 20);
+                                }
+                                else if (AreStrayCreaturesInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("If you do, take care that your friend doesn't freeze!<LINE>They don't seem as resistant to the cold as you are!"), 20);
+                                }
 
-                        else if (AreSlugpupsInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("If you do, take care that your little friend doesn't freeze!<LINE>They don't have a fiery tail like you do!"), 20);
-
-                        else if (AreStrayCreaturesInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("If you do, take care that your friend doesn't freeze!<LINE>They don't seem as resistant to the cold as you are!"), 20);
+                                break;
+                        }
                     }
-                    else speak.NewMessage(moon.Translate("If so, make sure to avoid the water until you leave!"), 20);
+                    else
+                    {
+                        speak.NewMessage(moon.Translate("If so, make sure to avoid the water until you leave!"), 20);
+                    }
                 }
                 if (MoonIsNeutralToYou)
                 {
                     speak.NewMessage(moon.Translate("Oh, it sounds like the blizzard has arrived."), 20);
-                    speak.NewMessage(moon.Translate("If you wish to stay, then be sure to avoid the water, little incandescent."), (company ? 10 : 20));
+                    speak.NewMessage(moon.Translate("If you wish to stay, then be sure to avoid the water, little incandescent."), company ? 10 : 20);
                     if (company)
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("And keep your friends warm!"), 10);
-
-                        else if (AreSlugpupsInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("And keep your little friend warm!"), 10);
-
-                        else if (AreStrayCreaturesInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("And keep your friend warm!"), 10);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("And keep your friends warm!"), 10);
+                                break;
+                            default:
+                                if (AreSlugpupsInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("And keep your little friend warm!"), 10);
+                                }
+                                else if (AreStrayCreaturesInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("And keep your friend warm!"), 10);
+                                }
+                                break;
+                        }
                     }
                 }
                 else if (MoonDislikesYou)
@@ -797,14 +810,23 @@ internal class Dialogue
                     speak.NewMessage(moon.Translate("Not that it matters for you, I suppose..."), 5);
                     if (company)
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("For the sake of both your friends and myself, however, I implore that you leave."), 20);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("For the sake of both your friends and myself, however, I implore that you leave."), 20);
+                                break;
+                            default:
+                                if (AreSlugpupsInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("...However, your young friend is not as fortunate.<LINE>Please leave, for their sake."), 15);
+                                }
+                                else if (AreStrayCreaturesInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("...But it might matter for your friend.<LINE>Please leave, and take them with you."), 15);
+                                }
 
-                        else if (AreSlugpupsInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("...However, your young friend is not as fortunate.<LINE>Please leave, for their sake."), 15);
-
-                        else if (AreStrayCreaturesInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("...But it might matter for your friend.<LINE>Please leave, and take them with you."), 15);
+                                break;
+                        }
                     }
                 }
                 break;
@@ -812,46 +834,71 @@ internal class Dialogue
                 if (MoonLikesYou)
                 {
                     speak.NewMessage(moon.Translate("Oh, the storm is here!"), 15);
-                    speak.NewMessage(moon.Translate("Fiery friend, if you wish to stay, then be careful of the water!"), (company ? 15 : 30));
+                    speak.NewMessage(moon.Translate("Fiery friend, if you wish to stay, then be careful of the water!"), company ? 15 : 30);
                     if (company)
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("Keep your friends warm, too!"), 25);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("Keep your friends warm, too!"), 25);
+                                break;
+                            default:
+                                if (AreSlugpupsInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("Keep your little friend warm, too!"), 25);
+                                }
+                                else if (AreStrayCreaturesInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("Keep your friend warm, too!"), 25);
+                                }
 
-                        else if (AreSlugpupsInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("Keep your little friend warm, too!"), 25);
-
-                        else if (AreStrayCreaturesInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("Keep your friend warm, too!"), 25);
+                                break;
+                        }
                     }
                 }
                 if (MoonIsNeutralToYou)
                 {
                     speak.NewMessage(moon.Translate("It sounds like the storm has arrived."), 25);
-                    speak.NewMessage(moon.Translate("If you intend to stay, fiery one, be sure to avoid the water."), (company ? 15 : 30));
+                    speak.NewMessage(moon.Translate("If you intend to stay, fiery one, be sure to avoid the water."), company ? 15 : 30);
                     if (company)
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("And don't forget that your friends are not as protected from the cold as you are!"), 15);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("And don't forget that your friends are not as protected from the cold as you are!"), 15);
+                                break;
+                            default:
+                                if (AreSlugpupsInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("Although, your little friend is shivering badly.<LINE>Maybe you should leave, for their sake."), 15);
+                                }
+                                else if (AreStrayCreaturesInRoom(moon) == 1)
+                                {
+                                    speak.NewMessage(moon.Translate("Though I should mention that your friend doesn't seem to be taking the cold as well as you are..."), 15);
+                                }
 
-                        else if (AreSlugpupsInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("Although, your little friend is shivering badly.<LINE>Maybe you should leave, for their sake."), 15);
-
-                        else if (AreStrayCreaturesInRoom(moon) == 1)
-                            speak.NewMessage(moon.Translate("Though I should mention that your friend doesn't seem to be taking the cold as well as you are..."), 15);
+                                break;
+                        }
                     }
                 }
                 else if (MoonDislikesYou)
                 {
-                    speak.Interrupt(moon.Translate("...Oh, the storm has arrived."), (company ? 10 : 20));
+                    speak.Interrupt(moon.Translate("...Oh, the storm has arrived."), company ? 10 : 20);
                     if (!company)
+                    {
                         speak.NewMessage(moon.Translate("You should leave."), 10);
+                    }
                     else
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("You should leave, for both your friends' sakes and for mine."), 20);
-
-                        else speak.NewMessage(moon.Translate("You should go, so that your friend doesn't freeze."), 20);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("You should leave, for both your friends' sakes and for mine."), 20);
+                                break;
+                            default:
+                                speak.NewMessage(moon.Translate("You should go, so that your friend doesn't freeze."), 20);
+                                break;
+                        }
                     }
                 }
                 break;
@@ -860,24 +907,34 @@ internal class Dialogue
                 {
                     speak.Interrupt("...", 5);
                     moon.dialogBox.NewMessage(moon.Translate("The storm is here."), 25);
-                    moon.dialogBox.NewMessage(moon.Translate("You... should leave."), (company ? 25 : 45));
+                    moon.dialogBox.NewMessage(moon.Translate("You... should leave."), company ? 25 : 45);
                     if (company)
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("If you value your friends... do not let them freeze."), 25);
-
-                        else speak.NewMessage(moon.Translate("If not for my sake... then for your friend."), 25);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("If you value your friends... do not let them freeze."), 25);
+                                break;
+                            default:
+                                speak.NewMessage(moon.Translate("If not for my sake... then for your friend."), 25);
+                                break;
+                        }
                     }
                 }
                 else
                 {
-                    speak.NewMessage(moon.Translate("...The storm is here. Be careful, little flame."), (company ? 25 : 45));
+                    speak.NewMessage(moon.Translate("...The storm is here. Be careful, little flame."), company ? 25 : 45);
                     if (company)
                     {
-                        if (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon) > 1)
-                            speak.NewMessage(moon.Translate("Your friends... need warmth, too."), 15);
-
-                        else speak.NewMessage(moon.Translate("Protect your friend from the cold..."), 15);
+                        switch (AreSlugpupsInRoom(moon) + AreStrayCreaturesInRoom(moon))
+                        {
+                            case > 1:
+                                speak.NewMessage(moon.Translate("Your friends... need warmth, too."), 15);
+                                break;
+                            default:
+                                speak.NewMessage(moon.Translate("Protect your friend from the cold..."), 15);
+                                break;
+                        }
                     }
                 }
                 break;
@@ -886,17 +943,21 @@ internal class Dialogue
                 {
                     speak.Interrupt("...", 15);
                     moon.dialogBox.NewMessage(moon.Translate("...Cold..."), 35);
-                    moon.dialogBox.NewMessage(moon.Translate("...leave... now."), (company ? 35 : 55));
+                    moon.dialogBox.NewMessage(moon.Translate("...leave... now."), company ? 35 : 55);
                     if (company)
+                    {
                         speak.NewMessage(moon.Translate("Take them... with you..."), 30);
+                    }
                 }
                 else
                 {
                     speak.Interrupt("...", 15);
                     moon.dialogBox.NewMessage(moon.Translate("...Cold..."), 35);
-                    moon.dialogBox.NewMessage(moon.Translate("not... safe."), (company ? 35 : 55));
+                    moon.dialogBox.NewMessage(moon.Translate("not... safe."), company ? 35 : 55);
                     if (company)
+                    {
                         speak.NewMessage(moon.Translate("Protect... friends!"), 35);
+                    }
                 }
                 break;
             case 2: // Two neurons
@@ -905,6 +966,8 @@ internal class Dialogue
                 break;
             case 1: // One neuron
                 moon.dialogBox.NewMessage(moon.Translate("..."), 180);
+                break;
+            default:
                 break;
         }
     }

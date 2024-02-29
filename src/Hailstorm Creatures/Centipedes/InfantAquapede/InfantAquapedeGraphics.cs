@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class InfantAquapedeGraphics : CentipedeGraphics
 {
     public InfantAquapede ba;
@@ -9,13 +7,13 @@ public class InfantAquapedeGraphics : CentipedeGraphics
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    public InfantAquapedeGraphics(PhysicalObject owner)  : base(owner)
+    public InfantAquapedeGraphics(PhysicalObject owner) : base(owner)
     {
         ba = owner as InfantAquapede;
 
         Random.State state = Random.state;
         Random.InitState(ba.abstractCreature.ID.RandomSeed);
-        hue = (260/360f) - Mathf.Abs(Custom.WrappedRandomVariation(80/360f, 80/360f, 0.33f) - 80/360f);
+        hue = (260 / 360f) - Mathf.Abs(Custom.WrappedRandomVariation(80 / 360f, 80 / 360f, 0.33f) - (80 / 360f));
         saturation = 1;
         Random.state = state;
     }
@@ -86,6 +84,3 @@ public class InfantAquapedeGraphics : CentipedeGraphics
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

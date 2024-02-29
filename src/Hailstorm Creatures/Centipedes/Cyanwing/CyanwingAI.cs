@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class CyanwingAI : CentipedeAI, IUseARelationshipTracker
 {
     public Cyanwing cyn;
@@ -36,7 +34,7 @@ public class CyanwingAI : CentipedeAI, IUseARelationshipTracker
     {
         Creature ctr = dynamRelat.trackerRep.representedCreature.realizedCreature;
         CreatureTemplate.Relationship defaultRelation = StaticRelationship(ctr.abstractCreature);
-        
+
         if (defaultRelation.type == CreatureTemplate.Relationship.Type.Ignores)
         {
             return defaultRelation;
@@ -71,12 +69,9 @@ public class CyanwingAI : CentipedeAI, IUseARelationshipTracker
                     (CreatureTemplate.Relationship.Type.Eats, intensity * defaultRelation.intensity);
             }
             return new CreatureTemplate.Relationship
-                (CreatureTemplate.Relationship.Type.Afraid, 0.2f + 0.8f * Mathf.InverseLerp(cyn.TotalMass, cyn.TotalMass * 1.5f, ctr.TotalMass));
+                (CreatureTemplate.Relationship.Type.Afraid, 0.2f + (0.8f * Mathf.InverseLerp(cyn.TotalMass, cyn.TotalMass * 1.5f, ctr.TotalMass)));
         }
         return defaultRelation;
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,13 +1,11 @@
 ﻿namespace Hailstorm;
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class Luminescipede : InsectoidCreature, IPlayerEdible
 {
     //-----------------------------------------
 
     public LuminFlock flock;
-    
+
     public LuminAI AI;
     public BodyChunk Body => firstChunk;
     public LuminGraphics Graphics => graphicsModule as LuminGraphics;
@@ -29,7 +27,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     public bool WantToHide => Role != Forager && (Behavior == Hide || CamoFac > 0 || GlowState.timeSincePreyLastSeen == GlowState.timeToWantToHide);
     public bool Dominant => GlowState.dominant;
 
-    new public Vector2 VisionPoint;
+    public new Vector2 VisionPoint;
 
     public Vector2 dragPos;
     public Vector2 direction;
@@ -363,10 +361,10 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     {
         //-----------------------------------------//
 
-                        Refresh(eu);
-        
+        Refresh(eu);
+
         //-----------------------------------------//
-        
+
         if (AI is null || room is null)
         {
             return;
@@ -375,7 +373,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         GlowUpdate(eu);
 
-        
+
         if (dead)
         {
             deathSpasms = Mathf.Max(0f, deathSpasms - (1 / Mathf.Lerp(200f, 400f, Random.value)));
@@ -1299,7 +1297,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
     public virtual bool GrabbingItem(PhysicalObject item)
     {
-        return item is not null && (grasps[0]?.grabbed == item || grasps.Length > 1 && grasps[1]?.grabbed == item);
+        return item is not null && (grasps[0]?.grabbed == item || (grasps.Length > 1 && grasps[1]?.grabbed == item));
     }
     public virtual bool WantToBackcarry(PhysicalObject target)
     {
@@ -1395,7 +1393,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
                 if (absObj.realizedObject?.room is null ||
                     absObj.Room.realizedRoom != currentPrey.room ||
-                    (CWT.ObjectData.TryGetValue(currentPrey, out ObjectInfo oI) && oI.inShortcut))
+                    (CWT.ObjectData.TryGetValue(currentPrey, out CWT.ObjectInfo oI) && oI.inShortcut))
                 {
                     nullpreyCounter++;
                 }
@@ -1817,7 +1815,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         }
         else
         if (AI.ObjRelationship(target.abstractPhysicalObject).type == Avoids ||
-            AI.ObjRelationship(target.abstractPhysicalObject).type == ObjectRelationship.Type.AfraidOf)
+            AI.ObjRelationship(target.abstractPhysicalObject).type == AfraidOf)
         {
             return true;
         }
@@ -1831,17 +1829,17 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             target is Creature ||
             target.room != room ||
             target.TotalMass > BackholdMassLimit ||
-            (CWT.ObjectData.TryGetValue(target, out ObjectInfo oI) && oI.inShortcut))
+            (CWT.ObjectData.TryGetValue(target, out CWT.ObjectInfo oI) && oI.inShortcut))
         {
             return false;
         }
 
-        if (AI.ObjRelationship(target.abstractPhysicalObject).type == ObjectRelationship.Type.Uses ||
-            AI.ObjRelationship(target.abstractPhysicalObject).type == ObjectRelationship.Type.Likes)
+        if (AI.ObjRelationship(target.abstractPhysicalObject).type == Uses ||
+            AI.ObjRelationship(target.abstractPhysicalObject).type == Likes)
         {
             return true;
         }
-        if (AI.ObjRelationship(target.abstractPhysicalObject).type == ObjectRelationship.Type.PlaysWith)
+        if (AI.ObjRelationship(target.abstractPhysicalObject).type == PlaysWith)
         {
             if (Behavior == Idle && currentPrey is null && fearSource is null)
             {
@@ -1866,7 +1864,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         if (grasps.Length > 1 &&
             grasps[1]?.grabbed is not null &&
-            grasps[1] .grabbed == currentPrey)
+            grasps[1].grabbed == currentPrey)
         {
             return true;
         }
@@ -1910,7 +1908,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             if (Behavior == ReturnPrey)
             {
                 if (!ctr.dead && (
-                    (AI.DynamicRelationship(ctr.abstractCreature).type ==  CreatureTemplate.Relationship.Type.Eats   && AI.DynamicRelationship(ctr.abstractCreature).intensity >= CurrentPreyRelationIntensity * 2f) ||
+                    (AI.DynamicRelationship(ctr.abstractCreature).type == CreatureTemplate.Relationship.Type.Eats && AI.DynamicRelationship(ctr.abstractCreature).intensity >= CurrentPreyRelationIntensity * 2f) ||
                     (AI.DynamicRelationship(ctr.abstractCreature).type == CreatureTemplate.Relationship.Type.Attacks && AI.DynamicRelationship(ctr.abstractCreature).intensity >= CurrentPreyRelationIntensity * 3f)))
                 {
                     return true;
@@ -1936,14 +1934,14 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             if (Behavior == ReturnPrey)
             {
                 if (AI.ObjRelationship(newTarget.abstractPhysicalObject).intensity >= CurrentPreyRelationIntensity * 4f && (
-                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == ObjectRelationship.Type.Eats ||
-                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == ObjectRelationship.Type.Uses))
+                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == Eats ||
+                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == Uses))
                 {
                     return true;
                 }
                 if (AI.ObjRelationship(newTarget.abstractPhysicalObject).intensity >= CurrentPreyRelationIntensity * 6f && (
-                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == ObjectRelationship.Type.Likes ||
-                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == ObjectRelationship.Type.PlaysWith))
+                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == Likes ||
+                    AI.ObjRelationship(newTarget.abstractPhysicalObject).type == PlaysWith))
                 {
                     return true;
                 }
@@ -1976,7 +1974,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         float newItemAppeal = AI.ObjRelationship(newItem.abstractPhysicalObject).intensity;
         float oldItemAppeal = AI.ObjRelationship(useItem.abstractPhysicalObject).intensity;
-        if (AI.ObjRelationship(useItem.abstractPhysicalObject).type == ObjectRelationship.Type.PlaysWith)
+        if (AI.ObjRelationship(useItem.abstractPhysicalObject).type == PlaysWith)
         {
             oldItemAppeal *= 0.75f;
         }
@@ -2646,10 +2644,10 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
     //-----------------------------------------
     // Miscellaneous
-    public void ThrowByPlayer() 
+    public void ThrowByPlayer()
     {
     }
-    public void BitByPlayer(Grasp grasp, bool eu) 
+    public void BitByPlayer(Grasp grasp, bool eu)
     {
         bites--;
         for (int b = 0; b < bodyChunks.Length; b++)
@@ -2688,7 +2686,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
             Destroy();
         }
     }
-    public override void TerrainImpact(int chunk, IntVector2 direction, float speed, bool firstContact) 
+    public override void TerrainImpact(int chunk, IntVector2 direction, float speed, bool firstContact)
     {
         if (firstContact && speed > 15)
         {
@@ -2704,7 +2702,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         }
         base.TerrainImpact(chunk, direction, speed, firstContact);
     }
-    public override void SpitOutOfShortCut(IntVector2 pos, Room newRoom, bool spitOutAllSticks) 
+    public override void SpitOutOfShortCut(IntVector2 pos, Room newRoom, bool spitOutAllSticks)
     {
         base.SpitOutOfShortCut(pos, newRoom, spitOutAllSticks);
         Vector2 pipeDirection = Custom.IntVector2ToVector2(newRoom.ShorcutEntranceHoleDirection(pos));
@@ -2713,7 +2711,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         Body.vel = pipeDirection * 7.5f;
         graphicsModule?.Reset();
     }
-    public static bool WantToHideInDen(AbstractCreature absLmn) 
+    public static bool WantToHideInDen(AbstractCreature absLmn)
     {
         if (absLmn?.Room?.realizedRoom is null)
         {
@@ -2723,7 +2721,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             return true;
         }
-        if (CWT.AbsCtrData.TryGetValue(absLmn, out AbsCtrInfo aI))
+        if (CWT.AbsCtrData.TryGetValue(absLmn, out CWT.AbsCtrInfo aI))
         {
             if (absLmn.world.rainCycle.TimeUntilRain < (absLmn.world.game.session is not null && absLmn.world.game.IsStorySession ? 60 : 15) * 40 && !absLmn.nightCreature && !absLmn.ignoreCycle && !aI.LateBlizzardRoamer)
             {
@@ -2752,128 +2750,3 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
 
 }
-
-//-----------------------------------------
-
-public abstract class LuminMass 
-{
-    public List<Luminescipede> lumins;
-    public bool lastEu;
-    public Room room;
-    public Color color = Custom.HSL2RGB(Random.value, 1f, 0.5f);
-
-    public virtual Luminescipede FirstLumin => lumins.Count == 0 ? null : lumins[0];
-
-    public LuminMass(Luminescipede firstLumin, Room room)
-    {
-        this.room = room;
-        lumins = new List<Luminescipede> { firstLumin };
-    }
-
-    public virtual void Update(bool eu)
-    {
-        for (int l = lumins.Count - 1; l >= 0; l--)
-        {
-            if (lumins[l].dead ||
-                lumins[l].room != room)
-            {
-                RemoveLmnAt(l);
-            }
-        }
-    }
-    public bool ShouldIUpdate(bool eu)
-    {
-        if (eu == lastEu)
-        {
-            return false;
-        }
-        lastEu = eu;
-        return true;
-    }
-
-    public void AddLmn(Luminescipede lmn)
-    {
-        if (lumins.IndexOf(lmn) == -1)
-        {
-            lumins.Add(lmn);
-        }
-        if (this is LuminFlock)
-        {
-            lmn.flock = this as LuminFlock;
-            lmn.flock.lumins = new();
-        }
-    }
-    public void RemoveLmn(Luminescipede lmn)
-    {
-        for (int i = 0; i < lumins.Count; i++)
-        {
-            if (lumins[i] == lmn)
-            {
-                RemoveLmnAt(i);
-                break;
-            }
-        }
-    }
-    private void RemoveLmnAt(int i)
-    {
-        if (this is LuminFlock &&
-            lumins[i].flock == (this as LuminFlock))
-        {
-            lumins[i].flock = null;
-        }
-        lumins.RemoveAt(i);
-    }
-    public void Merge(LuminMass otherFlock)
-    {
-        if (otherFlock == this)
-        {
-            return;
-        }
-        for (int i = 0; i < otherFlock.lumins.Count; i++)
-        {
-            if (lumins.IndexOf(otherFlock.lumins[i]) == -1)
-            {
-                lumins.Add(otherFlock.lumins[i]);
-                if (this is LuminFlock)
-                {
-                    otherFlock.lumins[i].flock = this as LuminFlock;
-                }
-            }
-        }
-        otherFlock.lumins.Clear();
-    }
-}
-public class LuminFlock : LuminMass
-{
-    public LuminFlock(Luminescipede firstLumin, Room room) : base(firstLumin, room)
-    {
-    }
-
-    public override void Update(bool eu)
-    {
-        lumins ??= new();
-        if (!ShouldIUpdate(eu))
-        {
-            return;
-        }
-        base.Update(eu);
-        if (room.abstractRoom.creatures.Count == 0)
-        {
-            return;
-        }
-        AbstractCreature absCtr = room.abstractRoom.creatures[Random.Range(0, room.abstractRoom.creatures.Count)];
-        if (absCtr.realizedCreature is not null && absCtr.realizedCreature is Luminescipede lmn && lmn.flock is not null && lmn.flock != this && lmn.flock.FirstLumin is not null)
-        {
-            if (lumins.Count >= lmn.flock.lumins.Count)
-            {
-                Merge(lmn.flock);
-            }
-            else
-            {
-                lmn.flock.Merge(this);
-            }
-        }
-    }
-}
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -1,11 +1,8 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-sealed class ChillipedeCritob : Critob
+public class ChillipedeCritob : Critob
 {
-    public Color ChillipedeColor = new HSLColor(198/360f, 1, 0.75f).rgb;
+    public Color ChillipedeColor = new HSLColor(198 / 360f, 1, 0.75f).rgb;
 
     internal ChillipedeCritob() : base(HSEnums.CreatureType.Chillipede)
     {
@@ -18,13 +15,12 @@ sealed class ChillipedeCritob : Critob
     public override int ExpeditionScore() => 14;
 
     public override Color DevtoolsMapColor(AbstractCreature absChl) => ChillipedeColor;
-    public override string DevtoolsMapName(AbstractCreature absChl) => "chl";
-    public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[]
-    {
-        RoomAttractivenessPanel.Category.LikesInside
-    };
-    public override IEnumerable<string> WorldFileAliases() => new[] { "chillipede", "Chillipede" };
 
+    public override string DevtoolsMapName(AbstractCreature absChl) => "chl";
+
+    public override IEnumerable<RoomAttractivenessPanel.Category> DevtoolsRoomAttraction() => new[] { RoomAttractivenessPanel.Category.LikesInside };
+
+    public override IEnumerable<string> WorldFileAliases() => new[] { "chillipede", "Chillipede" };
 
     public override CreatureTemplate CreateTemplate()
     {
@@ -59,34 +55,35 @@ sealed class ChillipedeCritob : Critob
                 BetweenRooms = new(10, PathCost.Legality.Allowed),
                 OffScreenMovement = new(1, PathCost.Legality.Allowed)
             },
-            DamageResistances = new() { Base = 5f, Explosion = 2/3f, Electric = 0.5f, Water = 4f },
-            StunResistances = new()   { Base = 3f, Explosion = 2/3f, Electric = 0.5f, Water = 4f },
+            DamageResistances = new() { Base = 5f, Explosion = 2 / 3f, Electric = 0.5f, Water = 4f },
+            StunResistances = new() { Base = 3f, Explosion = 2 / 3f, Electric = 0.5f, Water = 4f },
             HasAI = true,
             Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.Centipede),
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Eats, 1),
         }.IntoTemplate();
         chllpd.meatPoints = 10;
-		chllpd.BlizzardAdapted = true;
+        chllpd.BlizzardAdapted = true;
         chllpd.BlizzardWanderer = true;
-		chllpd.bodySize = 7;
-		
+        chllpd.bodySize = 7;
+
         chllpd.visualRadius = 1000;
         chllpd.movementBasedVision = 1f;
         chllpd.throughSurfaceVision = 0.25f;
-		chllpd.waterVision = 0.3f;
-		chllpd.waterRelationship = CreatureTemplate.WaterRelationship.AirOnly;
+        chllpd.waterVision = 0.3f;
+        chllpd.waterRelationship = CreatureTemplate.WaterRelationship.AirOnly;
         chllpd.lungCapacity = 640;
-		
- 		chllpd.stowFoodInDen = true;
+
+        chllpd.stowFoodInDen = true;
         chllpd.usesCreatureHoles = false;
-		chllpd.dangerousToPlayer = 0.45f;
+        chllpd.dangerousToPlayer = 0.45f;
         chllpd.communityInfluence = 0.1f;
-		chllpd.shortcutSegments = 5;	
+        chllpd.shortcutSegments = 5;
         chllpd.jumpAction = "Swap Heads";
         chllpd.pickupAction = "Grab/Freeze";
         chllpd.throwAction = "Release";
         return chllpd;
     }
+
     public override void EstablishRelationships()
     {
         Relationships Chl = new(HSEnums.CreatureType.Chillipede);
@@ -139,12 +136,10 @@ sealed class ChillipedeCritob : Critob
     }
 
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absChl) => new ChillipedeAI(absChl, absChl.world);
+
     public override Creature CreateRealizedCreature(AbstractCreature absChl) => new Chillipede(absChl, absChl.world);
+
     public override CreatureState CreateState(AbstractCreature absChl) => new ChillipedeState(absChl);
 
-    #nullable enable
-    public override CreatureTemplate.Type? ArenaFallback() => CreatureTemplate.Type.Centipede;
-    #nullable disable
+    public override CreatureTemplate.Type ArenaFallback() => CreatureTemplate.Type.Centipede;
 }
-
-//----------------------------------------------------------------------------------

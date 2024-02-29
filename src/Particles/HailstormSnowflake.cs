@@ -1,9 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-// Adapted from PuffballSkin code
 public class HailstormSnowflake : CosmeticSprite
 {
     public Vector2 rotation;
@@ -36,7 +32,7 @@ public class HailstormSnowflake : CosmeticSprite
         base.vel = vel;
         this.color = color;
         this.color2 = color2;
-        base.pos = pos + vel.normalized * 60f * Random.value;
+        base.pos = pos + (vel.normalized * 60f * Random.value);
         rotation = Custom.RNV();
         lastRotation = Custom.RNV();
         randomDir = Custom.RNV();
@@ -44,7 +40,7 @@ public class HailstormSnowflake : CosmeticSprite
         life = 1f;
         lifeTime = Mathf.Lerp(140f, 160f, Random.value);
         randomRotat = Random.value * 360f;
-        flipDir = ((Random.value < 0.5f) ? (-1f) : 1f);
+        flipDir = (Random.value < 0.5f) ? (-1f) : 1f;
     }
 
     public override void Update(bool eu)
@@ -52,10 +48,10 @@ public class HailstormSnowflake : CosmeticSprite
         vel *= Custom.LerpMap(vel.magnitude, 1f, 10f, 0.999f, 0.8f);
         vel.y -= 0.1f;
         vel += randomDir * 0.17f;
-        Vector2 val = randomDir + Custom.RNV() * 0.8f;
+        Vector2 val = randomDir + (Custom.RNV() * 0.8f);
         randomDir = vel.normalized;
         lastRotation = rotation;
-        val = lastRotation + Custom.DirVec(pos, lastPos) * 0.3f;
+        val = lastRotation + (Custom.DirVec(pos, lastPos) * 0.3f);
         rotation = vel.normalized;
         lastFlip = flip;
         flip += flipDir / Mathf.Lerp(6f, 80f, Random.value);
@@ -95,7 +91,7 @@ public class HailstormSnowflake : CosmeticSprite
         sLeaser.sprites[0].scale = 0.7f * Mathf.InverseLerp(0f, 0.3f, Mathf.Lerp(lastLife, life, timeStacker));
         float num = Mathf.Sin(Mathf.Lerp(lastFlip, flip, timeStacker) * Mathf.PI * 2f);
         sLeaser.sprites[0].scaleX = num;
-        sLeaser.sprites[0].color = ((num > 0f) ? color : color2);
+        sLeaser.sprites[0].color = (num > 0f) ? color : color2;
         base.DrawSprites(sLeaser, rCam, timeStacker, camPos);
     }
 
@@ -109,5 +105,3 @@ public class HailstormSnowflake : CosmeticSprite
         base.AddToContainer(sLeaser, rCam, newContatiner);
     }
 }
-
-//----------------------------------------------------------------------------------

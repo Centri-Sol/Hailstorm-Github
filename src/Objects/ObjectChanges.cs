@@ -1,6 +1,6 @@
 ﻿namespace Hailstorm;
 
-internal class ObjectChanges
+public class ObjectChanges
 {
     public static void Hooks()
     {
@@ -52,7 +52,7 @@ internal class ObjectChanges
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
     }
 
     public static void ObjectCWT(On.PhysicalObject.orig_ctor orig, PhysicalObject obj, AbstractPhysicalObject absObj)
@@ -60,7 +60,7 @@ internal class ObjectChanges
         orig(obj, absObj);
         if (!CWT.ObjectData.TryGetValue(obj, out _))
         {
-            CWT.ObjectData.Add(obj, new ObjectInfo(obj));
+            CWT.ObjectData.Add(obj, new CWT.ObjectInfo(obj));
         }
     }
 
@@ -73,7 +73,7 @@ internal class ObjectChanges
             List<AbstractPhysicalObject> stuckObjects = ctr.abstractCreature.GetAllConnectedObjects();
             for (int i = 0; i < stuckObjects.Count; i++)
             {
-                if (stuckObjects[i].realizedObject is null || !CWT.ObjectData.TryGetValue(stuckObjects[i].realizedObject, out ObjectInfo oI) || oI.inShortcut)
+                if (stuckObjects[i].realizedObject is null || !CWT.ObjectData.TryGetValue(stuckObjects[i].realizedObject, out CWT.ObjectInfo oI) || oI.inShortcut)
                 {
                     continue;
                 }
@@ -85,13 +85,13 @@ internal class ObjectChanges
     }
     public static void ObjectOutOfShortcutTracking(On.Creature.orig_SpitOutOfShortCut orig, Creature ctr, IntVector2 pos, Room newRoom, bool spitOutAttachedStuff)
     {
-        orig(ctr, pos, newRoom, spitOutAttachedStuff); 
+        orig(ctr, pos, newRoom, spitOutAttachedStuff);
         if (spitOutAttachedStuff && ctr is not null && ctr.abstractCreature.stuckObjects.Count > 0)
         {
             List<AbstractPhysicalObject> stuckObjects = ctr.abstractCreature.GetAllConnectedObjects();
             for (int i = 0; i < stuckObjects.Count; i++)
             {
-                if (stuckObjects[i].realizedObject is null || !CWT.ObjectData.TryGetValue(stuckObjects[i].realizedObject, out ObjectInfo oI) || !oI.inShortcut)
+                if (stuckObjects[i].realizedObject is null || !CWT.ObjectData.TryGetValue(stuckObjects[i].realizedObject, out CWT.ObjectInfo oI) || !oI.inShortcut)
                 {
                     continue;
                 }
@@ -123,7 +123,7 @@ internal class ObjectChanges
         IL.Player.AddQuarterFood += IL =>
         {
             ILCursor c = new(IL);
-            var label = IL.DefineLabel();
+            ILLabel label = IL.DefineLabel();
             c.Emit(OpCodes.Ldarg_0);
             c.EmitDelegate((Player self) =>
             {
@@ -148,7 +148,10 @@ internal class ObjectChanges
                 for (int p = 0; p < self.abstractCreature.world.game.Players.Count; p++)
                 {
                     PlayerState plr = self.abstractCreature.world.game.Players[p].state as PlayerState;
-                    if (plr.playerNumber != 0) continue;
+                    if (plr.playerNumber != 0)
+                    {
+                        continue;
+                    }
 
                     playerState = plr;
                     playerState.quarterFoodPoints++;
@@ -186,7 +189,7 @@ internal class ObjectChanges
         {
             Random.State state = Random.state;
             Random.InitState(absGlow.ID.RandomSeed);
-            warmColor = new HSLColor(Custom.WrappedRandomVariation( 80 / 360f, 20 / 360f, 0.33f), 0.6f, 0.5f);
+            warmColor = new HSLColor(Custom.WrappedRandomVariation(80 / 360f, 20 / 360f, 0.33f), 0.6f, 0.5f);
             coldColor = new HSLColor(Custom.WrappedRandomVariation(220 / 360f, 20 / 360f, 0.66f), 0.6f, Custom.WrappedRandomVariation(0.65f, 0.1f, 0.25f));
             warmGlowRadius = (1f - warmColor.hue) * 360f;
             coldGlowRadius = (1f - coldColor.hue) * 360f;
@@ -214,7 +217,7 @@ internal class ObjectChanges
         if (glow?.room is null || !GlowweedData.TryGetValue(glow, out GlowweedInfo gI))
         {
             orig(glow, eu);
-        }     
+        }
         else
         {
             if (glow.myLight is null && glow.room.BeingViewed)
@@ -234,35 +237,23 @@ internal class ObjectChanges
 
             if (glow.myLight is not null)
             {
-                float lightCounterFac = 1f + Mathf.Sin(glow.LightCounter) * 0.05f;
+                float lightCounterFac = 1f + (Mathf.Sin(glow.LightCounter) * 0.05f);
                 float biteFac = glow.bites / 3f;
                 float submersionMult = 1 + (glow.Submersion / 2f);
                 if (glow.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
                 {
                     float radiusGoal = Custom.LerpMap(glow.room.world.rainCycle.timer, glow.room.world.rainCycle.cycleLength, gI.maxColdTime, gI.warmGlowRadius, gI.coldGlowRadius) * submersionMult;
-                    if (gI.displayRadius > -1)
-                    {
-                        gI.displayRadius = Mathf.Lerp(glow.myLight.rad, radiusGoal, 0.01f);
-                    }
-                    else
-                    {
-                        gI.displayRadius = radiusGoal;
-                    }
+                    gI.displayRadius = gI.displayRadius > -1 ? Mathf.Lerp(glow.myLight.rad, radiusGoal, 0.01f) : radiusGoal;
                 }
                 else
                 {
-                    if (gI.displayRadius > -1)
-                    {
-                        gI.displayRadius = Mathf.Lerp(glow.myLight.rad, gI.warmGlowRadius * submersionMult, 0.01f);
-                    }
-                    else
-                    {
-                        gI.displayRadius = gI.warmGlowRadius * submersionMult;
-                    }
+                    gI.displayRadius = gI.displayRadius > -1
+                        ? Mathf.Lerp(glow.myLight.rad, gI.warmGlowRadius * submersionMult, 0.01f)
+                        : gI.warmGlowRadius * submersionMult;
                 }
                 glow.myLight.HardSetPos(glow.firstChunk.pos);
                 glow.myLight.HardSetRad(gI.displayRadius * lightCounterFac * biteFac);
-                glow.myLight.HardSetAlpha(Mathf.Lerp((lightCounterFac - 0.1f) * biteFac * submersionMult, 0, 0.1f + glow.room.Darkness(glow.firstChunk.pos)/4f));
+                glow.myLight.HardSetAlpha(Mathf.Lerp((lightCounterFac - 0.1f) * biteFac * submersionMult, 0, 0.1f + (glow.room.Darkness(glow.firstChunk.pos) / 4f)));
                 glow.myLight.color = gI.displayColor;
                 if (glow.myLight.rad > 5f)
                 {
@@ -298,25 +289,11 @@ internal class ObjectChanges
         if (glow.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
         {
             Color colorGoal = Color.Lerp(gI.warmColor.rgb, gI.coldColor.rgb, Mathf.InverseLerp(glow.room.world.rainCycle.cycleLength, gI.maxColdTime, glow.room.world.rainCycle.timer));
-            if (gI.displayColor != Color.clear)
-            {
-                gI.displayColor = Color.Lerp(gI.displayColor, colorGoal, 0.01f);
-            }
-            else
-            {
-                gI.displayColor = colorGoal;
-            }
+            gI.displayColor = gI.displayColor != Color.clear ? Color.Lerp(gI.displayColor, colorGoal, 0.01f) : colorGoal;
         }
         else
         {
-            if (gI.displayColor != Color.clear)
-            {
-                gI.displayColor = Color.Lerp(gI.displayColor, gI.warmColor.rgb, 0.01f);
-            }
-            else
-            {
-                gI.displayColor = gI.warmColor.rgb;
-            }
+            gI.displayColor = gI.displayColor != Color.clear ? Color.Lerp(gI.displayColor, gI.warmColor.rgb, 0.01f) : gI.warmColor.rgb;
         }
 
         if (glow.blink > 0 && Random.value < 0.5f)
@@ -409,7 +386,7 @@ internal class ObjectChanges
                 AbstractPhysicalObject abstractPhysicalObject = null;
                 if (abstractObjectType == AbstractPhysicalObject.AbstractObjectType.SlimeMold && array.Length >= 6)
                 {
-                    abstractPhysicalObject = new AbstractSlimeMold(world, abstractObjectType, null, pos, iD, int.Parse(array[3], NumberStyles.Any, CultureInfo.InvariantCulture), int.Parse(array[4], NumberStyles.Any, CultureInfo.InvariantCulture), null, array[5] == "1" || array[5] == "big")
+                    abstractPhysicalObject = new AbstractSlimeMold(world, abstractObjectType, null, pos, iD, int.Parse(array[3], NumberStyles.Any, CultureInfo.InvariantCulture), int.Parse(array[4], NumberStyles.Any, CultureInfo.InvariantCulture), null, array[5] is "1" or "big")
                     {
                         unrecognizedAttributes = SaveUtils.PopulateUnrecognizedStringAttrs(array, 5)
                     };
@@ -442,7 +419,7 @@ internal class ObjectChanges
             }
             if (flag && Random.value < Mathf.InverseLerp(0f, 0.3f, grs.oxygen))
             {
-                Bubble bubble = new(grs.firstChunk.pos + Custom.RNV() * Random.value * 4f, Custom.RNV() * Mathf.Lerp(6f, 16f, Random.value) * Mathf.InverseLerp(0f, 0.45f, grs.oxygen), bottomBubble: false, fakeWaterBubble: false);
+                Bubble bubble = new(grs.firstChunk.pos + (Custom.RNV() * Random.value * 4f), Custom.RNV() * Mathf.Lerp(6f, 16f, Random.value) * Mathf.InverseLerp(0f, 0.45f, grs.oxygen), bottomBubble: false, fakeWaterBubble: false);
                 grs.room.AddObject(bubble);
                 bubble.age = 600 - Random.Range(20, Random.Range(30, 80));
                 for (int i = 0; i < grs.room.abstractRoom.creatures.Count; i++)
@@ -482,9 +459,17 @@ internal class ObjectChanges
                 absBrnSpr.spearColor = Custom.HSL2RGB(Random.value < 0.02f ? Random.value : Random.Range(0f, 0.11f), 1, Random.Range(0.5f, 0.65f));
                 Vector3 col2 = Custom.RGB2HSL(absBrnSpr.spearColor);
                 col2.x -= col2.x + Random.Range(-0.15f, 0.15f);
-                if (col2.x > 1) col2.x -= 1f;
-                if (col2.x < 0) col2.x += 1f;
-                absBrnSpr.fireFadeColor = Custom.HSL2RGB(col2.x, col2.y, col2.z - (Random.value < 0.2f? -0.2f : 0.2f));
+                if (col2.x > 1)
+                {
+                    col2.x -= 1f;
+                }
+
+                if (col2.x < 0)
+                {
+                    col2.x += 1f;
+                }
+
+                absBrnSpr.fireFadeColor = Custom.HSL2RGB(col2.x, col2.y, col2.z - (Random.value < 0.2f ? -0.2f : 0.2f));
             }
         }
     }
@@ -511,9 +496,15 @@ internal class ObjectChanges
 
                     foreach (UpdatableAndDeletable upDel in spr.room.updateList)
                     {
-                        if (upDel is null) return;
+                        if (upDel is null)
+                        {
+                            return;
+                        }
 
-                        if (upDel is FreezerMist mist && Custom.DistLess(absBrnSpr.spearTipPos, mist.pos, mist.rad + 100f)) absBrnSpr.chill += 0.005f;
+                        if (upDel is FreezerMist mist && Custom.DistLess(absBrnSpr.spearTipPos, mist.pos, mist.rad + 100f))
+                        {
+                            absBrnSpr.chill += 0.005f;
+                        }
                         else if (upDel is ColdLizard icy && icy.chillAura is not null)
                         {
                             absBrnSpr.chill += 0.04f * Mathf.InverseLerp(icy.chillAura.rad, icy.chillAura.rad - 120f, Custom.Dist(absBrnSpr.spearTipPos, icy.DangerPos));
@@ -552,7 +543,7 @@ internal class ObjectChanges
                 absBrnSpr.flicker[i, 0] = Custom.LerpAndTick(absBrnSpr.flicker[i, 0], absBrnSpr.flicker[i, 2], 0.05f, 1f / 30f);
                 if (Random.value < 0.2f)
                 {
-                    absBrnSpr.flicker[i, 2] = 1f + Mathf.Pow(Random.value, 3f) * 0.2f * (Random.value < 0.5f ? -1f : 1f);
+                    absBrnSpr.flicker[i, 2] = 1f + (Mathf.Pow(Random.value, 3f) * 0.2f * (Random.value < 0.5f ? -1f : 1f));
                 }
                 absBrnSpr.flicker[i, 2] = Mathf.Lerp(absBrnSpr.flicker[i, 2], 1f, 0.01f);
             }
@@ -607,7 +598,7 @@ internal class ObjectChanges
                     spr.SetRandomSpin();
                     for (int j = 0; j < 4; j++)
                     {
-                        spr.room.AddObject(new WaterDrip(spr.firstChunk.pos, spr.firstChunk.vel * Random.value * 0.5f + Custom.DegToVec(360f * Random.value) * spr.firstChunk.vel.magnitude * Random.value * 0.5f, waterColor: false));
+                        spr.room.AddObject(new WaterDrip(spr.firstChunk.pos, (spr.firstChunk.vel * Random.value * 0.5f) + (Custom.DegToVec(360f * Random.value) * spr.firstChunk.vel.magnitude * Random.value * 0.5f), waterColor: false));
                     }
                 }
                 spr.deerCounter = 0;
@@ -620,11 +611,7 @@ internal class ObjectChanges
     // Electric Spears
     public static bool ChillipedeAintElectric(On.MoreSlugcats.ElectricSpear.orig_CheckElectricCreature orig, ElectricSpear elcSpr, Creature target)
     {
-        if (target is not null && target.Template.type == HSEnums.CreatureType.Chillipede)
-        {
-            return false;
-        }
-        return orig(elcSpr, target);
+        return (target is null || target.Template.type != HSEnums.CreatureType.Chillipede) && orig(elcSpr, target);
     }
     public static void ElectriSpearExtraCharge(On.AbstractSpear.orig_ctor_World_Spear_WorldCoordinate_EntityID_bool_bool orig, AbstractSpear absSpr, World world, Spear spr, WorldCoordinate pos, EntityID ID, bool explosive, bool electric)
     {
@@ -652,7 +639,7 @@ internal class ObjectChanges
         IL.MoreSlugcats.ElectricSpear.Electrocute += IL =>
         {
             ILCursor c = new(IL);
-            var label = IL.DefineLabel();
+            ILLabel label = IL.DefineLabel();
             c.Emit(OpCodes.Ldarg_0);
             c.Emit(OpCodes.Ldarg_1);
             c.EmitDelegate((ElectricSpear eSpr, PhysicalObject obj) =>
@@ -692,7 +679,7 @@ internal class ObjectChanges
                 for (int i = 0; i < 15; i++)
                 {
                     Vector2 val = Custom.DegToVec(360f * Random.value);
-                    eSpr.room.AddObject(new MouseSpark(eSpr.firstChunk.pos + val * 9f, eSpr.firstChunk.vel + val * 36f * Random.value, 20f, new Color(0.7f, 1f, 1f)));
+                    eSpr.room.AddObject(new MouseSpark(eSpr.firstChunk.pos + (val * 9f), eSpr.firstChunk.vel + (val * 36f * Random.value), 20f, new Color(0.7f, 1f, 1f)));
                 }
                 if (!ElectricTarget)
                 {
@@ -713,9 +700,9 @@ internal class ObjectChanges
     public static float ElectricDamage(Creature target)
     {
         return
-            target.Template.baseStunResistance >= 6f? 1 :
-            target.Template.baseStunResistance >= 4f? 0.75f :
-            target.Template.baseStunResistance >= 2f? 0.50f : 0.25f;
+            target.Template.baseStunResistance >= 6f ? 1 :
+            target.Template.baseStunResistance >= 4f ? 0.75f :
+            target.Template.baseStunResistance >= 2f ? 0.50f : 0.25f;
     }
     public static float ElectricStun(PhysicalObject source, Creature target)
     {
@@ -724,7 +711,7 @@ internal class ObjectChanges
         {
             stun *= Mathf.Lerp(source is JellyFish ? 2f : 1.5f, 1f, HS.ClampedHealth);
         }
-        
+
         if (target is Player plr)
         {
             if (plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Saint)
@@ -803,7 +790,7 @@ internal class ObjectChanges
     }
     public static bool ElementalDamage(On.Spear.orig_HitSomething orig, Spear spr, SharedPhysics.CollisionResult result, bool eu)
     {
-        if (result.obj is not Creature target || !CWT.CreatureData.TryGetValue(target, out CreatureInfo cI))
+        if (result.obj is not Creature target || !CWT.CreatureData.TryGetValue(target, out CWT.CreatureInfo cI))
         {
             return orig(spr, result, eu);
         }
@@ -841,7 +828,7 @@ internal class ObjectChanges
                     spr.room.AddObject(new FireSpikes(spr.room, spr.firstChunk.pos, 14, 15f, 9f, 5f, 90f, brnSpr.spearColor, brnSpr.fireFadeColor));
                 }
 
-                if (target.SpearStick(spr, spr.spearDamageBonus, result.chunk, result.onAppendagePos, spr.firstChunk.vel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out AbsCtrInfo aI))
+                if (target.SpearStick(spr, spr.spearDamageBonus, result.chunk, result.onAppendagePos, spr.firstChunk.vel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out CWT.AbsCtrInfo aI))
                 {
                     aI.AddBurn(brnSpr, target, result.chunk?.index, 600, brnSpr.spearColor, brnSpr.fireFadeColor);
                 }
@@ -858,7 +845,7 @@ internal class ObjectChanges
     {
         if (IsIncanStory(jelly?.room?.game) && obj is Creature target && target != jelly.thrownBy && jelly.Electric)
         {
-            if (target is not BigEel && target is not Centipede && target is not BigJellyFish && target is not Inspector)
+            if (target is not BigEel and not Centipede and not BigJellyFish and not Inspector)
             {
                 target.Violence(jelly.firstChunk, Custom.DirVec(jelly.firstChunk.pos, target.bodyChunks[otherChunk].pos) * 5f, target.bodyChunks[otherChunk], null, Creature.DamageType.Electric, 0.05f, ElectricStun(jelly, target));
                 target.room.AddObject(new CreatureSpasmer(target, allowDead: false, target.stun));
@@ -870,7 +857,7 @@ internal class ObjectChanges
                 for (int i = 0; i < 15; i++)
                 {
                     Vector2 val = Custom.DegToVec(360f * Random.value);
-                    jelly.room.AddObject(new MouseSpark(jelly.firstChunk.pos + val * 9f, jelly.firstChunk.vel + val * 36f * Random.value, 20f, new Color(0.7f, 1f, 1f)));
+                    jelly.room.AddObject(new MouseSpark(jelly.firstChunk.pos + (val * 9f), jelly.firstChunk.vel + (val * 36f * Random.value), 20f, new Color(0.7f, 1f, 1f)));
                 }
             }
             jelly.electricCounter = 0;
@@ -899,8 +886,4 @@ internal class ObjectChanges
             }
         }
     }
-
-    //--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
 }

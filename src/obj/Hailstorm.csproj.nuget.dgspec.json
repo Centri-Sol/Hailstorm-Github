@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\Hailstorm.csproj": {}
+    "C:\\Users\\Marmol Salazar\\Documents\\GitHub\\Hailstorm-Github\\src\\Hailstorm.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\Hailstorm.csproj": {
+    "C:\\Users\\Marmol Salazar\\Documents\\GitHub\\Hailstorm-Github\\src\\Hailstorm.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\Hailstorm.csproj",
+        "projectUniqueName": "C:\\Users\\Marmol Salazar\\Documents\\GitHub\\Hailstorm-Github\\src\\Hailstorm.csproj",
         "projectName": "Hailstorm",
-        "projectPath": "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\Hailstorm.csproj",
+        "projectPath": "C:\\Users\\Marmol Salazar\\Documents\\GitHub\\Hailstorm-Github\\src\\Hailstorm.csproj",
         "packagesPath": "C:\\Users\\Marmol Salazar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Marmol Salazar\\Desktop\\Hailstorm-Github-main\\src\\obj\\",
+        "outputPath": "C:\\Users\\Marmol Salazar\\Documents\\GitHub\\Hailstorm-Github\\src\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Marmol Salazar\\AppData\\Roaming\\NuGet\\NuGet.Config",

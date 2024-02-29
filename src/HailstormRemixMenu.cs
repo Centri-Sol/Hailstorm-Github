@@ -270,7 +270,7 @@ public class HSRemix : OptionInterface
         opTab3.AddItems(containerTab3);
         PolePlantIcon = new FSprite("Kill_PoleMimic") { x = 50, y = 485, color = Color.red };
         MonsterKelpIcon = new FSprite("Kill_TentaclePlant") { x = 50, y = 435, color = Color.red };
-        BigSpiderIcon = new FSprite("Kill_BigSpider") { x = 50, y = 385, color = Custom.HSL2RGB(42/360f, 0.7f, 0.4f)};
+        BigSpiderIcon = new FSprite("Kill_BigSpider") { x = 50, y = 385, color = Custom.HSL2RGB(42 / 360f, 0.7f, 0.4f) };
         SpitterSpiderIcon = new FSprite("Kill_BigSpider") { x = 80, y = 385, color = Custom.HSL2RGB(0, 0.7f, 0.4f) };
         MotherSpiderIcon2 = new FSprite("Kill_MotherSpider_CentriSol") { x = 110, y = 385, color = Custom.HSL2RGB(120 / 360f, 0.7f, 0.4f) };
         YellowLizardIcon = new FSprite("Kill_Yellow_Lizard") { x = 50, y = 335, color = new Color(1, 0.6f, 0) };
@@ -309,35 +309,35 @@ public class HSRemix : OptionInterface
 
     }
 
-    private FSprite PolePlantIcon = new ("Kill_PoleMimic");
-    private FSprite MonsterKelpIcon = new ("Kill_TentaclePlant");
-    private FSprite BigSpiderIcon = new ("Kill_BigSpider");
-    private FSprite SpitterSpiderIcon = new ("Kill_BigSpider");
-    private FSprite MotherSpiderIcon2 = new ("Kill_MotherSpider_CentriSol");
-    private FSprite YellowLizardIcon = new ("Kill_Yellow_Lizard");
-    private FSprite EelLizardIcon = new ("Kill_Salamander");
-    private FSprite StrawberryLizardIcon = new ("Kill_White_Lizard");
+    private FSprite PolePlantIcon = new("Kill_PoleMimic");
+    private FSprite MonsterKelpIcon = new("Kill_TentaclePlant");
+    private FSprite BigSpiderIcon = new("Kill_BigSpider");
+    private FSprite SpitterSpiderIcon = new("Kill_BigSpider");
+    private FSprite MotherSpiderIcon2 = new("Kill_MotherSpider_CentriSol");
+    private FSprite YellowLizardIcon = new("Kill_Yellow_Lizard");
+    private FSprite EelLizardIcon = new("Kill_Salamander");
+    private FSprite StrawberryLizardIcon = new("Kill_White_Lizard");
 
     private float ppHue;
     private float ppHueDirection = 0.50f / 360f;
 
-    private float mkHue = -20/360f;
+    private float mkHue = -20 / 360f;
     private float mkHueDirection = 0.50f / 360f;
 
-    private float bigSpdHue = 50/360f;
-    private float sptSpdHue = -20/360f;
-    private float mthSpdHue = 140/360f;
+    private float bigSpdHue = 50 / 360f;
+    private float sptSpdHue = -20 / 360f;
+    private float mthSpdHue = 140 / 360f;
     private float bigSpdHueDirection = 0.25f / 360f;
     private float sptSpdHueDirection = 0.50f / 360f;
     private float mthSpdHueDirection = 0.25f / 360f;
 
-    private float ylHue = 44/360f;
+    private float ylHue = 44 / 360f;
     private float ylHueDirection = 0.50f / 360f;
 
-    private float eelHue = 130/360f;
+    private float eelHue = 130 / 360f;
     private float eelHueDirection = 0.75f / 360f;
 
-    private float sbHue = -10/360f;
+    private float sbHue = -10 / 360f;
     private float sbHueDirection = 0.50f / 360f;
     public override void Update()
     {
@@ -349,11 +349,11 @@ public class HSRemix : OptionInterface
         }
         else if (PolePlantColorsEverywhere.Value)
         {
-            if (ppHue >= 40/360f)
+            if (ppHue >= 40 / 360f)
             {
                 ppHueDirection = -0.5f / 360f;
             }
-            else if (ppHue <= -40/360f)
+            else if (ppHue <= -40 / 360f)
             {
                 ppHueDirection = 0.5f / 360f;
             }
@@ -364,15 +364,15 @@ public class HSRemix : OptionInterface
         if (!MonsterKelpColorsEverywhere.Value && MonsterKelpIcon.color != Color.red)
         {
             MonsterKelpIcon.color = Color.red;
-            mkHue = -20/360f;
+            mkHue = -20 / 360f;
         }
         else if (MonsterKelpColorsEverywhere.Value)
         {
-            if (mkHue >= 20/360f)
+            if (mkHue >= 20 / 360f)
             {
                 mkHueDirection = -0.5f / 360f;
             }
-            else if (mkHue <= -60/360f)
+            else if (mkHue <= -60 / 360f)
             {
                 mkHueDirection = 0.5f / 360f;
             }
@@ -384,10 +384,10 @@ public class HSRemix : OptionInterface
         {
             BigSpiderIcon.color = Custom.HSL2RGB(42 / 360f, 0.7f, 0.4f);
             SpitterSpiderIcon.color = Custom.HSL2RGB(0, 0.7f, 0.4f);
-            MotherSpiderIcon2.color = Custom.HSL2RGB(120/360f, 0.7f, 0.4f);
-            bigSpdHue = 50/360f;
-            sptSpdHue = -20/360f;
-            mthSpdHue = 140/360f;
+            MotherSpiderIcon2.color = Custom.HSL2RGB(120 / 360f, 0.7f, 0.4f);
+            bigSpdHue = 50 / 360f;
+            sptSpdHue = -20 / 360f;
+            mthSpdHue = 140 / 360f;
         }
         else if (BigSpiderColorsEverywhere.Value)
         {
@@ -428,7 +428,7 @@ public class HSRemix : OptionInterface
         if (!YellowLizardColorsEverywhere.Value && YellowLizardIcon.color != new Color(1, 0.6f, 0))
         {
             YellowLizardIcon.color = new Color(1, 0.6f, 0);
-            ylHue = 44/360f;
+            ylHue = 44 / 360f;
         }
         else if (YellowLizardColorsEverywhere.Value)
         {
@@ -447,7 +447,7 @@ public class HSRemix : OptionInterface
         if (!EelLizardColorsEverywhere.Value && EelLizardIcon.color != new Color(0f, 0.66f, 0.42f))
         {
             EelLizardIcon.color = new Color(0f, 0.66f, 0.42f);
-            eelHue = 130/360f;
+            eelHue = 130 / 360f;
         }
         else if (EelLizardColorsEverywhere.Value)
         {
@@ -466,7 +466,7 @@ public class HSRemix : OptionInterface
         if (!StrawberryLizardColorsEverywhere.Value && StrawberryLizardIcon.color != new Color(0.95f, 0.73f, 0.73f))
         {
             StrawberryLizardIcon.color = new Color(0.95f, 0.73f, 0.73f);
-            sbHue = -10/360f;
+            sbHue = -10 / 360f;
         }
         else if (StrawberryLizardColorsEverywhere.Value)
         {

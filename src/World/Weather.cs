@@ -1,6 +1,6 @@
 ﻿namespace Hailstorm;
 
-internal class Weather
+public class Weather
 {
     public static void Hooks()
     {
@@ -24,7 +24,7 @@ internal class Weather
 
         On.MoreSlugcats.BlizzardSound.Update += BlizzardPleaseSHUTUPYoureSoLOUD;
 
-        new Hook(typeof(RainCycle).GetMethod("get_RainApproaching", Public | NonPublic | Instance), (Func<RainCycle, float> orig, RainCycle cycle) => IsIncanStory(cycle.world.game) && FogPrecycle ? 1f - ((float)cycle.preTimer / (float)cycle.maxPreTimer) : orig(cycle));
+        _ = new Hook(typeof(RainCycle).GetMethod("get_RainApproaching", Public | NonPublic | Instance), (Func<RainCycle, float> orig, RainCycle cycle) => IsIncanStory(cycle.world.game) && FogPrecycle ? 1f - (cycle.preTimer / (float)cycle.maxPreTimer) : orig(cycle));
 
 
     }
@@ -34,7 +34,7 @@ internal class Weather
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return (RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent);
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 
@@ -42,7 +42,7 @@ internal class Weather
     //----------------------------------------------------------------------------------
 
     public static bool HailPrecycle;
-    public readonly static Dictionary<CreatureTemplate.Type, float> HailResistantCreatures = new()
+    public static readonly Dictionary<CreatureTemplate.Type, float> HailResistantCreatures = new()
     {
         { CreatureTemplate.Type.BigSpider, 0.9f },
         { CreatureTemplate.Type.SpitterSpider, 0.8f },
@@ -77,7 +77,7 @@ internal class Weather
     public static int TimePerPip = 1200;
     // A whole 9 things to set up Erratic Wind cycles. Most of this is necessary to color cycle pips the way I did.
 
-    public readonly static List<CreatureTemplate.Type> ErraticWindFearers = new()
+    public static readonly List<CreatureTemplate.Type> ErraticWindFearers = new()
     {
         CreatureTemplate.Type.BlueLizard,
         CreatureTemplate.Type.Vulture,
@@ -97,19 +97,17 @@ internal class Weather
 
     public static int LateBlizzardTime(World world)
     {
-        if (world.region is not null &&
-            Regions.RegionData.TryGetValue(world.region, out RegionInfo rI))
-        {
-            return world.rainCycle.cycleLength + rI.lateBlizzardStartTimeAfterCycleEnds;
-        }
-        return RainWorldGame.BlizzardHardEndTimer(world.game.IsStorySession);
+        return world.region is not null &&
+            Regions.RegionData.TryGetValue(world.region, out RegionInfo rI)
+            ? world.rainCycle.cycleLength + rI.lateBlizzardStartTimeAfterCycleEnds
+            : RainWorldGame.BlizzardHardEndTimer(world.game.IsStorySession);
     }
 
 
     //-----------------------------------------
     public static void LockDestination(ArtificialIntelligence AI)
     {
-        if (AI?.creature?.abstractAI is not null && CWT.AbsCtrData.TryGetValue(AI.creature, out AbsCtrInfo aI))
+        if (AI?.creature?.abstractAI is not null && CWT.AbsCtrData.TryGetValue(AI.creature, out CWT.AbsCtrInfo aI))
         {
             aI.destinationLocked = true;
             AI.creature.abstractAI.freezeDestination = true;
@@ -121,7 +119,7 @@ internal class Weather
         int denTime = 0;
         if (absLmn?.state is not null &&
             absLmn.state is GlowSpiderState gs &&
-            gs.behavior == GlowSpiderState.Behavior.ReturnPrey)
+            gs.behavior == ReturnPrey)
         {
             string itemList = "";
             for (int g = absLmn.stuckObjects.Count - 1; g >= 0; g--)
@@ -142,11 +140,17 @@ internal class Weather
                         float massFac = Mathf.InverseLerp(lmn.TotalMass, lmn.BackholdMassLimit, lmnGrip.B.realizedObject.TotalMass);
                         denTime = (int)Mathf.Lerp(60, 560, massFac / lmnGrip.B.stuckObjects.Count);
                     }
-                    else denTime = 200;
+                    else
+                    {
+                        denTime = 200;
+                    }
 
                     absLmn.remainInDenCounter += denTime;
                 }
-                else itemList += " and ";
+                else
+                {
+                    itemList += " and ";
+                }
 
                 itemList += (lmnGrip.B is AbstractCreature) ?
                     (lmnGrip.B as AbstractCreature).creatureTemplate.name : lmnGrip.B.type.value;
@@ -154,7 +158,7 @@ internal class Weather
                 int itemGrabbersCount = lmnGrip.B.stuckObjects.Count;
                 for (int b = lmnGrip.B.stuckObjects.Count - 1; b >= 0; b--)
                 {
-                    if (lmnGrip.B.stuckObjects[b] is null || 
+                    if (lmnGrip.B.stuckObjects[b] is null ||
                         lmnGrip.B.stuckObjects[b] is not AbstractPhysicalObject.CreatureGripStick otherGrip ||
                         otherGrip.A == absLmn ||
                         otherGrip.B != lmnGrip.B)
@@ -167,10 +171,10 @@ internal class Weather
                     {
                         continue;
                     }
-                    othergs.ChangeBehavior(GlowSpiderState.Behavior.Idle, 2);
+                    othergs.ChangeBehavior(Idle, 2);
                     grabber.remainInDenCounter += denTime + (20 * (itemGrabbersCount - b));
-                    if (grabber.realizedCreature is not null &&
-                        grabber.realizedCreature is Luminescipede otherLmn)
+                    if (grabber.realizedCreature is not null and
+                        Luminescipede otherLmn)
                     {
                         otherLmn.currentPrey = null;
                     }
@@ -186,18 +190,21 @@ internal class Weather
                 {
                     absLmn.DropCarriedObject(lmnGrip.grasp);
                 }
-                else lmnGrip.B.Destroy();
+                else
+                {
+                    lmnGrip.B.Destroy();
+                }
             }
             if (itemList != "")
             {
-                if (absLmn.realizedCreature is not null &&
-                    absLmn.realizedCreature is Luminescipede lmn)
+                if (absLmn.realizedCreature is not null and
+                    Luminescipede lmn)
                 {
                     lmn.currentPrey = null;
                     lmn.useItem = null;
                     lmn.fearSource = null;
                 }
-                gs.ChangeBehavior(GlowSpiderState.Behavior.Idle, 2);
+                gs.ChangeBehavior(Idle, 2);
                 if (RainWorld.ShowLogs)
                 {
                     Debug.Log("[Hailstorm] Lumin returned " + itemList + " to home den at (" + den.ToString() + ")!");
@@ -226,20 +233,58 @@ internal class Weather
     }
     public static void HailstormCycleTypes(On.RainCycle.orig_ctor orig, RainCycle rc, World world, float minutes)
     {
-        if (HailPrecycle) HailPrecycle = false;
-        if (FogPrecycle) FogPrecycle = false;
+        if (HailPrecycle)
+        {
+            HailPrecycle = false;
+        }
 
-        if (ErraticWindCycle) ErraticWindCycle = false;
-        if (WindIntervalDurations is not null) WindIntervalDurations = null;
-        if (WindIntervalIntensities is not null) WindIntervalIntensities = null;
-        if (WindcycleCount != -1) WindcycleCount = -1;
-        if (WindcycleTimer != 0) WindcycleTimer = 0;
-        if (CurrentWindIntensity != 0) CurrentWindIntensity = 0;
-        if (WindInterval != 0) WindInterval = 0;
-        if (TimerBlink) TimerBlink = false;
+        if (FogPrecycle)
+        {
+            FogPrecycle = false;
+        }
+
+        if (ErraticWindCycle)
+        {
+            ErraticWindCycle = false;
+        }
+
+        if (WindIntervalDurations is not null)
+        {
+            WindIntervalDurations = null;
+        }
+
+        if (WindIntervalIntensities is not null)
+        {
+            WindIntervalIntensities = null;
+        }
+
+        if (WindcycleCount != -1)
+        {
+            WindcycleCount = -1;
+        }
+
+        if (WindcycleTimer != 0)
+        {
+            WindcycleTimer = 0;
+        }
+
+        if (CurrentWindIntensity != 0)
+        {
+            CurrentWindIntensity = 0;
+        }
+
+        if (WindInterval != 0)
+        {
+            WindInterval = 0;
+        }
+
+        if (TimerBlink)
+        {
+            TimerBlink = false;
+        }
 
         orig(rc, world, minutes);
-        
+
         if (IsIncanStory(world?.game) &&
             world.region is not null &&
             Regions.RegionData.TryGetValue(world.region, out RegionInfo rI))
@@ -257,7 +302,7 @@ internal class Weather
             }
 
             Random.State state = Random.state;
-            Random.InitState((sgs.saveState.totTime + sgs.saveState.cycleNumber * sgs.saveStateNumber.Index) * 10000);
+            Random.InitState((sgs.saveState.totTime + (sgs.saveState.cycleNumber * sgs.saveStateNumber.Index)) * 10000);
             if (rc.maxPreTimer > 0)
             {
                 FogPrecycle = Random.value < rI.freezingFogInsteadOfHailChance;
@@ -379,7 +424,7 @@ internal class Weather
                 {
                     WindStrength *= 1.5f;
                 }
-                else if (region == "HI" || region == "SU" || region == "CC")
+                else if (region is "HI" or "SU" or "CC")
                 {
                     WindStrength += 0.2f;
                 }
@@ -397,11 +442,11 @@ internal class Weather
                 }
 
                 float windAngleExtremeness =
-                    region == "SI" || region == "SU" || region == "MS" ? 3 :
-                    region == "HI" || region == "LF" || region == "CC" || region == "SL" ? 2 : 1;
+                    region is "SI" or "SU" or "MS" ? 3 :
+                    region is "HI" or "LF" or "CC" or "SL" ? 2 : 1;
 
                 float whatEven = Mathf.Sin(TimeTilRain / 900f) * windAngleExtremeness;
-                whatEven = Mathf.Lerp(whatEven, Mathf.Sin(TimeTilRain / 240f), 0.3f + Mathf.Sin(TimeTilRain / 100f) / 4f);
+                whatEven = Mathf.Lerp(whatEven, Mathf.Sin(TimeTilRain / 240f), 0.3f + (Mathf.Sin(TimeTilRain / 100f) / 4f));
                 float lerpedWind = Mathf.Lerp(BG.WindAngle, whatEven, 0.1f) * RainIntensity;
 
                 BG.WindAngle = Mathf.Lerp(lerpedWind, Mathf.Sign(whatEven), 0.2f * (0f - Mathf.Abs(lerpedWind)));
@@ -423,18 +468,18 @@ internal class Weather
                     TimeTilRain = (int)(3000f * Mathf.InverseLerp(1f, 0.5f, RainIntensity));
                 }
                 float windAngleExtremeness =
-                    region == "SI" || region == "SU" || region == "MS" ? 3 :
-                    region == "HI" || region == "LF" || region == "CC" || region == "SL" ? 2f : 1f;
+                    region is "SI" or "SU" or "MS" ? 3 :
+                    region is "HI" or "LF" or "CC" or "SL" ? 2f : 1f;
                 float num3 = Mathf.Sin(TimeTilRain / 900f) * windAngleExtremeness;
-                num3 = Mathf.Lerp(num3, Mathf.Sin(TimeTilRain / 240f), 0.3f + Mathf.Sin(TimeTilRain / 100f) / 4f);
+                num3 = Mathf.Lerp(num3, Mathf.Sin(TimeTilRain / 240f), 0.3f + (Mathf.Sin(TimeTilRain / 100f) / 4f));
                 float num4 = Mathf.Lerp(BG.WindAngle, num3, 0.1f) * RainIntensity;
 
                 BG.WindAngle =
                     Mathf.Lerp(num4, Mathf.Sign(num3), 0.2f * (0f - Mathf.Abs(num4))) * Mathf.Lerp(0f, 0.75f, CycleProgression * 3f);
 
                 float maxWindStrength =
-                    region == "SI" || region == "SU" ? 1.4f :
-                    region == "HI" || region == "LF" || region == "CC" ? 1.2f : 1f;
+                    region is "SI" or "SU" ? 1.4f :
+                    region is "HI" or "LF" or "CC" ? 1.2f : 1f;
 
                 if (region == "SU")
                 {
@@ -443,7 +488,7 @@ internal class Weather
                     BG.SnowfallIntensity = Mathf.Lerp(0.7f, maxWindStrength, Mathf.Clamp(BG.WindStrength * 6f, 1.5f, 5f)) * RainIntensity;
                     BG.WhiteOut = BG.BlizzardIntensity * RainIntensity;
                 }
-                else if (region == "HI" || region == "LF" || region == "CC")
+                else if (region is "HI" or "LF" or "CC")
                 {
                     BG.WindStrength = Mathf.Lerp(maxWindStrength * 0.25f, maxWindStrength, Mathf.InverseLerp(RainCycle.cycleLength * 1.25f, 3000f, TimeTilRain)) * RainIntensity;
                     BG.BlizzardIntensity = Mathf.Lerp(0.3f, maxWindStrength, Mathf.InverseLerp(RainCycle.cycleLength * 1.25f, 3000f, TimeTilRain)) * RainIntensity;
@@ -472,7 +517,7 @@ internal class Weather
         }
 
         orig(rm, HUD, container);
-        
+
         if (!ErraticWindCycle || rm.circles is null || rm.circles.Length < 1)
         {
             return;
@@ -563,7 +608,7 @@ internal class Weather
             if (circle?.hud?.owner is not null && circle.hud.owner is Player owner && IsIncanStory(owner.room?.game))
             {
                 RainCycle rc = owner.room.world.rainCycle;
-                float cutOffTime = (rc.maxPreTimer / (float)rm.circles.Length) * c;
+                float cutOffTime = rc.maxPreTimer / (float)rm.circles.Length * c;
                 if (rc.preTimer > cutOffTime)
                 {
                     if (HailPrecycle && circle.sprite.element.name != "HSHailPip")
@@ -630,7 +675,9 @@ internal class Weather
         IL.HUD.RainMeter.Update += IL =>
         {
             ILCursor c = new(IL);
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = null;
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             if (
             c.TryGotoNext(x => x.MatchStfld<RainMeter>(nameof(RainMeter.fRain))) &&
             c.TryGotoNext(
@@ -647,7 +694,9 @@ internal class Weather
                 c.Emit(OpCodes.Brfalse, label);
             }
             else
+            {
                 Debug.LogError("[Hailstorm] An IL hook for Erratic Wind Cycles isn't working! Report this if you see it!");
+            }
         };
 
     }
@@ -786,7 +835,10 @@ internal class Weather
                     {
                         return;
                     }
-                    else blizzPush *= 0.05f;
+                    else
+                    {
+                        blizzPush *= 0.05f;
+                    }
                 }
 
                 blizzPush.y = 0;
@@ -832,17 +884,19 @@ internal class Weather
                     }
 
                     if (ctr is Lizard liz &&
-                        liz.LegsGripping < 4 - (liz.TotalMass/3f))
+                        liz.LegsGripping < 4 - (liz.TotalMass / 3f))
                     {
-                        windVulnerability *= (liz.LegsGripping / 4f);
+                        windVulnerability *= liz.LegsGripping / 4f;
                     }
 
                     if (windVulnerability > 0)
                     {
                         blizzPush *= windVulnerability;
                     }
-                    else return;
-
+                    else
+                    {
+                        return;
+                    }
                 }
 
                 chunk.vel += blizzPush;
@@ -859,24 +913,13 @@ internal class Weather
             TimerBlink = true;
         }
 
-        if (rc.preTimer > 0)
-        {
-            WindcycleTimer = rc.maxPreTimer;
-        }
-        else if (rc.cycleLength >= 7200)
-        {
-            WindcycleTimer = rc.cycleLength;
-        }
-        else
-        {
-            WindcycleTimer = 7200;
-        }
+        WindcycleTimer = rc.preTimer > 0 ? rc.maxPreTimer : rc.cycleLength >= 7200 ? rc.cycleLength : 7200;
 
         if (rc.preTimer < 1)
         {
             WindcycleCount++;
         }
-        
+
         TimePerPip = 1200;
         int pipCount = rc.cycleLength / TimePerPip;
         if (pipCount > 30)
@@ -901,7 +944,10 @@ internal class Weather
                     {
                         WindIntervalDurations[WindIntervalDurations.Count - 1] += remainingTime;
                     }
-                    else WindIntervalDurations.Add(remainingTime);
+                    else
+                    {
+                        WindIntervalDurations.Add(remainingTime);
+                    }
                 }
                 else if (remainingTime < 0 && WindIntervalDurations.Count > 0)
                 {
@@ -957,7 +1003,7 @@ internal class Weather
         {
             RainCycle rc = owner.room.world.rainCycle;
             rm.fRain = rc.preTimer > 0 ?
-                1 : (float)WindcycleTimer / (float)rc.cycleLength;
+                1 : (float)WindcycleTimer / rc.cycleLength;
             return false;
         }
         return true;
@@ -973,5 +1019,3 @@ internal class Weather
         }
     }
 }
-
-//-------------------------------------------------------------------------------------------------------------------------------------------------------------------

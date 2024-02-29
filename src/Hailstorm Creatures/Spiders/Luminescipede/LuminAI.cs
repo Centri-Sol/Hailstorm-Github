@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINoiseReaction, IUseItemTracker
 {
     public Luminescipede Lmn => creature.realizedCreature as Luminescipede;
@@ -19,17 +17,17 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     public float currentUtility;
 
-    
+
     public WorldCoordinate nextForageSpot;
     public WorldCoordinate forageSpot;
     public WorldCoordinate? forageAtPosition;
     private int forageSpotCounter;
     public List<WorldCoordinate> prevForageSpots = new();
-    
+
 
     private MovementConnection lastFollowedConnection;
     private Vector2 travelDir;
-    public virtual float MovementDesire 
+    public virtual float MovementDesire
     {
         get
         {
@@ -115,7 +113,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     //--------------------------------------------------
 
-    public override void Update() 
+    public override void Update()
     {
         try
         {
@@ -223,12 +221,12 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             }
         }
         catch (Exception e)
-        { 
+        {
             Debug.Log("[Hailstorm] Something is breaking with Luminescipede AI! Report this ASAP: " + e);
         }
     }
 
-    public virtual void NormalMovement() 
+    public virtual void NormalMovement()
     {
         if (Lmn.Submersion > 0.3f)
         {
@@ -285,7 +283,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
 
     }
-    public virtual void SafariMovement() 
+    public virtual void SafariMovement()
     {
         if (Lmn.inputWithDiagonals.HasValue)
         {
@@ -356,7 +354,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
 
     }
-    public virtual void NormalPathfinding(MovementConnection followingConnection) 
+    public virtual void NormalPathfinding(MovementConnection followingConnection)
     {
         if (followingConnection.type == MovementConnection.MovementType.ReachUp)
         {
@@ -447,7 +445,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         lastFollowedConnection = followingConnection;
     }
-    public virtual void WaterPathfinding() 
+    public virtual void WaterPathfinding()
     {
         Lmn.GoThroughFloors = true;
         Lmn.Body.vel *= inAccessibleTerrain ? 0.95f : 0.8f;
@@ -475,7 +473,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             Lmn.Body.vel.y += 0.35f * (2.2f - GlowState.ivars.Size);
         }
     }
-    public virtual void MoveTowards(Vector2 moveTo) 
+    public virtual void MoveTowards(Vector2 moveTo)
     {
         if (Random.value > 0.5f + (GlowState.health / 2f))
         {
@@ -493,7 +491,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             {
                 if (Lmn.grasps[g]?.grabbed is not null)
                 {
-                    float maxMass = Lmn.AttackMassLimit/2f;
+                    float maxMass = Lmn.AttackMassLimit / 2f;
                     if (g == 1)
                     {
                         maxMass *= 2f;
@@ -505,7 +503,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         Lmn.Body.vel += vel * angle * 3f;
         Lmn.GoThroughFloors = moveTo.y < LmnPos.y - 5f;
     }
-    public virtual void PathingDestination() 
+    public virtual void PathingDestination()
     {
         if (Lmn.safariControlled && Lmn.Consious)
         {
@@ -686,7 +684,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
     }
 
-    public override PathCost TravelPreference(MovementConnection connection, PathCost cost) 
+    public override PathCost TravelPreference(MovementConnection connection, PathCost cost)
     {
         cost.resistance += Mathf.Max(0f, threatTracker.ThreatOfTile(connection.destinationCoord, accountThreatCreatureAccessibility: true) - threatTracker.ThreatOfTile(creature.pos, accountThreatCreatureAccessibility: true)) * 40f;
         if (Lmn?.room is null)
@@ -703,7 +701,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         return base.TravelPreference(connection, cost);
     }
-    public virtual bool TileInEnclosedArea(IntVector2 tilePos) 
+    public virtual bool TileInEnclosedArea(IntVector2 tilePos)
     {
         int numOfSolidSides = 0;
         for (int s = 0; s < 4; s++)
@@ -719,7 +717,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         return false;
     }
-    public virtual float ForagePosScore(WorldCoordinate coord) 
+    public virtual float ForagePosScore(WorldCoordinate coord)
     {
         if (coord.room != creature.pos.room || !pathFinder.CoordinateReachableAndGetbackable(coord))
         {
@@ -755,7 +753,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
     //--------------------------------------------------
 
-    public override Tracker.CreatureRepresentation CreateTrackerRepresentationForCreature(AbstractCreature newCtr) 
+    public override Tracker.CreatureRepresentation CreateTrackerRepresentationForCreature(AbstractCreature newCtr)
     {
         return newCtr.realizedCreature is not null &&
             newCtr.realizedCreature is Luminescipede otherLmn &&
@@ -772,7 +770,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             ? threatTracker
             : (AIModule)null;
     }
-    CreatureTemplate.Relationship IUseARelationshipTracker.UpdateDynamicRelationship(RelationshipTracker.DynamicRelationship relationship) 
+    CreatureTemplate.Relationship IUseARelationshipTracker.UpdateDynamicRelationship(RelationshipTracker.DynamicRelationship relationship)
     {
         if (Lmn.dead || relationship.trackerRep.representedCreature is null)
         {
@@ -867,7 +865,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                 Lmn.flock.lumins.Count < 3 &&
                 Lmn.TotalMass < ctr.TotalMass &&
                 (newRelat.type == CreatureTemplate.Relationship.Type.Eats || newRelat.type == CreatureTemplate.Relationship.Type.Attacks))
-            { 
+            {
                 newRelat = new CreatureTemplate.Relationship
                              (CreatureTemplate.Relationship.Type.Afraid, 1f - (0.75f * Mathf.Clamp(newRelat.intensity, 0, 1)));
                 // Foragers will run from prey that it can't take on.
@@ -906,12 +904,12 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
         return newRelat;
     }
-    public override bool TrackerToDiscardDeadCreature(AbstractCreature absCtr) 
+    public override bool TrackerToDiscardDeadCreature(AbstractCreature absCtr)
     {
         return absCtr is null || absCtr.InDen;
     }
 
-    public virtual ObjectRelationship ObjRelationship(AbstractPhysicalObject absObj) 
+    public virtual ObjectRelationship ObjRelationship(AbstractPhysicalObject absObj)
     {
         if (absObj is AbstractCreature)
         {
@@ -1010,7 +1008,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             }
             if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.Seed ||
                     absObj.type == MoreSlugcatsEnums.AbstractObjectType.LillyPuck)// ||
-                        //absObj.type == HailstormEnums.BezanNut)
+                                                                                  //absObj.type == HailstormEnums.BezanNut)
             {
                 return new ObjectRelationship(Eats, 0.6f);
             }
@@ -1027,7 +1025,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             {
                 return new ObjectRelationship(Eats, 1);
             }
-            
+
             if (absObj is BubbleGrass.AbstractBubbleGrass ABG)
             {
                 float like = (Lmn.room?.water is not null) ? 1f : 0.25f;
@@ -1051,7 +1049,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         return new ObjectRelationship(Ignores, 0);
     }
 
-    RelationshipTracker.TrackedCreatureState IUseARelationshipTracker.CreateTrackedCreatureState(RelationshipTracker.DynamicRelationship rel) 
+    RelationshipTracker.TrackedCreatureState IUseARelationshipTracker.CreateTrackedCreatureState(RelationshipTracker.DynamicRelationship rel)
     {
         return null;
     }
@@ -1101,7 +1099,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         {
             return;
         }
-        
+
         AbstractCreature absCtr = tracker.creatures[Random.Range(0, tracker.creatures.Count)].representedCreature;
 
         if (absCtr?.realizedCreature is null || absCtr.InDen)
@@ -1109,7 +1107,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return;
         }
         Creature ctr = absCtr.realizedCreature;
-        if (ctr.slatedForDeletetion || !CWT.ObjectData.TryGetValue(ctr, out ObjectInfo oI) || oI.inShortcut)
+        if (ctr.slatedForDeletetion || !CWT.ObjectData.TryGetValue(ctr, out CWT.ObjectInfo oI) || oI.inShortcut)
         {
             return;
         }
@@ -1162,7 +1160,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             absObj.InDen ||
             absObj.realizedObject is not PlayerCarryableItem item ||
             item.slatedForDeletetion ||
-            !CWT.ObjectData.TryGetValue(item, out ObjectInfo oI) || oI.inShortcut)
+            !CWT.ObjectData.TryGetValue(item, out CWT.ObjectInfo oI) || oI.inShortcut)
         {
             return;
         }
@@ -1189,7 +1187,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
     }
 
 
-    new public virtual bool VisualContact(Vector2 pos, float bonus = 0)
+    public new virtual bool VisualContact(Vector2 pos, float bonus = 0)
     {
         if (Lmn.room is null || !Lmn.room.VisualContact(LmnPos, pos))
         {
@@ -1203,71 +1201,4 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
     }
 
 
-}
-
-public struct ObjectRelationship 
-{
-    public class Type : ExtEnum<Type>
-    {
-        public static readonly Type DoesntTrack = new ("DoesntTrack", register: true);
-        public static readonly Type Ignores = new ("Ignores", register: true);
-        public static readonly Type Eats = new ("Eats", register: true);
-        public static readonly Type Uses = new ("Uses", register: true);
-        public static readonly Type Likes = new ("Likes", register: true);
-        public static readonly Type Attacks = new ("Attacks", register: true);
-        public static readonly Type UncomfortableAround = new ("UncomfortableAround", register: true);
-        public static readonly Type Avoids = new("Avoids", register: true);
-        public static readonly Type AfraidOf = new("AfraidOf", register: true);
-        public static readonly Type PlaysWith = new ("PlaysWith", register: true);
-
-        public Type(string value, bool register = false)
-            : base(value, register)
-        {
-        }
-    }
-
-    public Type type;
-
-    public float intensity;
-
-    public ObjectRelationship(Type type, float intensity)
-    {
-        this.type = type;
-        this.intensity = intensity;
-    }
-
-    public override readonly bool Equals(object obj)
-    {
-        return obj is not null && obj is ObjectRelationship relationship && Equals(relationship);
-    }
-
-    public readonly bool Equals(ObjectRelationship relationship)
-    {
-        return type == relationship.type && intensity == relationship.intensity;
-    }
-
-    public override readonly int GetHashCode()
-    {
-        return base.GetHashCode();
-    }
-
-    public static bool operator ==(ObjectRelationship a, ObjectRelationship b)
-    {
-        return a.type == b.type && a.intensity == b.intensity;
-    }
-
-    public static bool operator !=(ObjectRelationship a, ObjectRelationship b)
-    {
-        return !(a == b);
-    }
-
-    public readonly ObjectRelationship Duplicate()
-    {
-        return new ObjectRelationship(type, intensity);
-    }
-
-    public override readonly string ToString()
-    {
-        return type.ToString() + " " + intensity;
-    }
 }

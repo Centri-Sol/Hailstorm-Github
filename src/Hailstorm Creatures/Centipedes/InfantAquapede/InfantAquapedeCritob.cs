@@ -1,12 +1,9 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-sealed class InfantAquapedeCritob : Critob
+public class InfantAquapedeCritob : Critob
 {
 
-    public Color InfantAquapedeColor = Custom.HSL2RGB(240/360f, 1, 0.63f);
+    public Color InfantAquapedeColor = Custom.HSL2RGB(240 / 360f, 1, 0.63f);
 
     internal InfantAquapedeCritob() : base(HSEnums.CreatureType.InfantAquapede)
     {
@@ -104,10 +101,5 @@ sealed class InfantAquapedeCritob : Critob
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absCnt) => new CentipedeAI(absCnt, absCnt.world);
     public override Creature CreateRealizedCreature(AbstractCreature absCnt) => new InfantAquapede(absCnt, absCnt.world);
     public override CreatureState CreateState(AbstractCreature absCnt) => new InfantAquapedeState(absCnt);
-
-    #nullable enable
-    public override CreatureTemplate.Type? ArenaFallback() => CreatureTemplate.Type.SmallCentipede;
-    #nullable disable
+    public override CreatureTemplate.Type ArenaFallback() => CreatureTemplate.Type.SmallCentipede;
 }
-
-//----------------------------------------------------------------------------------

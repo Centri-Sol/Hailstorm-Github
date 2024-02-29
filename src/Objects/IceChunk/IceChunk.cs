@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class IceChunk : Weapon
 {
     public AbstractIceChunk AbsIce => abstractPhysicalObject as AbstractIceChunk;
@@ -11,13 +9,13 @@ public class IceChunk : Weapon
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     public float Size => AbsIce.size;
-    public float BaseMass => Mathf.Lerp(0.04f, 0.2f, Size/2f);
-    public float BaseRadius => Mathf.Lerp(2, 12, Size/2f);
+    public float BaseMass => Mathf.Lerp(0.04f, 0.2f, Size / 2f);
+    public float BaseRadius => Mathf.Lerp(2, 12, Size / 2f);
     public virtual float BaseDamage
     {
         get
         {
-            float dmg = 0.6f * Mathf.Lerp(2/3f, 4/3f, Size/2f);
+            float dmg = 0.6f * Mathf.Lerp(2 / 3f, 4 / 3f, Size / 2f);
             if (FreezerCrystal)
             {
                 dmg *= 2f;
@@ -41,7 +39,7 @@ public class IceChunk : Weapon
     {
         get
         {
-            float velMult = 1 * Mathf.Lerp(1.2f, 0.7f, Size/2f);
+            float velMult = 1 * Mathf.Lerp(1.2f, 0.7f, Size / 2f);
             if (FreezerCrystal)
             {
                 velMult *= 1.25f;
@@ -49,13 +47,7 @@ public class IceChunk : Weapon
             return velMult;
         }
     }
-    public float Pitch
-    {
-        get
-        {
-            return Random.Range(1.3f, 1.7f);
-        }
-    }
+    public float Pitch => Random.Range(1.3f, 1.7f);
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     public override int DefaultCollLayer => 1;
@@ -67,7 +59,7 @@ public class IceChunk : Weapon
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    public IceChunk(AbstractIceChunk absIce, World world): base(absIce, world)
+    public IceChunk(AbstractIceChunk absIce, World world) : base(absIce, world)
     {
         bodyChunks = new BodyChunk[1];
         bodyChunks[0] = new BodyChunk(this, 0, default, BaseRadius, BaseMass)
@@ -85,7 +77,7 @@ public class IceChunk : Weapon
         airFriction = 0.97f;
         buoyancy = 1f;
         gravity = 0.9f;
-        bounce = FreezerCrystal ? 2/3f : 1/3f;
+        bounce = FreezerCrystal ? 2 / 3f : 1 / 3f;
 
         if (FrozenObject.obj is not null)
         {
@@ -111,21 +103,14 @@ public class IceChunk : Weapon
         soundLoop.sound = SoundID.None;
         if (firstChunk.vel.magnitude > 5f)
         {
-            if (firstChunk.ContactPoint.y < 0)
-            {
-                soundLoop.sound = SoundID.Rock_Skidding_On_Ground_LOOP;
-            }
-            else
-            {
-                soundLoop.sound = SoundID.Rock_Through_Air_LOOP;
-            }
+            soundLoop.sound = firstChunk.ContactPoint.y < 0 ? SoundID.Rock_Skidding_On_Ground_LOOP : SoundID.Rock_Through_Air_LOOP;
             soundLoop.Volume = Mathf.InverseLerp(5, 15, firstChunk.vel.magnitude);
             soundLoop.Pitch = Pitch;
         }
         soundLoop.Update();
         if (firstChunk.ContactPoint.y != 0)
         {
-            rotationSpeed = (rotationSpeed * 2f + firstChunk.vel.x * 5f) / 3f;
+            rotationSpeed = ((rotationSpeed * 2f) + (firstChunk.vel.x * 5f)) / 3f;
         }
 
         if (light is null)
@@ -234,10 +219,10 @@ public class IceChunk : Weapon
                 int sparkAmount = (int)(speed / 5f);
                 for (int i = 0; i < sparkAmount; i++)
                 {
-                    room.AddObject(new Spark(new Vector2(firstChunk.pos.x, room.MiddleOfTile(firstChunk.pos).y + firstChunk.ContactPoint.y * 10f), firstChunk.vel * Random.value + Custom.RNV() * Random.value * 4f - firstChunk.ContactPoint.ToVector2() * 4f * Random.value, Color.white, null, 6, 18));
+                    room.AddObject(new Spark(new Vector2(firstChunk.pos.x, room.MiddleOfTile(firstChunk.pos).y + (firstChunk.ContactPoint.y * 10f)), (firstChunk.vel * Random.value) + (Custom.RNV() * Random.value * 4f) - (firstChunk.ContactPoint.ToVector2() * 4f * Random.value), Color.white, null, 6, 18));
                 }
             }
-            
+
             if (speed >= 16)
             {
                 Shatter();
@@ -298,12 +283,12 @@ public class IceChunk : Weapon
             (result.obj as IHaveAppendages).ApplyForceOnAppendage(result.onAppendagePos, firstChunk.vel * firstChunk.mass);
         }
 
-        firstChunk.vel = firstChunk.vel * -0.5f + Custom.DegToVec(Random.value * 360f) * Mathf.Lerp(0.1f, 0.4f, Random.value) * firstChunk.vel.magnitude;
+        firstChunk.vel = (firstChunk.vel * -0.5f) + (Custom.DegToVec(Random.value * 360f) * Mathf.Lerp(0.1f, 0.4f, Random.value) * firstChunk.vel.magnitude);
 
         if (result.chunk is not null ||
             result.onAppendagePos is not null)
         {
-            room?.AddObject(new ExplosionSpikes(room, result.chunk.pos + Custom.DirVec(result.chunk.pos, result.collisionPoint) * result.chunk.rad, 5, 2f, 4f, 4.5f, 30f, new Color(1f, 1f, 1f, 0.5f)));
+            room?.AddObject(new ExplosionSpikes(room, result.chunk.pos + (Custom.DirVec(result.chunk.pos, result.collisionPoint) * result.chunk.rad), 5, 2f, 4f, 4.5f, 30f, new Color(1f, 1f, 1f, 0.5f)));
             Shatter();
         }
 
@@ -470,7 +455,7 @@ public class IceChunk : Weapon
     public override void DrawSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         Vector2 pos = Vector2.Lerp(firstChunk.lastPos, firstChunk.pos, timeStacker);
-        Vector3 rotat = Vector3.Slerp(lastRotation, rotation, timeStacker);      
+        Vector3 rotat = Vector3.Slerp(lastRotation, rotation, timeStacker);
 
         if (vibrate > 0)
         {
@@ -481,7 +466,7 @@ public class IceChunk : Weapon
         {
             sLeaser.sprites[i].x = pos.x - camPos.x;
             sLeaser.sprites[i].y = pos.y - camPos.y;
-            sLeaser.sprites[i].scale = SpriteScale * Mathf.Max(firstChunk.rad/10f, 0);
+            sLeaser.sprites[i].scale = SpriteScale * Mathf.Max(firstChunk.rad / 10f, 0);
             sLeaser.sprites[i].rotation = Custom.AimFromOneVectorToAnother(default, rotat);
         }
         UpdateIceColors(sLeaser, rCam, timeStacker, camPos);
@@ -493,8 +478,8 @@ public class IceChunk : Weapon
             Vector2 trailPos = Vector2.Lerp(tailPos, firstChunk.lastPos, timeStacker);
             Vector2 posDifference = pos - trailPos;
             Vector2 trailDir = Custom.PerpendicularVector(posDifference.normalized);
-            trail.MoveVertice(0, pos + trailDir * 3f - camPos);
-            trail.MoveVertice(1, pos - trailDir * 3f - camPos);
+            trail.MoveVertice(0, pos + (trailDir * 3f) - camPos);
+            trail.MoveVertice(1, pos - (trailDir * 3f) - camPos);
             trail.MoveVertice(2, trailPos - camPos);
             for (int i = 0; i < trail.verticeColors.Length; i++)
             {
@@ -570,6 +555,3 @@ public class IceChunk : Weapon
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

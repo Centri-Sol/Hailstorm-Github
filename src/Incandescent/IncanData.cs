@@ -1,13 +1,11 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class IncanInfo // Stores a boatload of information for individual players.
 {
     public static ConditionalWeakTable<Player, IncanInfo> IncanData = new();
 
     public readonly bool isIncan;
-    public static SlugcatStats.Name Incandescent = new ("Incandescent", false);
+    public static SlugcatStats.Name Incandescent = new("Incandescent", false);
     public SlugBaseCharacter Incan;
     public WeakReference<Player> incanRef;
 
@@ -79,7 +77,7 @@ public class IncanInfo // Stores a boatload of information for individual player
         incanRef =
             new WeakReference<Player>(self); // I'm not sure why this is needed, but I'm keeping it just in case.
 
-        if (ExtEnumBase.TryParse(typeof(SlugcatStats.Name), "Incandescent", true, out var extEnum))
+        if (ExtEnumBase.TryParse(typeof(SlugcatStats.Name), "Incandescent", true, out ExtEnumBase extEnum))
         {
             Incandescent = extEnum as SlugcatStats.Name;
         }
@@ -105,7 +103,7 @@ public class IncanInfo // Stores a boatload of information for individual player
             flicker[i, 2] = 1f;
         }
 
-        
+
         if (self.room.game.session is not null)
         {
             if (self.room.game.IsArenaSession)
@@ -323,7 +321,7 @@ public class IncanInfo // Stores a boatload of information for individual player
             flicker[i, 0] = Custom.LerpAndTick(flicker[i, 0], flicker[i, 2], 0.05f, 1f / 30f);
             if (Random.value < 0.2f)
             {
-                flicker[i, 2] = 1f + Mathf.Pow(Random.value, 3f) * 0.2f * (Random.value < 0.5f ? -1f : 1f);
+                flicker[i, 2] = 1f + (Mathf.Pow(Random.value, 3f) * 0.2f * (Random.value < 0.5f ? -1f : 1f));
             }
             flicker[i, 2] = Mathf.Lerp(flicker[i, 2], 1f, 0.01f);
         }
@@ -332,15 +330,10 @@ public class IncanInfo // Stores a boatload of information for individual player
 
         Vector2 GlowPos;
         PlayerGraphics IncanGraphics = self.graphicsModule as PlayerGraphics;
-        if (IncanGraphics?.tail is not null &&
-            IncanGraphics.tail.Length > 0)
-        {
-            GlowPos = IncanGraphics.tail[IncanGraphics.tail.Length - 1].pos;
-        }
-        else
-        {
-            GlowPos = self.bodyChunks[1].pos;
-        }
+        GlowPos = IncanGraphics?.tail is not null &&
+            IncanGraphics.tail.Length > 0
+            ? IncanGraphics.tail[IncanGraphics.tail.Length - 1].pos
+            : self.bodyChunks[1].pos;
 
         if (Glow is null && !self.dead)
         {
@@ -403,18 +396,11 @@ public class IncanInfo // Stores a boatload of information for individual player
             self.Submersion > 0;
 
 
-        float EmberTimerTick;
-        if (soak > 0 && self.Submersion <= 0.5f)
-        {
-            EmberTimerTick = Mathf.Lerp(0.05f, 0.5f, SoakFac);
-        }
-        else
-        {
-            EmberTimerTick =
-                (MakeBigEmbers ? 0.25f : 0.17f) *
+        float EmberTimerTick = soak > 0 && self.Submersion <= 0.5f
+            ? Mathf.Lerp(0.05f, 0.5f, SoakFac)
+            : (MakeBigEmbers ? 0.25f : 0.17f) *
                 (self.Malnourished ? 0.7f : 1) *
                 (self.bodyMode == Player.BodyModeIndex.Swimming ? 0.7f : 1);
-        }
         smallEmberTimer += EmberTimerTick;
 
 
@@ -467,7 +453,7 @@ public class IncanInfo // Stores a boatload of information for individual player
         {
             fireSmoke.Update(eu);
 
-            float SmokeRadMult = Mathf.Lerp(1, 2/3f, SoakFac);
+            float SmokeRadMult = Mathf.Lerp(1, 2 / 3f, SoakFac);
             if (FirefuelFac > 0)
             {
                 SmokeRadMult *= Mathf.Lerp(1, 1.5f, FirefuelFac);
@@ -658,6 +644,3 @@ public class IncanInfo // Stores a boatload of information for individual player
     }
 
 }
-
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------------------------------------------------------------------------

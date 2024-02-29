@@ -1,8 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
 public class DroppedCyanwingShell : CosmeticSprite
 {
     public Centipede cnt;
@@ -45,11 +42,9 @@ public class DroppedCyanwingShell : CosmeticSprite
                 return 1f - Mathf.InverseLerp(pos.y - 5, pos.y + 5, room.FloatWaterLevel(pos.x));
             }
             float num = room.FloatWaterLevel(pos.x);
-            if (ModManager.MMF && !MMF.cfgVanillaExploits.Value && num > (room.abstractRoom.size.y + 20) * 20f)
-            {
-                return 1f;
-            }
-            return Mathf.InverseLerp(pos.y - 5, pos.y + 5, num);
+            return ModManager.MMF && !MMF.cfgVanillaExploits.Value && num > (room.abstractRoom.size.y + 20) * 20f
+                ? 1f
+                : Mathf.InverseLerp(pos.y - 5, pos.y + 5, num);
         }
     }
 
@@ -89,7 +84,7 @@ public class DroppedCyanwingShell : CosmeticSprite
         }
         if (Random.value < Mathf.Max(0.1f, Mathf.InverseLerp(80, 0, fuseTime) / 4f))
         {
-            room.AddObject(new WaterDrip(Vector2.Lerp(lastPos, pos, Random.value), vel + Custom.RNV() * Random.value * 2f, waterColor: false));
+            room.AddObject(new WaterDrip(Vector2.Lerp(lastPos, pos, Random.value), vel + (Custom.RNV() * Random.value * 2f), waterColor: false));
         }
         lastRotation = rotation;
         rotation += rotVel * Vector2.Distance(lastPos, pos);
@@ -247,42 +242,31 @@ public class DroppedCyanwingShell : CosmeticSprite
         Vector2 val = Vector2.Lerp(lastPos, pos, timeStacker);
         lastDarkness = darkness;
         darkness = rCam.room.Darkness(val);
-        darkness *= 1f - 0.5f * rCam.room.LightSourceExposure(val);
+        darkness *= 1f - (0.5f * rCam.room.LightSourceExposure(val));
         Vector2 Zrotation = Custom.DegToVec(Mathf.Lerp(lastZRotation, zRotation, timeStacker));
         for (int i = 0; i < sLeaser.sprites.Length; i++)
         {
             sLeaser.sprites[i].x = val.x - camPos.x;
             sLeaser.sprites[i].y = val.y - camPos.y;
             sLeaser.sprites[i].rotation = Mathf.Lerp(lastRotation, rotation, timeStacker);
-            if (Mathf.Abs(Zrotation.x) < 0.1f)
-            {
-                sLeaser.sprites[i].scaleX = 0.1f * Mathf.Sign(Zrotation.x) * scaleX;
-            }
-            else
-            {
-                sLeaser.sprites[i].scaleX = Zrotation.x * scaleX;
-            }
+            sLeaser.sprites[i].scaleX = Mathf.Abs(Zrotation.x) < 0.1f ? 0.1f * Mathf.Sign(Zrotation.x) * scaleX : Zrotation.x * scaleX;
         }
         sLeaser.sprites[0].x += Custom.DegToVec(Mathf.Lerp(lastRotation, rotation, timeStacker)).x * 1.5f;
         sLeaser.sprites[0].y += Custom.DegToVec(Mathf.Lerp(lastRotation, rotation, timeStacker)).y * 1.5f;
 
         if (Gilded)
         {
-            sLeaser.sprites[0].color = Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.7f + 0.3f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-            if (Zrotation.y > 0f)
-            {
-                sLeaser.sprites[1].color = Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-            }
-            else sLeaser.sprites[1].color = Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.4f + 0.6f * darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            sLeaser.sprites[0].color = Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.7f + (0.3f * darkness)), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            sLeaser.sprites[1].color = Zrotation.y > 0f
+                ? Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, darkness), Color.white, Mathf.InverseLerp(30, 0, fuseTime))
+                : Color.Lerp(Color.Lerp(RainWorld.SaturatedGold, blackColor, 0.4f + (0.6f * darkness)), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
         }
         else
         {
             sLeaser.sprites[0].color = Color.Lerp(scaleColor, Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-            if (Zrotation.y > 0f)
-            {
-                sLeaser.sprites[1].color = Color.Lerp(scaleColor, Color.white, Mathf.InverseLerp(30, 0, fuseTime));
-            }
-            else sLeaser.sprites[1].color = Color.Lerp(Color.Lerp(scaleColor, blackColor, 0.5f), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
+            sLeaser.sprites[1].color = Zrotation.y > 0f
+                ? Color.Lerp(scaleColor, Color.white, Mathf.InverseLerp(30, 0, fuseTime))
+                : Color.Lerp(Color.Lerp(scaleColor, blackColor, 0.5f), Color.white, Mathf.InverseLerp(30, 0, fuseTime));
         }
 
         if (sLeaser.sprites[0] is not null)
@@ -302,5 +286,3 @@ public class DroppedCyanwingShell : CosmeticSprite
         base.AddToContainer(sLeaser, rCam, newContatiner);
     }
 }
-
-//----------------------------------------------------------------------------------

@@ -1,8 +1,5 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
 public class ColorableElectrodeathSpark : CosmeticSprite
 {
     private readonly float size;
@@ -33,7 +30,7 @@ public class ColorableElectrodeathSpark : CosmeticSprite
             return;
         }
         lastLife = life;
-        life = Mathf.Max(0f, life - 1f / lifeTime);
+        life = Mathf.Max(0f, life - (1f / lifeTime));
     }
 
     public override void InitiateSprites(RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
@@ -82,5 +79,3 @@ public class ColorableElectrodeathSpark : CosmeticSprite
         sLeaser.sprites[2].alpha = Mathf.Sin(lifespanFac * Mathf.PI) * Random.value * 0.75f;
     }
 }
-
-//----------------------------------------------------------------------------------

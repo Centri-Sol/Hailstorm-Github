@@ -1,12 +1,9 @@
 ﻿namespace Hailstorm;
 
-//----------------------------------------------------------------------------------
-//----------------------------------------------------------------------------------
-
-sealed class CyanwingCritob : Critob
+public class CyanwingCritob : Critob
 {
 
-    public Color CyanwingColor = Custom.HSL2RGB(180/360f, 0.88f, 0.4f);
+    public Color CyanwingColor = Custom.HSL2RGB(180 / 360f, 0.88f, 0.4f);
 
     internal CyanwingCritob() : base(HSEnums.CreatureType.Cyanwing)
     {
@@ -174,10 +171,5 @@ sealed class CyanwingCritob : Critob
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absCnt) => new CyanwingAI(absCnt, absCnt.world);
     public override Creature CreateRealizedCreature(AbstractCreature absCnt) => new Cyanwing(absCnt, absCnt.world);
     public override CreatureState CreateState(AbstractCreature absCnt) => new CyanwingState(absCnt);
-
-    #nullable enable
-    public override CreatureTemplate.Type? ArenaFallback() => CreatureTemplate.Type.Centiwing;
-    #nullable disable
+    public override CreatureTemplate.Type ArenaFallback() => CreatureTemplate.Type.Centiwing;
 }
-
-//----------------------------------------------------------------------------------

@@ -1,7 +1,5 @@
 ﻿namespace Hailstorm;
 
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 public class LuminGraphics : GraphicsModule
 {
     public Luminescipede Lmn => owner as Luminescipede;
@@ -45,10 +43,10 @@ public class LuminGraphics : GraphicsModule
 
     private int LimbSprite(int limb, int side, int segment)
     {
-        return LegSpritesStart + limb + (segment * 4) + side * 8;
+        return LegSpritesStart + limb + (segment * 4) + (side * 8);
     }
 
-    public float GlowSize => 200 * Lmn.Juice * Lmn.GlowState.ivars.Size * Mathf.Min(1, Lmn.BitesLeft/5f);
+    public float GlowSize => 200 * Lmn.Juice * Lmn.GlowState.ivars.Size * Mathf.Min(1, Lmn.BitesLeft / 5f);
     public LightSource light;
     public ChunkDynamicSoundLoop lightNoise;
 
@@ -120,7 +118,7 @@ public class LuminGraphics : GraphicsModule
             lightNoise.Volume = 0f;
         }
 
-        if (Lmn.Behavior != Behavior.Hide && Lmn.Juice >= 0.05f && light is null)
+        if (Lmn.Behavior != Hide && Lmn.Juice >= 0.05f && light is null)
         {
             light = new LightSource(Lmn.Body.pos, false, Lmn.MainBodyColor, Lmn)
             {
@@ -144,7 +142,7 @@ public class LuminGraphics : GraphicsModule
         }
 
         base.Update();
-        
+
         float magnitude = Lmn.Body.vel.magnitude;
         if (magnitude > 1f)
         {
@@ -163,9 +161,9 @@ public class LuminGraphics : GraphicsModule
             {
                 Vector2 bodyAngle = Lmn.direction;
                 bool legOnAltSide = limb % 2 == side == legsPosition;
-                bodyAngle = Custom.DegToVec(Custom.VecToDeg(bodyAngle) + (Mathf.Lerp(Mathf.Lerp(30f, 140f, limb * (1 / 3f)) + (20f * Lmn.legsPosition) + (35f * (legOnAltSide ? -1f : 1f) * Mathf.InverseLerp(0.5f, 5f, magnitude)), 180f * (0.5f + Lmn.legsPosition / 2f), Mathf.Abs(Lmn.legsPosition) * 0.3f) * (-1 + (2 * side))));
+                bodyAngle = Custom.DegToVec(Custom.VecToDeg(bodyAngle) + (Mathf.Lerp(Mathf.Lerp(30f, 140f, limb * (1 / 3f)) + (20f * Lmn.legsPosition) + (35f * (legOnAltSide ? -1f : 1f) * Mathf.InverseLerp(0.5f, 5f, magnitude)), 180f * (0.5f + (Lmn.legsPosition / 2f)), Mathf.Abs(Lmn.legsPosition) * 0.3f) * (-1 + (2 * side))));
                 float limbLength = limbLengths[limb, 0] * this.limbLength;
-                Vector2 limbPosGoal = Lmn.Body.pos + bodyAngle * limbLength * 0.85f + Lmn.Body.vel.normalized * limbLength * 0.4f * Mathf.InverseLerp(0.5f, 5f, magnitude);
+                Vector2 limbPosGoal = Lmn.Body.pos + (bodyAngle * limbLength * 0.85f) + (Lmn.Body.vel.normalized * limbLength * 0.4f * Mathf.InverseLerp(0.5f, 5f, magnitude));
                 if (limb == 0 && !Lmn.dead && !Lmn.idle)
                 {
                     limbs[limb, side].pos += Custom.DegToVec(Random.value * 360f) * Random.value;
@@ -187,7 +185,7 @@ public class LuminGraphics : GraphicsModule
                     else if (limb == 0 && Lmn.heavycarryChunk is not null)
                     {
                         noFooting = true;
-                        limbs[limb, side].absoluteHuntPos = Lmn.heavycarryChunk.pos + perpToFacedDirection * (-1 + 2 * side) * Lmn.heavycarryChunk.rad * 0.25f;
+                        limbs[limb, side].absoluteHuntPos = Lmn.heavycarryChunk.pos + (perpToFacedDirection * (-1 + (2 * side)) * Lmn.heavycarryChunk.rad * 0.25f);
                         limbs[limb, side].pos = limbs[limb, side].absoluteHuntPos;
                     }
                 }
@@ -237,7 +235,7 @@ public class LuminGraphics : GraphicsModule
         }
         else
         {
-            limbs[l, s].FindGrip(Lmn.room, Lmn.Body.pos, idealPos, rad, idealPos + Lmn.direction * Mathf.Lerp(moveSpeed * 2f, rad / 2f, 0.5f), 2, 2, behindWalls: true);
+            limbs[l, s].FindGrip(Lmn.room, Lmn.Body.pos, idealPos, rad, idealPos + (Lmn.direction * Mathf.Lerp(moveSpeed * 2f, rad / 2f, 0.5f)), 2, 2, behindWalls: true);
         }
         limbGoalDistances[l, s] = Vector2.Distance(limbs[l, s].pos, limbs[l, s].absoluteHuntPos);
     }
@@ -337,9 +335,9 @@ public class LuminGraphics : GraphicsModule
             {
                 Vector2 bodyPos2 = bodyPos;
                 //bodyPos2 += (bodyAngle * 7f * lmn.GlowState.ivars.Size);
-                bodyPos2 += perpToBodyDir * (3f + (limb * 0.5f) - (limb == 3 ? 5.5f : 0f)) * (-1 + 2 * side) * Lmn.GlowState.ivars.Size;
+                bodyPos2 += perpToBodyDir * (3f + (limb * 0.5f) - (limb == 3 ? 5.5f : 0f)) * (-1 + (2 * side)) * Lmn.GlowState.ivars.Size;
                 Vector2 limbPos = Vector2.Lerp(limbs[limb, side].lastPos, limbs[limb, side].pos, timeStacker);
-                limbPos = Vector2.Lerp(limbPos, bodyPos2 + bodyAngle * limbLength * 0.1f, Mathf.Sin(Mathf.InverseLerp(0f, limbGoalDistances[limb, side], Vector2.Distance(limbPos, limbs[limb, side].absoluteHuntPos)) * Mathf.PI) * 0.4f);
+                limbPos = Vector2.Lerp(limbPos, bodyPos2 + (bodyAngle * limbLength * 0.1f), Mathf.Sin(Mathf.InverseLerp(0f, limbGoalDistances[limb, side], Vector2.Distance(limbPos, limbs[limb, side].absoluteHuntPos)) * Mathf.PI) * 0.4f);
                 float num = limbLengths[limb, 0] * limbLengths[limb, 1] * limbLength;
                 float num2 = limbLengths[limb, 0] * (1f - limbLengths[limb, 1]) * limbLength;
                 float num3 = Vector2.Distance(bodyPos2, limbPos);
@@ -350,10 +348,10 @@ public class LuminGraphics : GraphicsModule
                 }
                 if (Lmn.legsPosition != 0f)
                 {
-                    num4 = 1f - 2f * Mathf.Pow(0.5f + 0.5f * Lmn.legsPosition, 0.65f);
+                    num4 = 1f - (2f * Mathf.Pow(0.5f + (0.5f * Lmn.legsPosition), 0.65f));
                 }
                 num4 *= -1 + (2 * side);
-                float num5 = Mathf.Acos(Mathf.Clamp((num3 * num3 + num * num - num2 * num2) / (2f * num3 * num), 0.2f, 0.98f)) * (180f / Mathf.PI) * num4;
+                float num5 = Mathf.Acos(Mathf.Clamp(((num3 * num3) + (num * num) - (num2 * num2)) / (2f * num3 * num), 0.2f, 0.98f)) * (180f / Mathf.PI) * num4;
                 Vector2 bodyPos3 = bodyPos2 + (Custom.DegToVec(Custom.AimFromOneVectorToAnother(bodyPos2, limbPos) + num5) * num);
                 sLeaser.sprites[LimbSprite(limb, side, 0)].x = bodyPos2.x - camPos.x;
                 sLeaser.sprites[LimbSprite(limb, side, 0)].y = bodyPos2.y - camPos.y;
@@ -433,5 +431,3 @@ public class LuminGraphics : GraphicsModule
     }
 
 }
-
-//--------------------------------------------------------------------------------------------------------------------------------------------------------------------
