@@ -9,21 +9,20 @@ public class IncanFeatures
         On.Player.ctor += PlayerCWT;
         On.SlugcatStats.ctor += IncanStats;
 
-        On.Player.ThrownSpear += IncanSpearThrows;
+        On.Player.ThrownSpear += SpearThrows;
 
         // Movement
-        On.Player.MovementUpdate += IncanMovementUpdate;
-        On.Player.Jump += IncanJumpBoosts;
-        On.Player.UpdateAnimation += IncanAnimationUpdate;
-        On.Player.UpdateBodyMode += IncanOtherMobility;
-        //On.Player.TerrainImpact += TerrainImpact;
+        On.Player.TerrainImpact += WallRollFromFlip;
+        On.Player.MovementUpdate += MovementUpdate;
+        On.Player.Jump += JumpBoosts;
+        On.Player.UpdateAnimation += AnimationUpdate;
+        On.Player.UpdateBodyMode += OtherMobility;
 
         IncanILHooks();
         On.SlugcatStats.NourishmentOfObjectEaten += SaintNoYouCantEatTheseFuckOff_WaitNoPUTAWAYYOURASCENSIONPOWERSDONOTBLOWUPMYMINDLIKEPANCA;
-        On.Player.ObjectEaten += IncanFoodEffects;
+        On.Player.ObjectEaten += FoodEffects;
         On.Player.CanEatMeat += INCANNOSTOPEATINGSLUGCATS;
         On.Player.Update += HailstormPlayerUpdate;
-        //On.Player.UpdateAnimation += RollAnimations;
 
         On.Player.Collide += HailstormPlayerCollision;
 
@@ -48,6 +47,7 @@ public class IncanFeatures
             IncanInfo.IncanData.Add(self, new IncanInfo(self));
         }
     }
+
     public static void IncanStats(On.SlugcatStats.orig_ctor orig, SlugcatStats stats, SlugcatStats.Name slugcat, bool starving)
     {
         orig(stats, slugcat, starving);
@@ -64,6 +64,7 @@ public class IncanFeatures
             }
         }
     }
+
     public static bool INCANNOSTOPEATINGSLUGCATS(On.Player.orig_CanEatMeat orig, Player self, Creature ctr)
     {
         if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) && player.isIncan)
@@ -80,7 +81,7 @@ public class IncanFeatures
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-    public static void IncanSpearThrows(On.Player.orig_ThrownSpear orig, Player self, Spear spr)
+    public static void SpearThrows(On.Player.orig_ThrownSpear orig, Player self, Spear spr)
     {
         orig(self, spr);
         if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo incan) && incan.isIncan)
@@ -115,7 +116,25 @@ public class IncanFeatures
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-    public static void IncanMovementUpdate(On.Player.orig_MovementUpdate orig, Player self, bool eu)
+    public static void WallRollFromFlip(On.Player.orig_TerrainImpact orig, Player self, int chunk, IntVector2 dir, float speed, bool firstContact)
+    {
+        orig(self, chunk, dir, speed, firstContact);
+        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
+        {
+            return;
+        }
+
+        if (firstContact &&
+            self.animation == Player.AnimationIndex.Flip &&
+            self.input[0].downDiagonal != 0)
+        {
+            self.animation = Player.AnimationIndex.Roll;
+            self.rollDirection = self.input[0].downDiagonal;
+        }
+
+    }
+
+    public static void MovementUpdate(On.Player.orig_MovementUpdate orig, Player self, bool eu)
     {
         orig(self, eu);
         if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
@@ -148,7 +167,7 @@ public class IncanFeatures
         }
     }
 
-    public static void IncanJumpBoosts(On.Player.orig_Jump orig, Player self)
+    public static void JumpBoosts(On.Player.orig_Jump orig, Player self)
     {
         orig(self);
         if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
@@ -156,13 +175,35 @@ public class IncanFeatures
             return;
         }
 
-        bool starving = self.Malnourished;
+        bool Starving = self.Malnourished;
 
         if (self.animation == Player.AnimationIndex.Flip)
         {
-            self.mainBodyChunk.vel.x *= starving ? 3f : 2.50f;
-            self.mainBodyChunk.vel.y *= starving ? 2f : 1.66f;
+            self.mainBodyChunk.vel.x *= Starving ? 3f : 2.50f;
+            self.mainBodyChunk.vel.y *= Starving ? 2f : 1.66f;
             self.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, self.mainBodyChunk.pos, self.flipFromSlide ? 1f : 0.6f, 1.5f);
+        }
+        else if (player.wallRolling > 0)
+        {
+            Vector2 launchForce = new(3f * self.input[0].x, 6f);
+            player.wallRolling = 0;
+            player.wallrollJump = true;
+            if (player.ReadyToMoveOn &&
+                self.input[0].x != self.bodyChunks[0].ContactPoint.x)
+            {
+                self.animation = Player.AnimationIndex.Flip;
+                self.room.PlaySound(SoundID.Slugcat_Flip_Jump, self.mainBodyChunk);
+                self.room.PlaySound(MoreSlugcatsEnums.MSCSoundID.Throw_FireSpear, self.mainBodyChunk.pos, 0.9f, 1.25f);
+                launchForce *= 4 / 3f;
+            }
+            if (Starving)
+            {
+                launchForce *= 1.2f;
+            }
+            self.bodyChunks[0].vel += launchForce;
+            self.bodyChunks[1].vel += launchForce / 2f;
+            self.bodyChunks[0].pos += launchForce / 2f;
+            self.bodyChunks[1].pos += launchForce / 2f;
         }
         else if (player.longJumpReady)
         {
@@ -174,14 +215,14 @@ public class IncanFeatures
                 player.highJump = false;
                 self.bodyChunks[0].vel.x *= 0;
                 self.bodyChunks[1].vel.x *= 0;
-                self.mainBodyChunk.vel.y += starving ? 30 : 24;
+                self.mainBodyChunk.vel.y += Starving ? 30 : 24;
                 self.animation = Player.AnimationIndex.Flip;
             }
             else
             {
-                self.bodyChunks[0].vel.x *= starving ? 2.2f : 1.8f;
-                self.bodyChunks[1].vel.x *= starving ? 1.7f : 1.48f;
-                self.bodyChunks[0].vel.y *= starving ? 1.35f : 1.25f;
+                self.bodyChunks[0].vel.x *= Starving ? 2.2f : 1.8f;
+                self.bodyChunks[1].vel.x *= Starving ? 1.7f : 1.48f;
+                self.bodyChunks[0].vel.y *= Starving ? 1.35f : 1.25f;
             }
         }
         else if (!player.longJumping)
@@ -190,7 +231,7 @@ public class IncanFeatures
         }
     }
 
-    public static void IncanAnimationUpdate(On.Player.orig_UpdateAnimation orig, Player self)
+    public static void AnimationUpdate(On.Player.orig_UpdateAnimation orig, Player self)
     {
         bool canBoost =
             self is not null &&
@@ -246,7 +287,7 @@ public class IncanFeatures
         }
     }
 
-    public static void IncanOtherMobility(On.Player.orig_UpdateBodyMode orig, Player self)
+    public static void OtherMobility(On.Player.orig_UpdateBodyMode orig, Player self)
     {
         orig(self);
         if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
@@ -254,60 +295,127 @@ public class IncanFeatures
             return;
         }
 
-        bool starving = self.Malnourished;
+        bool Starving = self.Malnourished;
 
         if (self.animation == Player.AnimationIndex.BellySlide)
         {
-            self.mainBodyChunk.vel.x *= starving ? 1.4f : 1.35f;
+            self.mainBodyChunk.vel.x *= Starving ? 1.4f : 1.35f;
             self.mainBodyChunk.vel.y *= 1.05f;
         }
-        else if (self.animation == Player.AnimationIndex.RocketJump)
+        else if (self.animation == Player.AnimationIndex.RocketJump && !player.wallrollJump)
         {
-            if (starving)
+            if (Starving)
             {
                 self.mainBodyChunk.vel.x *= 1.02f;
             }
-            self.mainBodyChunk.vel.y *= starving ? 1.06f : 1.05f;
+            self.mainBodyChunk.vel.y *= Starving ? 1.06f : 1.05f;
         }
         else if (self.animation == Player.AnimationIndex.Roll)
         {
-            self.bodyChunks[0].vel *= starving ? 1.11f : 1.1f;
-            self.bodyChunks[1].vel *= starving ? 1.11f : 1.1f;
-            if (self.rollCounter > 15 && player.rollExtender < (starving ? 75 : 60) && self.input[0].downDiagonal != 0) // Extends roll duration.
+            self.bodyChunks[0].vel *= Starving ? 1.11f : 1.1f;
+            self.bodyChunks[1].vel *= Starving ? 1.11f : 1.1f;
+            if (self.input[0].downDiagonal != 0 &&
+                self.rollCounter > 15 &&
+                player.rollExtender < (Starving ? 75 : 60)) // Extends roll duration.
             {
                 player.rollExtender++;
                 self.rollCounter--;
             }
-            if (self.stopRollingCounter > 3 && player.rollFallExtender < 12) // Extends how long you can fall mid-roll without your roll being canceled.
+
+            bool RollUp = false;
+            bool HighWall = false;
+            for (int b = 0; b < 2; b++)
+            {
+                if (!RollUp &&
+                    self.IsTileSolid(b, self.rollDirection, 0) &&
+                    !self.IsTileSolid(0, 0, 1) &&
+                    !self.IsTileSolid(1, 0, 1))
+                {
+                    RollUp = true;
+                    if (self.stopRollingCounter > 3)
+                    {
+                        self.stopRollingCounter--;
+                    }
+                    if (self.goIntoCorridorClimb > 0)
+                    {
+                        self.goIntoCorridorClimb--;
+                    }
+                    if (player.rollFallExtender > 0)
+                    {
+                        player.rollFallExtender--;
+                    }
+                }
+                if (!HighWall &&
+                    self.IsTileSolid(b, self.rollDirection, 0) &&
+                    self.IsTileSolid(b, self.rollDirection, 1))
+                {
+                    HighWall = true;
+                }
+
+            }
+            if (RollUp && (HighWall || (
+                !self.IsTileSolid(0, 0, -1) && self.bodyChunks[0].ContactPoint.y > -1 &&
+                !self.IsTileSolid(1, 0, -1) && self.bodyChunks[1].ContactPoint.y > -1)))
+            {
+                if (player.WallRollPower > 0)
+                {
+                    self.canJump = Math.Max(self.canJump, 5);
+                    self.bodyChunks[0].pos.y += (self.gravity + 7f) * Mathf.Pow(player.WallRollPower, 0.5f);
+                    self.bodyChunks[1].pos.y += (self.gravity + 7f) * Mathf.Pow(player.WallRollPower, 0.5f);
+                    player.wallRollDir = self.rollDirection;
+
+                    if (HighWall)
+                    {
+                        player.wallRolling++;
+                    }
+                }
+            }
+            else
+            if (self.stopRollingCounter > 3 &&
+                player.rollFallExtender < 12) // Extends how long you can fall mid-roll without your roll being canceled.
             {
                 player.rollFallExtender++;
                 self.stopRollingCounter--;
             }
+
+            if (player.wallRolling > 0 && (!RollUp || !HighWall))
+            {
+                player.wallRolling = Mathf.Min(5, player.wallRolling - 1);
+            }
+
+            if (player.WallRollPower == 0)
+            {
+                self.animation = Player.AnimationIndex.None;
+            }
         }
 
-        if (player.longJumping && (
-                self.bodyChunks[0].contactPoint != default ||
-                self.bodyChunks[1].contactPoint != default ||
-                self.Submersion > 0 ||
-                self.Stunned ||
-                self.dead ||
-                self.bodyMode == Player.BodyModeIndex.Swimming ||
-                self.bodyMode == Player.BodyModeIndex.ClimbingOnBeam ||
-                self.bodyMode == Player.BodyModeIndex.ZeroG ||
-                self.animation == Player.AnimationIndex.AntlerClimb ||
-                self.animation == Player.AnimationIndex.GrapplingSwing ||
-                self.animation == Player.AnimationIndex.VineGrab ||
-                (self.grasps[0]?.grabbed is not null && self.HeavyCarry(self.grasps[0].grabbed)) ||
-                (self.grasps[1]?.grabbed is not null && self.HeavyCarry(self.grasps[1].grabbed))))
+        if (player.longJumping &&
+            player.StopLongJump(self))
         {
             player.longJumping = false;
         }
 
-
         if (self.animation != Player.AnimationIndex.Roll)
         {
-            player.rollExtender = 0;
-            player.rollFallExtender = 0;
+            if (player.rollExtender > 0)
+            {
+                player.rollExtender = 0;
+            }
+            if (player.rollFallExtender > 0)
+            {
+                player.rollFallExtender = 0;
+            }
+            if (player.wallRolling > 0)
+            {
+                player.wallRolling = Mathf.Min(5, player.wallRolling - 1);
+            }
+        }
+
+        if (player.wallrollJump &&
+            self.animation != Player.AnimationIndex.RocketJump &&
+            self.animation != Player.AnimationIndex.Flip)
+        {
+            player.wallrollJump = false;
         }
 
     }
@@ -315,83 +423,9 @@ public class IncanFeatures
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
-    /* Wall/ceiling-rolling code
-    private static void TerrainImpact(On.Player.orig_TerrainImpact orig, Player self, int chunk, IntVector2 direction, float speed, bool firstContact)
-    {
-        orig(self, chunk, direction, speed, firstContact);
-        if (CWT.PlayerData.TryGetValue(self, out IncanPlayer player) && player.isIncan)
-        {
-            // This is literally just the code for activating a Roll, but the speed requirements are lowered.
-            // This exists alongside the usual Roll-activation code, so I have to make sure both can't activate at once.
-            if (self.input[0].downDiagonal != 0 && self.animation != Player.AnimationIndex.Roll && (speed > 10f || self.animation == Player.AnimationIndex.Flip || self.animation == Player.AnimationIndex.RocketJump || self.animation == IncanPlayer.WallRoll || self.animation == IncanPlayer.CeilingRoll) && direction.y < 0 && self.allowRoll > 0 && self.consistentDownDiagonal > ((speed > 16f) ? 1 : 6))
-            {
-                self.animation = Player.AnimationIndex.Roll;
-                if (speed > 10 && speed <= 12)
-                {
-                    if (self.animation == Player.AnimationIndex.RocketJump && self.rocketJumpFromBellySlide)
-                    {
-                        self.bodyChunks[1].vel.y += 3f;
-                        self.bodyChunks[1].pos.y += 3f;
-                        self.bodyChunks[0].vel.y -= 3f;
-                        self.bodyChunks[0].pos.y -= 3f;
-                    }
-                    self.rollDirection = self.input[0].downDiagonal;
-                    self.rollCounter = 0;
-                    self.bodyChunks[0].vel.x = Mathf.Lerp(self.bodyChunks[0].vel.x, 9f * self.input[0].x, 0.7f);
-                    self.bodyChunks[1].vel.x = Mathf.Lerp(self.bodyChunks[1].vel.x, 9f * self.input[0].x, 0.7f);
-                    self.standing = false;
-                }
-            }
-
-            // A check for activating a Wall Roll.
-            if (self.input[0].downDiagonal != 0 &&
-                self.allowRoll > 0 &&
-                (self.IsTileSolid(0, self.input[0].x, 0) ||
-                self.IsTileSolid(1, self.input[0].x, 0)) &&
-                (self.animation == Player.AnimationIndex.Roll ||
-                self.animation == Player.AnimationIndex.Flip ||
-                self.animation == Player.AnimationIndex.RocketJump ||
-                self.bodyMode == Player.BodyModeIndex.WallClimb))
-            {
-                self.room.PlaySound(SoundID.Slugcat_Roll_Init, self.mainBodyChunk.pos, 1f, 1f);
-                self.animation = IncanPlayer.WallRoll;
-                player.wallRollDirection = player.wallRollingFromCeiling? -1 : 1;
-                self.rollCounter = 0;
-                self.stopRollingCounter = 0;
-                player.rollExtender -= 10;
-                self.bodyChunks[0].vel.y = Mathf.Lerp(self.bodyChunks[0].vel.y, 9f * -self.input[0].y, 0.7f) * player.wallRollDirection;
-                self.bodyChunks[1].vel.y = Mathf.Lerp(self.bodyChunks[1].vel.y, 9f * -self.input[0].y, 0.7f) * player.wallRollDirection;
-                self.standing = false;
-            }
-
-            // A check for activating a Ceiling Roll.
-            if (self.input[0].downDiagonal != 0 &&
-                self.allowRoll > 0 &&
-                !self.IsTileSolid(0, 0, -1) &&
-                !self.IsTileSolid(1, 0, -1) &&
-                (self.IsTileSolid(0, 0, 1) ||
-                self.IsTileSolid(1, 0, 1)) &&
-                (self.animation == IncanPlayer.WallRoll || self.animation == Player.AnimationIndex.Flip))
-            {
-                self.room.PlaySound(SoundID.Slugcat_Roll_Init, self.mainBodyChunk.pos, 1f, 1f);
-                self.animation = IncanPlayer.CeilingRoll;
-                self.rollDirection = -self.input[0].downDiagonal;
-                self.rollCounter = 0;
-                self.stopRollingCounter = 0;
-                player.rollExtender -= 10;
-                self.bodyChunks[0].vel.x = Mathf.Lerp(self.bodyChunks[0].vel.x, 9f * -self.input[0].x, 0.8f) * -1;
-                self.bodyChunks[1].vel.x = Mathf.Lerp(self.bodyChunks[1].vel.x, 9f * -self.input[0].x, 0.8f) * -1;
-                self.standing = false;
-            }
-        }
-    }*/
-
-    //----------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------
-
     // This allows certain foods to temporarily buff the Incandescent's glow.
     // The actual buffing is done near the bottom of the HailstormPlayerUpdate method.
-    public static void IncanFoodEffects(On.Player.orig_ObjectEaten orig, Player self, IPlayerEdible food)
+    public static void FoodEffects(On.Player.orig_ObjectEaten orig, Player self, IPlayerEdible food)
     {
         orig(self, food);
         if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player))
@@ -476,9 +510,10 @@ public class IncanFeatures
             player.firefuel += fuel;
         }
     }
+
     public static int SaintNoYouCantEatTheseFuckOff_WaitNoPUTAWAYYOURASCENSIONPOWERSDONOTBLOWUPMYMINDLIKEPANCA(On.SlugcatStats.orig_NourishmentOfObjectEaten orig, SlugcatStats.Name slugcat, IPlayerEdible eatenobject)
     {
-        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob)
+        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob || eatenobject is SnowcuttleCreature)
             ? -1
             : orig(slugcat, eatenobject);
     }
@@ -488,9 +523,7 @@ public class IncanFeatures
 
         IL.Player.GrabUpdate += IL =>
         {
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = null;
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILCursor c = new(IL);
             if (c.TryGotoNext(
                 MoveType.After,
@@ -549,7 +582,66 @@ public class IncanFeatures
             }
         };
 
+        IL.Player.MovementUpdate += IL => // Prevents Incan from grabbing onto walls while rolling 
+        {
+            ILLabel label = null;
+            ILCursor c = new(IL);
+            if (c.TryGotoNext(
+                    MoveType.After,
+                    x => x.MatchLdarg(0),
+                    x => x.MatchCall<PhysicalObject>("get_bodyChunks"),
+                    x => x.MatchLdcI4(0),
+                    x => x.MatchLdelemRef(),
+                    x => x.MatchCallvirt<BodyChunk>("get_ContactPoint"),
+                    x => x.MatchLdfld<IntVector2>(nameof(IntVector2.x)),
+                    x => x.MatchBrfalse(out label)
+                    )
+                )
+            {
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate((Player self) => CanWallRoll(self));
+                c.Emit(OpCodes.Brtrue, label);
+            }
+            else
+            {
+                Debug.LogError("[Hailstorm] An IL hook related to Incan and wall-grabbing broke! Not good; tell me about this.");
+            }
+
+            c = new(IL);
+            if (c.TryGotoNext(
+                    MoveType.After,
+                    x => x.MatchLdarg(0),
+                    x => x.MatchCall<Player>("get_input"),
+                    x => x.MatchLdcI4(0),
+                    x => x.MatchLdelema<Player.InputPackage>(),
+                    x => x.MatchLdfld<Player.InputPackage>(nameof(Player.InputPackage.x)),
+                    x => x.MatchBrfalse(out label)
+                    )
+                )
+            {
+                c.Emit(OpCodes.Ldarg_0);
+                c.EmitDelegate((Player self) => CanWallRoll(self));
+                c.Emit(OpCodes.Brtrue, label);
+            }
+            else
+            {
+                Debug.LogError("[Hailstorm] An IL hook related to Incan and ledge-crawl prevention broke! Not super major, but I'd still like to know about this.");
+            }
+        };
+
     }
+    public static bool CanWallRoll(Player self)
+    {
+        if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) &&
+            Incan.isIncan && (
+                self.animation == Player.AnimationIndex.Roll || (
+                    self.animation == Player.AnimationIndex.Flip && self.input[0].downDiagonal != 0)))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public static void UpdateFood(Player self, IncanInfo Incan, bool wasMalnourished)
     {
         self.playerState.foodInStomach = Custom.IntClamp(Mathf.FloorToInt(Incan.floatFood), 0, self.slugcatStats.maxFood);
@@ -592,6 +684,7 @@ public class IncanFeatures
             Incan.Update(self, eu);
         }
     }
+
     public static void IncanStoryTutorialText(Player self)
     {
         if (Dialogue.IsIncanStory(self?.room?.game) &&
@@ -623,6 +716,7 @@ public class IncanFeatures
             }
         }
     }
+
     public static void NewHypothermiaMechanics(Player self)
     {
         if (self.isSlugpup)
@@ -697,161 +791,6 @@ public class IncanFeatures
         }
 
     }
-
-    //----------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------        
-
-    /* More wall/ceiling-rolling code
-    public static void RollAnimations(On.Player.orig_UpdateAnimation orig, Player self)
-    {
-        orig(self);
-        if (!CWT.PlayerData.TryGetValue(self, out IncanPlayer player) || !player.isIncan)
-        {
-            return;
-        }
-
-        // Movement stuff for wall rolling.
-        if (self.animation == IncanPlayer.WallRoll && self.input[0].downDiagonal != 0)
-        {
-            self.bodyMode = Player.BodyModeIndex.Default;
-            self.animation = IncanPlayer.WallRoll;
-            bool noWallContact = false;
-            int wallDirection = self.input[0].x;
-            Vector2 perpVector = Custom.PerpendicularVector(self.bodyChunks[0].pos, self.bodyChunks[1].pos);
-
-            self.bodyChunks[0].vel *= 0.8f;
-            self.bodyChunks[1].vel *= 0.8f;
-            self.bodyChunks[0].vel += perpVector * 2f * player.wallRollDirection;
-            self.bodyChunks[1].vel -= perpVector * 2f * player.wallRollDirection;
-            self.mainBodyChunk.vel.x = 0f * wallDirection;
-            self.AerobicIncrease(0.01f);               
-            Debug.Log("beep | " + player.wallStopTimer + " | " + self.rollCounter + " | " + (self.IsTileSolid(0, wallDirection, 0) || self.IsTileSolid(1, wallDirection, 0)) + " | " + (self.IsTileSolid(0, wallDirection*2, 0) || self.IsTileSolid(1, wallDirection*2, 0)));
-            if (self.bodyChunks[1].onSlope == player.wallRollDirection || self.bodyChunks[0].onSlope == player.wallRollDirection)
-            {
-                Debug.Log("bap");
-                self.bodyChunks[0].pos += perpVector * player.wallRollDirection;
-                self.bodyChunks[1].pos -= perpVector * player.wallRollDirection;
-            }
-            if (!self.IsTileSolid(0, wallDirection, 0) && !self.IsTileSolid(1, wallDirection, 0) && self.bodyChunks[0].ContactPoint.y <= 0 && self.bodyChunks[1].ContactPoint.y <= 0)
-            {
-                if (self.IsTileSolid(0, wallDirection*2, 0) || self.IsTileSolid(1, wallDirection*2, 0))
-                {
-                    Debug.Log("bedurp");
-                    self.bodyChunks[0].vel *= 0.85f;
-                    self.bodyChunks[1].vel *= 0.85f;
-                    self.bodyChunks[0].pos.x += 2.5f * wallDirection;
-                    self.bodyChunks[1].pos.x += 2.5f * wallDirection;
-                }
-                else
-                {
-                    noWallContact = true;
-                }
-            }
-            else
-            {
-                self.bodyChunks[0].vel.y += 1.1f * player.wallRollDirection;
-                self.bodyChunks[1].vel.y += 1.1f * player.wallRollDirection;
-                self.canJump = System.Math.Max(self.canJump, 5);
-                for (int C = 0; C < 2; C++)
-                {
-                    if (self.IsTileSolid(C, self.rollDirection, 0) && !self.IsTileSolid(C, self.rollDirection, 1) && !self.IsTileSolid(0, 0, 1) && !self.IsTileSolid(1, 0, 1))
-                    {
-                        Debug.Log((object)"roll up ledge");
-
-                        self.bodyChunks[0].vel *= 0.7f;
-                        self.bodyChunks[1].vel *= 0.7f;
-                        self.bodyChunks[0].pos.y += 2.5f;
-                        self.bodyChunks[1].pos.y += 2.5f;
-                        self.bodyChunks[0].vel.y -= self.gravity;
-                        self.bodyChunks[1].vel.y -= self.gravity;
-                        self.animation = Player.AnimationIndex.Roll;
-                        break;
-                    }
-                }
-            }
-            if (noWallContact)
-            {
-                player.wallStopTimer++;
-            } else
-            {
-                player.wallStopTimer = 0;
-            }
-            if ((((self.rollCounter > 15 && self.input[0].x == 0 && self.input[0].downDiagonal == 0) || (self.rollCounter > 30f + 80f * self.Adrenaline * (self.isSlugpup ? 0.5f : 1f) && (!self.isGourmand || self.gourmandExhausted)) || self.input[0].x != wallDirection) && self.bodyChunks[0].pos.y > self.bodyChunks[1].pos.y) ||
-                (self.rollCounter > 60f + 80f * self.Adrenaline * (self.isSlugpup ? 0.5f : 1f) && (!self.isGourmand || self.gourmandExhausted)) ||
-                player.wallStopTimer > 6)
-            {
-                player.wallRollDirection = 0;
-                self.mainBodyChunk.vel *= 0.2f;
-                self.room.PlaySound(SoundID.Slugcat_Roll_Finish, self.mainBodyChunk.pos, 1f, 1f);
-                self.animation = Player.AnimationIndex.None;
-                self.standing = self.input[0].y > -1;
-            }
-        }
-
-
-        // Movement stuff for ceiling rolling.
-        if (self.animation == IncanPlayer.CeilingRoll && self.input[0].downDiagonal != 0)
-        {
-            self.bodyMode = Player.BodyModeIndex.Default;
-            bool noCeilingContact = false;                
-            Vector2 perpVector = Custom.PerpendicularVector(self.bodyChunks[0].pos, self.bodyChunks[1].pos);
-
-            self.bodyChunks[0].vel *= 0.9f;
-            self.bodyChunks[1].vel *= 0.9f;
-            self.bodyChunks[0].vel += perpVector * 2f * self.rollDirection;
-            self.bodyChunks[1].vel -= perpVector * 2f * self.rollDirection;
-            self.mainBodyChunk.vel.y = 0.2f;
-            self.AerobicIncrease(0.01f);                
-            Debug.Log("beep | " + player.ceilingStopTimer + " | " + self.rollCounter + " | " + (self.IsTileSolid(0, 0, 2) || self.IsTileSolid(1, 0, 2)) + " | " + (self.IsTileSolid(0, 0, 3) || self.IsTileSolid(1, 0, 3)));
-            if (self.bodyChunks[1].onSlope == self.rollDirection || self.bodyChunks[0].onSlope == self.rollDirection)
-            {
-                Debug.Log("bap");
-                self.bodyChunks[0].pos += perpVector * self.rollDirection;
-                self.bodyChunks[1].pos -= perpVector * self.rollDirection;
-            }
-            if (!self.IsTileSolid(0, 0, 1) && !self.IsTileSolid(1, 0, 1) && self.bodyChunks[0].ContactPoint.y <= 0 && self.bodyChunks[1].ContactPoint.y <= 0)
-            {
-                if (self.IsTileSolid(0, 0, 2) || self.IsTileSolid(1, 0, 2))
-                {
-                    Debug.Log("bedurp");
-                    self.bodyChunks[0].vel *= 0.7f;
-                    self.bodyChunks[1].vel *= 0.7f;
-                    self.bodyChunks[0].pos.y += 2.5f;
-                    self.bodyChunks[1].pos.y += 2.5f;
-                }
-                else
-                {
-                    noCeilingContact = true;
-                }
-            }
-            else
-            {
-                self.bodyChunks[0].vel.x += 1.1f * self.rollDirection;
-                self.bodyChunks[1].vel.x += 1.1f * self.rollDirection;
-                self.canJump = System.Math.Max(self.canJump, 5);                    
-            }
-            if (noCeilingContact)
-            {
-                player.ceilingStopTimer++;
-            }
-            else
-            {
-                player.ceilingStopTimer = 0;
-            }
-            if ((((self.rollCounter > 15 && self.input[0].y > -1 && self.input[0].downDiagonal == 0) || (self.rollCounter > 30f + 80f * self.Adrenaline * (self.isSlugpup ? 0.5f : 1f) && (!self.isGourmand || self.gourmandExhausted)) || self.input[0].x != -self.rollDirection) && self.bodyChunks[0].pos.y < self.bodyChunks[1].pos.y) ||
-                (self.rollCounter > 60f + 80f * self.Adrenaline * (self.isSlugpup ? 0.5f : 1f) && (!self.isGourmand || self.gourmandExhausted)) ||
-                player.ceilingStopTimer > 6)
-            {
-                self.rollDirection = 0;
-                self.mainBodyChunk.vel *= 0.2f;
-                self.bodyChunks[0].vel *= 0.2f;
-                self.bodyChunks[1].vel *= 0.2f;
-                self.room.PlaySound(SoundID.Slugcat_Roll_Finish, self.mainBodyChunk.pos, 1f, 1f);
-                self.animation = Player.AnimationIndex.None;
-                self.standing = self.input[0].y > -1;
-            }
-        }
-    }*/
 
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
@@ -1020,6 +959,7 @@ public class IncanFeatures
         }
 
     }
+
     public static void IncanCollision(Player self, IncanInfo Incan, Creature target, CWT.CreatureInfo cI, int myChunk, int otherChunk, bool hitSmallCreature)
     {
         if (!Incan.CollisionDamageValues(self, out float DMG, out float STUN, out float HEATLOSS, out int BURNTIME))
@@ -1163,6 +1103,7 @@ public class IncanFeatures
         }
 
     }
+
     public static void FlipSingeCollisionCheck(Player self, IncanInfo Incan)
     {
         if (self?.room is null || !Incan.isIncan)

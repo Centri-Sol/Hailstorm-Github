@@ -8,3 +8,12 @@ C:\Users\Marmol Salazar\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Ha
 C:\Users\Marmol Salazar\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.sourcelink.json
 C:\Users\Marmol Salazar\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.dll
 C:\Users\Marmol Salazar\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.pdb
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\bin\Debug\net48\Hailstorm.dll
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\bin\Debug\net48\Hailstorm.pdb
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.csproj.AssemblyReference.cache
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.AssemblyInfoInputs.cache
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.AssemblyInfo.cs
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.csproj.CoreCompileInputs.cache
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.dll
+C:\Users\brycc\Documents\GitHub\Hailstorm-Github\src\obj\Debug\net48\Hailstorm.pdb

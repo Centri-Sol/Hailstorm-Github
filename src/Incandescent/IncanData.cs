@@ -11,16 +11,12 @@ public class IncanInfo // Stores a boatload of information for individual player
 
     public int rollExtender;
     public int rollFallExtender;
-    /*public int wallRollDirection;
-    public int ceilingRollDirection;
-    public bool wallRolling;
-    public bool ceilingRolling;
-    public bool wallRollingFromCeiling;
-    public static readonly Player.AnimationIndex WallRoll = new Player.AnimationIndex("WallRoll", register: true);
-    public static readonly Player.AnimationIndex CeilingRoll = new Player.AnimationIndex("CeilingRoll", register: true);
-    public int wallStopTimer = 0; 
-    public int ceilingStopTimer = 0;*/
-    // ^ This commented-out stuff up here is scrapped unless I can figure out how to properly implement it. That'll be a LONG while.
+
+    public int wallRolling;
+    public int wallRollDir;
+    public bool wallrollJump;
+    private int MaxWallRoll => ReadyToMoveOn ? 150 : 50;
+    public float WallRollPower => Mathf.InverseLerp(MaxWallRoll, 0, wallRolling);
 
     public float BaseGlowRadius => 200;
     public LightSource Glow;
@@ -88,12 +84,6 @@ public class IncanInfo // Stores a boatload of information for individual player
         {
             return;
         }
-
-        /*wallRolling = false;
-        ceilingRolling = false;
-        wallRollDirection = 0;
-        ceilingRollDirection = 0;
-        wallRollingFromCeiling = false; */
 
         flicker = new float[2, 3];
         for (int i = 0; i < flicker.GetLength(0); i++)
@@ -520,11 +510,32 @@ public class IncanInfo // Stores a boatload of information for individual player
             HEATLOSS = 0.06f;
         }
         else
-        if (self.animation == Player.AnimationIndex.Flip && !self.flipFromSlide && singeFlipTimer >= 15)
+        if (self.animation == Player.AnimationIndex.Flip)
         {
-            DMG = 0.50f;
-            STUN = 20f;
-            HEATLOSS = 0.06f;
+            if (self.flipFromSlide)
+            {
+                DMG = 2f;
+                STUN = 120f;
+                HEATLOSS = 0.24f;
+                BURNTIME = 500; // +0.50 DMG; 2.50 total
+            }
+            else if (wallrollJump)
+            {
+                DMG = 0.75f;
+                STUN = 60f;
+                HEATLOSS = 0.20f;
+                BURNTIME = 500; // +0.50 DMG; 1.25 total
+            }
+            else if (singeFlipTimer >= 15)
+            {
+                DMG = 0.50f;
+                STUN = 20f;
+                HEATLOSS = 0.06f;
+            }
+            else
+            {
+                return false;
+            }
         }
         else
         if (longJumping)
@@ -547,14 +558,6 @@ public class IncanInfo // Stores a boatload of information for individual player
             STUN = 60f;
             HEATLOSS = 0.20f;
             BURNTIME = 500; // +0.50 DMG; 1.25 total
-        }
-        else
-        if (self.animation == Player.AnimationIndex.Flip && self.flipFromSlide)
-        {
-            DMG = 2f;
-            STUN = 120f;
-            HEATLOSS = 0.24f;
-            BURNTIME = 500; // +0.50 DMG; 2.50 total
         }
         else
         {
@@ -641,6 +644,27 @@ public class IncanInfo // Stores a boatload of information for individual player
             Multiplier *= 0.75f;
         }
         return Multiplier;
+    }
+
+    public virtual bool StopLongJump(Player self)
+    {
+        if (self.bodyChunks[0].contactPoint != default ||
+            self.bodyChunks[1].contactPoint != default ||
+            self.Submersion > 0 ||
+            self.Stunned ||
+            self.dead ||
+            self.bodyMode == Player.BodyModeIndex.Swimming ||
+            self.bodyMode == Player.BodyModeIndex.ClimbingOnBeam ||
+            self.bodyMode == Player.BodyModeIndex.ZeroG ||
+            self.animation == Player.AnimationIndex.AntlerClimb ||
+            self.animation == Player.AnimationIndex.GrapplingSwing ||
+            self.animation == Player.AnimationIndex.VineGrab ||
+            (self.grasps[0]?.grabbed is not null && self.HeavyCarry(self.grasps[0].grabbed)) ||
+            (self.grasps[1]?.grabbed is not null && self.HeavyCarry(self.grasps[1].grabbed)))
+        {
+            return true;
+        }
+        return false;
     }
 
 }
