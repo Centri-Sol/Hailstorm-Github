@@ -40,6 +40,7 @@ public static class HSEnums
     public static class Sound
     {
         public static readonly SoundID CyanwingDeath;
+        public static readonly SoundID FireImpact;
     }
 
     public static class CreatureType

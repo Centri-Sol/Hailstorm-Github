@@ -1,1 +1,2 @@
 [ADD]CyanwingDeath : cyandeath1, cyandeath2
+[ADD]FireImpact/vol=0.33 : fireimpact1, fireimpact2
