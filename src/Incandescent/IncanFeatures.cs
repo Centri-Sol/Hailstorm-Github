@@ -7,8 +7,6 @@ public class IncanFeatures
 
     public static void Hooks()
     {
-
-        On.Player.ctor += PlayerCWT;
         On.SlugcatStats.ctor += IncanStats;
 
         On.Player.ThrownSpear += SpearThrows;
@@ -35,25 +33,16 @@ public class IncanFeatures
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
-
-    public static void PlayerCWT(On.Player.orig_ctor orig, Player self, AbstractCreature abstractCreature, World world)
-    {
-        orig(self, abstractCreature, world);
-        if (!IncanInfo.IncanData.TryGetValue(self, out _))
-        {
-            IncanInfo.IncanData.Add(self, new IncanInfo(self));
-        }
-    }
 
     public static void IncanStats(On.SlugcatStats.orig_ctor orig, SlugcatStats stats, SlugcatStats.Name slugcat, bool starving)
     {
         orig(stats, slugcat, starving);
-        if (slugcat == IncanInfo.Incandescent)
+        if (slugcat == Incandescent)
         {
             stats.generalVisibilityBonus = starving ? 0.25f : 0.5f;
             if (ModManager.Expedition &&
@@ -69,7 +58,7 @@ public class IncanFeatures
 
     public static bool INCANNOSTOPEATINGSLUGCATS(On.Player.orig_CanEatMeat orig, Player self, Creature ctr)
     {
-        if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) && player.isIncan)
+        if (self.IsIncan(out _))
         {
             if (ctr.Template.type == CreatureTemplate.Type.Slugcat ||
                 ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC)
@@ -86,7 +75,7 @@ public class IncanFeatures
     public static void SpearThrows(On.Player.orig_ThrownSpear orig, Player self, Spear spr)
     {
         orig(self, spr);
-        if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo incan) && incan.isIncan)
+        if (self.IsIncan(out IncanInfo incan))
         {
             spr.spearDamageBonus *= HSRemix.IncanSpearDamageMultiplier.Value;
             if (MMF.cfgUpwardsSpearThrow.Value && spr.setRotation.Value.y == 1f && self.bodyMode != Player.BodyModeIndex.ZeroG)
@@ -121,7 +110,7 @@ public class IncanFeatures
     public static void WallRollFromFlip(On.Player.orig_TerrainImpact orig, Player self, int chunk, IntVector2 dir, float speed, bool firstContact)
     {
         orig(self, chunk, dir, speed, firstContact);
-        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
+        if (!self.IsIncan(out _))
         {
             return;
         }
@@ -139,7 +128,7 @@ public class IncanFeatures
     public static void MovementUpdate(On.Player.orig_MovementUpdate orig, Player self, bool eu)
     {
         orig(self, eu);
-        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
+        if (!self.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -172,7 +161,7 @@ public class IncanFeatures
     public static void JumpBoosts(On.Player.orig_Jump orig, Player self)
     {
         orig(self);
-        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
+        if (!self.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -240,7 +229,7 @@ public class IncanFeatures
             self.waterJumpDelay == 0;
 
         orig(self);
-        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
+        if (!self.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -292,7 +281,7 @@ public class IncanFeatures
     public static void OtherMobility(On.Player.orig_UpdateBodyMode orig, Player self)
     {
         orig(self);
-        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !player.isIncan)
+        if (!self.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -430,7 +419,7 @@ public class IncanFeatures
     public static void FoodEffects(On.Player.orig_ObjectEaten orig, Player self, IPlayerEdible food)
     {
         orig(self, food);
-        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player))
+        if (!self.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -576,7 +565,7 @@ public class IncanFeatures
                 )
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((bool Malnourished, Player self) => Malnourished && (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) || !Incan.isIncan));
+                c.EmitDelegate((bool Malnourished, Player self) => Malnourished && (!self.IsIncan(out IncanInfo player)));
             }
             else
             {
@@ -634,8 +623,7 @@ public class IncanFeatures
     }
     public static bool CanWallRoll(Player self)
     {
-        if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) &&
-            Incan.isIncan && (
+        if (self.IsIncan(out _) && (
                 self.animation == Player.AnimationIndex.Roll || (
                     self.animation == Player.AnimationIndex.Flip && self.input[0].downDiagonal != 0)))
         {
@@ -680,8 +668,7 @@ public class IncanFeatures
 
         //--------------------------------------------------------------------------------------------------
 
-        if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) &&
-            Incan.isIncan)
+        if (self.IsIncan(out IncanInfo Incan))
         {
             Incan.Update(self, eu);
         }
@@ -752,9 +739,8 @@ public class IncanFeatures
                     {
                         stomachHeat += 0.0007f;
                     }
-                    if (stomachHeat != 0 &&
-                        IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) &&
-                        Incan.isIncan)
+
+                    if (self.IsIncan(out _))
                     {
                         stomachHeat /= 3;
                     }
@@ -948,7 +934,7 @@ public class IncanFeatures
         orig(self, otherObject, myChunk, otherChunk);
 
         if (CWT.CreatureData.TryGetValue(target, out CWT.CreatureInfo cI) &&
-            IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan)
+            self.IsIncan(out IncanInfo Incan))
         {
             if (canHarm && (cI.impactCooldown == 0 || Incan.impactCooldown == 0))
             {

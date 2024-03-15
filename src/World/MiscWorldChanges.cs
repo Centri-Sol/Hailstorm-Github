@@ -37,7 +37,7 @@ public class MiscWorldChanges
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
     //----------------------------------------------------------------------------------
@@ -49,7 +49,7 @@ public class MiscWorldChanges
     public static bool Incan_AllowAllEchoesToSpawn(On.World.orig_CheckForRegionGhost orig, SlugcatStats.Name saveFile, string regionString)
     {
         GhostWorldPresence.GhostID ghostID = GhostWorldPresence.GetGhostID(regionString);
-        return (saveFile == IncanInfo.Incandescent && ghostID != GhostWorldPresence.GhostID.NoGhost && ghostID != MoreSlugcatsEnums.GhostID.LC)
+        return (saveFile == HSEnums.Incandescent && ghostID != GhostWorldPresence.GhostID.NoGhost && ghostID != MoreSlugcatsEnums.GhostID.LC)
 || orig(saveFile, regionString);
     }
     public static void EchoSpawning(On.World.orig_LoadWorld orig, World world, SlugcatStats.Name playerChar, List<AbstractRoom> absRoomsList, int[] swarmRooms, int[] shelters, int[] gates)
@@ -343,7 +343,7 @@ public class MiscWorldChanges
     public static void Moon_StartsWith6Neurons(On.SLOrcacleState.orig_ForceResetState orig, SLOrcacleState moon, SlugcatStats.Name name)
     {
         orig(moon, name);
-        if (name is not null && name.value == IncanInfo.Incandescent.value)
+        if (name is not null && name.value == HSEnums.Incandescent.value)
         {
             moon.neuronsLeft = 6;
         }
@@ -428,7 +428,7 @@ public class MiscWorldChanges
     public static void Incan_SleepScreenBlizzardSounds(SleepAndDeathScreen.orig_GetDataFromGame orig, Menu.SleepAndDeathScreen postCycleScreen, Menu.KarmaLadderScreen.SleepDeathScreenDataPackage package)
     { // Plays the blizzard background noise when going to sleep in the Incandescent's campaign.
         orig(postCycleScreen, package);
-        if (postCycleScreen.IsSleepScreen && package.characterStats.name.value == IncanInfo.Incandescent.value)
+        if (postCycleScreen.IsSleepScreen && package.characterStats.name.value == HSEnums.Incandescent.value)
         {
             postCycleScreen.soundLoop?.Destroy();
             postCycleScreen.mySoundLoopID = MoreSlugcatsEnums.MSCSoundID.Sleep_Blizzard_Loop;
@@ -436,7 +436,7 @@ public class MiscWorldChanges
     }
     public static WinState.EndgameTracker ChieftainAndPilgrimPassageChanges(On.WinState.orig_CreateAndAddTracker orig, WinState.EndgameID ID, List<WinState.EndgameTracker> endgameTrackers)
     {
-        if (RainWorld.lastActiveSaveSlot.value == IncanInfo.Incandescent.value)
+        if (RainWorld.lastActiveSaveSlot.value == HSEnums.Incandescent.value)
         {
             WinState.EndgameTracker tracker;
             if (ID == WinState.EndgameID.Chieftain)
@@ -532,7 +532,7 @@ public class MiscWorldChanges
                 x => x.MatchCall(out _)))
             {
                 c.Emit(OpCodes.Ldarg_0);
-                c.EmitDelegate((bool NotSaint, Player self) => NotSaint && self.SlugCatClass != IncanInfo.Incandescent);
+                c.EmitDelegate((bool NotSaint, Player self) => NotSaint && self.SlugCatClass != HSEnums.Incandescent);
             }
             else
             {

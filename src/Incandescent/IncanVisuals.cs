@@ -28,7 +28,7 @@ public class IncanVisuals
     public static void Ctor(On.PlayerGraphics.orig_ctor orig, PlayerGraphics self, PhysicalObject ow)
     {
         orig.Invoke(self, ow);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !player.isIncan)
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -62,7 +62,7 @@ public class IncanVisuals
     public static void InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(self, sLeaser, rCam);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !player.isIncan)
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -85,7 +85,7 @@ public class IncanVisuals
     public static void DrawNewSprites(On.PlayerGraphics.orig_DrawSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(self, sLeaser, rCam, timeStacker, camPos);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !player.isIncan)
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -271,7 +271,7 @@ public class IncanVisuals
     public static void SpriteLayering(On.PlayerGraphics.orig_AddToContainer orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContainer)
     {
         orig(self, sLeaser, rCam, newContainer);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !player.isIncan)
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -310,7 +310,7 @@ public class IncanVisuals
     public static void ApplyPalette(On.PlayerGraphics.orig_ApplyPalette orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(self, sLeaser, rCam, palette);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !player.isIncan)
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -345,8 +345,7 @@ public class IncanVisuals
     {
         //if (ModManager.CoopAvailable && self.IsJollyPlayer) return;
         // Loads default colors from this Slugcat's SlugBase .json file.
-        if (!IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) ||
-            !SlugBaseCharacter.TryGet(IncanInfo.Incandescent, out player.Incan))
+        if (!self.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -390,7 +389,7 @@ public class IncanVisuals
     }
     public static Color HypothermiaColorBlendbutforFirebecausetheNormalHypothermiaColorBlenddoesntlookGoodonIt(PlayerGraphics self, Color oldCol)
     {
-        if (!IncanInfo.IncanData.TryGetValue(self.owner as Player, out IncanInfo player) || !player.isIncan)
+        if (!self.player.IsIncan(out IncanInfo _))
         {
             return Color.black;
         }
@@ -434,7 +433,7 @@ public class IncanVisuals
     public static void RollAnimationUpdate(On.PlayerGraphics.orig_Update orig, PlayerGraphics self)
     {
         orig(self);
-        if (!IncanInfo.IncanData.TryGetValue(self.owner as Player, out IncanInfo Incan) || !Incan.isIncan)
+        if (!self.player.IsIncan(out IncanInfo Incan))
         {
             return;
         }

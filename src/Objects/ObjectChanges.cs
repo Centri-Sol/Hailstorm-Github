@@ -52,7 +52,7 @@ public class ObjectChanges
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
     public static void ObjectCWT(On.PhysicalObject.orig_ctor orig, PhysicalObject obj, AbstractPhysicalObject absObj)
@@ -436,7 +436,7 @@ public class ObjectChanges
                         {
                             ctr.Hypothermia -= 0.0005f;
                         }
-                        if (ctr is Player self && IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan)
+                        if (ctr is Player self && self.IsIncan(out IncanInfo Incan))
                         {
                             Incan.bubbleHeat = true;
                         }

@@ -43,7 +43,7 @@ public class HailstormSpiders
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
 

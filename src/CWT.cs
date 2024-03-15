@@ -147,7 +147,7 @@ public class CWT
             return target is Overseer ||
                 target is Inspector ||
                 (target is EggBug egg && egg.FireBug) ||
-                (target is Player self && IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan);
+                (target is Player self && self.IsIncan(out IncanInfo Incan));
         }
 
     }

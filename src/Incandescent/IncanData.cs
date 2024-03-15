@@ -1,13 +1,11 @@
 ﻿namespace Hailstorm;
 
-public class IncanInfo // Stores a boatload of information for individual players.
+public class IncanInfo
 {
-    public static ConditionalWeakTable<Player, IncanInfo> IncanData = new();
-
     public readonly bool isIncan;
-    public static SlugcatStats.Name Incandescent = new("Incandescent", false);
+    public readonly Player player;
+
     public SlugBaseCharacter Incan;
-    public WeakReference<Player> incanRef;
 
     public int rollExtender;
     public int rollFallExtender;
@@ -67,18 +65,11 @@ public class IncanInfo // Stores a boatload of information for individual player
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    public IncanInfo(Player self)
+    public IncanInfo(Player player)
     {
 
-        incanRef =
-            new WeakReference<Player>(self); // I'm not sure why this is needed, but I'm keeping it just in case.
-
-        if (ExtEnumBase.TryParse(typeof(SlugcatStats.Name), "Incandescent", true, out ExtEnumBase extEnum))
-        {
-            Incandescent = extEnum as SlugcatStats.Name;
-        }
-
-        isIncan = self.SlugCatClass == Incandescent;
+        isIncan = player.SlugCatClass == HSEnums.Incandescent;
+        this.player = player;
 
         if (!isIncan)
         {
@@ -94,13 +85,13 @@ public class IncanInfo // Stores a boatload of information for individual player
         }
 
 
-        if (self.room.game.session is not null)
+        if (player.room.game.session is not null)
         {
-            if (self.room.game.IsArenaSession)
+            if (player.room.game.IsArenaSession)
             {
                 inArena = true;
             }
-            else if (self.room.game.session is StoryGameSession SGS)
+            else if (player.room.game.session is StoryGameSession SGS)
             {
                 SlugcatStats.Name[] slugcatTimelineOrder = SlugcatStats.getSlugcatTimelineOrder();
                 bool? tooFar = null;

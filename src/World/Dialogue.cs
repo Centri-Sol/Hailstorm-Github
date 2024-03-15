@@ -27,7 +27,7 @@ public class Dialogue
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
     //----------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ public class Dialogue
     public static void NewEchoConversations(On.GhostConversation.orig_AddEvents orig, GhostConversation gConv)
     {
         orig(gConv);
-        if (gConv.currentSaveFile == IncanInfo.Incandescent && (gConv.id == MoreSlugcatsEnums.ConversationID.Ghost_MS || gConv.id == Conversation.ID.Ghost_CC || gConv.id == Conversation.ID.Ghost_SI || gConv.id == Conversation.ID.Ghost_LF || gConv.id == Conversation.ID.Ghost_SB))
+        if (gConv.currentSaveFile == HSEnums.Incandescent && (gConv.id == MoreSlugcatsEnums.ConversationID.Ghost_MS || gConv.id == Conversation.ID.Ghost_CC || gConv.id == Conversation.ID.Ghost_SI || gConv.id == Conversation.ID.Ghost_LF || gConv.id == Conversation.ID.Ghost_SB))
         {
             RemoveEvents(gConv);
 
@@ -264,14 +264,14 @@ public class Dialogue
 
     public static void HasMoonTalkedAboutItemAlready(On.SLOracleBehaviorHasMark.orig_GrabObject orig, SLOracleBehaviorHasMark moon, PhysicalObject obj)
     {
-        if (moon.oracle.room.game.StoryCharacter == IncanInfo.Incandescent)
+        if (moon.oracle.room.game.StoryCharacter == HSEnums.Incandescent)
         {
             incPresent = false;
             if (moon?.oracle?.room?.abstractRoom is not null)
             {
                 foreach (AbstractCreature absCtr in moon.oracle.room.abstractRoom.creatures)
                 {
-                    if (absCtr != null && absCtr.realizedCreature is Player plr && IncanInfo.IncanData.TryGetValue(plr, out IncanInfo player) && player.isIncan)
+                    if (absCtr != null && absCtr.realizedCreature is Player plr && plr.IsIncan(out IncanInfo player))
                     {
                         incPresent = true;
                         break;
@@ -388,7 +388,7 @@ public class Dialogue
     {
         orig(mConv);
 
-        if (mConv.currentSaveFile == IncanInfo.Incandescent)
+        if (mConv.currentSaveFile == HSEnums.Incandescent)
         {
             if (mConv.id == Conversation.ID.Moon_Pebbles_Pearl || mConv.id.value.StartsWith("Moon_Pearl"))
             {
@@ -646,7 +646,7 @@ public class Dialogue
 
     public static void IncanConversationReactions(On.Conversation.DialogueEvent.orig_Update orig, Conversation.DialogueEvent dEvent)
     { // Delicious hardcoded timings, oh boy.
-        if (dEvent.owner.currentSaveFile == IncanInfo.Incandescent && dEvent.owner is not null)
+        if (dEvent.owner.currentSaveFile == HSEnums.Incandescent && dEvent.owner is not null)
         {
             List<Conversation.DialogueEvent> events = dEvent.owner.events;
             if (dEvent.owner.id == MoreSlugcatsEnums.ConversationID.Moon_Pearl_RM)

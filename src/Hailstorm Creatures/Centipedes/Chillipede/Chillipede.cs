@@ -664,7 +664,7 @@ public class Chillipede : Centipede
             }
         }
 
-        if (victim is Player player2 && IncanInfo.IncanData.TryGetValue(player2, out IncanInfo hs2) && hs2.isIncan)
+        if (victim is Player player2 && player2.IsIncan(out var hs2) && hs2.isIncan)
         {
             victim.killTag = abstractCreature;
             victim.Die();

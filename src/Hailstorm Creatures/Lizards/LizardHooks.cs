@@ -45,7 +45,7 @@ public class LizardHooks
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return !(RWG?.session is null || !RWG.IsStorySession || RWG.StoryCharacter != IncanInfo.Incandescent);
+        return !(RWG?.session is null || !RWG.IsStorySession || RWG.StoryCharacter != HSEnums.Incandescent);
         // ^ Returns true if all of the given conditions are met, or false otherwise.
     }
 

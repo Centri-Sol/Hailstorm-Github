@@ -35,7 +35,7 @@ public class CentiHooks
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
     public static ConditionalWeakTable<Centipede, CWT.CentiInfo> CentiData = new();
@@ -366,15 +366,13 @@ public class CentiHooks
 
             bool hitByIncan =
                 source.owner is Player self &&
-                IncanInfo.IncanData.TryGetValue(self, out IncanInfo incan) &&
-                incan.isIncan &&
+                self.IsIncan(out IncanInfo _) &&
                 damage < 1;
 
             bool spearedByIncan =
                 source.owner is Spear spr &&
                 spr.thrownBy is Player plr &&
-                IncanInfo.IncanData.TryGetValue(plr, out incan) &&
-                incan.isIncan &&
+                plr.IsIncan(out IncanInfo _) &&
                 damage < 1;
 
             if (hitArmoredSegment && (hitByIncan || spearedByIncan))

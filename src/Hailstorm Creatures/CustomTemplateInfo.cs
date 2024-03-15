@@ -11,8 +11,7 @@ public static class CustomTemplateInfo
     public static bool IsFireCreature(Creature creature)
     {
         return (creature is Player player &&
-                IncanInfo.IncanData.TryGetValue(player, out IncanInfo Incan) &&
-                Incan.isIncan)
+                player.IsIncan(out IncanInfo _))
                 || creature.Template.type == MoreSlugcatsEnums.CreatureTemplateType.FireBug;
     }
 
@@ -613,7 +612,7 @@ public static class CustomTemplateInfo
                 return 1f;
             }
 
-            if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan)
+            if (self.IsIncan(out _))
             {
                 if (dmgType == HSEnums.DamageTypes.Cold)
                 {

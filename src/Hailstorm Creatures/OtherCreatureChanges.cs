@@ -1,4 +1,6 @@
-﻿namespace Hailstorm;
+﻿using UnityEngine.UI;
+
+namespace Hailstorm;
 
 public class OtherCreatureChanges
 {
@@ -81,7 +83,7 @@ public class OtherCreatureChanges
 
     public static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == IncanInfo.Incandescent;
+        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
     //-----------------------------------------
@@ -260,7 +262,7 @@ public class OtherCreatureChanges
 
             float boostMult = squitCount == 0 ? 1 : 0.33f;
 
-            if (IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && (
+            if (self.IsIncan( out IncanInfo Incan) && (
                     (self.bodyMode == Player.BodyModeIndex.Default && self.animation == Player.AnimationIndex.None) ||
                     self.animation == Player.AnimationIndex.Flip ||
                     self.animation == Player.AnimationIndex.RocketJump ||
@@ -722,7 +724,7 @@ public class OtherCreatureChanges
                             {
                                 plr.room.PlaySound(SoundID.Spear_Bounce_Off_Creauture_Shell, source.pos, 1.25f, 0.75f);
                                 plr.room.PlaySound(SoundID.Spear_Bounce_Off_Wall, source.pos, 1.5f, 0.75f);
-                                if (IncanInfo.IncanData.TryGetValue(plr, out IncanInfo Incan) && Incan.isIncan && !Incan.ReadyToMoveOn)
+                                if (plr.IsIncan(out IncanInfo Incan) && Incan.isIncan && !Incan.ReadyToMoveOn)
                                 {
                                     plr.Stun(Random.Range(20, 30));
                                 }
@@ -1461,7 +1463,7 @@ public class OtherCreatureChanges
         {
             if (obj is Creature ctr && (
                 (ctr is EggBug egg && !egg.dead && egg.FireBug) ||
-                (ctr is Player plr && !plr.dead && IncanInfo.IncanData.TryGetValue(plr, out IncanInfo Incan) && Incan.isIncan) ||
+                (ctr is Player plr && !plr.dead && plr.IsIncan(out IncanInfo Incan)) ||
                 (ctr is ColdLizard)
                 ))
             {
@@ -1484,7 +1486,7 @@ public class OtherCreatureChanges
         {
             if (obj is Creature ctr && (
                 (ctr is EggBug egg && egg.FireBug) ||
-                (ctr is Player plr && IncanInfo.IncanData.TryGetValue(plr, out IncanInfo Incan) && Incan.isIncan) ||
+                (ctr is Player plr && plr.IsIncan(out IncanInfo _)) ||
                 (ctr is ColdLizard)
                 ))
             {
@@ -1592,7 +1594,7 @@ public class OtherCreatureChanges
             }
 
 
-            if (tempSources.Contains(ctr) && ctr.dead && ((ctr is Player plr && plr.SlugCatClass == IncanInfo.Incandescent) || (ctr is EggBug f && f.FireBug)))
+            if (tempSources.Contains(ctr) && ctr.dead && ((ctr is Player plr && plr.SlugCatClass == HSEnums.Incandescent) || (ctr is EggBug f && f.FireBug)))
             {
                 tempSources.Remove(ctr);
             }
@@ -1759,8 +1761,7 @@ public class OtherCreatureChanges
                 if (source.owner is Weapon wpn &&
                     wpn.thrownBy is not null &&
                     wpn.thrownBy is Player inc &&
-                    IncanInfo.IncanData.TryGetValue(inc, out IncanInfo Incan) &&
-                    Incan.isIncan &&
+                    inc.IsIncan(out IncanInfo Incan) &&
                     dirAndMomentum.HasValue &&
                     dirAndMomentum.Value.y > Mathf.Abs(dirAndMomentum.Value.x) * 3)
                 // If the source of damage is a weapon thrown upwards by the Incandescent...
@@ -2314,7 +2315,7 @@ public class OtherCreatureChanges
             }
 
             float distance = Vector2.Distance(target.firstChunk.pos, obj.firstChunk.pos);
-            bool receiverIsIncan = target is Player incCheck && incCheck.SlugCatClass == IncanInfo.Incandescent;
+            bool receiverIsIncan = target is Player incCheck && incCheck.SlugCatClass == HSEnums.Incandescent;
 
             // Lantern warmth changes
             if (tempSource is Lantern lan)
@@ -2328,7 +2329,7 @@ public class OtherCreatureChanges
                     {
                         target.Hypothermia -= heat; // Enables the warming capabilities of Lanterns at pretty much all times. 
                     }
-                    if (target is Player self && IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan)
+                    if (target is Player self && self.IsIncan(out IncanInfo Incan))
                     {
                         target.Hypothermia += heat * 0.8f;
                         if (target.HypothermiaExposure < 1)
@@ -2350,7 +2351,7 @@ public class OtherCreatureChanges
                     {
                         target.Hypothermia -= heat; // Enables the warming capabilities of Lanterns at pretty much all times. 
                     }
-                    if (target is Player self && IncanInfo.IncanData.TryGetValue(self, out IncanInfo Incan) && Incan.isIncan)
+                    if (target is Player self && self.IsIncan(out IncanInfo Incan))
                     {
                         target.Hypothermia += heat;
                         Incan.soak--;
@@ -2363,8 +2364,7 @@ public class OtherCreatureChanges
             {
                 // Incan heat
                 if (tempSource is Player plr &&
-                    IncanInfo.IncanData.TryGetValue(plr, out IncanInfo Incan) &&
-                    Incan.isIncan &&
+                    plr.IsIncan(out IncanInfo Incan) &&
                     Incan.Glow is not null)
                 {
                     if (target != plr)
