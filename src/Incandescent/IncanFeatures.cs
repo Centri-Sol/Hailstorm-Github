@@ -1,4 +1,6 @@
-﻿namespace Hailstorm;
+﻿using static Hailstorm.HSEnums;
+
+namespace Hailstorm;
 
 public class IncanFeatures
 {
@@ -1041,6 +1043,40 @@ public class IncanFeatures
         }
 
 
+        // Damage sounds
+        bool KillingBlow = false;
+        float Pitch = Custom.WrappedRandomVariation(0.1f, 0.01f, 0.3f) * 10f;
+        if (self.isSlugpup)
+        {
+            Pitch *= 1.2f;
+        }
+
+        if (target.State.dead || (target.State is HealthState targetHP && targetHP.ClampedHealth == 0f))
+        {
+            KillingBlow = true;
+            self.room.PlaySound(SoundID.Rock_Hit_Creature, self.mainBodyChunk, false, 1.7f, Pitch);
+        }
+
+        bool HitArmor = !target.SpearStick(null, DMG, target.bodyChunks[otherChunk], null, self.mainBodyChunk.vel);
+        if (HitArmor)
+        {
+            HEATLOSS /= 4f;
+            self.room.PlaySound(SoundID.Spear_Bounce_Off_Creauture_Shell, self.mainBodyChunk, false, KillingBlow ? 0.8f : 1.2f, Pitch);
+        }
+
+        float vol = HitArmor ? 0.5f : 1f;
+        if (DMGTYPE == DamageTypes.Heat)
+        {
+            vol *= KillingBlow ? 0.7f : 1f;
+            self.room.PlaySound(Sound.FireImpact, self.mainBodyChunk, false, vol, Mathf.Lerp(2f, 1f, DMG / 2f * Pitch));
+        }
+        else
+        {
+            vol *= KillingBlow ? 1.1f : 1.7f;
+            self.room.PlaySound(SoundID.Rock_Hit_Wall, self.mainBodyChunk, false, vol, Mathf.Lerp(1.4f, 1f, DMG * Pitch));
+        }
+
+
         // Damages target. Quick note: Slugcats don't have actual HP without the DLC. As long as attacks don't deal at least 1 damage to them, they're effectively invincible.
         target.Violence(self.bodyChunks[myChunk], self.mainBodyChunk.vel, target.bodyChunks[otherChunk], null, DMGTYPE, DMG, STUN);
         if (target is Player player) // WITH the DLC, though, that's not an issue. You've just gotta make sure to address Slugcat HP separately from Violence, since it... wasn't integrated directly into Violence, for some reason.
@@ -1060,16 +1096,6 @@ public class IncanFeatures
         self.Hypothermia += HEATLOSS;
         target.Hypothermia -= HEATLOSS * 0.75f;
 
-        // Damage sounds
-        if (target.State.dead || (target.State is HealthState targetHP && targetHP.ClampedHealth == 0f))
-        {
-            self.room.PlaySound(SoundID.Rock_Hit_Wall, self.mainBodyChunk, loop: false, 1.2f, 1f);
-            self.room.PlaySound(SoundID.Rock_Hit_Creature, self.mainBodyChunk, loop: false, 1.7f, 1f);
-        }
-        else
-        {
-            self.room.PlaySound(SoundID.Rock_Hit_Wall, self.mainBodyChunk, loop: false, 1.7f, 1f);
-        }
 
         if (HitFly)
         {
