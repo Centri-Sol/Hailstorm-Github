@@ -402,3 +402,6 @@ FodyWeavers.xsd
 /src/obj/Debug/net48
 /src/obj/Debug
 /src/obj
+/src/bin/Debug/net48
+src/bin/Debug/net48/Hailstorm.dll
+src/bin/Debug/net48/Hailstorm.pdb
