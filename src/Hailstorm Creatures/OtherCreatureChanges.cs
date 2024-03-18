@@ -1369,64 +1369,63 @@ public class OtherCreatureChanges
     public static void YeekColors(On.MoreSlugcats.YeekGraphics.orig_CreateCosmeticAppearance orig, YeekGraphics yGrph)
     {
         orig(yGrph);
-        if (IsIncanStory(yGrph?.myYeek?.room?.game))
+        if (!IsIncanStory(yGrph?.myYeek?.room?.game))
         {
-            AbstractCreature absYeek = yGrph.myYeek.abstractCreature;
-            float groupLeaderPotential = yGrph.myYeek.GroupLeaderPotential;
-
-            Random.State state = Random.state;
-            Random.InitState(absYeek.ID.RandomSeed);
-
-            HSLColor accColor =
-                absYeek.Winterized ?
-                new(Random.Range(160 / 360f, 280 / 360f), Random.value < 0.1 ? 0 : Random.Range(0.75f, 1), Random.value < 0.1f ? Random.Range(0.45f, 0.55f) : Random.Range(0.55f, 0.70f)) : // Winter colors
-                absYeek.world.region is not null &&
-                absYeek.world.region.name == "OE" ?
-                new(Custom.WrappedRandomVariation(30 / 360f, 80 / 360f, 0.5f), Random.Range(0.8f, 1), Custom.WrappedRandomVariation(Random.value < 0.15 ? 0.55f : 0.7f, 0.1f, 0.5f)) : // Outer Expanse colors
-                new(Random.value, Random.Range(0.85f, 1), Custom.WrappedRandomVariation(0.66f, 0.11f, 0.1f)); // Default colors
-
-            yGrph.tailHighlightColor = Color.HSVToRGB(accColor.hue, accColor.saturation, accColor.lightness);
-            yGrph.featherColor = Color.HSVToRGB(Custom.ClampedRandomVariation(accColor.hue, 20 / 360f, 0.2f), accColor.saturation + 0.075f, accColor.lightness - 0.15f);
-
-            if (Random.value < 0.01f)
-            {
-                (yGrph.featherColor, yGrph.tailHighlightColor) = (yGrph.tailHighlightColor, yGrph.featherColor);
-            }
-
-            yGrph.furColor = Color.Lerp(yGrph.featherColor, Color.HSVToRGB(accColor.hue, accColor.saturation - 0.1f, accColor.lightness - 0.3f), 0.33f + (absYeek.personality.energy * 0.25f));
-
-            Color val =
-                Color.Lerp(yGrph.featherColor, new Color(0.33f, 0.33f, 0.33f), 0.33f + (absYeek.personality.aggression * 0.25f));
-            val =
-                (absYeek.personality.nervous <= absYeek.personality.bravery) ?
-                Color.Lerp(val, Color.black, absYeek.personality.bravery * 0.5f) :
-                Color.Lerp(val, Color.white, absYeek.personality.nervous * 0.5f);
-
-            yGrph.furColor = Color.Lerp(val, yGrph.furColor, absYeek.personality.sympathy);
-            yGrph.furColor = Color.Lerp(yGrph.furColor, Color.white, Random.Range(0.6f, 0.75f) + (absYeek.Winterized ? 0.15f : 0));
-            yGrph.HeadfurColor = Color.Lerp(yGrph.furColor + new Color(0.1f, 0.1f, 0.1f), yGrph.furColor + new Color(0.3f, 0.15f, 0.15f), absYeek.personality.bravery);
-            yGrph.HeadfurColor = Color.Lerp(yGrph.furColor, yGrph.HeadfurColor, absYeek.personality.dominance);
-            yGrph.beakColor = Color.Lerp(yGrph.furColor, new Color(0.81f, 0.53f, 0.34f), 0.6f + (absYeek.personality.dominance / 3f));
-            yGrph.featherColor = yGrph.tailHighlightColor;
-            yGrph.trueEyeColor = yGrph.featherColor;
-            yGrph.plumageGraphic = 2;
-            while (yGrph.plumageGraphic is 2 or 1)
-            {
-                yGrph.plumageGraphic = Random.Range(0, 7);
-            }
-            Random.Range(0.5f, Mathf.Clamp(groupLeaderPotential * 1.5f, 0.6f, 1.2f));
-            int num2 = Random.Range(3, 5);
-            for (int num3 = num2; num3 > 0; num3--)
-            {
-                YeekGraphics.YeekFeather yeekFeather = new(yGrph.myYeek.bodyChunks[0].pos, yGrph, num3, num2)
-                {
-                    featherScaler = 1.2f
-                };
-                yGrph.bodyFeathers.Add(yeekFeather);
-            }
-
-            Random.state = state;
+            return;
         }
+        AbstractCreature absYeek = yGrph.myYeek.abstractCreature;
+        float groupLeaderPotential = yGrph.myYeek.GroupLeaderPotential;
+
+        Random.State state = Random.state;
+        Random.InitState(absYeek.ID.RandomSeed);
+
+        HSLColor accColor =
+            absYeek.Winterized ?
+            new(Random.Range(160 / 360f, 280 / 360f), Random.value < 0.1 ? 0 : Random.Range(0.75f, 1), Random.value < 0.1f ? Random.Range(0.45f, 0.55f) : Random.Range(0.55f, 0.70f)) : // Winter colors
+            new(Random.value, Random.Range(0.85f, 1), Custom.WrappedRandomVariation(0.66f, 0.11f, 0.1f)); // Default colors
+
+        yGrph.tailHighlightColor = Color.HSVToRGB(accColor.hue, accColor.saturation, accColor.lightness);
+        yGrph.featherColor = Color.HSVToRGB(Custom.ClampedRandomVariation(accColor.hue, 20 / 360f, 0.2f), accColor.saturation + 0.075f, accColor.lightness - 0.15f);
+
+        if (Random.value < 0.01f)
+        {
+            (yGrph.featherColor, yGrph.tailHighlightColor) = (yGrph.tailHighlightColor, yGrph.featherColor);
+        }
+
+        yGrph.furColor = Color.Lerp(yGrph.featherColor, Color.HSVToRGB(accColor.hue, accColor.saturation - 0.1f, accColor.lightness - 0.3f), 0.33f + (absYeek.personality.energy * 0.25f));
+
+        Color val =
+            Color.Lerp(yGrph.featherColor, new Color(0.33f, 0.33f, 0.33f), 0.33f + (absYeek.personality.aggression * 0.25f));
+        val =
+            (absYeek.personality.nervous <= absYeek.personality.bravery) ?
+            Color.Lerp(val, Color.black, absYeek.personality.bravery * 0.5f) :
+            Color.Lerp(val, Color.white, absYeek.personality.nervous * 0.5f);
+
+        yGrph.furColor = Color.Lerp(val, yGrph.furColor, absYeek.personality.sympathy);
+        yGrph.furColor = Color.Lerp(yGrph.furColor, Color.white, Random.Range(0.6f, 0.75f) + (absYeek.Winterized ? 0.15f : 0));
+        yGrph.HeadfurColor = Color.Lerp(yGrph.furColor + new Color(0.1f, 0.1f, 0.1f), yGrph.furColor + new Color(0.3f, 0.15f, 0.15f), absYeek.personality.bravery);
+        yGrph.HeadfurColor = Color.Lerp(yGrph.furColor, yGrph.HeadfurColor, absYeek.personality.dominance);
+        yGrph.beakColor = Color.Lerp(yGrph.furColor, new Color(0.81f, 0.53f, 0.34f), 0.6f + (absYeek.personality.dominance / 3f));
+        yGrph.featherColor = yGrph.tailHighlightColor;
+        yGrph.trueEyeColor = yGrph.featherColor;
+        yGrph.plumageGraphic = 2;
+        while (yGrph.plumageGraphic is 2 or 1)
+        {
+            yGrph.plumageGraphic = Random.Range(0, 7);
+        }
+        Random.Range(0.5f, Mathf.Clamp(groupLeaderPotential * 1.5f, 0.6f, 1.2f));
+        int num2 = Random.Range(3, 5);
+        for (int num3 = num2; num3 > 0; num3--)
+        {
+            YeekGraphics.YeekFeather yeekFeather = new(yGrph.myYeek.bodyChunks[0].pos, yGrph, num3, num2)
+            {
+                featherScaler = 1.2f
+            };
+            yGrph.bodyFeathers.Add(yeekFeather);
+        }
+
+        Random.state = state;
+
     }
     public static void YeekEyesBecauseTheirColorIsStupidlySemiHardcoded(On.MoreSlugcats.YeekGraphics.orig_DrawSprites orig, YeekGraphics yGrph, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {

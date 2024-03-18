@@ -16,7 +16,6 @@ public class HailstormVultures
 
         On.Vulture.JawSlamShut += AuroricMirosShortcutProtection;
         On.Vulture.Update += AuroricMirosLaser;
-        On.VultureAI.IUseARelationshipTracker_UpdateDynamicRelationship += AuroricMirosAggro;
 
         On.VultureGraphics.ctor += HailstormVulFeathers;
         On.VultureGraphics.InitiateSprites += HailstormVultureSprites;
@@ -561,64 +560,6 @@ public class HailstormVultures
             }
         }
         orig(vul);
-    }
-    public static CreatureTemplate.Relationship AuroricMirosAggro(On.VultureAI.orig_IUseARelationshipTracker_UpdateDynamicRelationship orig, VultureAI vultureAI, RelationshipTracker.DynamicRelationship dynamRelat)
-    {
-        // Causes Miros Vultures to attack and eat ANYTHING that isn't flagged as inedible to them
-        if (vultureAI?.vulture is not null &&
-            VulData.TryGetValue(vultureAI.vulture, out CWT.VultureInfo vi) &&
-            vi.Miros)
-        {
-            CreatureTemplate.Type ctrType = dynamRelat.trackerRep.representedCreature.creatureTemplate.type;
-
-            bool inedibleForMirosVultures =
-                ctrType == CreatureTemplate.Type.Overseer ||
-                ctrType == CreatureTemplate.Type.Leech ||
-                ctrType == CreatureTemplate.Type.SeaLeech ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech ||
-                ctrType == CreatureTemplate.Type.Vulture ||
-                ctrType == CreatureTemplate.Type.KingVulture ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture ||
-                ctrType == CreatureTemplate.Type.Deer ||
-                ctrType == CreatureTemplate.Type.GarbageWorm ||
-                ctrType == CreatureTemplate.Type.Fly ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
-                ctrType == CreatureTemplate.Type.TempleGuard;
-
-            bool dangerousToMirosVultures =
-                ctrType == CreatureTemplate.Type.BigEel ||
-                ctrType == CreatureTemplate.Type.DaddyLongLegs ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs;
-
-
-            if (vultureAI?.vulture?.killTag is not null && vultureAI.vulture.killTag == dynamRelat.trackerRep.representedCreature && !dynamRelat.trackerRep.representedCreature.state.dead && !dangerousToMirosVultures && !inedibleForMirosVultures)
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Attacks, 1.33f);
-            }
-            if (ctrType == CreatureTemplate.Type.PoleMimic ||
-                ctrType == CreatureTemplate.Type.TentaclePlant)
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Attacks, 0.5f);
-            }
-            if (ctrType == CreatureTemplate.Type.BrotherLongLegs)
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Ignores, 1);
-            }
-            if (dangerousToMirosVultures)
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Afraid, (ctrType == CreatureTemplate.Type.BigEel) ? 0.33f : 0.5f);
-            }
-            if (!inedibleForMirosVultures)
-            {
-                return new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Eats, dynamRelat.trackerRep.representedCreature.state.dead ? 1 : 0.9f);
-            }
-        }
-        return orig(vultureAI, dynamRelat);
     }
 
     //---------------------------------------

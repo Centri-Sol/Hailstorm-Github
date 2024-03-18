@@ -954,6 +954,7 @@ public class IncanFeatures
         {
             return;
         }
+
         if (target is Player) // Making sure we don't get Artificer 2 in Arena Mode.
         {
             DMG /= 2f;
@@ -961,7 +962,6 @@ public class IncanFeatures
             BURNTIME /= 2;
             HEATLOSS *= 2f;
         }
-
 
         bool HitFly = target is Fly;
 
