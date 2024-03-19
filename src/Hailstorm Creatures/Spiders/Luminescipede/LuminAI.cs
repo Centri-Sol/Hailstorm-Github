@@ -252,11 +252,11 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             }
             else
             {
+                _ = (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(LmnPos), actuallyFollowingThisPath: true);
                 MovementConnection movementConnection = (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(LmnPos), actuallyFollowingThisPath: true);
-                movementConnection ??= (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(LmnPos), actuallyFollowingThisPath: true);
-                if (Lmn.safariControlled && (movementConnection is null || !Lmn.AllowableControlledAIOverride(movementConnection.type)))
+                if (Lmn.safariControlled && (movementConnection == default || !Lmn.AllowableControlledAIOverride(movementConnection.type)))
                 {
-                    movementConnection = null;
+                    movementConnection = default;
                     if (Lmn.inputWithDiagonals.HasValue && Behavior != Hide)
                     {
                         MovementConnection.MovementType type = MovementConnection.MovementType.Standard;
@@ -271,7 +271,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                         Lmn.GoThroughFloors = Lmn.inputWithDiagonals.Value.y < 0;
                     }
                 }
-                if (movementConnection is not null)
+                if (movementConnection != default)
                 {
                     NormalPathfinding(movementConnection);
                 }
@@ -386,7 +386,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             if (stuckTracker.Utility() == 0f)
             {
                 MovementConnection movementConnection2 = (pathFinder as StandardPather).FollowPath(movementConnection.destinationCoord, actuallyFollowingThisPath: false);
-                if (movementConnection2 is not null)
+                if (movementConnection2 != default)
                 {
                     if (movementConnection2.destinationCoord == followingConnection.startCoord)
                     {
@@ -419,7 +419,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             }
             Vector2 destination = Lmn.room.MiddleOfTile(movementConnection.DestTile);
             travelDir = Vector2.Lerp(travelDir, Custom.DirVec(LmnPos, destination), 0.4f);
-            if (lastFollowedConnection is not null && lastFollowedConnection.type == MovementConnection.MovementType.ReachUp)
+            if (lastFollowedConnection != default && lastFollowedConnection.type == MovementConnection.MovementType.ReachUp)
             {
                 Lmn.Body.vel += Custom.DirVec(LmnPos, destination) * 4f;
             }
@@ -434,7 +434,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
                     Lmn.Body.vel.y += Mathf.Min((destination.y - LmnPos.y) / 8f, 1.2f);
                 }
             }
-            if (lastFollowedConnection is not null &&
+            if (lastFollowedConnection != default &&
                 (followingConnection.type != MovementConnection.MovementType.DropToFloor || Lmn.room.aimap.TileAccessibleToCreature(LmnPos, Lmn.Template.preBakedPathingAncestor)) && (
                 (followingConnection.startCoord.x != followingConnection.destinationCoord.x && lastFollowedConnection.startCoord.x == lastFollowedConnection.destinationCoord.x) ||
                 (followingConnection.startCoord.y != followingConnection.destinationCoord.y && lastFollowedConnection.startCoord.y == lastFollowedConnection.destinationCoord.y)))
@@ -455,11 +455,11 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return;
         }
         MovementConnection movementDestination = (pathFinder as StandardPather).FollowPath(Lmn.room.GetWorldCoordinate(LmnPos), actuallyFollowingThisPath: true);
-        if (movementDestination is null && Math.Abs(creature.pos.y - Lmn.room.defaultWaterLevel) < 4)
+        if (movementDestination == default && Math.Abs(creature.pos.y - Lmn.room.defaultWaterLevel) < 4)
         {
             movementDestination = (pathFinder as StandardPather).FollowPath(new WorldCoordinate(creature.pos.room, creature.pos.x, Lmn.room.defaultWaterLevel, creature.pos.abstractNode), actuallyFollowingThisPath: true);
         }
-        if (movementDestination is not null)
+        if (movementDestination != default)
         {
             if (movementDestination.StartTile.y == movementDestination.DestTile.y && movementDestination.DestTile.y == Lmn.room.defaultWaterLevel)
             {
@@ -736,7 +736,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         {
             cost += 400f;
         }
-        if (Lmn.room.aimap.getAItile(coord).terrainProximity > 1)
+        if (Lmn.room.aimap.getTerrainProximity(coord) > 1)
         {
             cost += 200f;
         }

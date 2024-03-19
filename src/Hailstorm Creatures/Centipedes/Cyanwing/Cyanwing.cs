@@ -404,7 +404,7 @@ public class Cyanwing : Centipede
             bodyChunks[i].vel += dirToNextChunk * 0.5f * Mathf.Lerp(0.5f, 1.5f, size);
             bodyChunks[i].pos += perpAngle * 2.5f * bodyWaveFac;
         }
-        if (room.aimap.getAItile(moveToPos).terrainProximity > 2)
+        if (room.aimap.getTerrainProximity(moveToPos) > 2)
         {
             HeadChunk.vel += Custom.DirVec(HeadChunk.pos, moveToPos + (Custom.DegToVec(bodyWave * 10f) * 60f)) * 4f * Mathf.Lerp(0.7f, 1.3f, size);
         }

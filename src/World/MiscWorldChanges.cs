@@ -447,10 +447,10 @@ public class MiscWorldChanges
             if (ID == MoreSlugcatsEnums.EndgameID.Pilgrim)
             {
                 int echoCount = 0;
-                string[] slugcatStoryRegions = SlugcatStats.getSlugcatStoryRegions(RainWorld.lastActiveSaveSlot);
-                for (int i = 0; i < slugcatStoryRegions.Length; i++)
+                List<string> slugcatStoryRegions = SlugcatStats.SlugcatStoryRegions(RainWorld.lastActiveSaveSlot);
+                foreach (var region in slugcatStoryRegions)
                 {
-                    if (World.CheckForRegionGhost(RainWorld.lastActiveSaveSlot, slugcatStoryRegions[i]))
+                    if (World.CheckForRegionGhost(RainWorld.lastActiveSaveSlot, region))
                     {
                         echoCount++;
                     }

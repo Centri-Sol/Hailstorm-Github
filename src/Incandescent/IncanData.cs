@@ -93,15 +93,15 @@ public class IncanInfo
             }
             else if (player.room.game.session is StoryGameSession SGS)
             {
-                SlugcatStats.Name[] slugcatTimelineOrder = SlugcatStats.getSlugcatTimelineOrder();
+                LinkedList<SlugcatStats.Name> slugcatTimelineOrder = SlugcatStats.SlugcatTimelineOrder();
                 bool? tooFar = null;
-                for (int s = 0; s < slugcatTimelineOrder.Length - 1; s++)
+                foreach (var name in slugcatTimelineOrder)
                 {
-                    if (slugcatTimelineOrder[s] == SGS.saveStateNumber)
+                    if (name == SGS.saveStateNumber)
                     {
                         tooFar = false;
                     }
-                    else if (slugcatTimelineOrder[s] == MoreSlugcatsEnums.SlugcatStatsName.Rivulet)
+                    else if (name == MoreSlugcatsEnums.SlugcatStatsName.Rivulet)
                     {
                         tooFar = true;
                     }

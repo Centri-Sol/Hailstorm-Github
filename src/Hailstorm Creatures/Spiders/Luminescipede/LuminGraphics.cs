@@ -175,7 +175,7 @@ public class LuminGraphics : GraphicsModule
                     limbs[limb, side].mode = Limb.Mode.HuntAbsolutePosition;
 
                     if ((Lmn.AI is not null && !Lmn.AI.inAccessibleTerrain) ||
-                        (Lmn.followingConnection is not null && Lmn.followingConnection.type == MovementConnection.MovementType.DropToFloor))
+                        (Lmn.followingConnection != default && Lmn.followingConnection.type == MovementConnection.MovementType.DropToFloor))
                     {
                         noFooting = true;
                         limbs[limb, side].mode = Limb.Mode.Dangle;

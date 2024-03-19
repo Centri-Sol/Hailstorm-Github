@@ -7,8 +7,7 @@ public class IncanFeatures
 
     public static void Hooks()
     {
-        On.SlugcatStats.ctor += IncanStats;
-
+        On.SlugcatStats.ctor += IncanStats; 
         On.Player.ThrownSpear += SpearThrows;
 
         // Movement

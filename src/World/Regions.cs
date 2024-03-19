@@ -73,7 +73,7 @@ public class Regions
             RainWorld rainWorld = menu.manager.rainWorld;
             cTracker.displayRegions = new List<string>(new string[12] { "MS", "SL", "CL", "GW", "HI", "UG", "SU", "CC", "VS", "SI", "LF", "SB" });
             cTracker.collectionData = cTracker.MineForSaveData(menu.manager, saveSlot);
-            string[] slugcatOptionalRegions = SlugcatStats.getSlugcatOptionalRegions(saveSlot);
+            List<string> slugcatOptionalRegions = SlugcatStats.SlugcatOptionalRegions(saveSlot);
             cTracker.collectionData ??= new()
             {
                 currentRegion = "??",
@@ -83,14 +83,14 @@ public class Regions
             {
                 cTracker.displayRegions[i] = cTracker.displayRegions[i].ToLowerInvariant();
             }
-            for (int j = 0; j < slugcatOptionalRegions.Length; j++)
+            foreach (var region in slugcatOptionalRegions)
             {
-                slugcatOptionalRegions[j] = slugcatOptionalRegions[j].ToLowerInvariant();
-                for (int k = 0; k < cTracker.collectionData.regionsVisited.Count; k++)
+                string lowerRegion = region.ToLowerInvariant();
+                foreach (var visitedRegion in cTracker.collectionData.regionsVisited)
                 {
-                    if (cTracker.collectionData.regionsVisited[k] == slugcatOptionalRegions[j])
+                    if (visitedRegion == lowerRegion)
                     {
-                        cTracker.displayRegions.Add(slugcatOptionalRegions[j]);
+                        cTracker.displayRegions.Add(lowerRegion);
                         break;
                     }
                 }

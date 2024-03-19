@@ -148,7 +148,7 @@ public class InfantAquapede : Centipede, IPlayerEdible
             }
             chunk.pos += perpAngle * 2.5f * bodyWaveFac;
         }
-        if (room.aimap.getAItile(moveToPos).terrainProximity > 2)
+        if (room.aimap.getTerrainProximity(moveToPos) > 2)
         {
             HeadChunk.vel +=
                 AquacentiSwim ?

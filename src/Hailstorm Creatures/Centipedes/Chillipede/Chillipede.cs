@@ -302,10 +302,10 @@ public class Chillipede : Centipede
             bool onVerticalSurface = bodyChunks[m].contactPoint.x != 0;
             if (moving || onVerticalSurface)
             {
-                MovementConnection movementConnection = (AI?.pathFinder as CentipedePather)?.FollowPath(room.GetWorldCoordinate(HeadChunk.pos), actuallyFollowingThisPath: false);
+                MovementConnection movementConnection = (AI?.pathFinder as CentipedePather).FollowPath(room.GetWorldCoordinate(HeadChunk.pos), actuallyFollowingThisPath: false);
                 if (onVerticalSurface ||
                     room.aimap.getAItile(room.GetWorldCoordinate(bodyChunks[m].pos)).narrowSpace ||
-                    (movementConnection is not null && room.aimap.getAItile(movementConnection.DestTile).narrowSpace))
+                    (movementConnection != default && room.aimap.getAItile(movementConnection.DestTile).narrowSpace))
                 {
                     // Shrinks bodyChunk terrain collision if the chunk is on a wall or wanting to move through a narrow space.
                     bodyChunks[m].terrainSqueeze = Mathf.Lerp(bodyChunks[m].terrainSqueeze, Custom.LerpMap(bodyChunks[m].rad, 6, 18, DefaultTerrainCollisionMult, 0.05f), 0.05f);
@@ -421,7 +421,7 @@ public class Chillipede : Centipede
         return room.GetTile(testPos).wallbehind ||
             room.GetTile(testPos).verticalBeam ||
             room.GetTile(testPos).horizontalBeam ||
-            room.aimap.getAItile(testPos).terrainProximity < 3;
+            room.aimap.getTerrainProximity(testPos) < 3;
     }
 
     // - - - - - - - - - - - - - - - - - - - -

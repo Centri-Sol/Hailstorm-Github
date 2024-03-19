@@ -160,7 +160,7 @@ internal sealed class GorditoGreenieCritob : Critob
         {
             allow = false;
         }
-        if (map.getAItile(tilePos).terrainProximity != 0 && map.getAItile(tilePos).narrowSpace)
+        if (map.getTerrainProximity(tilePos) != 0 && map.getAItile(tilePos).narrowSpace)
         {
             allow = false;
         }

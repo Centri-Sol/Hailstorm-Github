@@ -70,6 +70,11 @@ public class SnowcuttleCreature : InsectoidCreature
         }
         public void GenerateWingPitch(SnowcuttleCreature Snwctl)
         {
+            if (Snwctl is null)
+            {
+                throw new ArgumentNullException(nameof(Snwctl));
+            }
+
             wingSoundPitch = 2f - fatness;
         }
     }
@@ -258,14 +263,14 @@ public class SnowcuttleCreature : InsectoidCreature
         {
             stamina = Mathf.Min(stamina + (1f / 70f), 1f);
         }
-        MovementConnection movementConnection = null;
+        MovementConnection movementConnection = default;
         if ((flying || !AtSitDestination) && chargeCounter == 0 && !AI.swooshToPos.HasValue)
         {
             movementConnection = (AI.pathFinder as CicadaPather).FollowPath(room.GetWorldCoordinate(mainBodyChunk.pos), actuallyFollowingThisPath: true);
         }
-        if (safariControlled && (movementConnection is not null || !AllowableControlledAIOverride(movementConnection.type)))
+        if (safariControlled && (movementConnection != default || !AllowableControlledAIOverride(movementConnection.type)))
         {
-            movementConnection = null;
+            movementConnection = default;
             if (inputWithDiagonals.HasValue)
             {
                 MovementConnection.MovementType type = MovementConnection.MovementType.Standard;
@@ -346,7 +351,7 @@ public class SnowcuttleCreature : InsectoidCreature
                 {
                     flag = true;
                 }
-                else if (room.aimap.getAItile(bodyChunks[0].pos).terrainProximity == 1 && room.aimap.getAItile(bodyChunks[1].pos).terrainProximity == 1 && (movementConnection == null || room.aimap.getAItile(movementConnection.destinationCoord).terrainProximity == 1))
+                else if (room.aimap.getTerrainProximity(bodyChunks[0].pos) == 1 && room.aimap.getTerrainProximity(bodyChunks[1].pos) == 1 && (movementConnection == null || room.aimap.getTerrainProximity(movementConnection.destinationCoord) == 1))
                 {
                     flag = true;
                 }
@@ -374,7 +379,7 @@ public class SnowcuttleCreature : InsectoidCreature
                     Land();
                 }
                 else
-                if (movementConnection is not null &&
+                if (movementConnection != default &&
                     movementConnection.destinationCoord.y < abstractCreature.pos.y)
                 {
                     flag2 = false;
@@ -456,7 +461,7 @@ public class SnowcuttleCreature : InsectoidCreature
             bodyChunks[1].vel += Vector2.ClampMagnitude(BodySitPosOffset(FindBodySitPos(AI.pathFinder.GetDestination.Tile)) - bodyChunks[1].pos, 10f) / 10f * 0.5f;
             mainBodyChunk.vel += Vector2.ClampMagnitude(BodySitPosOffset(AI.pathFinder.GetDestination.Tile) - mainBodyChunk.pos, 10f) / 10f * 0.5f;
         }
-        if (movementConnection is not null)
+        if (movementConnection != default)
         {
             if (movementConnection.destinationCoord.x < movementConnection.startCoord.x)
             {
@@ -520,7 +525,7 @@ public class SnowcuttleCreature : InsectoidCreature
                     num6++;
                 }
                 val3 /= num6;
-                float num8 = room.aimap.getAItile(mainBodyChunk.pos).terrainProximity / Mathf.Max(room.aimap.getAItile(mainBodyChunk.pos + (Custom.DirVec(mainBodyChunk.pos, val3) * Mathf.Clamp(mainBodyChunk.vel.magnitude * 5f, 5f, 15f))).terrainProximity, 1f);
+                float num8 = room.aimap.getTerrainProximity(mainBodyChunk.pos) / Mathf.Max(room.aimap.getTerrainProximity(mainBodyChunk.pos + (Custom.DirVec(mainBodyChunk.pos, val3) * Mathf.Clamp(mainBodyChunk.vel.magnitude * 5f, 5f, 15f))), 1f);
                 num8 = Mathf.Min(num8, 1f);
                 num8 = Mathf.Pow(num8, 3f);
                 if (WantToSitDownAtDestination && AI.pathFinder.GetDestination.room == room.abstractRoom.index && Custom.DistLess(room.MiddleOfTile(AI.pathFinder.GetDestination.Tile), mainBodyChunk.pos, 200f) && AI.VisualContact(room.MiddleOfTile(AI.pathFinder.GetDestination.Tile), 0f))
@@ -727,9 +732,9 @@ public class SnowcuttleCreature : InsectoidCreature
     public bool Climbable(IntVector2 tile)
     {
         return safariControlled
-            ? (inputWithDiagonals.HasValue && inputWithDiagonals.Value.pckp && room.aimap.getAItile(tile).terrainProximity == 1)
+            ? (inputWithDiagonals.HasValue && inputWithDiagonals.Value.pckp && room.aimap.getTerrainProximity(tile) == 1)
 || room.aimap.getAItile(tile).acc == AItile.Accessibility.Climb
-            : room.aimap.getAItile(tile).terrainProximity == 1 || room.aimap.getAItile(tile).acc == AItile.Accessibility.Climb;
+            : room.aimap.getTerrainProximity(tile) == 1 || room.aimap.getAItile(tile).acc == AItile.Accessibility.Climb;
     }
 
     public bool TryToGrabPrey(PhysicalObject prey)
@@ -768,7 +773,7 @@ public class SnowcuttleCreature : InsectoidCreature
         {
             for (int j = 0; j < 3; j++)
             {
-                int terrainProximity = room.aimap.getAItile(abstractCreature.pos.Tile + (Custom.eightDirections[i] * j)).terrainProximity;
+                int terrainProximity = room.aimap.getTerrainProximity(abstractCreature.pos.Tile + (Custom.eightDirections[i] * j));
                 num += terrainProximity;
                 val = Custom.eightDirections[i].ToVector2() * terrainProximity;
             }

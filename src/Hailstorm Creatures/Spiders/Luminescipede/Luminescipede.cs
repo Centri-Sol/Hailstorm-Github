@@ -554,7 +554,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         }
 
 
-        if (!(room.GetTile(DangerPos).Terrain == Room.Tile.TerrainType.ShortcutEntrance && (followingConnection is null || followingConnection.DestTile != tilePosition)) &&
+        if (!(room.GetTile(DangerPos).Terrain == Room.Tile.TerrainType.ShortcutEntrance && (followingConnection == default || followingConnection.DestTile != tilePosition)) &&
             !room.IsPositionInsideBoundries(tilePosition) && AI.inAccessibleTerrain)
         {
             footingTimer = 5;
@@ -574,7 +574,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         GraspUpdate(eu);
 
 
-        bool validConnection = followingConnection is null || followingConnection.type != MovementConnection.MovementType.DropToFloor;
+        bool validConnection = followingConnection != default || followingConnection.type != MovementConnection.MovementType.DropToFloor;
 
         if (validConnection && (Submersion > 0 || AI.inAccessibleTerrain))
         {
@@ -590,7 +590,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
             if (!validConnection && !(AI.inAccessibleTerrain || footingTimer > 0))
             {
-                followingConnection = null;
+                followingConnection = default;
                 if (pathCount > 0)
                 {
                     pathCount = 0;
@@ -2444,8 +2444,8 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
         {
             TileScore -= 0.01f;
         }
-        TileScore -= room.aimap.getAItile(tile).terrainProximity * 0.01f;
-        if (lastShortCut is not null)
+        TileScore -= room.aimap.getTerrainProximity(tile) * 0.01f;
+        if (lastShortCut != default)
         {
             TileScore -= 10f / lastShortCut.StartTile.FloatDist(tile);
             TileScore -= 10f / lastShortCut.DestTile.FloatDist(tile);
@@ -2539,12 +2539,12 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
 
         if (idle)
         {
-            if (followingConnection is not null)
+            if (followingConnection != default)
             {
                 IdleMove(followingConnection);
                 if (room.GetTilePosition(DangerPos) == followingConnection.DestTile)
                 {
-                    followingConnection = null;
+                    followingConnection = default;
                 }
             }
             else if (Random.value < 1f / 12f)
@@ -2572,13 +2572,13 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 scratchPathCount = oldPathCount;
             }
         }
-        if (followingConnection is not null && followingConnection.type != 0)
+        if (followingConnection != default && followingConnection.type != 0)
         {
             if (lastFollowingConnection != followingConnection)
             {
                 footingTimer = 20;
             }
-            if (followingConnection is not null)
+            if (followingConnection != default)
             {
                 lastFollowingConnection = followingConnection;
             }
@@ -2588,13 +2588,13 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 return;
             }
         }
-        else if (followingConnection is not null)
+        else if (followingConnection != default)
         {
             lastFollowingConnection = followingConnection;
         }
         if (pathCount > 0)
         {
-            followingConnection = null;
+            followingConnection = default;
             for (int p = pathCount - 1; p >= 0; p--)
             {
                 if (abstractCreature.pos.Tile == path[p].StartTile)
@@ -2603,12 +2603,12 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                     break;
                 }
             }
-            if (followingConnection is null)
+            if (followingConnection == default)
             {
                 pathCount = 0;
             }
         }
-        if (followingConnection is null)
+        if (followingConnection == default)
         {
             return;
         }
@@ -2624,7 +2624,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
                 NPCTransportationDestination = followingConnection.destinationCoord;
             }
             lastShortCut = followingConnection;
-            followingConnection = null;
+            followingConnection = default;
         }
         return;
     }

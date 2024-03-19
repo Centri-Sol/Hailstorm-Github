@@ -32,7 +32,8 @@ public class ObjectChanges
         On.AbstractSpear.ctor_World_Spear_WorldCoordinate_EntityID_bool_bool += ElectriSpearExtraCharge;
         On.MoreSlugcats.ElectricSpear.Recharge += ElectriSpearExtraRecharge;
         ElectriSpearElectrocutionReplacement();
-        On.Spear.LodgeInCreature += WeakerElectricSpearStun;
+        On.Spear.LodgeInCreature_CollisionResult_bool += WeakerElectricSpearStun;
+        
 
         // Fire Spears
         On.Spear.InitiateSprites += IncandescentSpearColor;
@@ -651,7 +652,9 @@ public class ObjectChanges
             c.MarkLabel(label);
         };
     }
-    public static void WeakerElectricSpearStun(On.Spear.orig_LodgeInCreature orig, Spear spr, SharedPhysics.CollisionResult result, bool eu)
+
+
+    public static void WeakerElectricSpearStun(On.Spear.orig_LodgeInCreature_CollisionResult_bool orig, Spear spr, SharedPhysics.CollisionResult result, bool eu)
     {
         if (IsIncanStory(spr?.room?.game) && spr is ElectricSpear eSpr && result.obj is not null && result.obj is Creature target)
         {
