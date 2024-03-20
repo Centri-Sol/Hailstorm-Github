@@ -5,6 +5,9 @@ public class IncanInfo
     public readonly bool isIncan;
     public readonly Player player;
 
+    public static ConditionalWeakTable<Player, IncanInfo> IncanData = new();
+
+    public static SlugcatStats.Name Incandescent = new("Incandescent");
     public SlugBaseCharacter Incan;
 
     public int rollExtender;
@@ -68,7 +71,7 @@ public class IncanInfo
     public IncanInfo(Player player)
     {
 
-        isIncan = player.SlugCatClass == HSEnums.Incandescent;
+        isIncan = player.slugcatStats.name == Incandescent;
         this.player = player;
 
         if (!isIncan)

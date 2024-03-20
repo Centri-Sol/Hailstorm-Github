@@ -100,12 +100,19 @@ public class Plugin : BaseUnityPlugin
 
     private void LoadAtlases()
     {
-        foreach (string file in from string file in AssetManager.ListDirectory("hs_atlases")
-                                where Path.GetExtension(file).Equals(".png")
-                                where File.Exists(Path.ChangeExtension(file, ".txt"))
-                                select file)
+        foreach (var file in AssetManager.ListDirectory("hs_atlases"))
         {
-            Futile.atlasManager.LoadAtlas(Path.ChangeExtension(file, null));
+            if (".png".Equals(Path.GetExtension(file)))
+            {
+                if (File.Exists(Path.ChangeExtension(file, ".txt")))
+                {
+                    Futile.atlasManager.LoadAtlas(Path.ChangeExtension(file, null));
+                }
+                else
+                {
+                    Futile.atlasManager.LoadImage(Path.ChangeExtension(file, null));
+                }
+            }
         }
     }
 }

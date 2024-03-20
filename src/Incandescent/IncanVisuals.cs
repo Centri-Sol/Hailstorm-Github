@@ -28,7 +28,7 @@ public class IncanVisuals
     public static void Ctor(On.PlayerGraphics.orig_ctor orig, PlayerGraphics self, PhysicalObject ow)
     {
         orig.Invoke(self, ow);
-        if (!self.player.IsIncan(out IncanInfo player))
+        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
         {
             return;
         }
@@ -62,7 +62,7 @@ public class IncanVisuals
     public static void InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(self, sLeaser, rCam);
-        if (!self.player.IsIncan(out IncanInfo player))
+        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
         {
             return;
         }
@@ -85,10 +85,14 @@ public class IncanVisuals
     public static void DrawNewSprites(On.PlayerGraphics.orig_DrawSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(self, sLeaser, rCam, timeStacker, camPos);
-        if (!self.player.IsIncan(out IncanInfo player))
+
+        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !player.isIncan)
         {
+            Debug.LogError("Pewish!");
             return;
         }
+
+        Debug.LogError("I'm working");
 
         if (self.lightSource is not null && self.lightSource.alpha != 0)
         {
@@ -102,6 +106,13 @@ public class IncanVisuals
         string headSpriteNames = sLeaser.sprites[3].element.name;
         FSprite bodySprites = sLeaser.sprites[1];
         Color waistbandColor = player.WaistbandColor == Color.clear ? new Color(0.1f, 0.1f, 0.1f) : player.WaistbandColor;
+
+        Debug.LogWarning(headSprites);
+        Debug.LogWarning(headSpriteNames);
+        Debug.LogWarning(faceSprites);
+        Debug.LogWarning(faceSprites.element.name);
+        Debug.LogWarning(bodySprites);
+        Debug.LogWarning(bodySprites.element.name);
 
         // List of Slugcat sprites:
         /* 0 - BodyA                    Body
@@ -266,12 +277,14 @@ public class IncanVisuals
                 tail.verticeColors[vertice] = Color.Lerp(baseColor, player.FireColor, 0.1f * vertice);
             }
         }
+
+        orig(self, sLeaser, rCam, timeStacker, camPos);
     }
 
     public static void SpriteLayering(On.PlayerGraphics.orig_AddToContainer orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContainer)
     {
         orig(self, sLeaser, rCam, newContainer);
-        if (!self.player.IsIncan(out IncanInfo player))
+        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
         {
             return;
         }
@@ -310,7 +323,7 @@ public class IncanVisuals
     public static void ApplyPalette(On.PlayerGraphics.orig_ApplyPalette orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(self, sLeaser, rCam, palette);
-        if (!self.player.IsIncan(out IncanInfo player))
+        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
         {
             return;
         }
@@ -345,10 +358,12 @@ public class IncanVisuals
     {
         //if (ModManager.CoopAvailable && self.IsJollyPlayer) return;
         // Loads default colors from this Slugcat's SlugBase .json file.
-        if (!self.IsIncan(out IncanInfo player))
+        if (!self.IsIncan() || !IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !SlugBaseCharacter.TryGet(HSEnums.Incandescent, out player.Incan))
         {
             return;
         }
+
+        
 
         if (player.Incan.Features.TryGet(PlayerFeatures.CustomColors, out ColorSlot[] customColors))
         {
@@ -389,21 +404,20 @@ public class IncanVisuals
     }
     public static Color HypothermiaColorBlendbutforFirebecausetheNormalHypothermiaColorBlenddoesntlookGoodonIt(PlayerGraphics self, Color oldCol)
     {
-        if (!self.player.IsIncan(out IncanInfo _))
+        if (!IncanInfo.IncanData.TryGetValue(self.owner as Player, out IncanInfo inc) || !self.player.IsIncan())
         {
             return Color.black;
         }
 
-        Player inc = self.owner as Player;
-        Color inbetween = Color.Lerp(oldCol * 0.7f, inc.ShortCutColor(), 0.7f);
-        Color.RGBToHSV(inc.ShortCutColor(), out float H, out float S, out float V);
+        Color inbetween = Color.Lerp(oldCol * 0.7f, inc.player.ShortCutColor(), 0.7f);
+        Color.RGBToHSV(inc.player.ShortCutColor(), out float H, out float S, out float V);
         H += (H + 0.15f > 1) ? -0.85f : 0.15f;
         V -= 0.1f;
 
         Color coldColors =
-            inc.Hypothermia < 1f ?
-            Color.Lerp(oldCol, inbetween, inc.Hypothermia) :
-            Color.Lerp(inbetween, Color.HSVToRGB(H, S, V), (inc.Hypothermia - 1f) * 0.5f);
+            inc.player.Hypothermia < 1f ?
+            Color.Lerp(oldCol, inbetween, inc.player.Hypothermia) :
+            Color.Lerp(inbetween, Color.HSVToRGB(H, S, V), (inc.player.Hypothermia - 1f) * 0.5f);
 
         return Color.Lerp(oldCol, coldColors, 0.92f);
     }
@@ -415,25 +429,34 @@ public class IncanVisuals
      * HOWEVER, if you don't want to recolor any tail vertices?This is useless for you, so don't worry about it. */
     public static void InitiateSprites_1(ILContext il)
     {
-        ILCursor cursor = new(il);
-
-        if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdstr("Futile_White"), i => i.MatchLdloc(0)))
+        try
         {
-            return;
+            ILCursor cursor = new(il);
+
+            if (!cursor.TryGotoNext(MoveType.After, i => i.MatchLdstr("Futile_White"), i => i.MatchLdloc(0)))
+            {
+                return;
+            }
+
+            cursor.MoveAfterLabels();
+
+            cursor.Remove();
+            cursor.Emit(OpCodes.Ldc_I4_1);
+
         }
-
-        cursor.MoveAfterLabels();
-
-        cursor.Remove();
-        cursor.Emit(OpCodes.Ldc_I4_1);
-
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            Debug.LogException(e);
+            throw new Exception("HailStorm, InitiateSprites_1 wasn't able to load!");
+        }
     }
 
     // Makes the Incandescent's tail spin around her when she rolls.
     public static void RollAnimationUpdate(On.PlayerGraphics.orig_Update orig, PlayerGraphics self)
     {
         orig(self);
-        if (!self.player.IsIncan(out IncanInfo Incan))
+        if (!IncanInfo.IncanData.TryGetValue(self.owner as Player, out IncanInfo _) || !self.player.IsIncan())
         {
             return;
         }
