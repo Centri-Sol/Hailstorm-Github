@@ -2,11 +2,21 @@
 
 public static class IncanExtension
 {
-    private static readonly ConditionalWeakTable<Player, IncanInfo> _ctwic = new();
+    public static readonly ConditionalWeakTable<Player, IncanInfo> _cwtInc = new();
 
-    public static IncanInfo Incan(this Player player)
+    public static IncanInfo Incan(this Player self)
     {
-        return player is null ? throw new ArgumentNullException(nameof(player)) : _ctwic.GetValue(player, _ => new IncanInfo(player));
+        if (self is null)
+        {
+            throw new ArgumentNullException(nameof(self));
+        }
+
+        if (_cwtInc.TryGetValue(self, out IncanInfo player))
+        {
+            return player;
+        }
+
+        return _cwtInc.GetValue(self, _ => new IncanInfo(self));
     }
 
     public static bool IsIncan(this Player player)

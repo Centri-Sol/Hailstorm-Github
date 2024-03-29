@@ -47,6 +47,7 @@ public class SnowcuttleTemplate : Critob
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.StayOutOfWay, 0.6f),
 
         }.IntoTemplate();
+        scTemp.virtualCreature = true;
         scTemp.meatPoints = 1;
         scTemp.BlizzardAdapted = true;
         scTemp.BlizzardWanderer = true;

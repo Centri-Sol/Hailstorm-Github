@@ -5,7 +5,7 @@ public class IncanVisuals
 
     public static void Hooks()
     {
-        On.PlayerGraphics.ctor += Ctor;
+        On.PlayerGraphics.ctor += Constructor;
         On.PlayerGraphics.InitiateSprites += InitiateSprites;
         On.PlayerGraphics.DrawSprites += DrawNewSprites;
         On.PlayerGraphics.AddToContainer += SpriteLayering;
@@ -25,17 +25,13 @@ public class IncanVisuals
     //---------------------------------------
 
     // Creates new tail segments to replace the default ones for the Incandescent. Their size, length, connection points, and friction values can all be messed with!
-    public static void Ctor(On.PlayerGraphics.orig_ctor orig, PlayerGraphics self, PhysicalObject ow)
+    public static void Constructor(On.PlayerGraphics.orig_ctor orig, PlayerGraphics self, PhysicalObject ow)
     {
-        orig.Invoke(self, ow);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
+        orig(self, ow);
+
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
-        }
-
-        if (MiscWorldChanges.AllEchoesMet && !player.ReadyToMoveOn)
-        {
-            player.ReadyToMoveOn = true;
         }
 
         if (self.RenderAsPup) // Tail segments for if you're playing as a slugpup.
@@ -62,7 +58,8 @@ public class IncanVisuals
     public static void InitiateSprites(On.PlayerGraphics.orig_InitiateSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(self, sLeaser, rCam);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
+
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -82,37 +79,28 @@ public class IncanVisuals
     }
 
     // Applies proper positioning and visuals to each Initiated Sprite.
-    public static void DrawNewSprites(On.PlayerGraphics.orig_DrawSprites orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
+    public static void DrawNewSprites(On.PlayerGraphics.orig_DrawSprites orig, PlayerGraphics vis, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
-        orig(self, sLeaser, rCam, timeStacker, camPos);
+        orig(vis, sLeaser, rCam, timeStacker, camPos);
 
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !player.isIncan)
+        if (!vis.player.IsIncan(out IncanInfo player))
         {
-            Debug.LogError("Pewish!");
             return;
         }
 
-        Debug.LogError("I'm working");
-
-        if (self.lightSource is not null && self.lightSource.alpha != 0)
+        if (vis.lightSource is not null &&
+            vis.lightSource.alpha != 0)
         {
-            self.lightSource.alpha = 0; // Makes the normal Neuron glow invisible for the Incandescent.
+            vis.lightSource.alpha = 0; // Makes the normal Neuron glow invisible for the Incandescent.
         }
 
-        Player incan = self.owner as Player;
+        Player self = vis.owner as Player;
 
-        FSprite headSprites = sLeaser.sprites[3];
-        FSprite faceSprites = sLeaser.sprites[9];
+        FSprite Head = sLeaser.sprites[3];
+        FSprite Face = sLeaser.sprites[9];
         string headSpriteNames = sLeaser.sprites[3].element.name;
-        FSprite bodySprites = sLeaser.sprites[1];
+        FSprite Body = sLeaser.sprites[1];
         Color waistbandColor = player.WaistbandColor == Color.clear ? new Color(0.1f, 0.1f, 0.1f) : player.WaistbandColor;
-
-        Debug.LogWarning(headSprites);
-        Debug.LogWarning(headSpriteNames);
-        Debug.LogWarning(faceSprites);
-        Debug.LogWarning(faceSprites.element.name);
-        Debug.LogWarning(bodySprites);
-        Debug.LogWarning(bodySprites.element.name);
 
         // List of Slugcat sprites:
         /* 0 - BodyA                    Body
@@ -131,43 +119,36 @@ public class IncanVisuals
          */
 
         // Sad head and faces.
-        if (!headSprites.element.name.Contains("incanSad") && (!player.ReadyToMoveOn || (player.ReadyToMoveOn && incSad)))
+        if (!Head.element.name.Contains("incanSad") && (!player.ReadyToMoveOn || incSad))
         {
-            if (headSprites.element.name.StartsWith("HeadC"))
+            if (Head.element.name.Contains("HeadA") ||
+                Head.element.name.Contains("HeadC"))
             {
-                headSprites.SetElementByName("incanSad" + headSprites.element.name);
-            }
-            else if (headSprites.element.name.StartsWith("HeadA"))
-            {
-                headSprites.SetElementByName("incanSad" + headSprites.element.name);
+                Head.SetElementByName("incanSad" + Head.element.name);
             }
 
-
-            if (faceSprites.element.name.StartsWith("PFaceA"))
+            if (Face.element.name.Contains("FaceA") ||
+                Face.element.name.Contains("PFaceA"))
             {
-                faceSprites.SetElementByName("incanSad" + faceSprites.element.name);
-            }
-            else if (faceSprites.element.name.StartsWith("FaceA"))
-            {
-                faceSprites.SetElementByName("incanSad" + faceSprites.element.name);
+                Face.SetElementByName("incanSad" + Face.element.name);
             }
         }
 
-        if (incan is not null)
+        if (self is not null)
         {
             if (incLookDown)
             {
-                self.objectLooker.lookAtPoint = !self.objectLooker.lookAtPoint.HasValue ?
-                    incan.bodyChunks[0].pos :
-                    Vector2.Lerp(self.objectLooker.lookAtPoint.Value, incan.bodyChunks[0].pos + new Vector2(3 + (8 * incan.flipDirection), -20), 0.2f);
+                vis.objectLooker.lookAtPoint = !vis.objectLooker.lookAtPoint.HasValue ?
+                    self.bodyChunks[0].pos :
+                    Vector2.Lerp(vis.objectLooker.lookAtPoint.Value, self.bodyChunks[0].pos + new Vector2(3 + (8 * self.flipDirection), -20), 0.2f);
             }
-            else if (incLookAtMoon && incan.room is not null)
+            else if (incLookAtMoon && self.room is not null)
             {
-                foreach (AbstractPhysicalObject absObj in incan.room.abstractRoom.creatures)
+                foreach (AbstractPhysicalObject absObj in self.room.abstractRoom.creatures)
                 {
-                    if (absObj.realizedObject is Oracle oracle && Custom.DistLess(incan.firstChunk.pos, oracle.firstChunk.pos, 800))
+                    if (absObj.realizedObject is Oracle oracle && Custom.DistLess(self.firstChunk.pos, oracle.firstChunk.pos, 800))
                     {
-                        self.objectLooker.lookAtPoint = oracle.firstChunk.pos;
+                        vis.objectLooker.lookAtPoint = oracle.firstChunk.pos;
                     }
                 }
             }
@@ -179,7 +160,7 @@ public class IncanVisuals
             else if (incLookPointReset)
             {
                 incLookPointReset = false;
-                self.objectLooker.lookAtPoint = null;
+                vis.objectLooker.lookAtPoint = null;
             }
         }
 
@@ -219,7 +200,8 @@ public class IncanVisuals
             sLeaser.sprites[player.cheekFluffSprite].y = cheekFluffPos.y;
             sLeaser.sprites[player.cheekFluffSprite].color = player.FireColor;
 
-            if (headSpriteNames.StartsWith("HeadA") || headSpriteNames.StartsWith("HeadC"))
+            if (headSpriteNames.StartsWith("HeadA") ||
+                headSpriteNames.StartsWith("HeadC"))
             {
                 sLeaser.sprites[player.cheekFluffSprite].element = Futile.atlasManager.GetElementWithName("incanCheekfluff" + headSpriteNames);
             }
@@ -228,7 +210,7 @@ public class IncanVisuals
         }
 
         // Waistband sprite.
-        if (!string.IsNullOrWhiteSpace(bodySprites.element.name))
+        if (!string.IsNullOrWhiteSpace(Body.element.name))
         {
 
             float waistbandOffsetX = 0f;
@@ -247,19 +229,19 @@ public class IncanVisuals
             player.lastWaistbandPos = new Vector2(sLeaser.sprites[1].x, sLeaser.sprites[1].y);
         }
         // Tail flame sprite.
-        if (!string.IsNullOrWhiteSpace(bodySprites.element.name))
+        if (!string.IsNullOrWhiteSpace(Body.element.name))
         {
 
             float tailflameOffsetX = camPos.x;
             float tailflameOffsetY = camPos.y;
 
-            Vector2 tailflamePos = new(Mathf.Lerp(self.tail[3].pos.x, self.tail[2].pos.x, 0.2f) - tailflameOffsetX,
-                                            Mathf.Lerp(self.tail[3].pos.y, self.tail[2].pos.y, 0.2f) - tailflameOffsetY);
-            Vector2 tailAngle = (self.tail[3].pos - self.tail[2].pos).normalized;
+            Vector2 tailflamePos = new(Mathf.Lerp(vis.tail[3].pos.x, vis.tail[2].pos.x, 0.2f) - tailflameOffsetX,
+                                            Mathf.Lerp(vis.tail[3].pos.y, vis.tail[2].pos.y, 0.2f) - tailflameOffsetY);
+            Vector2 tailAngle = (vis.tail[3].pos - vis.tail[2].pos).normalized;
             int rotationSide = (tailAngle.x > 0) ? 1 : -1;
 
-            sLeaser.sprites[player.tailflameSprite].scaleX = rotationSide * (incan.isSlugpup ? 0.7f : 1f);
-            sLeaser.sprites[player.tailflameSprite].scaleY = (incan.animation == Player.AnimationIndex.Roll ? -1 : 1) * (incan.isSlugpup ? 0.7f : 1f);
+            sLeaser.sprites[player.tailflameSprite].scaleX = rotationSide * (self.isSlugpup ? 0.7f : 1f);
+            sLeaser.sprites[player.tailflameSprite].scaleY = (self.animation == Player.AnimationIndex.Roll ? -1 : 1) * (self.isSlugpup ? 0.7f : 1f);
             sLeaser.sprites[player.tailflameSprite].rotation = Mathf.Rad2Deg * (float)-Math.Atan(tailAngle.y / tailAngle.x);
             sLeaser.sprites[player.tailflameSprite].x = tailflamePos.x;
             sLeaser.sprites[player.tailflameSprite].y = tailflamePos.y;
@@ -271,20 +253,20 @@ public class IncanVisuals
         // Tail colors.
         if (sLeaser.sprites[2] is TriangleMesh tail)
         {
-            Color baseColor = headSprites.color;
+            Color baseColor = Head.color;
             for (int vertice = 1; vertice < 15; vertice++)
             {
                 tail.verticeColors[vertice] = Color.Lerp(baseColor, player.FireColor, 0.1f * vertice);
             }
         }
 
-        orig(self, sLeaser, rCam, timeStacker, camPos);
     }
 
     public static void SpriteLayering(On.PlayerGraphics.orig_AddToContainer orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, FContainer newContainer)
     {
         orig(self, sLeaser, rCam, newContainer);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
+
+        if (!self.player.IsIncan(out IncanInfo player))
         {
             return;
         }
@@ -323,11 +305,9 @@ public class IncanVisuals
     public static void ApplyPalette(On.PlayerGraphics.orig_ApplyPalette orig, PlayerGraphics self, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(self, sLeaser, rCam, palette);
-        if (!IncanInfo.IncanData.TryGetValue(self.player, out IncanInfo player) || !self.player.IsIncan())
-        {
-            return;
-        }
-        if (self.player.room?.game?.IsArenaSession is null)
+
+        if (!self.player.IsIncan(out IncanInfo player) ||
+            self.player.room?.game?.IsArenaSession is null)
         {
             return;
         }
@@ -358,11 +338,11 @@ public class IncanVisuals
     {
         //if (ModManager.CoopAvailable && self.IsJollyPlayer) return;
         // Loads default colors from this Slugcat's SlugBase .json file.
-        if (!self.IsIncan() || !IncanInfo.IncanData.TryGetValue(self, out IncanInfo player) || !SlugBaseCharacter.TryGet(HSEnums.Incandescent, out player.Incan))
+        if (!self.IsIncan(out IncanInfo player) ||
+            !SlugBaseCharacter.TryGet(HSEnums.Incandescent, out player.Incan))
         {
             return;
         }
-
         
 
         if (player.Incan.Features.TryGet(PlayerFeatures.CustomColors, out ColorSlot[] customColors))
@@ -404,20 +384,20 @@ public class IncanVisuals
     }
     public static Color HypothermiaColorBlendbutforFirebecausetheNormalHypothermiaColorBlenddoesntlookGoodonIt(PlayerGraphics self, Color oldCol)
     {
-        if (!IncanInfo.IncanData.TryGetValue(self.owner as Player, out IncanInfo inc) || !self.player.IsIncan())
+        if (!self.player.IsIncan())
         {
             return Color.black;
         }
 
-        Color inbetween = Color.Lerp(oldCol * 0.7f, inc.player.ShortCutColor(), 0.7f);
-        Color.RGBToHSV(inc.player.ShortCutColor(), out float H, out float S, out float V);
+        Color inbetween = Color.Lerp(oldCol * 0.7f, self.player.ShortCutColor(), 0.7f);
+        Color.RGBToHSV(self.player.ShortCutColor(), out float H, out float S, out float V);
         H += (H + 0.15f > 1) ? -0.85f : 0.15f;
         V -= 0.1f;
 
         Color coldColors =
-            inc.player.Hypothermia < 1f ?
-            Color.Lerp(oldCol, inbetween, inc.player.Hypothermia) :
-            Color.Lerp(inbetween, Color.HSVToRGB(H, S, V), (inc.player.Hypothermia - 1f) * 0.5f);
+            self.player.Hypothermia < 1f ?
+            Color.Lerp(oldCol, inbetween, self.player.Hypothermia) :
+            Color.Lerp(inbetween, Color.HSVToRGB(H, S, V), (self.player.Hypothermia - 1f) * 0.5f);
 
         return Color.Lerp(oldCol, coldColors, 0.92f);
     }
@@ -456,23 +436,22 @@ public class IncanVisuals
     public static void RollAnimationUpdate(On.PlayerGraphics.orig_Update orig, PlayerGraphics self)
     {
         orig(self);
-        if (!IncanInfo.IncanData.TryGetValue(self.owner as Player, out IncanInfo _) || !self.player.IsIncan())
+
+        if (!self.player.IsIncan() ||
+            self.player.animation != Player.AnimationIndex.Roll)
         {
             return;
         }
 
-        if (self.player.animation == Player.AnimationIndex.Roll)
+        for (int i = 1; i < self.tail.Length; i++)
         {
-            for (int i = 1; i < self.tail.Length; i++)
+            float startVel = Custom.VecToDeg(Custom.DirVec(self.tail[i].pos, self.tail[i - 1].pos));
+            startVel += 45f * -self.player.flipDirection;
+            self.tail[i].vel = Custom.DegToVec(startVel) * 15f;
+            if (self.player.bodyChunks[0].pos.y >= self.player.bodyChunks[1].pos.y)
             {
-                float startVel = Custom.VecToDeg(Custom.DirVec(self.tail[i].pos, self.tail[i - 1].pos));
-                startVel += 45f * -self.player.flipDirection;
-                self.tail[i].vel = Custom.DegToVec(startVel) * 15f;
-                if (self.player.bodyChunks[0].pos.y >= self.player.bodyChunks[1].pos.y)
-                {
-                    self.tail[i].vel.x *= 2.20f;
-                    self.tail[i].vel.y *= 0.25f;
-                }
+                self.tail[i].vel.x *= 2.20f;
+                self.tail[i].vel.y *= 0.25f;
             }
         }
     }

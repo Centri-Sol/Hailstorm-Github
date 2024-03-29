@@ -1,5 +1,4 @@
-﻿using static Hailstorm.HSEnums;
-
+﻿
 namespace Hailstorm;
 
 public class IncanFeatures
@@ -7,6 +6,7 @@ public class IncanFeatures
 
     public static void Hooks()
     {
+        On.Player.ctor += IncanCWT;
         On.SlugcatStats.ctor += IncanStats; 
         On.Player.ThrownSpear += SpearThrows;
 
@@ -32,16 +32,32 @@ public class IncanFeatures
 
     private static bool IsIncanStory(RainWorldGame RWG)
     {
-        return RWG?.session is not null && RWG.IsStorySession && RWG.StoryCharacter == HSEnums.Incandescent;
+        return
+            RWG?.session is not null &&
+            RWG.IsStorySession &&
+            RWG.StoryCharacter == HSEnums.Incandescent;
     }
 
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
 
+    public static void IncanCWT(On.Player.orig_ctor orig, Player self, AbstractCreature absSelf, World world)
+    {
+        orig(self, absSelf, world);
+        if (!IncanExtension._cwtInc.TryGetValue(self, out _))
+        {
+            IncanExtension._cwtInc.Add(self, new IncanInfo(self));
+        }
+        if (self.IsIncan(out IncanInfo player))
+        {
+            player.ReadyToMoveOn = MiscWorldChanges.AllEchoesMet;
+        }
+    }
+
     public static void IncanStats(On.SlugcatStats.orig_ctor orig, SlugcatStats stats, SlugcatStats.Name slugcat, bool starving)
     {
         orig(stats, slugcat, starving);
-        if (slugcat == Incandescent)
+        if (slugcat == HSEnums.Incandescent)
         {
             stats.generalVisibilityBonus = starving ? 0.25f : 0.5f;
             if (ModManager.Expedition &&
@@ -1050,10 +1066,10 @@ public class IncanFeatures
         }
 
         float vol = HitArmor ? 0.5f : 1f;
-        if (DMGTYPE == DamageTypes.Heat)
+        if (DMGTYPE == HSEnums.DamageTypes.Heat)
         {
             vol *= KillingBlow ? 0.7f : 1f;
-            self.room.PlaySound(Sound.FireImpact, self.mainBodyChunk, false, vol, Mathf.Lerp(2f, 1f, DMG / 2f * Pitch));
+            self.room.PlaySound(HSEnums.Sound.FireImpact, self.mainBodyChunk, false, vol, Mathf.Lerp(2f, 1f, DMG / 2f * Pitch));
         }
         else
         {
@@ -1128,10 +1144,12 @@ public class IncanFeatures
 
         foreach (AbstractCreature absCtr in self.room.abstractRoom.creatures)
         {
-            if (absCtr?.realizedCreature is null || absCtr.realizedCreature == self)
+            if (absCtr?.realizedCreature is null ||
+                absCtr.realizedCreature == self)
             {
                 continue;
             }
+
             Creature target = absCtr.realizedCreature;
             bool smallCreature = target.abstractCreature.creatureTemplate.smallCreature;
             if (target.dead ||

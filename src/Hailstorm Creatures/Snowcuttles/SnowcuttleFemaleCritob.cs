@@ -12,6 +12,7 @@ public class SnowcuttleFemaleCritob : SnowcuttleTemplate
     public override CreatureTemplate CreateTemplate()
     {
         CreatureTemplate snwCtlFemale = new CreatureFormula(HSEnums.CreatureType.SnowcuttleTemplate, Type, "Snowcuttle Female").IntoTemplate();
+        snwCtlFemale.virtualCreature = false;
         snwCtlFemale.visualRadius = 900;
         snwCtlFemale.throughSurfaceVision = 0.45f;
         snwCtlFemale.waterVision = 0.4f;

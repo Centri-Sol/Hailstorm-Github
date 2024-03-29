@@ -158,7 +158,7 @@
 	"sourceSize": {"w":32, "h":26}
 }
 
-}
+},
 "meta": {
 	"app": "https://www.codeandweb.com/texturepacker",
 	"version": "1.0",

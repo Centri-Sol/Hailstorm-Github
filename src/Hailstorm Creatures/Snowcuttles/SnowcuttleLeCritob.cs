@@ -21,7 +21,9 @@ public class SnowcuttleLeCritob : SnowcuttleTemplate
 
     public override CreatureTemplate CreateTemplate()
     {
-        return new CreatureFormula(HSEnums.CreatureType.SnowcuttleTemplate, Type, "Snowcuttle Le").IntoTemplate();
+        CreatureTemplate snwCtlLe = new CreatureFormula(HSEnums.CreatureType.SnowcuttleTemplate, Type, "Snowcuttle Le").IntoTemplate();
+        snwCtlLe.virtualCreature = false;
+        return snwCtlLe;
     }
     public override void EstablishRelationships()
     {
