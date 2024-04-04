@@ -15,6 +15,7 @@ public class Plugin : BaseUnityPlugin
         On.RainWorld.OnModsDisabled += DisableCheck;
 
         RegisterUnlocks();
+        HSEnums.Init();
     }
 
     //----------------------------------------
