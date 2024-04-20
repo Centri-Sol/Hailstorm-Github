@@ -521,9 +521,11 @@ public class HailstormVultures
     }
     public static void AuroricMirosShortcutProtection(On.Vulture.orig_JawSlamShut orig, Vulture vul)
     {
-        if (vul?.room?.abstractRoom?.creatures is not null &&
-            vul.bodyChunks is not null &&
-            VulData.TryGetValue(vul, out CWT.VultureInfo vi) &
+        if (vul?.room?.abstractRoom?.creatures != null &&
+            vul.bodyChunks != null &&
+            VulData != null &&
+            VulData.TryGetValue(vul, out CWT.VultureInfo vi) &&
+            vi != null &&
             vi.Miros)
         {
             for (int i = 0; i < vul.room.abstractRoom.creatures.Count; i++)
