@@ -33,7 +33,7 @@ public class CyanwingAI : CentipedeAI, IUseARelationshipTracker
     CreatureTemplate.Relationship IUseARelationshipTracker.UpdateDynamicRelationship(RelationshipTracker.DynamicRelationship dynamRelat)
     {
         Creature ctr = dynamRelat.trackerRep.representedCreature.realizedCreature;
-        CreatureTemplate.Relationship defaultRelation = StaticRelationship(ctr.abstractCreature);
+        CreatureTemplate.Relationship defaultRelation = StaticRelationship(dynamRelat.trackerRep.representedCreature);
 
         if (defaultRelation.type == CreatureTemplate.Relationship.Type.Ignores)
         {

@@ -78,8 +78,8 @@ public static class HSEnums
                 GorditoGreenieLizard,
                 //BezanBud,
                 Chillipede,
-                Luminescipede
-                //, Strobelegs
+                Luminescipede,
+                //Strobelegs
             };
         }
     }
