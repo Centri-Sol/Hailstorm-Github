@@ -92,27 +92,31 @@ public class IncanInfo
             }
             else if (player.room.game.session is StoryGameSession SGS)
             {
-                LinkedList<SlugcatStats.Name> slugcatTimelineOrder = SlugcatStats.SlugcatTimelineOrder();
+                // Convert SaveState to Timeline
+                SlugcatStats.Timeline saveStateTimeline = SlugcatStats.SlugcatToTimeline(SGS.saveStateNumber);
+                SlugcatStats.Timeline rivuletTimeline = SlugcatStats.SlugcatToTimeline(MoreSlugcatsEnums.SlugcatStatsName.Rivulet);
+
+                // Get the timeline order...
+                LinkedList<SlugcatStats.Timeline> slugcatTimelineOrder = SlugcatStats.SlugcatTimelineOrder();
                 bool? tooFar = null;
-                foreach (var name in slugcatTimelineOrder)
+                foreach (var timeline in slugcatTimelineOrder)
                 {
-                    if (name == SGS.saveStateNumber)
+                    if (timeline == saveStateTimeline)
                     {
                         tooFar = false;
                     }
-                    else if (name == MoreSlugcatsEnums.SlugcatStatsName.Rivulet)
+                    else if (timeline == rivuletTimeline)
                     {
                         tooFar = true;
                     }
 
-                    if (tooFar.HasValue) break;
+                    if (tooFar.HasValue)
+                        break;
                 }
 
-                currentCampaignBeforeRiv = tooFar.HasValue && tooFar.Value is false;
-
+                currentCampaignBeforeRiv = tooFar.HasValue && tooFar.Value == false;
             }
         }
-
     }
 
     //--------------------------------------------------------------------------------

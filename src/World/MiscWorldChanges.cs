@@ -7,8 +7,8 @@ public class MiscWorldChanges
 
         // Echo changes
         On.World.CheckForRegionGhost += Incan_AllowAllEchoesToSpawn;
-        On.World.LoadWorld += EchoSpawning;
-        On.GhostWorldPresence.ctor += EchoSpawnLocationChanges;
+        On.World.LoadWorld_Name_List1_Int32Array_Int32Array_Int32Array += EchoSpawning;
+        On.GhostWorldPresence.ctor_World_GhostID += EchoSpawnLocationChanges;
         On.GhostWorldPresence.GhostMode_AbstractRoom_Vector2 += EchoAuraLocationChanges;
 
         // Moon
@@ -52,7 +52,7 @@ public class MiscWorldChanges
         return (saveFile == HSEnums.Incandescent && ghostID != GhostWorldPresence.GhostID.NoGhost && ghostID != MoreSlugcatsEnums.GhostID.LC)
 || orig(saveFile, regionString);
     }
-    public static void EchoSpawning(On.World.orig_LoadWorld orig, World world, SlugcatStats.Name playerChar, List<AbstractRoom> absRoomsList, int[] swarmRooms, int[] shelters, int[] gates)
+    public static void EchoSpawning(On.World.orig_LoadWorld_Name_List1_Int32Array_Int32Array_Int32Array orig, World world, SlugcatStats.Name playerChar, List<AbstractRoom> absRoomsList, int[] swarmRooms, int[] shelters, int[] gates)
     {
         orig(world, playerChar, absRoomsList, swarmRooms, shelters, gates);
         if (world.game.setupValues.ghosts >= 0 && world is not null && IsIncanStory(world.game) && !world.singleRoomWorld && world.game.session is not null && world.game.session is StoryGameSession SGS)
@@ -128,7 +128,7 @@ public class MiscWorldChanges
             // 0 = can be seen, but karma is not high enough
         }
     }
-    public static void EchoSpawnLocationChanges(On.GhostWorldPresence.orig_ctor orig, GhostWorldPresence GWP, World world, GhostWorldPresence.GhostID ghostID)
+    public static void EchoSpawnLocationChanges(On.GhostWorldPresence.orig_ctor_World_GhostID orig, GhostWorldPresence GWP, World world, GhostWorldPresence.GhostID ghostID)
     {
         orig(GWP, world, ghostID);
         if (IsIncanStory(world?.game))

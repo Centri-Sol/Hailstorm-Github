@@ -49,16 +49,16 @@ public class Weather
         { CreatureTemplate.Type.SmallCentipede, 0.75f },
         { CreatureTemplate.Type.Centipede, 0.75f },
         { CreatureTemplate.Type.Centiwing, 0.75f },
-        { MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.75f },
-        { MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 0.35f },
-        { MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.35f },
+        { DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.75f },
+        { DLCSharedEnums.CreatureTemplateType.EelLizard, 0.35f },
+        { DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.35f },
         { CreatureTemplate.Type.KingVulture, 0.25f },
-        { MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.25f },
+        { DLCSharedEnums.CreatureTemplateType.StowawayBug, 0.25f },
         { CreatureTemplate.Type.RedCentipede, 0.25f },
         { HSEnums.CreatureType.Cyanwing, 0.25f },
         { CreatureTemplate.Type.Salamander, 0 },
         { CreatureTemplate.Type.Deer, 0 },
-        { MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0 },
+        { DLCSharedEnums.CreatureTemplateType.BigJelly, 0 },
         { HSEnums.CreatureType.GorditoGreenieLizard, 0 }
     }; // For each listed creature type, hail damage and stun are multiplied by the given number.
 
@@ -87,10 +87,10 @@ public class Weather
         CreatureTemplate.Type.PoleMimic,
         CreatureTemplate.Type.TentaclePlant,
         CreatureTemplate.Type.Scavenger,
-        MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite,
+        DLCSharedEnums.CreatureTemplateType.ScavengerElite,
         MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing,
-        MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard,
-        MoreSlugcatsEnums.CreatureTemplateType.MirosVulture,
+        DLCSharedEnums.CreatureTemplateType.ZoopLizard,
+        DLCSharedEnums.CreatureTemplateType.MirosVulture,
         HSEnums.CreatureType.Luminescipede
     };
 
@@ -765,7 +765,7 @@ public class Weather
                 }
                 else
                 {
-                    AbstractConsumable DandelionPeach = new(room.world, MoreSlugcatsEnums.AbstractObjectType.DandelionPeach, null, spawnCoordinate.Value, room.game.GetNewID(), room.abstractRoom.index, -1, null);
+                    AbstractConsumable DandelionPeach = new(room.world, DLCSharedEnums.AbstractObjectType.DandelionPeach, null, spawnCoordinate.Value, room.game.GetNewID(), room.abstractRoom.index, -1, null);
                     room.abstractRoom.AddEntity(DandelionPeach);
                     DandelionPeach.RealizeInRoom();
                     foreach (BodyChunk chunk in DandelionPeach.realizedObject.bodyChunks)
@@ -810,7 +810,7 @@ public class Weather
             }
 
             if (obj is Creature windImmune && (
-                windImmune.Template.type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
+                windImmune.Template.type == DLCSharedEnums.CreatureTemplateType.StowawayBug ||
                 windImmune.Template.type == HSEnums.CreatureType.GorditoGreenieLizard))
             {
                 return;

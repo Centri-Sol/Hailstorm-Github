@@ -47,13 +47,13 @@ public class InfantAquapedeCritob : Critob
 
     public override CreatureTemplate CreateTemplate()
     {
-        CreatureTemplate Aquababy = new CreatureFormula(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, Type, "Infant Aquapede")
+        CreatureTemplate Aquababy = new CreatureFormula(DLCSharedEnums.CreatureTemplateType.AquaCenti, Type, "Infant Aquapede")
         {
             DamageResistances = new() { Base = 1, Electric = 100 },
             StunResistances = new() { Base = 1, Electric = 100 },
             InstantDeathDamage = 1.1f,
             HasAI = true,
-            Pathing = PreBakedPathing.Ancestral(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti),
+            Pathing = PreBakedPathing.Ancestral(DLCSharedEnums.CreatureTemplateType.AquaCenti),
             DefaultRelationship = new(CreatureTemplate.Relationship.Type.Afraid, 1f),
         }.IntoTemplate();
         Aquababy.meatPoints = 3;
@@ -69,23 +69,23 @@ public class InfantAquapedeCritob : Critob
     {
         Relationships s = new(HSEnums.CreatureType.InfantAquapede);
 
-        s.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.5f);
+        s.IsInPack(DLCSharedEnums.CreatureTemplateType.AquaCenti, 0.5f);
         s.IsInPack(HSEnums.CreatureType.InfantAquapede, 0.85f);
 
         s.Ignores(HSEnums.CreatureType.Cyanwing);
 
         s.FearedBy(CreatureTemplate.Type.Leech, 1);
         s.FearedBy(CreatureTemplate.Type.SeaLeech, 1);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 1);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.JungleLeech, 1);
         s.FearedBy(CreatureTemplate.Type.Hazer, 1);
 
-        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0.33f);
+        s.Fears(DLCSharedEnums.CreatureTemplateType.BigJelly, 0.33f);
         s.Fears(HSEnums.CreatureType.GorditoGreenieLizard, 0.33f);
         s.Fears(HSEnums.CreatureType.Chillipede, 0.33f);
         s.Fears(CreatureTemplate.Type.Slugcat, 0.5f);
         s.Fears(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 0.5f);
         s.Fears(CreatureTemplate.Type.Salamander, 0.66f);
-        s.Fears(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 1);
+        s.Fears(DLCSharedEnums.CreatureTemplateType.EelLizard, 1);
 
 
         s.MakesUncomfortable(CreatureTemplate.Type.Salamander, 0.6f);
@@ -95,7 +95,7 @@ public class InfantAquapedeCritob : Critob
         s.IntimidatedBy(CreatureTemplate.Type.Snail, 1);
 
         s.EatenBy(CreatureTemplate.Type.JetFish, 0.2f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 1);
+        s.EatenBy(DLCSharedEnums.CreatureTemplateType.EelLizard, 1);
     }
 
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absCnt) => new CentipedeAI(absCnt, absCnt.world);

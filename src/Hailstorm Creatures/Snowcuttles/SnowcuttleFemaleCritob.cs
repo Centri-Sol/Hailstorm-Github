@@ -29,7 +29,7 @@ public class SnowcuttleFemaleCritob : SnowcuttleTemplate
         scF.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.7f);
         scF.Eats(HSEnums.CreatureType.PeachSpider, 0.6f);
         scF.Eats(CreatureTemplate.Type.SeaLeech, 0.6f);
-        scF.Eats(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 0.6f);
+        scF.Eats(DLCSharedEnums.CreatureTemplateType.JungleLeech, 0.6f);
         scF.Eats(CreatureTemplate.Type.Hazer, 0.5f);
         scF.Eats(CreatureTemplate.Type.VultureGrub, 0.3f);
         scF.Eats(CreatureTemplate.Type.SmallCentipede, 0.1f);

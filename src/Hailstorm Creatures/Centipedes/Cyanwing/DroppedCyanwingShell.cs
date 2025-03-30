@@ -39,9 +39,9 @@ public class DroppedCyanwingShell : CosmeticSprite
             }
             if (room.waterInverted)
             {
-                return 1f - Mathf.InverseLerp(pos.y - 5, pos.y + 5, room.FloatWaterLevel(pos.x));
+                return 1f - Mathf.InverseLerp(pos.y - 5, pos.y + 5, room.FloatWaterLevel(pos));
             }
-            float num = room.FloatWaterLevel(pos.x);
+            float num = room.FloatWaterLevel(pos);
             return ModManager.MMF && !MMF.cfgVanillaExploits.Value && num > (room.abstractRoom.size.y + 20) * 20f
                 ? 1f
                 : Mathf.InverseLerp(pos.y - 5, pos.y + 5, num);

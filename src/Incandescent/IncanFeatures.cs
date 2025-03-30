@@ -776,7 +776,7 @@ public class IncanFeatures
                     (self.graphicsModule as PlayerGraphics).head.vel += Custom.RNV() * (self.Hypothermia * 0.75f); // Head shivers
                 }
 
-                if (self.room.roomSettings.DangerType != MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+                if (self.room.roomSettings.DangerType != DLCSharedEnums.RoomRainDangerType.Blizzard)
                 {
                     self.Hypothermia -= 0.00015f;
                     if (!self.dead && self.Hypothermia >= 1.5f)
@@ -1224,7 +1224,7 @@ public class IncanFeatures
                     liz.turnedByRockCounter =
                         (liz.Template.type == HSEnums.CreatureType.FreezerLizard ||
                         liz.Template.type == CreatureTemplate.Type.GreenLizard ||
-                        liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard) ? 20 : 40;
+                        liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard) ? 20 : 40;
                     liz.turnedByRockDirection = (int)Mathf.Sign(chunk.pos.x - tailEnd.pos.x);
                 }
                 if (target.SpearStick(null, 0.25f, chunk, null, hitVel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out CWT.AbsCtrInfo aI))

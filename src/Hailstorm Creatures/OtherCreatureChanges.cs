@@ -97,13 +97,13 @@ public class OtherCreatureChanges
             CWT.CreatureData.Add(ctr, new CWT.CreatureInfo(ctr));
         }
 
-        if (absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.BigJelly && ctr.grasps is null)
+        if (absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.BigJelly && ctr.grasps is null)
         {
             ctr.grasps = new Creature.Grasp[ctr.Template.grasps];
         }
         if (IsIncanStory(world?.game))
         {
-            if (absCtr.creatureTemplate.type == CreatureTemplate.Type.LanternMouse || absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.Yeek)
+            if (absCtr.creatureTemplate.type == CreatureTemplate.Type.LanternMouse || absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.Yeek)
             {
                 absCtr.state.meatLeft = 1;
             }
@@ -541,7 +541,7 @@ public class OtherCreatureChanges
                     {
                         if (aI.ctrList[c].creatureTemplate.smallCreature ||
                             aI.ctrList[c].creatureTemplate.type == CreatureTemplate.Type.SeaLeech ||
-                            aI.ctrList[c].creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech)
+                            aI.ctrList[c].creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.JungleLeech)
                         {
                             smallCreatures++;
                         }
@@ -589,7 +589,7 @@ public class OtherCreatureChanges
                             CreatureTemplate.Type type = newCtr.creatureTemplate.type;
                             bool tough =
                                 type == CreatureTemplate.Type.SeaLeech ||
-                                type == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech ||
+                                type == DLCSharedEnums.CreatureTemplateType.JungleLeech ||
                                 type == CreatureTemplate.Type.DropBug ||
                                 type == CreatureTemplate.Type.RedCentipede ||
                                 type == CreatureTemplate.Type.RedLizard ||
@@ -800,7 +800,7 @@ public class OtherCreatureChanges
                         spawner.creatureType == CreatureTemplate.Type.Fly ||
                         spawner.creatureType == CreatureTemplate.Type.Leech ||
                         spawner.creatureType == CreatureTemplate.Type.SeaLeech ||
-                        spawner.creatureType == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech ||
+                        spawner.creatureType == DLCSharedEnums.CreatureTemplateType.JungleLeech ||
                         spawner.creatureType == CreatureTemplate.Type.Spider;
 
                     for (int s = 0; s < (smallCreature ? 1 : Mathf.Max(1, spawner.amount / 3)); s++)
@@ -831,7 +831,7 @@ public class OtherCreatureChanges
                         aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.Fly ||
                         aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.Leech ||
                         aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.SeaLeech ||
-                        aI.ctrList[i].creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech ||
+                        aI.ctrList[i].creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.JungleLeech ||
                         aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.Spider)
                     {
                         smallCreatures++;
@@ -847,7 +847,7 @@ public class OtherCreatureChanges
                     regionSpawns[i] == CreatureTemplate.Type.Leech ||
                     regionSpawns[i] == CreatureTemplate.Type.SeaLeech ||
                     regionSpawns[i] == CreatureTemplate.Type.Spider ||
-                    regionSpawns[i] == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech)))
+                    regionSpawns[i] == DLCSharedEnums.CreatureTemplateType.JungleLeech)))
                 {
                     regionSpawns.RemoveAt(i);
                 }
@@ -918,7 +918,7 @@ public class OtherCreatureChanges
                             ctrType = CreatureTemplate.Type.SpitterSpider;
                             break;
                         case 3:
-                            ctrType = MoreSlugcatsEnums.CreatureTemplateType.MotherSpider;
+                            ctrType = DLCSharedEnums.CreatureTemplateType.MotherSpider;
                             break;
                         default:
                             break;
@@ -934,7 +934,7 @@ public class OtherCreatureChanges
                         CreatureTemplate.Type.CicadaB;
                     break;
                 case < 0.850f:
-                    ctrType = MoreSlugcatsEnums.CreatureTemplateType.Yeek;
+                    ctrType = DLCSharedEnums.CreatureTemplateType.Yeek;
                     break;
                 case < 0.925f:
                     ctrType = CreatureTemplate.Type.DropBug;
@@ -943,18 +943,18 @@ public class OtherCreatureChanges
                     ctrType = Random.Range(0, 10) switch
                     {
                         0 => Random.value < 0.75f ? CreatureTemplate.Type.PinkLizard :
-                                                        Random.value < 0.75f ? MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard :
+                                                        Random.value < 0.75f ? DLCSharedEnums.CreatureTemplateType.ZoopLizard :
                                                         CreatureTemplate.Type.RedLizard,
                         1 => CreatureTemplate.Type.GreenLizard,
                         2 => Random.value < 0.75 ? CreatureTemplate.Type.BlueLizard :
                                                         Random.value < 0.75 ? HSEnums.CreatureType.IcyBlueLizard :
                                                         HSEnums.CreatureType.FreezerLizard,
                         3 => CreatureTemplate.Type.Salamander,
-                        4 => MoreSlugcatsEnums.CreatureTemplateType.EelLizard,
+                        4 => DLCSharedEnums.CreatureTemplateType.EelLizard,
                         5 => CreatureTemplate.Type.WhiteLizard,
                         6 => CreatureTemplate.Type.YellowLizard,
                         7 => CreatureTemplate.Type.BlackLizard,
-                        8 => MoreSlugcatsEnums.CreatureTemplateType.SpitLizard,
+                        8 => DLCSharedEnums.CreatureTemplateType.SpitLizard,
                         9 => CreatureTemplate.Type.CyanLizard,
                         _ => null,
                     };
@@ -971,7 +971,7 @@ public class OtherCreatureChanges
                 (Random.value < 0.50f) ? CreatureTemplate.Type.DropBug :
                 (Random.value < 0.50f) ? CreatureTemplate.Type.SeaLeech :
                 (Random.value < 0.50f) ? CreatureTemplate.Type.Snail :
-                (Random.value < 0.50f) ? CreatureTemplate.Type.Salamander : MoreSlugcatsEnums.CreatureTemplateType.EelLizard;
+                (Random.value < 0.50f) ? CreatureTemplate.Type.Salamander : DLCSharedEnums.CreatureTemplateType.EelLizard;
         }
 
         List<AbstractCreature> newCtrList = new();
@@ -998,10 +998,10 @@ public class OtherCreatureChanges
                 ctrType == CreatureTemplate.Type.Fly ? (Random.value < 0.5f ? 3 : 2) :
                 ctrType == CreatureTemplate.Type.Hazer ? (Random.value < 0.25f ? 2 : 1) :
                 ctrType == CreatureTemplate.Type.LanternMouse ||
-                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.Yeek ? (Random.value < 0.15f ? 2 : 1) :
+                 ctrType == DLCSharedEnums.CreatureTemplateType.Yeek ? (Random.value < 0.15f ? 2 : 1) :
                 ctrType == CreatureTemplate.Type.Leech ||
                 ctrType == CreatureTemplate.Type.SeaLeech ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech ? Random.Range(3, 6) :
+                ctrType == DLCSharedEnums.CreatureTemplateType.JungleLeech ? Random.Range(3, 6) :
                 ctrType == CreatureTemplate.Type.Spider ? Random.Range(4, 8) : 1;
 
             for (int i = 0; i < reps; i++)
@@ -1449,9 +1449,9 @@ public class OtherCreatureChanges
     // The following section manages my own version of the IProvideWarmth interface, which I made to be able to customize and edit heat sources more freely.
     #region WarmthSources
     public static List<UpdatableAndDeletable> tempSources;
-    public static void BootlegIProvideWarmth(On.Room.orig_ctor orig, Room room, RainWorldGame game, World world, AbstractRoom abstractRoom)
+    public static void BootlegIProvideWarmth(On.Room.orig_ctor orig, Room room, RainWorldGame game, World world, AbstractRoom abstractRoom, bool devUI)
     {
-        orig(room, game, world, abstractRoom);
+        orig(room, game, world, abstractRoom, devUI);
 
         tempSources = new List<UpdatableAndDeletable>();
     }
@@ -2154,9 +2154,9 @@ public class OtherCreatureChanges
                     (ctrType == CreatureTemplate.Type.Spider ||
                     ctrType == CreatureTemplate.Type.BigSpider ||
                     ctrType == CreatureTemplate.Type.SpitterSpider ||
-                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
+                    ctrType == DLCSharedEnums.CreatureTemplateType.MotherSpider ||
                     ctrType == CreatureTemplate.Type.Scavenger ||
-                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite ||
+                    ctrType == DLCSharedEnums.CreatureTemplateType.ScavengerElite ||
                     ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing ||
                     ctrType == CreatureTemplate.Type.Vulture ||
                     ctrType == CreatureTemplate.Type.KingVulture)) ||
@@ -2168,8 +2168,8 @@ public class OtherCreatureChanges
                     ctrType == CreatureTemplate.Type.PoleMimic ||
                     ctrType == CreatureTemplate.Type.TentaclePlant ||
                     ctrType == CreatureTemplate.Type.DropBug ||
-                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
-                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.Yeek ||
+                    ctrType == DLCSharedEnums.CreatureTemplateType.StowawayBug ||
+                    ctrType == DLCSharedEnums.CreatureTemplateType.Yeek ||
                     (absCtr.creatureTemplate.ancestor == StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate) && ctrType != CreatureTemplate.Type.BlueLizard))))
             {
                 absCtr.Winterized = true;
@@ -2201,10 +2201,10 @@ public class OtherCreatureChanges
                     ctrType == CreatureTemplate.Type.Spider ||
                     ctrType == CreatureTemplate.Type.BigSpider ||
                     ctrType == CreatureTemplate.Type.SpitterSpider ||
-                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
+                    ctrType == DLCSharedEnums.CreatureTemplateType.MotherSpider ||
                     ctrType == CreatureTemplate.Type.DropBug ||
-                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
-                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.Yeek))))
+                    ctrType == DLCSharedEnums.CreatureTemplateType.StowawayBug ||
+                    ctrType == DLCSharedEnums.CreatureTemplateType.Yeek))))
         {
             absCtr.ignoreCycle = true;
         }
@@ -2215,10 +2215,10 @@ public class OtherCreatureChanges
                 ctrType == CreatureTemplate.Type.CyanLizard ||
                 ctrType == CreatureTemplate.Type.BrotherLongLegs ||
                 ctrType == CreatureTemplate.Type.DaddyLongLegs ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs ||
+                ctrType == DLCSharedEnums.CreatureTemplateType.TerrorLongLegs ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite ||
+                ctrType == DLCSharedEnums.CreatureTemplateType.ZoopLizard ||
+                ctrType == DLCSharedEnums.CreatureTemplateType.ScavengerElite ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing))
         {
             aI.HailstormAvoider = true;
@@ -2229,10 +2229,10 @@ public class OtherCreatureChanges
                 ctrType == CreatureTemplate.Type.SmallCentipede ||
                 ctrType == CreatureTemplate.Type.BrotherLongLegs ||
                 ctrType == CreatureTemplate.Type.DaddyLongLegs ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs ||
+                ctrType == DLCSharedEnums.CreatureTemplateType.TerrorLongLegs ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard ||
-                ctrType == MoreSlugcatsEnums.CreatureTemplateType.EelLizard ||
+                ctrType == DLCSharedEnums.CreatureTemplateType.ZoopLizard ||
+                ctrType == DLCSharedEnums.CreatureTemplateType.EelLizard ||
                 ctrType == HSEnums.CreatureType.InfantAquapede))
         {
             aI.FogAvoider = true;
@@ -2241,13 +2241,13 @@ public class OtherCreatureChanges
         if (!aI.ErraticWindRoamer && Weather.ErraticWindFearers.Contains(ctrType) && !(
             ctrType == CreatureTemplate.Type.TentaclePlant ||
             ctrType == CreatureTemplate.Type.Scavenger ||
-            ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite ||
+            ctrType == DLCSharedEnums.CreatureTemplateType.ScavengerElite ||
             ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing))
         {
             aI.ErraticWindAvoider = true;
         }
 
-        if (ctrType == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech)
+        if (ctrType == DLCSharedEnums.CreatureTemplateType.JungleLeech)
         {
             absCtr.HypothermiaImmune = false;
         }
@@ -2324,7 +2324,7 @@ public class OtherCreatureChanges
                     float heat = Mathf.Lerp(0.0005f, 0, target.HypothermiaExposure);
                     heat *= Mathf.InverseLerp(350, 70, distance);
 
-                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != MoreSlugcatsEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
+                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != DLCSharedEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
                     {
                         target.Hypothermia -= heat; // Enables the warming capabilities of Lanterns at pretty much all times. 
                     }
@@ -2346,7 +2346,7 @@ public class OtherCreatureChanges
                     heat *= Mathf.InverseLerp(190, 38, distance);
                     heat *= Mathf.InverseLerp(0f, 3500f, mse.State.battery);
 
-                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != MoreSlugcatsEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
+                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != DLCSharedEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
                     {
                         target.Hypothermia -= heat; // Enables the warming capabilities of Lanterns at pretty much all times. 
                     }

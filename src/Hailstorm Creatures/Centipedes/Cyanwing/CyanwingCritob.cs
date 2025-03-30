@@ -109,7 +109,7 @@ public class CyanwingCritob : Critob
         // "IgnoredBy" makes the given creatures ignore this one.
         s.IgnoredBy(CreatureTemplate.Type.Centipede);
         s.IgnoredBy(CreatureTemplate.Type.RedCentipede);
-        s.IgnoredBy(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti);
+        s.IgnoredBy(DLCSharedEnums.CreatureTemplateType.AquaCenti);
 
         // "FearedBy" causes other creatures to actively avoid this creature.
         s.FearedBy(CreatureTemplate.Type.Slugcat, 1);
@@ -124,9 +124,9 @@ public class CyanwingCritob : Critob
         s.FearedBy(CreatureTemplate.Type.BlackLizard, 1);
         s.FearedBy(CreatureTemplate.Type.CyanLizard, 1);
         s.FearedBy(CreatureTemplate.Type.RedLizard, 1);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 1);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 1);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.EelLizard, 1);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.SpitLizard, 1);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 1);
         s.FearedBy(CreatureTemplate.Type.CicadaA, 1);
         s.FearedBy(CreatureTemplate.Type.CicadaB, 1);
         s.FearedBy(CreatureTemplate.Type.EggBug, 1);
@@ -139,20 +139,20 @@ public class CyanwingCritob : Critob
         s.FearedBy(CreatureTemplate.Type.JetFish, 1);
         s.FearedBy(CreatureTemplate.Type.Leech, 1);
         s.FearedBy(CreatureTemplate.Type.SeaLeech, 1);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 1);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.JungleLeech, 1);
         s.FearedBy(CreatureTemplate.Type.SmallNeedleWorm, 1);
         s.FearedBy(CreatureTemplate.Type.BigNeedleWorm, 1);
         s.FearedBy(CreatureTemplate.Type.DropBug, 1);
         s.FearedBy(CreatureTemplate.Type.BigSpider, 1);
         s.FearedBy(CreatureTemplate.Type.SpitterSpider, 1);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 1);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.MotherSpider, 1);
         s.FearedBy(CreatureTemplate.Type.LanternMouse, 1);
         s.FearedBy(CreatureTemplate.Type.TubeWorm, 1);
         s.FearedBy(CreatureTemplate.Type.Deer, 0.5f);
         s.FearedBy(CreatureTemplate.Type.Scavenger, 1);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 0.75f);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.ScavengerElite, 0.75f);
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.75f);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 1);
+        s.FearedBy(DLCSharedEnums.CreatureTemplateType.Yeek, 1);
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
         s.FearedBy(HSEnums.CreatureType.Luminescipede, 1);
         s.FearedBy(HSEnums.CreatureType.Chillipede, 1);
@@ -160,11 +160,11 @@ public class CyanwingCritob : Critob
         // "Eaten By" makes other creatures prey on this one.
         s.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
         s.EatenBy(CreatureTemplate.Type.DaddyLongLegs, 0.4f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 0.6f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0.6f);
+        s.EatenBy(DLCSharedEnums.CreatureTemplateType.TerrorLongLegs, 0.6f);
+        s.EatenBy(DLCSharedEnums.CreatureTemplateType.BigJelly, 0.6f);
         s.EatenBy(CreatureTemplate.Type.KingVulture, 0.8f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.8f);
-        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 1);
+        s.EatenBy(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.8f);
+        s.EatenBy(DLCSharedEnums.CreatureTemplateType.StowawayBug, 1);
         s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
     }
 

@@ -212,7 +212,7 @@ public class GorditoGreenie : Lizard
             if (ctr is Player ||
                 ctr is Chillipede ||
                 ctr.Template.type == CreatureTemplate.Type.RedLizard ||
-                ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard ||
+                ctr.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard ||
                 ctr.Template.type == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard ||
                 ctr.TotalMass * 2 > TotalMass)
             {

@@ -269,7 +269,7 @@ public class HailstormSpiders
     public static void WinterSpiders(On.BigSpider.orig_ctor orig, BigSpider bigSpd, AbstractCreature absSpd, World world)
     {
         orig(bigSpd, absSpd, world);
-        if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(world?.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true))
+        if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(world?.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true))
         {
             absSpd.state.meatLeft = 9;
             if (bigSpd.bodyChunks is not null)
@@ -306,7 +306,7 @@ public class HailstormSpiders
         }
         else if (IsIncanStory(world?.game) || HSRemix.BigSpiderColorsEverywhere.Value is true)
         {
-            if (IsIncanStory(world?.game) && bigSpd.Template.type != MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && bigSpd.bodyChunks is not null)
+            if (IsIncanStory(world?.game) && bigSpd.Template.type != DLCSharedEnums.CreatureTemplateType.MotherSpider && bigSpd.bodyChunks is not null)
             {
                 for (int b = 0; b < bigSpd.bodyChunks.Length; b++)
                 {
@@ -336,7 +336,7 @@ public class HailstormSpiders
                             Random.value * 0.2f);
                 Random.state = state;
             }
-            else if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider)
+            else if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider)
             {
                 Random.State state = Random.state;
                 Random.InitState(absSpd.ID.RandomSeed);
@@ -371,7 +371,7 @@ public class HailstormSpiders
                 bigSpd.canCling = 0;
             }
         }
-        else if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo aI))
+        else if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             // Partially counteracts the Mother Spider's regeneration, or else it would be WAY too fast thanks to the health increase that Mother Spiders get (it's pretty much percentage-based).
             if (bigSpd.State.health is > 0 and < 1)
@@ -475,7 +475,7 @@ public class HailstormSpiders
             target is not Spider &&
             target is not BigSpider &&
             bigSpd?.room is not null &&
-            bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider &&
+            bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider &&
             (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) &&
             bigSpd.bodyChunks[myChunk].vel.magnitude >= 12.5f &&
             bigSpd.TotalMass > target.TotalMass &&
@@ -507,7 +507,7 @@ public class HailstormSpiders
     }
     public static void WinterMotherHP(On.BigSpider.orig_Violence orig, BigSpider bigSpd, BodyChunk source, Vector2? dirAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos hitAppendage, Creature.DamageType dmgType, float dmg, float stun)
     {
-        if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true))
+        if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true))
         {
             dmg /= 2f; // x2 HP
             stun *= 0.4f;
@@ -526,7 +526,7 @@ public class HailstormSpiders
     {
         if (bigSpd?.room is not null && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo aI))
         {
-            if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider)
+            if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider)
             {
                 bigSpd.spewBabies = true;
 
@@ -592,7 +592,7 @@ public class HailstormSpiders
     public static CreatureTemplate.Relationship WinterMotherSpiderHostility(On.BigSpiderAI.orig_IUseARelationshipTracker_UpdateDynamicRelationship orig, BigSpiderAI AI, RelationshipTracker.DynamicRelationship dynamRelat)
     {
         if (AI?.bug?.room is not null &&
-            AI.bug.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider &
+            AI.bug.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider &
             (IsIncanStory(AI.bug.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) &&
             CWT.AbsCtrData.TryGetValue(AI.bug.abstractCreature, out CWT.AbsCtrInfo aI))
         {
@@ -738,7 +738,7 @@ public class HailstormSpiders
         orig(bsg, sLeaser, rCam, timeStacker, camPos);
         if (bsg?.bug?.room is not null && (bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider || IsIncanStory(bsg.bug.room.game)))
         {
-            if (bsg.bug.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider || bsg.bug.Template.type == CreatureTemplate.Type.BigSpider)
+            if (bsg.bug.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider || bsg.bug.Template.type == CreatureTemplate.Type.BigSpider)
             {
                 if (sLeaser.sprites[bsg.MeshSprite] is TriangleMesh mesh)
                 {

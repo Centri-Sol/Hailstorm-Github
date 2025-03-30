@@ -241,7 +241,7 @@ public class ObjectChanges
                 float lightCounterFac = 1f + (Mathf.Sin(glow.LightCounter) * 0.05f);
                 float biteFac = glow.bites / 3f;
                 float submersionMult = 1 + (glow.Submersion / 2f);
-                if (glow.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+                if (glow.room.roomSettings.DangerType == DLCSharedEnums.RoomRainDangerType.Blizzard)
                 {
                     float radiusGoal = Custom.LerpMap(glow.room.world.rainCycle.timer, glow.room.world.rainCycle.cycleLength, gI.maxColdTime, gI.warmGlowRadius, gI.coldGlowRadius) * submersionMult;
                     gI.displayRadius = gI.displayRadius > -1 ? Mathf.Lerp(glow.myLight.rad, radiusGoal, 0.01f) : radiusGoal;
@@ -287,7 +287,7 @@ public class ObjectChanges
             return;
         }
 
-        if (glow.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+        if (glow.room.roomSettings.DangerType == DLCSharedEnums.RoomRainDangerType.Blizzard)
         {
             Color colorGoal = Color.Lerp(gI.warmColor.rgb, gI.coldColor.rgb, Mathf.InverseLerp(glow.room.world.rainCycle.cycleLength, gI.maxColdTime, glow.room.world.rainCycle.timer));
             gI.displayColor = gI.displayColor != Color.clear ? Color.Lerp(gI.displayColor, colorGoal, 0.01f) : colorGoal;
@@ -411,7 +411,7 @@ public class ObjectChanges
     public static void HeatyGrass(On.BubbleGrass.orig_Update orig, BubbleGrass grs, bool eu)
     {
         orig(grs, eu);
-        if (IsIncanStory(grs?.room?.game) && grs.firstChunk.submersion > 0.9f && grs.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+        if (IsIncanStory(grs?.room?.game) && grs.firstChunk.submersion > 0.9f && grs.room.roomSettings.DangerType == DLCSharedEnums.RoomRainDangerType.Blizzard)
         {
             bool flag = true;
             if (grs.grabbedBy.Count > 0 && grs.grabbedBy[0].grabber is Player plr && plr.animation == Player.AnimationIndex.SurfaceSwim && plr.airInLungs > 0.5f)
@@ -490,7 +490,7 @@ public class ObjectChanges
                 }
                 if (spr.room is not null)
                 {
-                    if (spr.Submersion > 0 && spr.room.roomSettings.DangerType == MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
+                    if (spr.Submersion > 0 && spr.room.roomSettings.DangerType == DLCSharedEnums.RoomRainDangerType.Blizzard)
                     {
                         absBrnSpr.chill += 0.005f * spr.Submersion;
                     }

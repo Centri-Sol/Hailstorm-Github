@@ -71,7 +71,7 @@ public class FreezerCritob : Critob
         Freezer.Eats(CreatureTemplate.Type.Slugcat, 1);
         Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 1);
         Freezer.Eats(CreatureTemplate.Type.Scavenger, 1);
-        Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 1);
+        Freezer.Eats(DLCSharedEnums.CreatureTemplateType.ScavengerElite, 1);
         Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 1);
         Freezer.Eats(CreatureTemplate.Type.RedCentipede, 1);
         Freezer.Eats(HSEnums.CreatureType.Cyanwing, 1);
@@ -80,8 +80,8 @@ public class FreezerCritob : Critob
         Freezer.Eats(CreatureTemplate.Type.Centipede, 0.95f);
         Freezer.Eats(CreatureTemplate.Type.LanternMouse, 0.95f);
         Freezer.Eats(CreatureTemplate.Type.Centiwing, 0.95f);
-        Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 0.95f);
-        Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.9f);
+        Freezer.Eats(DLCSharedEnums.CreatureTemplateType.Yeek, 0.95f);
+        Freezer.Eats(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.9f);
         Freezer.Eats(CreatureTemplate.Type.CicadaA, 0.85f);
         Freezer.Eats(CreatureTemplate.Type.CicadaB, 0.85f);
         Freezer.Eats(CreatureTemplate.Type.BigSpider, 0.8f);
@@ -98,20 +98,20 @@ public class FreezerCritob : Critob
         Freezer.Eats(CreatureTemplate.Type.Hazer, 0.35f);
         Freezer.Eats(CreatureTemplate.Type.TubeWorm, 0.2f);
         Freezer.Eats(HSEnums.CreatureType.InfantAquapede, 0.1f);
-        Freezer.Eats(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.1f);
-        Freezer.Attacks(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.5f);
+        Freezer.Eats(DLCSharedEnums.CreatureTemplateType.AquaCenti, 0.1f);
+        Freezer.Attacks(DLCSharedEnums.CreatureTemplateType.StowawayBug, 0.5f);
 
         // Does nothing on its own.
         Freezer.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
         Freezer.IntimidatedBy(CreatureTemplate.Type.Snail, 0.4f);
         Freezer.IntimidatedBy(CreatureTemplate.Type.TentaclePlant, 0.4f);
-        Freezer.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.Inspector, 0.4f);
+        Freezer.IntimidatedBy(DLCSharedEnums.CreatureTemplateType.Inspector, 0.4f);
 
-        Freezer.Fears(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 0.7f);
+        Freezer.Fears(DLCSharedEnums.CreatureTemplateType.TerrorLongLegs, 0.7f);
         Freezer.Fears(CreatureTemplate.Type.DaddyLongLegs, 0.6f);
         Freezer.Fears(CreatureTemplate.Type.BrotherLongLegs, 0.5f);
         Freezer.Fears(CreatureTemplate.Type.BigEel, 0.25f);
-        Freezer.Fears(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0.1f);
+        Freezer.Fears(DLCSharedEnums.CreatureTemplateType.BigJelly, 0.1f);
 
         // Does nothing on its own.
         Freezer.HasDynamicRelationship(CreatureTemplate.Type.Slugcat, 0.5f);
@@ -120,7 +120,7 @@ public class FreezerCritob : Critob
         // Does nothing on its own.
         Freezer.IsInPack(HSEnums.CreatureType.IcyBlueLizard, 1);
         Freezer.IsInPack(HSEnums.CreatureType.FreezerLizard, 1);
-        Freezer.IsInPack(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.75f);
+        Freezer.IsInPack(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 0.75f);
         Freezer.IsInPack(CreatureTemplate.Type.BlueLizard, 0.66f);
 
         Freezer.Ignores(CreatureTemplate.Type.Spider);
@@ -129,9 +129,9 @@ public class FreezerCritob : Critob
 
         //  -  -  -  -  -  -  -  -  -  -  -  -  -  -
 
-        Freezer.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 0.75f);
-        Freezer.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.75f);
-        Freezer.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 0.75f);
+        Freezer.EatenBy(DLCSharedEnums.CreatureTemplateType.TerrorLongLegs, 0.75f);
+        Freezer.EatenBy(DLCSharedEnums.CreatureTemplateType.AquaCenti, 0.75f);
+        Freezer.EatenBy(DLCSharedEnums.CreatureTemplateType.TerrorLongLegs, 0.75f);
         Freezer.EatenBy(CreatureTemplate.Type.DaddyLongLegs, 0.5f);
         Freezer.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
         Freezer.EatenBy(CreatureTemplate.Type.RedCentipede, 0.25f);
@@ -154,9 +154,9 @@ public class FreezerCritob : Critob
         Freezer.FearedBy(CreatureTemplate.Type.Scavenger, 0.9f);
         Freezer.FearedBy(CreatureTemplate.Type.BlackLizard, 0.8f);
         Freezer.FearedBy(CreatureTemplate.Type.WhiteLizard, 0.8f);
-        Freezer.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.8f);
+        Freezer.FearedBy(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.8f);
         Freezer.FearedBy(CreatureTemplate.Type.Centipede, 0.75f);
-        Freezer.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 0.75f);
+        Freezer.FearedBy(DLCSharedEnums.CreatureTemplateType.ScavengerElite, 0.75f);
         Freezer.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.75f);
         Freezer.FearedBy(CreatureTemplate.Type.BigSpider, 0.7f);
         Freezer.FearedBy(CreatureTemplate.Type.SpitterSpider, 0.6f);

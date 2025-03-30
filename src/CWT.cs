@@ -57,7 +57,7 @@ public class CWT
                 {
                     King = true;
                 }
-                else if (vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture)
+                else if (vul.Template.type == DLCSharedEnums.CreatureTemplateType.MirosVulture)
                 {
                     Miros = true;
                 }
@@ -112,8 +112,8 @@ public class CWT
             if (absCtr is not null)
             {
                 if (ctrList is null && (
-                    absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
-                    absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug))
+                    absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.MotherSpider ||
+                    absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.StowawayBug))
                 {
                     ctrList = new List<AbstractCreature>();
                 }

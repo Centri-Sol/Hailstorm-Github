@@ -139,32 +139,32 @@ public static class CustomTemplateInfo
             }
             //____________________
             // Downpour creatures
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+            else if (type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
             {
                 temp.damageRestistances[Cold.index, 0] = 1.5f; // -33% damage
                                                                // Stun is unchanged.
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.BigJelly)
+            else if (type == DLCSharedEnums.CreatureTemplateType.BigJelly)
             {
                 temp.damageRestistances[Cold.index, 0] = 2f; // -50% damage
                 temp.damageRestistances[Cold.index, 1] = 2f; // -50% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider)
+            else if (type == DLCSharedEnums.CreatureTemplateType.MotherSpider)
             {
                 temp.damageRestistances[Cold.index, 0] = 1.25f; // -20% damage
                 temp.damageRestistances[Cold.index, 1] = 1.25f; // -20% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.Yeek)
+            else if (type == DLCSharedEnums.CreatureTemplateType.Yeek)
             {
                 temp.damageRestistances[Cold.index, 0] = 2f;   // -50% damage
                 temp.damageRestistances[Cold.index, 1] = 4 / 3f; // -25% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug)
+            else if (type == DLCSharedEnums.CreatureTemplateType.StowawayBug)
             {
                 temp.damageRestistances[Cold.index, 0] = 0.8f; // +25% damage
                 temp.damageRestistances[Cold.index, 1] = 0.8f; // +25% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech)
+            else if (type == DLCSharedEnums.CreatureTemplateType.JungleLeech)
             {
                 temp.damageRestistances[Cold.index, 0] = 0.25f; // +300% damage
                 temp.damageRestistances[Cold.index, 1] = 0.25f; // +300% stun
@@ -179,7 +179,7 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Cold.index, 0] = 0.25f; // +300% damage
                 temp.damageRestistances[Cold.index, 1] = 0.25f; // +300% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs)
+            else if (type == DLCSharedEnums.CreatureTemplateType.TerrorLongLegs)
             {
                 temp.damageRestistances[Cold.index, 0] = 0.25f; // +300% damage
                 temp.damageRestistances[Cold.index, 1] = 0.25f; // +300% stun
@@ -321,22 +321,22 @@ public static class CustomTemplateInfo
             }
             //____________________
             // Downpour creatures
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+            else if (type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
             {
                 temp.damageRestistances[Heat.index, 0] = 5f; // -80% damage
                 temp.damageRestistances[Heat.index, 1] = 5f; // -80% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.BigJelly)
+            else if (type == DLCSharedEnums.CreatureTemplateType.BigJelly)
             {
                 temp.damageRestistances[Heat.index, 0] = 2f; // -50% damage
                 temp.damageRestistances[Heat.index, 1] = 2f; // -50% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider)
+            else if (type == DLCSharedEnums.CreatureTemplateType.MotherSpider)
             {
                 temp.damageRestistances[Heat.index, 0] = 0.8f; // +25% damage
                 temp.damageRestistances[Heat.index, 1] = 0.8f; // +25% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech)
+            else if (type == DLCSharedEnums.CreatureTemplateType.JungleLeech)
             {
                 temp.damageRestistances[Heat.index, 0] = 5f; // -80% damage
                 temp.damageRestistances[Heat.index, 1] = 2f; // -50% stun
@@ -351,7 +351,7 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Heat.index, 0] = 0.25f; // +300% damage
                 temp.damageRestistances[Heat.index, 1] = 0.25f; // +300% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs)
+            else if (type == DLCSharedEnums.CreatureTemplateType.TerrorLongLegs)
             {
                 temp.damageRestistances[Heat.index, 0] = 0.25f; // +300% damage
                 temp.damageRestistances[Heat.index, 1] = 0.25f; // +300% stun
@@ -432,17 +432,17 @@ public static class CustomTemplateInfo
             }
             //____________________
             // Downpour creatures
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider)
+            else if (type == DLCSharedEnums.CreatureTemplateType.MotherSpider)
             {
                 temp.damageRestistances[Venom.index, 0] = 4 / 3f; // -25% damage
                 temp.damageRestistances[Venom.index, 1] = 4 / 3f; // -25% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug)
+            else if (type == DLCSharedEnums.CreatureTemplateType.StowawayBug)
             {
                 temp.damageRestistances[Venom.index, 0] = 2.0f; // -50% damage
                                                                 // Stun is unchanged
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture)
+            else if (type == DLCSharedEnums.CreatureTemplateType.MirosVulture)
             {
                 // Damage is unchanged
                 temp.damageRestistances[Venom.index, 1] = 1.25f; // -20% stun
@@ -453,7 +453,7 @@ public static class CustomTemplateInfo
                 temp.damageRestistances[Venom.index, 1] = 2 / 3f; // +50% stun
 
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs)
+            else if (type == DLCSharedEnums.CreatureTemplateType.TerrorLongLegs)
             {
                 temp.damageRestistances[Venom.index, 0] = 1 / 3f; // +200% damage
                 temp.damageRestistances[Venom.index, 1] = 2 / 3f; // +50% stun
@@ -545,21 +545,21 @@ public static class CustomTemplateInfo
             }
             //____________________
             // Downpour lizards
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+            else if (type == DLCSharedEnums.CreatureTemplateType.EelLizard)
             {
                 temp.damageRestistances[Cold.index, 0] = 2 / 3f; // +50% damage
                 temp.damageRestistances[Cold.index, 1] = 2 / 3f; // +50% stun
                 temp.damageRestistances[Heat.index, 0] = 1.5f; // -33% damage
                 temp.damageRestistances[Heat.index, 1] = 1.5f; // -33% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+            else if (type == DLCSharedEnums.CreatureTemplateType.SpitLizard)
             {
                 temp.damageRestistances[Cold.index, 0] = 4 / 3f; // -25% damage
                 temp.damageRestistances[Cold.index, 1] = 4 / 3f; // -25% stun
                 temp.damageRestistances[Heat.index, 0] = 0.8f; // +25% damage
                 temp.damageRestistances[Heat.index, 1] = 0.8f; // +25% stun
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
+            else if (type == DLCSharedEnums.CreatureTemplateType.ZoopLizard)
             {
                 temp.damageRestistances[Heat.index, 0] = 2 / 3f; // +50% damage
                 temp.damageRestistances[Heat.index, 1] = 2 / 3f; // +50% stun
@@ -735,14 +735,14 @@ public static class CustomTemplateInfo
                         return TrueforstunFalsefordamage ? 2 / 3f : 1f;
                     }
                 }
-                else if (type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                else if (type == DLCSharedEnums.CreatureTemplateType.SpitLizard)
                 {
                     if (dmgType == Creature.DamageType.Electric)
                     {
                         return 2f;
                     }
                 }
-                else if (type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+                else if (type == DLCSharedEnums.CreatureTemplateType.EelLizard)
                 {
                     if (dmgType == Creature.DamageType.Water ||
                         dmgType == Creature.DamageType.Electric)
@@ -751,7 +751,7 @@ public static class CustomTemplateInfo
                     }
                 }
             }
-            else if (type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+            else if (type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
             {
                 if (dmgType == Creature.DamageType.Water)
                 {
@@ -781,11 +781,11 @@ public static class CustomTemplateInfo
             Hail.Add(CreatureTemplate.Type.Deer, 0);
             Hail.Add(CreatureTemplate.Type.BigEel, 0);
 
-            Hail.Add(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.8f);
-            Hail.Add(MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 0.35f);
-            Hail.Add(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.35f);
-            Hail.Add(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.25f);
-            Hail.Add(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0);
+            Hail.Add(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.8f);
+            Hail.Add(DLCSharedEnums.CreatureTemplateType.EelLizard, 0.35f);
+            Hail.Add(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.35f);
+            Hail.Add(DLCSharedEnums.CreatureTemplateType.StowawayBug, 0.25f);
+            Hail.Add(DLCSharedEnums.CreatureTemplateType.BigJelly, 0);
 
             // HailResistantCreatures.Add(HailstormEnums.Raven, 0.75f);
             Hail.Add(HSEnums.CreatureType.GorditoGreenieLizard, 0);
@@ -814,12 +814,12 @@ public static class CustomTemplateInfo
             Wind.Add(CreatureTemplate.Type.BigEel, 0);
             Wind.Add(CreatureTemplate.Type.KingVulture, 0);
 
-            Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.75f);
-            Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.5f);
-            Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.5f);
+            Wind.Add(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.75f);
+            Wind.Add(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.5f);
+            Wind.Add(DLCSharedEnums.CreatureTemplateType.SpitLizard, 0.5f);
             Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.25f);
-            Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0);
-            Wind.Add(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0);
+            Wind.Add(DLCSharedEnums.CreatureTemplateType.BigJelly, 0);
+            Wind.Add(DLCSharedEnums.CreatureTemplateType.StowawayBug, 0);
 
             Wind.Add(HSEnums.CreatureType.Cyanwing, 0.75f);
             Wind.Add(HSEnums.CreatureType.Chillipede, 0.5f);

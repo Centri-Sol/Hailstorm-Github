@@ -121,7 +121,7 @@ public class IcyCosmetics
     public static void SwimmyLizShortBodyScales(On.LizardCosmetics.ShortBodyScales.orig_DrawSprites orig, ShortBodyScales SBS, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(SBS, sLeaser, rCam, timeStacker, camPos);
-        if (OtherCreatureChanges.IsIncanStory(SBS?.lGraphics?.lizard?.room?.game) && SBS.lGraphics.lizard.abstractCreature.Winterized && (SBS.lGraphics.lizard.Template.type == CreatureTemplate.Type.Salamander || SBS.lGraphics.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard))
+        if (OtherCreatureChanges.IsIncanStory(SBS?.lGraphics?.lizard?.room?.game) && SBS.lGraphics.lizard.abstractCreature.Winterized && (SBS.lGraphics.lizard.Template.type == CreatureTemplate.Type.Salamander || SBS.lGraphics.lizard.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard))
         {
             for (int num = SBS.startSprite + SBS.scalesPositions.Length - 1; num >= SBS.startSprite; num--)
             {
@@ -212,7 +212,7 @@ public class IcyCosmetics
         num = Mathf.Lerp(num, Mathf.Pow(Mathf.Max(0f, Mathf.Lerp(liz.lastVoiceVisualization, liz.voiceVisualization, timeStacker)), 0.75f), Mathf.Lerp(liz.lastVoiceVisualizationIntensity, liz.voiceVisualizationIntensity, timeStacker));
 
         Color scaleCol = liz.effectColor;
-        if (liz.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && CWT.AbsCtrData.TryGetValue(liz.lizard.abstractCreature, out CWT.AbsCtrInfo aI))
+        if (liz.lizard.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard && CWT.AbsCtrData.TryGetValue(liz.lizard.abstractCreature, out CWT.AbsCtrInfo aI))
         {
             Vector3 e = Custom.RGB2HSL(scaleCol);
             float skew = aI.functionTimer / 1000f;

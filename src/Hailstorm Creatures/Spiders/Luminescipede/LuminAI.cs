@@ -938,14 +938,14 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return new ObjectRelationship(Uses, 1f);
         }
 
-        if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.GooieDuck ||
+        if (absObj.type == DLCSharedEnums.AbstractObjectType.GooieDuck ||
                 absObj.type == MoreSlugcatsEnums.AbstractObjectType.FireEgg ||
                     absObj.type == HSEnums.AbstractObjectType.BurnSpear)
         {
             return new ObjectRelationship(UncomfortableAround, 0.5f);
         }
         if (absObj.type == AbstractPhysicalObject.AbstractObjectType.SporePlant ||
-                absObj.type == MoreSlugcatsEnums.AbstractObjectType.SingularityBomb ||
+                absObj.type == DLCSharedEnums.AbstractObjectType.SingularityBomb ||
                     absObj.type == HSEnums.AbstractObjectType.IceChunk)
         {
             return new ObjectRelationship(UncomfortableAround, 1);
@@ -993,7 +993,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
         if (Role == Forager)
         {
-            if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.DandelionPeach)
+            if (absObj.type == DLCSharedEnums.AbstractObjectType.DandelionPeach)
             {
                 return new ObjectRelationship(Eats, 0.05f);
             }
@@ -1006,15 +1006,15 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             {
                 return new ObjectRelationship(Eats, 0.4f);
             }
-            if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.Seed ||
-                    absObj.type == MoreSlugcatsEnums.AbstractObjectType.LillyPuck)// ||
+            if (absObj.type == DLCSharedEnums.AbstractObjectType.Seed ||
+                    absObj.type == DLCSharedEnums.AbstractObjectType.LillyPuck)// ||
                                                                                   //absObj.type == HailstormEnums.BezanNut)
             {
                 return new ObjectRelationship(Eats, 0.6f);
             }
             if (absObj.type == AbstractPhysicalObject.AbstractObjectType.WaterNut ||
                     absObj.type == AbstractPhysicalObject.AbstractObjectType.SlimeMold ||
-                        absObj.type == MoreSlugcatsEnums.AbstractObjectType.GlowWeed)
+                        absObj.type == DLCSharedEnums.AbstractObjectType.GlowWeed)
             {
                 return new ObjectRelationship(Eats, 0.8f);
             }
@@ -1039,7 +1039,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         else
         {
-            if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.DandelionPeach)
+            if (absObj.type == DLCSharedEnums.AbstractObjectType.DandelionPeach)
             {
                 return new ObjectRelationship(PlaysWith, 0.8f);
             }

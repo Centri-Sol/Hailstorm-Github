@@ -51,8 +51,8 @@ public class HailstormVultures
             : vul.Template.type == HSEnums.CreatureType.Raven
 || (IsIncanStory(world.game) && (
                 vul.Template.type == CreatureTemplate.Type.KingVulture ||
-                vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture))
-|| (vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture && HSRemix.AuroricMirosEverywhere.Value);
+                vul.Template.type == DLCSharedEnums.CreatureTemplateType.MirosVulture))
+|| (vul.Template.type == DLCSharedEnums.CreatureTemplateType.MirosVulture && HSRemix.AuroricMirosEverywhere.Value);
     }
 
     public static void HailstormVulturesSetup(On.Vulture.orig_ctor orig, Vulture vul, AbstractCreature absVul, World world)
@@ -357,15 +357,15 @@ public class HailstormVultures
                 blizzPush = new Vector2(0f - tusk.room.blizzardGraphics.WindAngle, 0.1f) * 0.75f;
                 blizzPush *= blizzardPixel.g * (5f * tusk.room.blizzardGraphics.WindStrength);
 
-                if (tusk.room.waterInverted && tuskPos.y > tusk.room.FloatWaterLevel(tuskPos.x))
+                if (tusk.room.waterInverted && tuskPos.y > tusk.room.FloatWaterLevel(tuskPos))
                 {
                     break;
                 }
-                else if (!MMF.cfgVanillaExploits.Value && tusk.room.FloatWaterLevel(tuskPos.x) > (tusk.room.abstractRoom.size.y + 20) * 20f)
+                else if (!MMF.cfgVanillaExploits.Value && tusk.room.FloatWaterLevel(tuskPos) > (tusk.room.abstractRoom.size.y + 20) * 20f)
                 {
                     break;
                 }
-                else if (tusk.room.FloatWaterLevel(tuskPos.x) > tuskPos.y)
+                else if (tusk.room.FloatWaterLevel(tuskPos) > tuskPos.y)
                 {
                     break;
                 }

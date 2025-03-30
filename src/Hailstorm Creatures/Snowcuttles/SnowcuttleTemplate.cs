@@ -87,18 +87,18 @@ public class SnowcuttleTemplate : Critob
         scTempRelation.IntimidatedBy(CreatureTemplate.Type.LizardTemplate, 0.9f);
         scTempRelation.IntimidatedBy(CreatureTemplate.Type.SeaLeech, 0.9f);
         scTempRelation.IntimidatedBy(CreatureTemplate.Type.Snail, 0.7f);
-        scTempRelation.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 0.9f);
+        scTempRelation.IntimidatedBy(DLCSharedEnums.CreatureTemplateType.Yeek, 0.9f);
         scTempRelation.IntimidatedBy(CreatureTemplate.Type.GarbageWorm, 0.3f);
-        scTempRelation.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0.3f);
+        scTempRelation.IntimidatedBy(DLCSharedEnums.CreatureTemplateType.BigJelly, 0.3f);
 
         // Flies away from these creatures if they are anywhere nearby, showing active fear.
         // (Flee radius is much larger than with IntimidatedBy/StayOutOfWay.)
         scTempRelation.Fears(HSEnums.CreatureType.Raven, 1);
         //scTempRelation.Fears(HSEnums.CreatureType.Strobelegs, 1);
         scTempRelation.Fears(HSEnums.CreatureType.Luminescipede, 1);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 1);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.TerrorLongLegs, 1);
         scTempRelation.Fears(CreatureTemplate.Type.SpitterSpider, 0.9f);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 1);
         scTempRelation.Fears(HSEnums.CreatureType.FreezerLizard, 0.9f);
         scTempRelation.Fears(HSEnums.CreatureType.Cyanwing, 0.9f);
         scTempRelation.Fears(CreatureTemplate.Type.Vulture, 0.8f);
@@ -107,7 +107,7 @@ public class SnowcuttleTemplate : Critob
         scTempRelation.Fears(CreatureTemplate.Type.DropBug, 0.7f);
         scTempRelation.Fears(CreatureTemplate.Type.Centiwing, 0.7f);
         scTempRelation.Fears(CreatureTemplate.Type.RedLizard, 0.7f);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 0.6f);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.ScavengerElite, 0.6f);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.6f);
         scTempRelation.Fears(CreatureTemplate.Type.WhiteLizard, 0.6f);
         scTempRelation.Fears(CreatureTemplate.Type.BigSpider, 0.6f);
@@ -115,18 +115,18 @@ public class SnowcuttleTemplate : Critob
         scTempRelation.Fears(HSEnums.CreatureType.PeachSpider, 0.9f);
         scTempRelation.Fears(CreatureTemplate.Type.Slugcat, 0.5f);
         scTempRelation.Fears(CreatureTemplate.Type.MirosBird, 0.5f);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.5f);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.5f);
         scTempRelation.Fears(CreatureTemplate.Type.KingVulture, 0.5f);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.5f);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.SpitLizard, 0.5f);
         scTempRelation.Fears(CreatureTemplate.Type.Scavenger, 0.4f);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.4f);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.StowawayBug, 0.4f);
         scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.4f);
         scTempRelation.Fears(HSEnums.CreatureType.IcyBlueLizard, 0.4f);
         scTempRelation.Fears(HSEnums.CreatureType.GorditoGreenieLizard, 0.3f);
         scTempRelation.Fears(CreatureTemplate.Type.BigEel, 0.3f);
         scTempRelation.Fears(CreatureTemplate.Type.BrotherLongLegs, 0.3f);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.Inspector, 0.3f);
-        scTempRelation.Fears(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.1f);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.Inspector, 0.3f);
+        scTempRelation.Fears(DLCSharedEnums.CreatureTemplateType.AquaCenti, 0.1f);
 
         // Hangs out near these creatures when it has nothing else to do, and flies to them for protection if nearby and in danger.
         //scTemp.IsInPack(HailstormEnums.BezanBud, 1f);
@@ -154,19 +154,19 @@ public class SnowcuttleTemplate : Critob
         scTempRelation.EatenBy(CreatureTemplate.Type.CyanLizard, 0.3f);
         scTempRelation.EatenBy(CreatureTemplate.Type.WhiteLizard, 0.3f);
         scTempRelation.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.3f);
-        scTempRelation.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.25f);
+        scTempRelation.EatenBy(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 0.25f);
         scTempRelation.EatenBy(CreatureTemplate.Type.Leech, 0.2f);
         scTempRelation.EatenBy(CreatureTemplate.Type.SeaLeech, 0.2f);
-        scTempRelation.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 0.2f);
-        scTempRelation.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.2f);
+        scTempRelation.EatenBy(DLCSharedEnums.CreatureTemplateType.JungleLeech, 0.2f);
+        scTempRelation.EatenBy(DLCSharedEnums.CreatureTemplateType.SpitLizard, 0.2f);
         scTempRelation.EatenBy(CreatureTemplate.Type.RedLizard, 0.2f);
         scTempRelation.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.2f);
         scTempRelation.EatenBy(CreatureTemplate.Type.JetFish, 0.15f);
         scTempRelation.EatenBy(CreatureTemplate.Type.BigSpider, 0.15f);
-        scTempRelation.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.15f);
+        scTempRelation.EatenBy(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.15f);
         scTempRelation.EatenBy(CreatureTemplate.Type.Vulture, 0.05f);
         scTempRelation.EatenBy(CreatureTemplate.Type.KingVulture, 0.05f);
-        scTempRelation.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.05f);
+        scTempRelation.EatenBy(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.05f);
 
         scTempRelation.FearedBy(CreatureTemplate.Type.Fly, 0.6f);
         scTempRelation.FearedBy(CreatureTemplate.Type.SmallNeedleWorm, 0.4f);
@@ -174,7 +174,7 @@ public class SnowcuttleTemplate : Critob
         scTempRelation.IgnoredBy(CreatureTemplate.Type.PoleMimic);
         scTempRelation.IgnoredBy(CreatureTemplate.Type.TentaclePlant);
         scTempRelation.IgnoredBy(CreatureTemplate.Type.LanternMouse);
-        scTempRelation.IgnoredBy(MoreSlugcatsEnums.CreatureTemplateType.Yeek);
+        scTempRelation.IgnoredBy(DLCSharedEnums.CreatureTemplateType.Yeek);
     }
 
     public override Creature CreateRealizedCreature(AbstractCreature absCtl) => new Cicada(absCtl, absCtl.world, true);

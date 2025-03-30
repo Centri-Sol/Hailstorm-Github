@@ -35,7 +35,7 @@ public class SnowcuttleLeCritob : SnowcuttleTemplate
         scL.Eats(CreatureTemplate.Type.SeaLeech, 0.8f);
         scL.Eats(CreatureTemplate.Type.Leech, 0.6f);
         scL.Eats(CreatureTemplate.Type.Hazer, 0.5f);
-        scL.Eats(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 0.4f);
+        scL.Eats(DLCSharedEnums.CreatureTemplateType.JungleLeech, 0.4f);
         scL.Eats(CreatureTemplate.Type.Fly, 0.2f);
 
         // Will bash and nibble at these creatures until it dies.
@@ -58,14 +58,14 @@ public class SnowcuttleLeCritob : SnowcuttleTemplate
         scL.Fears(CreatureTemplate.Type.Vulture, 0.8f);
         scL.Fears(CreatureTemplate.Type.KingVulture, 0.8f);
         scL.Fears(CreatureTemplate.Type.MirosBird, 0.8f);
-        scL.Fears(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.8f);
-        scL.Fears(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.7f);
+        scL.Fears(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.8f);
+        scL.Fears(DLCSharedEnums.CreatureTemplateType.StowawayBug, 0.7f);
         scL.Fears(CreatureTemplate.Type.Snail, 0.2f);
-        scL.Fears(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 0.2f);
+        scL.Fears(DLCSharedEnums.CreatureTemplateType.Yeek, 0.2f);
 
         scL.Ignores(CreatureTemplate.Type.PoleMimic);
         scL.Ignores(CreatureTemplate.Type.TentaclePlant);
-        scL.Ignores(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti);
+        scL.Ignores(DLCSharedEnums.CreatureTemplateType.AquaCenti);
         scL.Ignores(HSEnums.CreatureType.InfantAquapede);
 
     }

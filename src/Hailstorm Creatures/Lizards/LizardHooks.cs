@@ -644,7 +644,7 @@ public class LizardHooks
                 liz.effectColor = Custom.HSL2RGB(Custom.ClampedRandomVariation(340 / 360f, 20 / 360f, 0.25f), Random.Range(0.7f, 0.8f), 0.4f);
                 Random.state = state;
             }
-            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard && (IsIncanStory(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(absLiz, out CWT.AbsCtrInfo aI))
+            else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard && (IsIncanStory(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(absLiz, out CWT.AbsCtrInfo aI))
             {
                 Random.State state = Random.state;
                 Random.InitState(absLiz.ID.RandomSeed);
@@ -657,7 +657,7 @@ public class LizardHooks
                 aI.functionTimer = Random.Range(0, 101);
                 Random.state = state;
             }
-            else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard && (IsIncanStory(world?.game) || HSRemix.StrawberryLizardColorsEverywhere.Value is true))
+            else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.ZoopLizard && (IsIncanStory(world?.game) || HSRemix.StrawberryLizardColorsEverywhere.Value is true))
             {
                 Random.State state = Random.state;
                 Random.InitState(absLiz.ID.RandomSeed);
@@ -675,14 +675,14 @@ public class LizardHooks
                 {
                     if (liz.Template.type != CreatureTemplate.Type.WhiteLizard &&
                     liz.Template.type != CreatureTemplate.Type.YellowLizard &&
-                    liz.Template.type != MoreSlugcatsEnums.CreatureTemplateType.EelLizard &&
-                    liz.Template.type != MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
+                    liz.Template.type != DLCSharedEnums.CreatureTemplateType.EelLizard &&
+                    liz.Template.type != DLCSharedEnums.CreatureTemplateType.ZoopLizard)
                     {
                         for (int b = 0; b < liz.bodyChunks.Length; b++)
                         {
                             liz.bodyChunks[b].rad = liz.lizardParams.bodySizeFac * liz.lizardParams.bodyRadFac * 9f;
                             liz.bodyChunks[b].mass = liz.lizardParams.bodyMass / 2.7f;
-                            if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+                            if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard)
                             {
                                 liz.bodyChunkConnections[b].distance =
                                     ((b != 2) ?
@@ -778,16 +778,16 @@ public class LizardHooks
     }
     public static void IncanHPandResistanceChanges(Lizard liz, Creature.DamageType dmgType, ref float dmg, ref float bonusStun)
     {
-        if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+        if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard)
         {
             dmg *= 0.615384f; // Base HP: 1.6 -> 2.6
         }
-        else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
+        else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard)
         {
             dmg *= 2 / 3f; // Base HP: 5 -> 7.5
             bonusStun *= 2 / 3f;
         }
-        else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
+        else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.ZoopLizard)
         {
             dmg *= 1.5f; // Base HP: 2.4 -> 1.6
         }
@@ -904,7 +904,7 @@ public class LizardHooks
                     }
 
                     if (otherCtrType == CreatureTemplate.Type.GreenLizard ||
-                        otherCtrType == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard ||
+                        otherCtrType == DLCSharedEnums.CreatureTemplateType.SpitLizard ||
                         otherCtrType == CreatureTemplate.Type.CyanLizard ||
                         otherCtrType == CreatureTemplate.Type.RedLizard)
                     {
@@ -1023,7 +1023,7 @@ public class LizardHooks
             lizAI.lizard is not ColdLizard &&
             lizType != CreatureTemplate.Type.BlueLizard &&
             lizType != CreatureTemplate.Type.Salamander &&
-            lizType != MoreSlugcatsEnums.CreatureTemplateType.EelLizard &&
+            lizType != DLCSharedEnums.CreatureTemplateType.EelLizard &&
             dynamRelat.trackerRep.representedCreature?.realizedCreature is not null &&
             dynamRelat.trackerRep.representedCreature.creatureTemplate.type == CreatureTemplate.Type.Slugcat &&
             lizAI.friendTracker.giftOfferedToMe is null) // Lizards will be more aggressive towards the player in general... probably?
@@ -1094,15 +1094,15 @@ public class LizardHooks
     }
     public static CreatureTemplate.Relationship IncanSpecificRelationshipChanges(LizardAI lizAI, CreatureTemplate.Type lizType, Creature target)
     {
-        if ((lizType == CreatureTemplate.Type.Salamander || lizType == MoreSlugcatsEnums.CreatureTemplateType.EelLizard) && target is Leech)
+        if ((lizType == CreatureTemplate.Type.Salamander || lizType == DLCSharedEnums.CreatureTemplateType.EelLizard) && target is Leech)
         {
             return new CreatureTemplate.Relationship
                         (CreatureTemplate.Relationship.Type.Eats, 0.1f);
         }
 
-        if (lizType == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
+        if (lizType == DLCSharedEnums.CreatureTemplateType.ZoopLizard)
         {
-            if (target is Lizard && target.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
+            if (target is Lizard && target.Template.type == DLCSharedEnums.CreatureTemplateType.ZoopLizard)
             {
                 return new CreatureTemplate.Relationship
                     (CreatureTemplate.Relationship.Type.Pack, 0.5f);
@@ -1141,7 +1141,7 @@ public class LizardHooks
                 new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, icy.ColdAI.NearAFreezer ? 1 : Mathf.Lerp(0.25f, 1, Mathf.InverseLerp(0.5f, 1, icy.ColdAI.PackPower))) :
                 new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.5f, 0.25f, Mathf.InverseLerp(0, 0.5f, icy.ColdAI.PackPower)))
             : lizType == CreatureTemplate.Type.GreenLizard ||
-            lizType == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard ||
+            lizType == DLCSharedEnums.CreatureTemplateType.SpitLizard ||
             lizType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard
             ? lizType == CreatureTemplate.Type.GreenLizard &&
                 icy.IcyBlue &&
@@ -1187,7 +1187,7 @@ public class LizardHooks
                 }
 
                 if (lizAI.redSpitAI is not null &&
-                    (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard || liz.Template.type == CreatureTemplate.Type.RedLizard))
+                    (liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard || liz.Template.type == CreatureTemplate.Type.RedLizard))
                 {
                     if (lizAI.redSpitAI.spitting)
                     {
@@ -1220,7 +1220,7 @@ public class LizardHooks
     public static PathCost HailstormLizTravelPrefs(On.LizardAI.orig_TravelPreference orig, LizardAI lizAI, MovementConnection connection, PathCost cost)
     {
         if (IsIncanStory(lizAI?.lizard?.room?.game) &&
-            (lizAI.lizard.Template.type == CreatureTemplate.Type.Salamander || lizAI.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard))
+            (lizAI.lizard.Template.type == CreatureTemplate.Type.Salamander || lizAI.lizard.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard))
         {
             if (!lizAI.lizard.room.GetTile(connection.destinationCoord).AnyWater)
             {
@@ -1352,7 +1352,7 @@ public class LizardHooks
             }
             else if (IsIncanStory(lG.lizard.room?.game) && lG.lizard.abstractCreature.Winterized)
             {
-                if (lG.lizard.Template.type == CreatureTemplate.Type.Salamander || lG.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
+                if (lG.lizard.Template.type == CreatureTemplate.Type.Salamander || lG.lizard.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard)
                 {
                     Random.State state = Random.state;
                     Random.InitState(lG.lizard.abstractCreature.ID.RandomSeed);

@@ -89,7 +89,7 @@ public class CentiHooks
 
         if (type == CreatureTemplate.Type.RedCentipede ||
             type == CreatureTemplate.Type.Centiwing ||
-            type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+            type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
         {
             Random.State state = Random.state;
             Random.InitState(absCnt.ID.RandomSeed);
@@ -100,7 +100,7 @@ public class CentiHooks
                 sizeFac = Mathf.InverseLerp(0.4f, 0.8f, cnt.size);
             }
             else
-            if (type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+            if (type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
             {
                 cnt.size = Random.Range(0.6f, 1.2f);
                 sizeFac = Mathf.InverseLerp(0.6f, 1.2f, cnt.size);
@@ -115,7 +115,7 @@ public class CentiHooks
             if (absCnt.spawnData is not null &&
                 absCnt.spawnData.Length > 2 &&
                 (type == CreatureTemplate.Type.Centiwing ||
-                type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti))
+                type == DLCSharedEnums.CreatureTemplateType.AquaCenti))
             {
                 string s = absCnt.spawnData.Substring(1, absCnt.spawnData.Length - 2);
                 try
@@ -141,7 +141,7 @@ public class CentiHooks
                     absCnt.state.meatLeft =
                         Mathf.RoundToInt(Mathf.Lerp(2.3f, 4, sizeFac));
                 }
-                else if (type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+                else if (type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
                 {
                     absCnt.state.meatLeft =
                         Mathf.RoundToInt(Mathf.Lerp(2.3f, 8, sizeFac));
@@ -149,7 +149,7 @@ public class CentiHooks
             }
 
             cnt.bodyChunks = new BodyChunk[
-                type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti ? (int)Mathf.Lerp(7, 27, sizeFac) :
+                type == DLCSharedEnums.CreatureTemplateType.AquaCenti ? (int)Mathf.Lerp(7, 27, sizeFac) :
                 type == CreatureTemplate.Type.RedCentipede ? (int)Mathf.Lerp(17.33f, 19.66f, sizeFac) :
                 (int)Mathf.Lerp(7, 17, cnt.size)];
 
@@ -349,7 +349,7 @@ public class CentiHooks
     public static void DMGvsCentis(On.Centipede.orig_Violence orig, Centipede cnt, BodyChunk source, Vector2? dirAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos hitAppen, Creature.DamageType dmgType, float damage, float bonusStun)
     {
         if (CentiData.TryGetValue(cnt, out _) &&
-            cnt.Template.type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+            cnt.Template.type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
         {
             damage /= CustomTemplateInfo.DamageResistances.IncanStoryResistances(cnt.Template, dmgType, false);
         }
@@ -919,7 +919,7 @@ public class CentiHooks
                     cg.saturation = Mathf.Clamp(cnt.size, 0, 1);
                 }
             }
-            else if (cnt.Template.type == MoreSlugcatsEnums.CreatureTemplateType.AquaCenti)
+            else if (cnt.Template.type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
             {
                 range = Mathf.Lerp(0, 20f, Mathf.InverseLerp(0.6f, 1.2f, cnt.size));
                 skew = Mathf.Lerp(1.6f, 0.4f, Mathf.InverseLerp(0.6f, 1.2f, cnt.size));

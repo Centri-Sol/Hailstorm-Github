@@ -22,9 +22,9 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
             }
             if (room.waterInverted)
             {
-                return 1f - Mathf.InverseLerp(pos.y - rad, pos.y + rad, room.FloatWaterLevel(pos.x));
+                return 1f - Mathf.InverseLerp(pos.y - rad, pos.y + rad, room.FloatWaterLevel(pos));
             }
-            float floatWaterLvl = room.FloatWaterLevel(pos.x);
+            float floatWaterLvl = room.FloatWaterLevel(pos);
             return !MMF.cfgVanillaExploits.Value && floatWaterLvl > (room.abstractRoom.size.y + 20) * 20
                 ? 1f
                 : Mathf.InverseLerp(pos.y - rad, pos.y + rad, floatWaterLvl);
@@ -93,7 +93,7 @@ public class MirosBomb : UpdatableAndDeletable, IDrawable
                 }
             }
             if (floatRect.HasValue ||
-                (collisionResult.chunk?.owner is not null && (collisionResult.chunk.owner is not Creature ctr || ctr.Template.type != MoreSlugcatsEnums.CreatureTemplateType.MirosVulture)))
+                (collisionResult.chunk?.owner is not null && (collisionResult.chunk.owner is not Creature ctr || ctr.Template.type != DLCSharedEnums.CreatureTemplateType.MirosVulture)))
             {
                 Explode(collisionResult.chunk);
             }
