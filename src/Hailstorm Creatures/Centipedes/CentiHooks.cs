@@ -6,8 +6,6 @@ public class CentiHooks
     {
         // Main Centi Functions
         _ = new Hook(typeof(Centipede).GetMethod("get_Centiwing", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.Cyanwing || orig(cnt));
-        _ = new Hook(typeof(Centipede).GetMethod("get_Small", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
-        _ = new Hook(typeof(Centipede).GetMethod("get_AquaCenti", Public | NonPublic | Instance), (Func<Centipede, bool> orig, Centipede cnt) => cnt.Template.type == HSEnums.CreatureType.InfantAquapede || orig(cnt));
 
         On.Centipede.ctor += WinterCentipedes;
 
@@ -52,16 +50,7 @@ public class CentiHooks
 
         CreatureTemplate.Type type = absCnt.creatureTemplate.type;
 
-        if (type == HSEnums.CreatureType.InfantAquapede)
-        {
-            if (meatNotSetYet)
-            {
-                cnt.bites = 7;
-                (absCnt.state as InfantAquapedeState).remainingBites = cnt.bites;
-            }
-            return;
-        }
-        else if (type == HSEnums.CreatureType.Cyanwing)
+        if (type == HSEnums.CreatureType.Cyanwing)
         {
             if (meatNotSetYet)
             {
@@ -88,8 +77,7 @@ public class CentiHooks
         }
 
         if (type == CreatureTemplate.Type.RedCentipede ||
-            type == CreatureTemplate.Type.Centiwing ||
-            type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
+            type == CreatureTemplate.Type.Centiwing)
         {
             Random.State state = Random.state;
             Random.InitState(absCnt.ID.RandomSeed);
@@ -100,12 +88,6 @@ public class CentiHooks
                 sizeFac = Mathf.InverseLerp(0.4f, 0.8f, cnt.size);
             }
             else
-            if (type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
-            {
-                cnt.size = Random.Range(0.6f, 1.2f);
-                sizeFac = Mathf.InverseLerp(0.6f, 1.2f, cnt.size);
-            }
-            else
             if (type == CreatureTemplate.Type.RedCentipede)
             {
                 cnt.size = Random.Range(0.9f, 1.1f);
@@ -114,8 +96,7 @@ public class CentiHooks
 
             if (absCnt.spawnData is not null &&
                 absCnt.spawnData.Length > 2 &&
-                (type == CreatureTemplate.Type.Centiwing ||
-                type == DLCSharedEnums.CreatureTemplateType.AquaCenti))
+                type == CreatureTemplate.Type.Centiwing)
             {
                 string s = absCnt.spawnData.Substring(1, absCnt.spawnData.Length - 2);
                 try
@@ -134,22 +115,14 @@ public class CentiHooks
 
             Random.state = state;
 
-            if (meatNotSetYet)
+            if (meatNotSetYet &&
+				type == CreatureTemplate.Type.Centiwing)
             {
-                if (type == CreatureTemplate.Type.Centiwing)
-                {
-                    absCnt.state.meatLeft =
-                        Mathf.RoundToInt(Mathf.Lerp(2.3f, 4, sizeFac));
-                }
-                else if (type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
-                {
-                    absCnt.state.meatLeft =
-                        Mathf.RoundToInt(Mathf.Lerp(2.3f, 8, sizeFac));
-                }
+				absCnt.state.meatLeft =
+					Mathf.RoundToInt(Mathf.Lerp(2.3f, 4, sizeFac));
             }
 
             cnt.bodyChunks = new BodyChunk[
-                type == DLCSharedEnums.CreatureTemplateType.AquaCenti ? (int)Mathf.Lerp(7, 27, sizeFac) :
                 type == CreatureTemplate.Type.RedCentipede ? (int)Mathf.Lerp(17.33f, 19.66f, sizeFac) :
                 (int)Mathf.Lerp(7, 17, cnt.size)];
 
@@ -198,7 +171,7 @@ public class CentiHooks
                 {
                     for (int m = l + 1; m < cnt.bodyChunks.Length; m++)
                     {
-                        cnt.bodyChunkConnections[chunkConNum] = new(cnt.bodyChunks[l], cnt.bodyChunks[m], (cnt.bodyChunks[l].rad + cnt.bodyChunks[m].rad) * 1.1f, PhysicalObject.BodyChunkConnection.Type.Push, 1f - (cnt.AquaCenti ? 0.7f : 0f), -1f);
+                        cnt.bodyChunkConnections[chunkConNum] = new(cnt.bodyChunks[l], cnt.bodyChunks[m], (cnt.bodyChunks[l].rad + cnt.bodyChunks[m].rad) * 1.1f, PhysicalObject.BodyChunkConnection.Type.Push, 1, -1f);
                         chunkConNum++;
                     }
                 }
@@ -206,7 +179,6 @@ public class CentiHooks
         }
 
         if (!CentiData.TryGetValue(cnt, out _) &&
-            cnt is not InfantAquapede &&
             cnt is not Cyanwing &&
             cnt is not Chillipede)
         {
@@ -265,9 +237,8 @@ public class CentiHooks
             if (target is not null)
             {
                 cnt.shockCharge = 0;
-                if (cnt is not InfantAquapede and
-                    not Cyanwing and
-                    not Chillipede)
+                if (cnt is not Cyanwing &&
+                    cnt is not Chillipede)
                 {
                     Fry(cnt, target);
                 }
@@ -275,12 +246,6 @@ public class CentiHooks
         }
 
         orig(cnt, eu);
-
-        if (cnt.AquaCenti &&
-            cnt.lungs < 0.005f)
-        {
-            cnt.lungs = 1;
-        }
 
     }
     public static void ModifiedCentiCrawling(On.Centipede.orig_Crawl orig, Centipede cnt)
@@ -317,44 +282,31 @@ public class CentiHooks
     }
     public static void ModifiedCentiSwimmingAndFlying(On.Centipede.orig_Fly orig, Centipede cnt)
     {
-        if (cnt is null or
-            (not InfantAquapede and not Cyanwing))
+        if (cnt is null ||
+            cnt is not Cyanwing cyn)
         {
             orig(cnt);
             return;
         }
 
-        float bodyWave = cnt.bodyWave;
-        Vector2[] bodyChunkVels = new Vector2[cnt.bodyChunks.Length];
-        for (int b = 0; b < cnt.bodyChunks.Length; b++)
+        float bodyWave = cyn.bodyWave;
+        Vector2[] bodyChunkVels = new Vector2[cyn.bodyChunks.Length];
+        for (int b = 0; b < cyn.bodyChunks.Length; b++)
         {
-            bodyChunkVels[b] = cnt.bodyChunks[b].vel;
+            bodyChunkVels[b] = cyn.bodyChunks[b].vel;
         }
 
-        orig(cnt);
+        orig(cyn);
 
-        cnt.bodyWave = bodyWave;
-
-        if (cnt is InfantAquapede BA)
-        {
-            BA.InfantAquapedeSwimming(bodyChunkVels);
-        }
-        else if (cnt is Cyanwing cyn)
-        {
-            cyn.CyanwingFly(bodyChunkVels);
-        }
+        cyn.bodyWave = bodyWave;
+        cyn.CyanwingFly(bodyChunkVels);
     }
 
     //----Centi Functions----//
     public static void DMGvsCentis(On.Centipede.orig_Violence orig, Centipede cnt, BodyChunk source, Vector2? dirAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos hitAppen, Creature.DamageType dmgType, float damage, float bonusStun)
     {
-        if (CentiData.TryGetValue(cnt, out _) &&
-            cnt.Template.type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
-        {
-            damage /= CustomTemplateInfo.DamageResistances.IncanStoryResistances(cnt.Template, dmgType, false);
-        }
-
-        if (source is not null && cnt.Template.type == CreatureTemplate.Type.RedCentipede)
+        if (source is not null &&
+			cnt.Template.type == CreatureTemplate.Type.RedCentipede)
         {
             bool hitArmoredSegment =
                 hitChunk is not null &&
@@ -401,10 +353,6 @@ public class CentiHooks
             {
                 stun = (int)(stun * 0.75f);
             }
-            else if (cnt.AquaCenti)
-            {
-                stun *= (int)Mathf.Lerp(1.1f, 0.66f, Mathf.InverseLerp(0.6f, 1.2f, cnt.size));
-            }
         }
         orig(cnt, stun);
     }
@@ -450,7 +398,7 @@ public class CentiHooks
             aI.ctrList[0].state.socialMemory.GetOrInitiateRelationship(cnt.killTag.ID).like = -1f;
             aI.ctrList[0].state.socialMemory.GetOrInitiateRelationship(cnt.killTag.ID).tempLike = -1f;
             aI.ctrList[0].abstractAI.followCreature = cnt.killTag;
-            Debug.Log("[Hailstorm] A Cyanwing's comin' after " + cnt.killTag.ToString() + "!");
+            Plugin.HailstormLog("A Cyanwing's comin' after " + cnt.killTag.ToString() + "!");
         }
 
         orig(cnt);
@@ -477,12 +425,7 @@ public class CentiHooks
                 {
                     if (!cnt.safariControlled)
                     {
-                        if (cnt is InfantAquapede ba && ba.babyCharge >= 1)
-                        {
-                            ba.BabyShock(ba.grasps[g].grabbed);
-                            ba.babyCharge = 0;
-                        }
-                        if (cnt is Cyanwing cyn && cyn.superCharge >= 1)
+						if (cnt is Cyanwing cyn && cyn.superCharge >= 1)
                         {
                             cyn.Vaporize(cyn.grasps[g].grabbed);
                             cyn.superCharge = 0;
@@ -685,9 +628,9 @@ public class CentiHooks
                 cnt.room.AddObject(new CreatureSpasmer(ctr, false, ctr.stun));
                 ctr.LoseAllGrasps();
             }
-            else if (ctr.TotalMass > shockee.TotalMass * ElectricResistance)
+            else if (cnt.TotalMass > ctr.TotalMass * ElectricResistance)
             {
-                if (shockee is Player plr && plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Artificer)
+                if (ctr is Player plr && plr.SlugCatClass == MoreSlugcatsEnums.SlugcatStatsName.Artificer)
                 {
                     plr.PyroDeath();
                 }
@@ -699,7 +642,7 @@ public class CentiHooks
             }
             else
             {
-                ctr.Stun((int)(Custom.LerpMap(shockee.TotalMass, 0f, cnt.TotalMass * 2f, 300f, 30f) / ElecStunResistance));
+                ctr.Stun((int)(Custom.LerpMap(ctr.TotalMass, 0f, cnt.TotalMass * 2f, 300f, 30f) / ElecStunResistance));
                 ctr.LoseAllGrasps();
                 cnt.room.AddObject(new CreatureSpasmer(ctr, false, ctr.stun));
 
@@ -919,18 +862,13 @@ public class CentiHooks
                     cg.saturation = Mathf.Clamp(cnt.size, 0, 1);
                 }
             }
-            else if (cnt.Template.type == DLCSharedEnums.CreatureTemplateType.AquaCenti)
-            {
-                range = Mathf.Lerp(0, 20f, Mathf.InverseLerp(0.6f, 1.2f, cnt.size));
-                skew = Mathf.Lerp(1.6f, 0.4f, Mathf.InverseLerp(0.6f, 1.2f, cnt.size));
-                cg.hue = Mathf.Lerp((240 - range) / 360f, (200 - range) / 360f, Mathf.Pow(Random.value, skew));
-            }
             else if (cnt.Template.type == CreatureTemplate.Type.RedCentipede)
             {
                 skew = Mathf.Lerp(1.6f, 0.4f, Mathf.InverseLerp(0.9f, 1.1f, cnt.size));
                 cg.hue = Mathf.Lerp(-0.06f, 0.03f, Mathf.Pow(Random.value, skew));
             }
-            else if (cnt.Template.type == CreatureTemplate.Type.Centipede ||
+            else
+			if (cnt.Template.type == CreatureTemplate.Type.Centipede ||
                 cnt.Template.type == CreatureTemplate.Type.SmallCentipede)
             {
                 cg.hue = Mathf.Lerp(0.04f, range, Mathf.Pow(Random.value, skew));

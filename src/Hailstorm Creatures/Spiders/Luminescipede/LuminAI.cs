@@ -222,7 +222,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         catch (Exception e)
         {
-            Debug.Log("[Hailstorm] Something is breaking with Luminescipede AI! Report this ASAP: " + e);
+            Plugin.HailstormLog("Something is breaking with Luminescipede AI! Report this ASAP: " + e);
         }
     }
 
@@ -511,7 +511,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return;
         }
 
-        Debug.Log("behavior: " + Behavior.value);
+        Plugin.TestingLog("behavior: " + Behavior.value);
         if (Lmn.shortcutDelay > 0 && denFinder.denPosition.HasValue && denFinder.denPosition.Value == creature.abstractAI.destination && Custom.ManhattanDistance(creature.pos, Lmn.room.LocalCoordinateOfNode(denFinder.denPosition.Value.abstractNode)) < 3)
         {
             int x = creature.pos.x + (Random.Range(2, 5) * (Random.value < 0.5f ? 1 : -1));
@@ -552,7 +552,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return;
         }
 
-        Debug.Log("stuckTracker utility: " + stuckTracker.Utility());
+        Plugin.TestingLog("stuckTracker utility: " + stuckTracker.Utility());
         if (stuckTracker.Utility() == 1)
         {
             if (Random.value < 1f / 120f)
@@ -938,14 +938,14 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             return new ObjectRelationship(Uses, 1f);
         }
 
-        if (absObj.type == DLCSharedEnums.AbstractObjectType.GooieDuck ||
+        if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.GooieDuck ||
                 absObj.type == MoreSlugcatsEnums.AbstractObjectType.FireEgg ||
                     absObj.type == HSEnums.AbstractObjectType.BurnSpear)
         {
             return new ObjectRelationship(UncomfortableAround, 0.5f);
         }
         if (absObj.type == AbstractPhysicalObject.AbstractObjectType.SporePlant ||
-                absObj.type == DLCSharedEnums.AbstractObjectType.SingularityBomb ||
+                absObj.type == MoreSlugcatsEnums.AbstractObjectType.SingularityBomb ||
                     absObj.type == HSEnums.AbstractObjectType.IceChunk)
         {
             return new ObjectRelationship(UncomfortableAround, 1);
@@ -993,7 +993,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
 
         if (Role == Forager)
         {
-            if (absObj.type == DLCSharedEnums.AbstractObjectType.DandelionPeach)
+            if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.DandelionPeach)
             {
                 return new ObjectRelationship(Eats, 0.05f);
             }
@@ -1006,15 +1006,15 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
             {
                 return new ObjectRelationship(Eats, 0.4f);
             }
-            if (absObj.type == DLCSharedEnums.AbstractObjectType.Seed ||
-                    absObj.type == DLCSharedEnums.AbstractObjectType.LillyPuck)// ||
+            if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.Seed ||
+                    absObj.type == MoreSlugcatsEnums.AbstractObjectType.LillyPuck)// ||
                                                                                   //absObj.type == HailstormEnums.BezanNut)
             {
                 return new ObjectRelationship(Eats, 0.6f);
             }
             if (absObj.type == AbstractPhysicalObject.AbstractObjectType.WaterNut ||
                     absObj.type == AbstractPhysicalObject.AbstractObjectType.SlimeMold ||
-                        absObj.type == DLCSharedEnums.AbstractObjectType.GlowWeed)
+                        absObj.type == MoreSlugcatsEnums.AbstractObjectType.GlowWeed)
             {
                 return new ObjectRelationship(Eats, 0.8f);
             }
@@ -1039,7 +1039,7 @@ public class LuminAI : ArtificialIntelligence, IUseARelationshipTracker, IAINois
         }
         else
         {
-            if (absObj.type == DLCSharedEnums.AbstractObjectType.DandelionPeach)
+            if (absObj.type == MoreSlugcatsEnums.AbstractObjectType.DandelionPeach)
             {
                 return new ObjectRelationship(PlaysWith, 0.8f);
             }

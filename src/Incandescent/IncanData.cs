@@ -38,6 +38,9 @@ public class IncanInfo
     public float bigEmberTimer;
     public HailstormFireSmokeCreator fireSmoke;
 
+    public int IdleTime;
+    public ChunkDynamicSoundLoop tailFlameBurnLoop;
+
     public Color FireColorBase;
     public Color FireColor;
     public int cheekFluffSprite;
@@ -83,6 +86,8 @@ public class IncanInfo
             flicker[i, 2] = 1f;
         }
 
+        tailFlameBurnLoop = new ChunkDynamicSoundLoop(player.bodyChunks[1]);
+        tailFlameBurnLoop.sound = HSEnums.Sound.IncanTailFlameLOOP;
 
         if (player.room.game.session is not null)
         {
@@ -92,31 +97,27 @@ public class IncanInfo
             }
             else if (player.room.game.session is StoryGameSession SGS)
             {
-                // Convert SaveState to Timeline
-                SlugcatStats.Timeline saveStateTimeline = SlugcatStats.SlugcatToTimeline(SGS.saveStateNumber);
-                SlugcatStats.Timeline rivuletTimeline = SlugcatStats.SlugcatToTimeline(MoreSlugcatsEnums.SlugcatStatsName.Rivulet);
-
-                // Get the timeline order...
-                LinkedList<SlugcatStats.Timeline> slugcatTimelineOrder = SlugcatStats.SlugcatTimelineOrder();
+                LinkedList<SlugcatStats.Name> slugcatTimelineOrder = SlugcatStats.SlugcatTimelineOrder();
                 bool? tooFar = null;
-                foreach (var timeline in slugcatTimelineOrder)
+                foreach (var name in slugcatTimelineOrder)
                 {
-                    if (timeline == saveStateTimeline)
+                    if (name == SGS.saveStateNumber)
                     {
                         tooFar = false;
                     }
-                    else if (timeline == rivuletTimeline)
+                    else if (name == MoreSlugcatsEnums.SlugcatStatsName.Rivulet)
                     {
                         tooFar = true;
                     }
 
-                    if (tooFar.HasValue)
-                        break;
+                    if (tooFar.HasValue) break;
                 }
 
-                currentCampaignBeforeRiv = tooFar.HasValue && tooFar.Value == false;
+                currentCampaignBeforeRiv = tooFar.HasValue && tooFar.Value is false;
+
             }
         }
+
     }
 
     //--------------------------------------------------------------------------------
@@ -133,6 +134,10 @@ public class IncanInfo
         //-------------------------------------------------
 
         GlowUpdate(self);
+
+        //-------------------------------------------------
+
+        TailSFXUpdate(self);
 
         //-------------------------------------------------
 
@@ -340,7 +345,7 @@ public class IncanInfo
             if (self.dead &&
                 self.Hypothermia > 1.9f)
             {
-                Glow.Destroy();
+                Glow = null;
             }
             if (Glow.slatedForDeletetion ||
                 Glow.room != self.room)
@@ -349,6 +354,54 @@ public class IncanInfo
             }
         }
 
+    }
+
+    public virtual void TailSFXUpdate(Player self)
+    {
+        if (tailFlameBurnLoop is null)
+        {
+            tailFlameBurnLoop = new ChunkDynamicSoundLoop(self.bodyChunks[1]);
+            tailFlameBurnLoop.sound = HSEnums.Sound.IncanTailFlameLOOP;
+        }
+        tailFlameBurnLoop.Update();
+
+        if (Glow is not null)
+        {
+            int lastIdleTime = IdleTime;
+
+            float heatFac = Mathf.InverseLerp(2, 0, self.Hypothermia);
+
+            if (UsingFlameForAttack(self))
+            {
+                tailFlameBurnLoop.Volume = Mathf.Min(heatFac, tailFlameBurnLoop.Volume + 0.02f);
+            }
+            else
+            if (self.input[0].AnyInput &&
+                !self.input[0].mp &&
+                !self.input[0].thrw &&
+                !self.input[0].pckp)
+            {
+                tailFlameBurnLoop.Volume = Mathf.Max(heatFac * 0.25f, tailFlameBurnLoop.Volume - 0.0075f);
+            }
+            else
+            {
+                IdleTime++;
+                if (IdleTime >= 80)
+                {
+                    tailFlameBurnLoop.Volume = Mathf.Min(heatFac, tailFlameBurnLoop.Volume + 0.005f);
+                }
+            }
+
+            if (lastIdleTime >= IdleTime)
+            {
+                IdleTime = 0;
+            }
+
+        }
+        else if (tailFlameBurnLoop.Volume > 0)
+        {
+            tailFlameBurnLoop.Volume = 0;
+        }
     }
 
     public virtual void ParticleUpdate(Player self, bool eu)
@@ -361,17 +414,12 @@ public class IncanInfo
         PlayerGraphics IncanGraphics = self.graphicsModule as PlayerGraphics;
 
         Vector2 TailEndPos = // This complicated glowPos change is only here because of DMS. Good thing it wasn't so bad, or else I wouldn't have bothered.
-                IncanGraphics.tail is null ? self.bodyChunks[1].pos :
+                IncanGraphics?.tail is null ? self.bodyChunks[1].pos :
                 IncanGraphics.tail.Length > 3 ? IncanGraphics.tail[Random.Range(IncanGraphics.tail.Length - 1, IncanGraphics.tail.Length / 2)].pos :
                 IncanGraphics.tail.Length > 2 ? IncanGraphics.tail[Random.Range(IncanGraphics.tail.Length - 1, IncanGraphics.tail.Length - 2)].pos :
                 IncanGraphics.tail.Length > 0 ? IncanGraphics.tail[1].pos : self.bodyChunks[1].pos;
 
-        bool MakeBigEmbers =
-            longJumping ||
-            self.animation == Player.AnimationIndex.BellySlide ||
-            self.animation == Player.AnimationIndex.RocketJump ||
-            self.animation == Player.AnimationIndex.Flip ||
-            self.animation == Player.AnimationIndex.Roll;
+        bool MakeBigEmbers = UsingFlameForAttack(self);
 
 
         bool SweemBoosting =
@@ -486,6 +534,20 @@ public class IncanInfo
             }
         }
 
+    }
+
+
+    public virtual bool UsingFlameForAttack(Player self)
+    {
+        if (longJumping ||
+            self.animation == Player.AnimationIndex.BellySlide ||
+            self.animation == Player.AnimationIndex.RocketJump ||
+            self.animation == Player.AnimationIndex.Flip ||
+            self.animation == Player.AnimationIndex.Roll)
+        {
+            return true;
+        }
+        return false;
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

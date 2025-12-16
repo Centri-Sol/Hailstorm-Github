@@ -7,7 +7,6 @@ VS_B13 : 3-Eel-{PreCycle}, 4-Mimic-{7}, 5-Mimic-{10}
 
 VS_A15 : 3-TentaclePlant-{PreCycle}, 7-BigSpider-{Night}-3
 VS_B15 : 2-Mimic-{10}
-VS_A10 : 4-SeaLeech-4
 VS_D03 : 3-Black, 4-Eel-{Night}
 VS_C10 : 3-Mouse-4, 4-Yellow-{Ignorecycle}-2, 7-Black-2
 VS_C12 : 5-Snail-{PreCycle}-5, 11-InfantAquapede
@@ -31,7 +30,7 @@ LINEAGE : VS_E06 : 6 : NONE-1.0, NONE-1.0, NONE-0.05, InfantAquapede-0
 VS_B17 : 2-Mouse-3, 3-TentaclePlant-{Night}, 6-Salamander-{Ignorecycle}, 7-TentaclePlant-{PreCycle}
 LINEAGE : VS_B17 : 6 : Salamander-0.15, Eel-0.15, Aquapede-0
 
-VS_A13 : 3-BigSpider, 4-Spider-20
+VS_A13 : 3-BigSpider, 4-MotherSpider-{Night}
 LINEAGE : VS_A13 : 4 : NONE-1.0, NONE-0.2, BigSpider-{Night}-0.3, BigSpider-0.15, MotherSpider-0
 VS_C09 : 2-SpitterSpider, 4-Centipede-3, 5-Mimic-{5}, 6-Eel-{Night}
 LINEAGE : VS_C09 : 2 : SpitterSpider-0.33, NONE-0.33, MotherSpider-0
@@ -41,7 +40,7 @@ LINEAGE : VS_C07 : 13 : NONE-0.2, Yellow-{Ignorecycle}-0.4, White-0.4, Strawberr
 VS_A08 : 2-Centipede-{1.0}-2, 2-Small Centipede, 2-Cyan-{Night}
 VS_B10 : 3-White, 4-White-{Night}, 6-Mimic-{7}, 7-Eel-{PreCycle}-2
 VS_C06 : 5-TentaclePlant-{Night}
-VS_C13 : 2-Small Centipede-{AlternateForm}-2, 3-Centiwing-2, 3-Centiwing-{Night}, 3-Cyanwing-{Night}, 4-Cyan-{Night}, 5-White, 6-TentaclePlant-{PreCycle}, 8-CicadaB-{PreCycle}-2
+VS_C13 : 2-Small Centipede-{AlternateForm}-2, 3-Centiwing-2, 3-Centiwing-{Night}, 3-Cyanwing-{Night}, 4-Cyan-{Night}, 5-White, 6-TentaclePlant-{PreCycle}
 LINEAGE : VS_C13 : 2 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.1, Cyanwing-{Night}-0
 VS_E07 : 2-Strawberry-{Night}, 3-White
 
@@ -58,7 +57,7 @@ LINEAGE : VS_C01 : 6 : TentaclePlant-{Night}-0.5, IcyBlue-{Night}-0
 VS_A03 : 4-Salamander-{Ignorecycle}, 4-Salamander-{Night}, 5-MotherSpider-{Night}
 VS_B02 : 5-MotherSpider-{PreCycle}, 6-Caramel-{Night}
 VS_A02 : 2-Caramel
-VS_B01 : 5-Spider-25
+VS_B01 : 5-MotherSpider
 LINEAGE : VS_B01 : 4 : Mimic-{5}-1.0, BigSpider-0.2, MotherSpider-0
 
 VS_C04 : 2-Centiwing-2, 2-Centiwing-{Night}, 3-Caramel, 4-Strawberry, 5-BigSpider-3, 5-BigSpider-{Night}

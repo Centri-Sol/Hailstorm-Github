@@ -3,7 +3,8 @@
 public class SnowcuttleFemaleCritob : SnowcuttleTemplate
 {
 
-    public override Color SnowcuttleColor => Custom.HSL2RGB(220 / 360f, 0.25f, 0.6f);
+    public override string IconSpriteName => $"Kill_Snowcuttle_Female";
+    public override Color SnowcuttleColor => Custom.HSL2RGB(320 / 360f, 0.25f, 0.6f);
 
     internal SnowcuttleFemaleCritob() : base(HSEnums.CreatureType.SnowcuttleFemale, HSEnums.SandboxUnlock.SnowcuttleFemale, null) { }
     public override string DevtoolsMapName(AbstractCreature absCtl) => "ctlF";
@@ -29,7 +30,7 @@ public class SnowcuttleFemaleCritob : SnowcuttleTemplate
         scF.Eats(CreatureTemplate.Type.SmallNeedleWorm, 0.7f);
         scF.Eats(HSEnums.CreatureType.PeachSpider, 0.6f);
         scF.Eats(CreatureTemplate.Type.SeaLeech, 0.6f);
-        scF.Eats(DLCSharedEnums.CreatureTemplateType.JungleLeech, 0.6f);
+        scF.Eats(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 0.6f);
         scF.Eats(CreatureTemplate.Type.Hazer, 0.5f);
         scF.Eats(CreatureTemplate.Type.VultureGrub, 0.3f);
         scF.Eats(CreatureTemplate.Type.SmallCentipede, 0.1f);

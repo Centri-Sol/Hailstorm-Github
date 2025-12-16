@@ -125,8 +125,8 @@ public class RavenCritob : Critob
         Raven.IsInPack(HSEnums.CreatureType.Raven, 1);
     }
 
-    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absVul) => new VultureAI(absVul, absVul.world);
-    public override Creature CreateRealizedCreature(AbstractCreature absVul) => new Vulture(absVul, absVul.world);
+    public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absVul) => new RavenAI(absVul, absVul.world);
+    public override Creature CreateRealizedCreature(AbstractCreature absVul) => new Raven(absVul, absVul.world);
     public override CreatureState CreateState(AbstractCreature absVul) => new Vulture.VultureState(absVul);
     public override AbstractCreatureAI CreateAbstractAI(AbstractCreature absVul) => new VultureAbstractAI(absVul.world, absVul);
     public override CreatureTemplate.Type ArenaFallback() => CreatureTemplate.Type.Vulture;

@@ -22,11 +22,11 @@ public class CustomObjectInfo
             { AbstractPhysicalObject.AbstractObjectType.ScavengerBomb, true },
             { AbstractPhysicalObject.AbstractObjectType.WaterNut, true },
 
-            { DLCSharedEnums.AbstractObjectType.GooieDuck, true },
+            { MoreSlugcatsEnums.AbstractObjectType.GooieDuck, true },
             { MoreSlugcatsEnums.AbstractObjectType.FireEgg, true },
             { MoreSlugcatsEnums.AbstractObjectType.HalcyonPearl, false },
-            { DLCSharedEnums.AbstractObjectType.Seed, false },
-            { DLCSharedEnums.AbstractObjectType.SingularityBomb, true },
+            { MoreSlugcatsEnums.AbstractObjectType.Seed, false },
+            { MoreSlugcatsEnums.AbstractObjectType.SingularityBomb, true },
             { MoreSlugcatsEnums.AbstractObjectType.Spearmasterpearl, true },
 
             //{ HSEnums.AbstractObjectType.BezanNut, true },

@@ -113,11 +113,11 @@
 //                {
 //                    spawnData += absCtr.spawnData[s];
 //                }
-//                Debug.Log(absCtr.creatureTemplate.name + " spawndata: " + spawnData);
+//                Plugin.DebugLog(absCtr.creatureTemplate.name + " spawndata: " + spawnData);
 //            }
-//            else Debug.Log("nope lol");
+//            else Plugin.DebugLog("nope lol");
 //        }
-//        catch (Exception e) { Debug.Log(e); }
+//        catch (Exception e) { Plugin.DebugLog(e); }
 //    }
 
 //    public static void AbsCtrCWT(On.AbstractCreature.orig_ctor orig, AbstractCreature absCtr, World world, CreatureTemplate temp, Creature realizedCtr, WorldCoordinate pos, EntityID ID)
@@ -786,7 +786,7 @@
 //            {
 //                stwAwyAI.activeThisCycle = true;
 //                stwAwyAI.behavior = StowawayBugAI.Behavior.Idle;
-//                Debug.Log("[Hailstorm] A sleeping Stowaway got WOKED!");
+//                Plugin.DebugLog("[Hailstorm] A sleeping Stowaway got WOKED!");
 //            }
 //        }
 //    }
@@ -917,7 +917,7 @@
 //                        /*
 //                        if (RainWorld.ShowLogs)
 //                        {
-//                            Debug.Log(
+//                            Plugin.DebugLog(
 //                                aI.ctrList.Count > 10 ? "[Hailstorm] DEAR LORD THAT STOWAWAY WAS HUNGRY; IT SPAT OUT " + aI.ctrList.Count + " CREATURES!" :
 //                                aI.ctrList.Count > 05 ? "[Hailstorm] Stowaway spat out a whopping " + aI.ctrList.Count + " creatures!" :
 //                                "[Hailstorm] Stowaway spat out " + aI.ctrList.Count + " creatures!");
@@ -1516,7 +1516,7 @@
 //            {
 //                if (RainWorld.ShowLogs)
 //                {
-//                    Debug.Log("Die! " + bigJelly.Template.name);
+//                    Plugin.DebugLog("Die! " + bigJelly.Template.name);
 //                }
 //                if (ModManager.MSC && bigJelly.room is not null && bigJelly.room.world.game.IsArenaSession && bigJelly.room.world.game.GetArenaGameSession.chMeta is not null && (bigJelly.room.world.game.GetArenaGameSession.chMeta.secondaryWinMethod == ChallengeInformation.ChallengeMeta.WinCondition.PROTECT || bigJelly.room.world.game.GetArenaGameSession.chMeta.winMethod == ChallengeInformation.ChallengeMeta.WinCondition.PROTECT))
 //                {
@@ -2373,7 +2373,7 @@
 //            {
 //                if (RainWorld.ShowLogs)
 //                {
-//                    Debug.Log("[HAILSTORM] " + absCtr + "'s fog-roamer flag disabled, creature started with player in the shelter!");
+//                    Plugin.DebugLog("[HAILSTORM] " + absCtr + "'s fog-roamer flag disabled, creature started with player in the shelter!");
 //                }
 //                aI.FogRoamer = false;
 //            }

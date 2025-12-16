@@ -6,6 +6,7 @@ public static class HSEnums
 
     public static void Init()
     {
+        return;
         RuntimeHelpers.RunClassConstructor(typeof(Sound).TypeHandle);
         RuntimeHelpers.RunClassConstructor(typeof(CreatureType).TypeHandle);
         RuntimeHelpers.RunClassConstructor(typeof(SandboxUnlock).TypeHandle);
@@ -39,19 +40,23 @@ public static class HSEnums
 
     public static class Sound
     {
-        public static readonly SoundID CyanwingDeath;
-        public static readonly SoundID FireImpact;
+        public static SoundID CyanwingDeath;
+        public static SoundID FireImpact;
+        public static SoundID FireBurnLOOP;
+        public static SoundID IncanTailFlameLOOP;
+        public static SoundID IncanFuel;
+        public static SoundID IcyBlueHiss;
+        public static SoundID FreezerHiss;
+        public static SoundID FreezerLove;
     }
 
     public static class CreatureType
     {
-        public static CreatureTemplate.Type InfantAquapede = new(nameof(InfantAquapede), true);
-        public static CreatureTemplate.Type SnowcuttleTemplate = new(nameof(SnowcuttleTemplate), true);
-        public static CreatureTemplate.Type SnowcuttleFemale = new(nameof(SnowcuttleFemale), true);
-        public static CreatureTemplate.Type SnowcuttleMale = new(nameof(SnowcuttleMale), true);
-        public static CreatureTemplate.Type SnowcuttleLe = new(nameof(SnowcuttleLe), true);
         public static CreatureTemplate.Type Raven = new(nameof(Raven), true);
+        //public static CreatureTemplate.Type FlurryKing = new(nameof(FlurryKing), true);
+        //public static CreatureTemplate.Type AuroraMiros = new(nameof(AuroraMiros), true);
         public static CreatureTemplate.Type IcyBlueLizard = new(nameof(IcyBlueLizard), true);
+        //public static CreatureTemplate.Type FrigidBlueLizard = new(nameof(FrigidBlueLizard), true);
         public static CreatureTemplate.Type FreezerLizard = new(nameof(FreezerLizard), true);
         public static CreatureTemplate.Type PeachSpider = new(nameof(PeachSpider), true);
         public static CreatureTemplate.Type Cyanwing = new(nameof(Cyanwing), true);
@@ -60,18 +65,20 @@ public static class HSEnums
         public static CreatureTemplate.Type Chillipede = new(nameof(Chillipede), true);
         public static CreatureTemplate.Type Luminescipede = new(nameof(Luminescipede), true);
         //public static CreatureTemplate.Type Strobelegs = new(nameof(Strobelegs), true);
+        public static CreatureTemplate.Type SnowcuttleTemplate = new(nameof(SnowcuttleTemplate), true);
+        public static CreatureTemplate.Type SnowcuttleFemale = new(nameof(SnowcuttleFemale), true);
+        public static CreatureTemplate.Type SnowcuttleMale = new(nameof(SnowcuttleMale), true);
+        public static CreatureTemplate.Type SnowcuttleLe = new(nameof(SnowcuttleLe), true);
 
         public static CreatureTemplate.Type[] GetAllCreatureTypes()
         {
             return new CreatureTemplate.Type[]
             {
-                InfantAquapede,
-                SnowcuttleTemplate,
-                SnowcuttleFemale,
-                SnowcuttleMale,
-                SnowcuttleLe,
                 Raven,
+                //FlurryKing,
+                //AuroraMiros,
                 IcyBlueLizard,
+                //FrigidBlueLizard,
                 FreezerLizard,
                 PeachSpider,
                 Cyanwing,
@@ -79,14 +86,17 @@ public static class HSEnums
                 //BezanBud,
                 Chillipede,
                 Luminescipede,
-                //Strobelegs
+                //Strobelegs,
+                SnowcuttleTemplate,
+                SnowcuttleFemale,
+                SnowcuttleMale,
+                SnowcuttleLe,
             };
         }
     }
 
     public static class SandboxUnlock
     {
-        public static MultiplayerUnlocks.SandboxUnlockID InfantAquapede = new(nameof(InfantAquapede), true);
         public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleFemale = new(nameof(SnowcuttleFemale), true);
         public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleMale = new(nameof(SnowcuttleMale), true);
         public static MultiplayerUnlocks.SandboxUnlockID SnowcuttleLe = new(nameof(SnowcuttleLe), true);
@@ -104,7 +114,7 @@ public static class HSEnums
 
         public static MultiplayerUnlocks.SandboxUnlockID IceChunk = new(nameof(IceChunk), true);
         public static MultiplayerUnlocks.SandboxUnlockID FreezerCrystal = new(nameof(FreezerCrystal), true);
-        public static MultiplayerUnlocks.SandboxUnlockID BurnSpear = new(nameof(BurnSpear), true);
+        public static MultiplayerUnlocks.SandboxUnlockID BurnSpear = new(nameof(BurnSpear), false);
     }
 
     public static class Color
@@ -122,7 +132,7 @@ public static class HSEnums
     {
         public static AbstractPhysicalObject.AbstractObjectType IceChunk = new(nameof(IceChunk), true);
         public static AbstractPhysicalObject.AbstractObjectType FreezerCrystal = new(nameof(FreezerCrystal), true);
-        public static AbstractPhysicalObject.AbstractObjectType BurnSpear = new(nameof(BurnSpear), true);
+        public static AbstractPhysicalObject.AbstractObjectType BurnSpear = new(nameof(BurnSpear), false);
     }
 
     public static class PlacedObjectType

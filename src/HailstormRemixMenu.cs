@@ -3,8 +3,9 @@
 public class HSRemix : OptionInterface
 {
     private UIelement[] IncandescentTab;
-    private UIelement[] CreaturesTab;
     private UIelement[] ColorVariationTab;
+    private UIelement[] ModifiedCreaturesTab1;
+    private UIelement[] HailstormCreaturesTab1;
 
 
     // Incandescent Configs
@@ -17,28 +18,6 @@ public class HSRemix : OptionInterface
     public static Configurable<bool> IncanWaveringFlame;
 
 
-    // Stowaway Configs
-    public static Configurable<float> StowawayFoodSurvivalBonus;
-    public static Configurable<float> StowawayHPMultiplier;
-    public static Configurable<bool> StowawayToughSides;
-    public static Configurable<bool> HailstormStowawaysEverywhere;
-
-    // Mother Spider Configs
-    public static Configurable<float> MotherSpiderEvenMoreSpiders;
-    public static Configurable<bool> MotherSpiderCRONCH;
-    public static Configurable<bool> HailstormMotherSpidersEverywhere;
-
-    // Baby Spider Configs
-    public static Configurable<bool> HailstormBabySpidersEverywhere;
-
-    // Miros Vulture Configs
-    public static Configurable<bool> ScissorhawkNoNormalLasers;
-    public static Configurable<bool> ScissorhawkEagerBirds;
-    public static Configurable<bool> AuroricMirosEverywhere;
-
-    // Cyanwing Configs
-    public static Configurable<bool> CyanwingAtomization; // Needs implementation
-
     // Color Variation Configs
     public static Configurable<bool> PolePlantColorsEverywhere;
     public static Configurable<bool> MonsterKelpColorsEverywhere;
@@ -46,6 +25,28 @@ public class HSRemix : OptionInterface
     public static Configurable<bool> YellowLizardColorsEverywhere;
     public static Configurable<bool> EelLizardColorsEverywhere;
     public static Configurable<bool> StrawberryLizardColorsEverywhere;
+
+
+    // Stowaway Configs
+    public static Configurable<float> StowawayFoodSurvivalBonus;
+    public static Configurable<float> StowawayHPMultiplier;
+    public static Configurable<bool> StowawayToughSides;
+    public static Configurable<bool> HailstormStowawaysEverywhere;
+    // Mother Spider Configs
+    public static Configurable<float> MotherSpiderEvenMoreSpiders;
+    public static Configurable<bool> MotherSpiderCRONCH;
+    public static Configurable<bool> HailstormMotherSpidersEverywhere;
+    // Baby Spider Configs
+    public static Configurable<bool> HailstormBabySpidersEverywhere;
+    // Miros Vulture Configs
+    public static Configurable<bool> ScissorhawkNoNormalLasers;
+    public static Configurable<bool> ScissorhawkEagerBirds;
+    public static Configurable<bool> AuroricMirosEverywhere;
+
+
+    // Cyanwing Configs
+    public static Configurable<bool> CyanwingAtomization; // Needs implementation
+
 
 
 
@@ -62,28 +63,6 @@ public class HSRemix : OptionInterface
         IncanNoFireFuelLimit = config.Bind("IncanNoFireFuelLimit", false, (ConfigurableInfo)null);
         IncanWaveringFlame = config.Bind("IncanWaveringFlame", false, (ConfigurableInfo)null);
 
-        // Stowaways
-        StowawayFoodSurvivalBonus = config.Bind("StowawayFoodSurvivalChanceBonus", 0f, (ConfigurableInfo)null);
-        StowawayHPMultiplier = config.Bind("StowawayHPMultiplier", 1f, (ConfigurableInfo)null);
-        StowawayToughSides = config.Bind("StowawayToughSides", false, (ConfigurableInfo)null);
-        HailstormStowawaysEverywhere = config.Bind("HailstormStowawaysEverywhere", false, (ConfigurableInfo)null);
-
-        // Mother Spiders
-        MotherSpiderEvenMoreSpiders = config.Bind("MotherSpiderEvenMoreSpiders", 0f, (ConfigurableInfo)null);
-        MotherSpiderCRONCH = config.Bind("MotherSpiderCRONCH", false, (ConfigurableInfo)null);
-        HailstormMotherSpidersEverywhere = config.Bind("HailstormMotherSpidersEverywhere", false, (ConfigurableInfo)null);
-
-        // Baby Spiders
-        HailstormBabySpidersEverywhere = config.Bind("HailstormBabySpidersEverywhere", false, (ConfigurableInfo)null);
-
-        // Miros Vultures
-        ScissorhawkNoNormalLasers = config.Bind("ScissorhawkNoNormalLasers", false, (ConfigurableInfo)null);
-        ScissorhawkEagerBirds = config.Bind("ScissorhawkEagerBirds", false, (ConfigurableInfo)null);
-        AuroricMirosEverywhere = config.Bind("HailstormScissorhawksEverywhere", false, (ConfigurableInfo)null);
-
-        // Cyanwings
-        CyanwingAtomization = config.Bind("CyanwingAtomization", false, (ConfigurableInfo)null);
-
         // Color Variation
         PolePlantColorsEverywhere = config.Bind("PolePlantColorsEverywhere", false, (ConfigurableInfo)null);
         MonsterKelpColorsEverywhere = config.Bind("MonsterKelpColorsEverywhere", false, (ConfigurableInfo)null);
@@ -92,6 +71,27 @@ public class HSRemix : OptionInterface
         EelLizardColorsEverywhere = config.Bind("EelLizardColorsEverywhere", false, (ConfigurableInfo)null);
         StrawberryLizardColorsEverywhere = config.Bind("StrawberryLizardColorsEverywhere", false, (ConfigurableInfo)null);
 
+        // Creature toggles
+        /* Stowaways */
+        StowawayFoodSurvivalBonus = config.Bind("StowawayFoodSurvivalChanceBonus", 0f, (ConfigurableInfo)null);
+        StowawayHPMultiplier = config.Bind("StowawayHPMultiplier", 1f, (ConfigurableInfo)null);
+        StowawayToughSides = config.Bind("StowawayToughSides", false, (ConfigurableInfo)null);
+        HailstormStowawaysEverywhere = config.Bind("HailstormStowawaysEverywhere", false, (ConfigurableInfo)null);
+        /* Mother Spiders */
+        MotherSpiderEvenMoreSpiders = config.Bind("MotherSpiderEvenMoreSpiders", 0f, (ConfigurableInfo)null);
+        MotherSpiderCRONCH = config.Bind("MotherSpiderCRONCH", false, (ConfigurableInfo)null);
+        HailstormMotherSpidersEverywhere = config.Bind("HailstormMotherSpidersEverywhere", false, (ConfigurableInfo)null);
+        /* Baby Spiders */
+        HailstormBabySpidersEverywhere = config.Bind("HailstormBabySpidersEverywhere", false, (ConfigurableInfo)null);
+        /* Miros Vultures */
+        ScissorhawkNoNormalLasers = config.Bind("ScissorhawkNoNormalLasers", false, (ConfigurableInfo)null);
+        ScissorhawkEagerBirds = config.Bind("ScissorhawkEagerBirds", false, (ConfigurableInfo)null);
+        AuroricMirosEverywhere = config.Bind("HailstormScissorhawksEverywhere", false, (ConfigurableInfo)null);
+
+        // Hailstorm Creature toggles
+        // /* Cyanwings */
+        CyanwingAtomization = config.Bind("CyanwingAtomization", false, (ConfigurableInfo)null);
+
     }
 
 
@@ -99,14 +99,15 @@ public class HSRemix : OptionInterface
     {
         base.Initialize();
         OpTab opTab1 = new(this, "The Incandescent");
-        OpTab opTab2 = new(this, "Creatures");
-        OpTab opTab3 = new(this, "Color Variation");
-        Tabs = new[] { opTab1, opTab2, opTab3 };
+        OpTab opTab2 = new(this, "Color Variation");
+        OpTab opTab3 = new(this, "Creatures - M1");
+        OpTab opTab4 = new(this, "Creatures - H1");
+        Tabs = new[] { opTab1, opTab2, opTab3, opTab4 };
 
 
         OpContainer containerTab1 = new(new Vector2(0, 0));
         opTab1.AddItems(containerTab1);
-        FSprite IncanIcon = new("HSColoredIcon_Incandescent") { x = 300, y = 500, width = 56, height = 34 };
+        FSprite IncanIcon = new("Wiki_Incandescent") { x = 300, y = 500, width = 56, height = 34 };
         containerTab1.container.AddChild(IncanIcon);
         IncandescentTab = new UIelement[]
         {
@@ -158,21 +159,64 @@ public class HSRemix : OptionInterface
 
         OpContainer containerTab2 = new(new Vector2(0, 0));
         opTab2.AddItems(containerTab2);
-        FSprite StowawayIcon = new("HSColoredIcon_Stowaway") { x = 85, y = 520 };
-        FSprite MotherSpiderIcon = new("HSColoredIcon_MotherSpider") { x = 299, y = 520 };
-        FSprite MirosVultureIcon = new("HSColoredIcon_MirosVulture") { x = 510, y = 520 };
-        FSprite BabySpiderIcon = new("HSColoredIcon_BabySpider") { x = 300, y = 270 };
+        PolePlantIcon = new FSprite("Kill_PoleMimic") { x = 50, y = 485, color = Color.red };
+        MonsterKelpIcon = new FSprite("Kill_TentaclePlant") { x = 50, y = 435, color = Color.red };
+        BigSpiderIcon = new FSprite("Kill_BigSpider") { x = 50, y = 385, color = Custom.HSL2RGB(42 / 360f, 0.7f, 0.4f) };
+        SpitterSpiderIcon = new FSprite("Kill_BigSpider") { x = 80, y = 385, color = Custom.HSL2RGB(0, 0.7f, 0.4f) };
+        MotherSpiderIcon2 = new FSprite("CS_Wiki_Mother_Spider") { x = 110, y = 385, color = Custom.HSL2RGB(120 / 360f, 0.7f, 0.4f) };
+        YellowLizardIcon = new FSprite("Kill_Yellow_Lizard") { x = 50, y = 335, color = new Color(1, 0.6f, 0) };
+        EelLizardIcon = new FSprite("Kill_Salamander") { x = 50, y = 285, color = new Color(0f, 0.66f, 0.42f) };
+        StrawberryLizardIcon = new FSprite("Kill_White_Lizard") { x = 50, y = 235, color = new Color(0.95f, 0.73f, 0.73f) };
+        containerTab2.container.AddChild(PolePlantIcon);
+        containerTab2.container.AddChild(MonsterKelpIcon);
+        containerTab2.container.AddChild(BigSpiderIcon);
+        containerTab2.container.AddChild(SpitterSpiderIcon);
+        containerTab2.container.AddChild(MotherSpiderIcon2);
+        containerTab2.container.AddChild(YellowLizardIcon);
+        containerTab2.container.AddChild(EelLizardIcon);
+        containerTab2.container.AddChild(StrawberryLizardIcon);
+        ColorVariationTab = new UIelement[]
+        {
+            //------------------------------------------------------------
+            new OpLabel(new Vector2(250f, 560f), new Vector2(100f, 40f), "Hailstorm Remix!", FLabelAlignment.Center, true, null) { color = new(127 / 255f, 212 / 255f, 1) },
+            new OpLabel(new Vector2(276f, 540f), new Vector2(50f, 20f), "Color Variation", FLabelAlignment.Center, true, null) { color = new(1, 175 / 255f, 230/255f) },
 
-        containerTab2.container.AddChild(StowawayIcon);
-        containerTab2.container.AddChild(MotherSpiderIcon);
-        containerTab2.container.AddChild(MirosVultureIcon);
-        containerTab2.container.AddChild(BabySpiderIcon);
+            new OpCheckBox(PolePlantColorsEverywhere, new Vector2(5f, 475f)),
+            new OpCheckBox(MonsterKelpColorsEverywhere, new Vector2(5f, 425f)),
+            new OpCheckBox(BigSpiderColorsEverywhere, new Vector2(5f, 375f)),
+            new OpCheckBox(YellowLizardColorsEverywhere, new Vector2(5f, 325f)),
+            new OpCheckBox(EelLizardColorsEverywhere, new Vector2(5f, 275f)),
+            new OpCheckBox(StrawberryLizardColorsEverywhere, new Vector2(5f, 225f)),
+            new OpLabel(70, 475f, "Pole Plant Colors Everywhere?", false),
+            new OpLabel(70, 425f, "Monster Kelp Colors Everywhere?", false),
+            new OpLabel(130, 375f, "Big Spider Colors Everywhere?", false),
+            new OpLabel(70, 325f, "Yellow Lizard Colors Everywhere?", false),
+            new OpLabel(70, 275f, "Eel Lizard Colors Everywhere?", false),
+            new OpLabel(70, 225f, "Strawberry Lizard Colors Everywhere?", false),
 
-        CreaturesTab = new UIelement[]
+            //------------------------------------------------------------
+        };
+        opTab2.AddItems(ColorVariationTab);
+
+
+        OpContainer containerTab3 = new(new Vector2(0, 0));
+        opTab3.AddItems(containerTab3);
+        FSprite StowawayIcon = new("Colored_Stowaway") { x = 85, y = 520 };
+        FSprite MotherSpiderIcon = new("CS_Wiki_Mother_Spider") { x = 299, y = 520 };
+        FSprite MirosVultureIcon = new("CS_Wiki_Aquacenti") { x = 510, y = 520 };
+        FSprite BabySpiderIcon = new("CS_Wiki_Salamander") { x = 300, y = 270 };
+
+        containerTab3.container.AddChild(StowawayIcon);
+        containerTab3.container.AddChild(MotherSpiderIcon);
+        containerTab3.container.AddChild(MirosVultureIcon);
+        containerTab3.container.AddChild(BabySpiderIcon);
+
+        ModifiedCreaturesTab1 = new UIelement[]
         {
             //------------------------------------------------------------
             new OpLabel(new Vector2(250f, 560f), new Vector2(100f, 40f), "Hailstorm Remix!", FLabelAlignment.Center, true, null) {color = new(127/255f, 212/255f, 1)},
-            new OpLabel(new Vector2(275f, 540f), new Vector2(50f, 20f), "Creatures", FLabelAlignment.Center, true, null) {color = new(0.85f, 0.85f, 0.85f)},
+            new OpLabel(new Vector2(275f, 540f), new Vector2(50f, 20f), "Modified Creatures", FLabelAlignment.Center, true, null) {color = new(0.85f, 0.85f, 0.85f)},
+            new OpLabel(new Vector2(40f, 560f), new Vector2(50f, 20f), "Page 1", FLabelAlignment.Center, true, null) {color = new(0.85f, 0.85f, 0.85f)},
 
             // Stowaways
             new OpLabel(30f, 480f, "Stowaways", true) {color = Custom.HSL2RGB(210 / 360f, 0.1f, 0.5f)},
@@ -236,7 +280,7 @@ public class HSRemix : OptionInterface
             },
             //------------------------------
             // Miros Vultures
-            new OpLabel(440f, 480f, "Miros Vultures", true) { color = new(230 / 255f, 14 / 255f, 14 / 255f) },
+            new OpLabel(440f, 480f, "Miros Vultures", true) { color = new HSLColor(253/360f, 1f, 0.68f).rgb },
 
             new OpLabel(500f, 455f, "No Normal Lasers", false),
             new OpCheckBox(ScissorhawkNoNormalLasers, new Vector2(565f, 427.5f))
@@ -253,59 +297,60 @@ public class HSRemix : OptionInterface
             {
                 description = "For all the people who dislike how Miros Vultures only attack players: this one's for you."
             },
-            //------------------------------
-            // Cyanwings
-            /*new OpLabel(239f, 230f, "Cyanwings", true),
-
-            new OpLabel(new Vector2(289f, 195f), new Vector2(5, 5), "Cyanwing Atomization", FLabelAlignment.Center, false, null),
-            new OpCheckBox(CyanwingAtomization, new Vector2(287f, 157.5f))
-            {
-                description = "Uh, this one's a little, how you say, 'fucked up'? Anything Cyanwings zap will straight-up get atomized. Poof.  G O N E.\nThis one is OFF by default because the fucked-up-ness of it was getting to me during testing."
-            },*/
             //------------------------------------------------------------
         };
-        opTab2.AddItems(CreaturesTab);
+        opTab3.AddItems(ModifiedCreaturesTab1);
 
-        OpContainer containerTab3 = new(new Vector2(0, 0));
-        opTab3.AddItems(containerTab3);
-        PolePlantIcon = new FSprite("Kill_PoleMimic") { x = 50, y = 485, color = Color.red };
-        MonsterKelpIcon = new FSprite("Kill_TentaclePlant") { x = 50, y = 435, color = Color.red };
-        BigSpiderIcon = new FSprite("Kill_BigSpider") { x = 50, y = 385, color = Custom.HSL2RGB(42 / 360f, 0.7f, 0.4f) };
-        SpitterSpiderIcon = new FSprite("Kill_BigSpider") { x = 80, y = 385, color = Custom.HSL2RGB(0, 0.7f, 0.4f) };
-        MotherSpiderIcon2 = new FSprite("Kill_MotherSpider_CentriSol") { x = 110, y = 385, color = Custom.HSL2RGB(120 / 360f, 0.7f, 0.4f) };
-        YellowLizardIcon = new FSprite("Kill_Yellow_Lizard") { x = 50, y = 335, color = new Color(1, 0.6f, 0) };
-        EelLizardIcon = new FSprite("Kill_Salamander") { x = 50, y = 285, color = new Color(0f, 0.66f, 0.42f) };
-        StrawberryLizardIcon = new FSprite("Kill_White_Lizard") { x = 50, y = 235, color = new Color(0.95f, 0.73f, 0.73f) };
-        containerTab3.container.AddChild(PolePlantIcon);
-        containerTab3.container.AddChild(MonsterKelpIcon);
-        containerTab3.container.AddChild(BigSpiderIcon);
-        containerTab3.container.AddChild(SpitterSpiderIcon);
-        containerTab3.container.AddChild(MotherSpiderIcon2);
-        containerTab3.container.AddChild(YellowLizardIcon);
-        containerTab3.container.AddChild(EelLizardIcon);
-        containerTab3.container.AddChild(StrawberryLizardIcon);
-        ColorVariationTab = new UIelement[]
+
+        OpContainer containerTab4 = new(new Vector2(0, 0));
+        opTab4.AddItems(containerTab4);
+        FSprite Separator1 = new("pixel") { anchorX = 0, y = 525, width = 600, color = Color.gray };
+        FSprite CyanwingIcon = new("Wiki_Cyanwing") { x = 62.5f, y = 125 };
+        FSprite Separator2 = new("pixel") { anchorX = 0, y = 450, width = 600, color = Color.gray };
+        FSprite Separator3 = new("pixel") { anchorX = 0, y = 375, width = 600, color = Color.gray };
+        FSprite Separator4 = new("pixel") { anchorX = 0, y = 300, width = 600, color = Color.gray };
+        FSprite Separator5 = new("pixel") { anchorX = 0, y = 225, width = 600, color = Color.gray };
+        FSprite Separator6 = new("pixel") { anchorX = 0, y = 150, width = 600, color = Color.gray };
+        FSprite Separator7 = new("pixel") { anchorX = 0, y = 75, width = 600, color = Color.gray };
+
+        containerTab4.container.AddChild(Separator1);
+        containerTab4.container.AddChild(CyanwingIcon);
+        containerTab4.container.AddChild(Separator2);
+        containerTab4.container.AddChild(Separator3);
+        containerTab4.container.AddChild(Separator4);
+        containerTab4.container.AddChild(Separator5);
+        containerTab4.container.AddChild(Separator6);
+        containerTab4.container.AddChild(Separator7);
+
+        HailstormCreaturesTab1 = new UIelement[]
         {
             //------------------------------------------------------------
-            new OpLabel(new Vector2(250f, 560f), new Vector2(100f, 40f), "Hailstorm Remix!", FLabelAlignment.Center, true, null) { color = new(127 / 255f, 212 / 255f, 1) },
-            new OpLabel(new Vector2(276f, 540f), new Vector2(50f, 20f), "Color Variation", FLabelAlignment.Center, true, null) { color = new(1, 175 / 255f, 230/255f) },
+            new OpLabel(new Vector2(250f, 560f), new Vector2(100f, 40f), "Hailstorm Remix!", FLabelAlignment.Center, true, null) {color = new(127/255f, 212/255f, 1)},
+            new OpLabel(new Vector2(275f, 540f), new Vector2(50f, 20f), "Hailstorm Creatures", FLabelAlignment.Center, true, null) {color = new(0.85f, 0.85f, 0.85f)},
+            new OpLabel(new Vector2(40f, 560f), new Vector2(50f, 20f), "Page 1", FLabelAlignment.Center, true, null) {color = new(0.85f, 0.85f, 0.85f)},
 
-            new OpCheckBox(PolePlantColorsEverywhere, new Vector2(5f, 475f)),
-            new OpCheckBox(MonsterKelpColorsEverywhere, new Vector2(5f, 425f)),
-            new OpCheckBox(BigSpiderColorsEverywhere, new Vector2(5f, 375f)),
-            new OpCheckBox(YellowLizardColorsEverywhere, new Vector2(5f, 325f)),
-            new OpCheckBox(EelLizardColorsEverywhere, new Vector2(5f, 275f)),
-            new OpCheckBox(StrawberryLizardColorsEverywhere, new Vector2(5f, 225f)),
-            new OpLabel(70, 475f, "Pole Plant Colors Everywhere?", false),
-            new OpLabel(70, 425f, "Monster Kelp Colors Everywhere?", false),
-            new OpLabel(130, 375f, "Big Spider Colors Everywhere?", false),
-            new OpLabel(70, 325f, "Yellow Lizard Colors Everywhere?", false),
-            new OpLabel(70, 275f, "Eel Lizard Colors Everywhere?", false),
-            new OpLabel(70, 225f, "Strawberry Lizard Colors Everywhere?", false),
+            // Ravens
+            /*
+            new OpLabel(10f, 460f, "Ravens", true) { color = new HSLColor(180/360f, 0.88f, 0.335f).rgb },
 
+            new OpLabel(new Vector2(190f, 495f), new Vector2(5, 5), "Cyanwing Atomization", FLabelAlignment.Center, false, null),
+            new OpCheckBox(CyanwingAtomization, new Vector2(185f, 467.5f))
+            {
+                description = "Uh, this one's a little, how you say, 'fucked up'? Anything Cyanwings zap will straight-up get atomized. Poof.  G O N E.\nThis one is OFF by default."
+            },
+            */
+            //------------------------------
+            // Cyanwings
+            new OpLabel(10f, 85f, "Cyanwings", true) { color = new HSLColor(180/360f, 0.88f, 0.335f).rgb },
+
+            new OpLabel(new Vector2(190f, 120f), new Vector2(5, 5), "Cyanwing Atomization", FLabelAlignment.Center, false, null),
+            new OpCheckBox(CyanwingAtomization, new Vector2(185f, 92.5f))
+            {
+                description = "Uh, this one's a little, how you say, 'fucked up'? Anything Cyanwings zap will straight-up get atomized. Poof.  G O N E.\nThis one is OFF by default."
+            },
             //------------------------------------------------------------
         };
-        opTab3.AddItems(ColorVariationTab);
+        opTab4.AddItems(HailstormCreaturesTab1);
 
     }
 
@@ -313,7 +358,7 @@ public class HSRemix : OptionInterface
     private FSprite MonsterKelpIcon = new("Kill_TentaclePlant");
     private FSprite BigSpiderIcon = new("Kill_BigSpider");
     private FSprite SpitterSpiderIcon = new("Kill_BigSpider");
-    private FSprite MotherSpiderIcon2 = new("Kill_MotherSpider_CentriSol");
+    private FSprite MotherSpiderIcon2 = new("CS_Wiki_Mother_Spider");
     private FSprite YellowLizardIcon = new("Kill_Yellow_Lizard");
     private FSprite EelLizardIcon = new("Kill_Salamander");
     private FSprite StrawberryLizardIcon = new("Kill_White_Lizard");

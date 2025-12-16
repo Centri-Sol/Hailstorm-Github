@@ -1,0 +1,16 @@
+Template: MS_SettingsTemplate_Vents
+DangerType: Rain
+CeilingDrips: 0
+RainIntensity: 0
+RumbleIntensity: 0
+WaveSpeed: 0.51
+WaveLength: 1
+WaveAmplitude: 0.0001
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+RandomItemDensity: 0.375
+RandomItemSpearChance: 0.25
+Effects: ElectricDeath-0.01086957-25-143, 
+PlacedObjects: BrokenShelterWaterLevel><285.4132><715.3881><, LightFixture><434.1225><256.1639><RedLight~17.32051~-10~0, LightFixture><74.82378><483.1378><RedLight~17.32051~-10~60, LightFixture><708.3301><491.3167><RedLight~17.32051~-10~58, 
+FadePalette: 5, 0.4456522
+WetTerrain: OFF

@@ -3,46 +3,47 @@ LINEAGE : OFFSCREEN_SL : 0 : Vulture-{Night}-0.25, KingVulture-{Night}-0
 
 SL_I01 : 7-Mimic-{20}
 SL_C09 : 3-Mimic-{Night}, 4-TentaclePlant-{Night}
-SL_H03 : 4-InfantAquapede, 4-Aquapede-{Night}, 5-Jetfish-2, 6-SeaLeech-{PreCycle}-3, 7-SeaLeech-4, 7-SeaLeech-{PreCycle}-3, 8-SeaLeech-4, 9-SeaLeech-4, 10-TentaclePlant-{PreCycle}
+SL_H03 : 4-InfantAquapede, 4-Aquapede-{Night}, 5-Jetfish-2, 7-Salamander-{Ignorecycle}, 7-Salamander-{PreCycle}, 10-TentaclePlant-{PreCycle}
 LINEAGE : SL_H03 : 10 : InfantAquapede-{Night}-0.15, Aquapede-{Night}-0
-SL_H02 : 3-Aquapede, 7-SeaLeech-6, 8-SeaLeech-4, 9-Eel-{PreCycle}, 10-Aquapede-{Night}, 10-InfantAquapede-{Night}
+SL_H02 : 3-Aquapede, 8-TentaclePlant-{ErraticWindRoamer}, 9-TentaclePlant-{ErraticWindRoamer}, 10-Aquapede-{Night}, 10-InfantAquapede-{Night}, 10-Eel-{PreCycle}
 LINEAGE : SL_H02 : 9 : NONE-0.05, InfantAquapede-0.05, Aquapede-0
 SL_D04 : 4-Salamander, 5-Jetfish-2, 6-Aquapede, 6-InfantAquapede-{Night}, 7-Aquapede-{Night}
 LINEAGE : SL_D04 : 3 : NONE-1.0, NONE-0.1, Salamander-{Night}-0.1, Eel-{Night}
 LINEAGE : SL_D04 : 7 : NONE-1.0, NONE-1.0, NONE-0.05, InfantAquapede-0
-SL_F02 : 4-Salamander-{Ignorecycle}, 5-Jetfish, 6-Jetfish, 7-SeaLeech-2, 8-Aquapede, 8-InfantAquapede-{PreCycle}, 9-SeaLeech-7, 10-SeaLeech-7
+SL_F02 : 4-Salamander-{Ignorecycle}, 5-Jetfish, 6-Jetfish, 8-Aquapede, 8-InfantAquapede-{PreCycle}
 LINEAGE : SL_F02 : 8 : NONE-1.0, NONE-0.05, InfantAquapede-{Night}-0
-SL_C02 : 4-Salamander-{Night}, 5-Eel, 6-Salamander-{PreCycle}, 7-Yellow-4-{Ignorecycle}, 8-SeaLeech-3, 9-Eel-{PreCycle}, 10-SeaLeech-5, 11-Eel, 12-SeaLeech-9
+SL_C02 : 4-Salamander-{Night}, 5-Eel, 6-Salamander-{PreCycle}, 7-Yellow-4-{Ignorecycle}, 9-Eel-{PreCycle}, 10-Eel, 11-Eel-{Ignorecycle}
 
-SL_C14 : 3-SeaLeech-12
-SL_C15 : 2-Jetfish, 3-Jetfish, 4-Aquapede, 5-InfantAquapede, 7-InfantAquapede
-SL_WALL02 : 6-SeaLeech-4
+SL_C14 : 3-TentaclePlant
+SL_C15 : 2-InfantAquapede, 3-InfantAquapede, 4-Aquapede-2, 5-InfantAquapede, 7-InfantAquapede
+SL_WALL02 : 6-InfantAquapede-2
 
-SL_E02 : 4-Eel, 6-Aquapede, 6-InfantAquapede-{Night}, 7-SeaLeech-3, 8-Aquapede-{Night}, 8-InfantAquapede-{PreCycle}
-SL_E01 : 4-SeaLeech-6, 4-Aquapede-{PreCycle}, 5-SeaLeech-4, 5-SeaLeech-4-{Night}
+SL_E02 : 4-Eel, 6-Aquapede, 6-InfantAquapede-{PreCycle}, 7-TentaclePlant-{PreCycle}, 8-Aquapede-{Night}, 8-InfantAquapede-{PreCycle}
+SL_E01 : 4-InfantAquapede-{PreCycle}, 4-Aquapede-{PreCycle}, 5-InfantAquapede-2
 SL_D03 : 5-Jetfish, 5-Jetfish-{Night}, 6-Aquapede, 8-InfantAquapede-{Night}-2
 SL_D02 : 4-Jetfish
 LINEAGE : SL_D02 : 5 : InfantAquapede-0.33, Jetfish-0
 SL_C10 : 2-Eel-{Ignorecycle}
 SL_TUNNELA : 5-Eel-{Ignorecycle}, 6-Jetfish-2, 7-Aquapede
 
-SL_D06 : 4-Eel-{PreCycle}, 5-Yellow-{Ignorecycle}, 6-Yellow-{Ignorecycle}, 6-Yellow, 7-Yellow-{Night}, 8-SeaLeech-{PreCycle}-{Ignorecycle}-6, 9-Aquapede
+SL_D06 : 4-Eel-{PreCycle}, 5-Yellow-{Ignorecycle}, 6-Yellow-{Ignorecycle}, 6-Yellow, 7-Yellow-{Night}, 8-TentaclePlant-{ErraticWindRoamer}, 9-Aquapede
 LINEAGE : SL_D06 : 9 : NONE-1.0, NONE-0.1, Eel-{Night}-1.0, NONE-0.33, InfantAquapede-{Night}-0
-SL_B01 : 2-SeaLeech-{Night}-8, 3-Eel, 3-TentaclePlant-{Night}
+SL_B01 : 3-Eel, 3-TentaclePlant-{Night}
 SL_A02 : 4-TentaclePlant
 SL_B02SAINT : 3-TentaclePlant-{Night}, 4-MotherSpider
-SL_B11 : 2-Spider-20, 2-MotherSpider-{PreCycle}
+SL_B11 : 2-MotherSpider
 SL_B10 : 2-BigSpider, 4-Mouse-3
 SL_I02 : 3-BigSpider-{Night}, 4-Mouse-3
 
-SL_F01 : 4-Jetfish, 5-SeaLeech-5, 7-Aquapede-{Night}, 7-InfantAquapede-{Night}-2
-LINEAGE : SL_F01 : 7 : NONE-1.0, NONE-1.0, NONE-0.05, InfantAquapede-{Night}-0.2, Eel-{Ignorecycle}-0
-SL_C05 : 3-SeaLeech-3, 4-SeaLeech-3, 4-SeaLeech-3-{PreCycle}
+SL_F01 : 5-Aquapede, 5-InfantAquapede-{Night}-2, 7-TentaclePlant
+LINEAGE : SL_F01 : 5 : NONE-1.0, NONE-1.0, NONE-0.05, InfantAquapede-{Night}-0.5, Eel-{Ignorecycle}-0
+LINEAGE : SL_F01 : 6 : NONE-1.0, NONE-1.0, NONE-0.25, Eel-{Night}-1.0, Aquapede-{Night}-0
 LINEAGE : SL_C05 : 3 : Salamander-{Ignorecycle}-0.25, Eel-{Ignorecycle}-0
 SL_C04 : 5-Aquapede, 5-InfantAquapede
 LINEAGE : SL_C04 : 5 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.05, InfantAquapede-{Night}-0
-SL_D01 : 4-SeaLeech-4, 5-SeaLeech-4, 5-SeaLeech-4-{Night}, 6-Aquapede-{PreCycle}, 6-InfantAquapede-{PreCycle}, 7-TentaclePlant-{Night}, 8-Salamander
-LINEAGE : SL_D01 : 6 : NONE-1.0, NONE-0.1, InfantAquapede-0
+SL_D01 : 4-TentaclePlant, 5-TentaclePlant-{Night}, 6-Aquapede-{PreCycle}, 6-InfantAquapede-{PreCycle}, 7-TentaclePlant-{Night}, 8-Salamander-{Ignorecycle}
+LINEAGE : SL_D01 : 6 : NONE-1.0, NONE-0.1, InfantAquapede-0.25, Aquapede-0
+LINEAGE : SL_D01 : 8 : Salamander-{Ignorecycle}-0.33, NONE-0.33, Eel-{Ignorecycle}-0
 SL_ECNIUS03 : 2-Jetfish, 3-Eel-{PreCycle}-{Night}, 4-Salamander-{Night}
 
 SL_C03 : 8-Aquapede-{Night}, 8-InfantAquapede-{Night}-2

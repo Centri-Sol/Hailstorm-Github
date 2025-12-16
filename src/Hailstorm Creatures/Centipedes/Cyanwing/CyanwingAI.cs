@@ -32,16 +32,16 @@ public class CyanwingAI : CentipedeAI, IUseARelationshipTracker
 
     CreatureTemplate.Relationship IUseARelationshipTracker.UpdateDynamicRelationship(RelationshipTracker.DynamicRelationship dynamRelat)
     {
-        Creature ctr = dynamRelat.trackerRep.representedCreature.realizedCreature;
+        Creature target = dynamRelat.trackerRep.representedCreature.realizedCreature;
         CreatureTemplate.Relationship defaultRelation = StaticRelationship(dynamRelat.trackerRep.representedCreature);
 
         if (defaultRelation.type == CreatureTemplate.Relationship.Type.Ignores)
         {
             return defaultRelation;
         }
-        if (ctr is not null)
+        if (target is not null)
         {
-            if (ctr.dead)
+            if (target.dead)
             {
                 return new CreatureTemplate.Relationship
                     (CreatureTemplate.Relationship.Type.Ignores, 0);
@@ -51,16 +51,26 @@ public class CyanwingAI : CentipedeAI, IUseARelationshipTracker
                 return new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Ignores, 0);
             }
 
+            float ElectricResistance = target.Template.damageRestistances[Creature.DamageType.Electric.index, 0];
+            if (target is Player)
+            {
+                ElectricResistance /= CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(target as Player, Creature.DamageType.Electric);
+            }
+            else if (CentiHooks.IsIncanStory(cyn.room?.game))
+            {
+                ElectricResistance *= CustomTemplateInfo.DamageResistances.IncanStoryResistances(target.Template, Creature.DamageType.Electric, false);
+            }
+
             if (defaultRelation.type == CreatureTemplate.Relationship.Type.Eats &&
-                ctr.TotalMass < cyn.TotalMass)
+                cyn.TotalMass > target.TotalMass * ElectricResistance)
             {
                 if (creature.abstractAI?.followCreature is not null &&
-                    creature.abstractAI.followCreature == ctr.abstractCreature)
+                    creature.abstractAI.followCreature == target.abstractCreature)
                 {
                     return new CreatureTemplate.Relationship
                         (CreatureTemplate.Relationship.Type.Antagonizes, 1);
                 }
-                float intensity = Mathf.InverseLerp(0f, cyn.TotalMass, ctr.TotalMass * 1.2f);
+                float intensity = Mathf.InverseLerp(0f, cyn.TotalMass, target.TotalMass * 1.2f);
                 if (CyanState is not null)
                 {
                     intensity *= 2 - CyanState.health;
@@ -69,7 +79,7 @@ public class CyanwingAI : CentipedeAI, IUseARelationshipTracker
                     (CreatureTemplate.Relationship.Type.Eats, intensity * defaultRelation.intensity);
             }
             return new CreatureTemplate.Relationship
-                (CreatureTemplate.Relationship.Type.Afraid, 0.2f + (0.8f * Mathf.InverseLerp(cyn.TotalMass, cyn.TotalMass * 1.5f, ctr.TotalMass)));
+                (CreatureTemplate.Relationship.Type.Afraid, 0.2f + (0.8f * Mathf.InverseLerp(cyn.TotalMass, cyn.TotalMass * 1.5f, target.TotalMass)));
         }
         return defaultRelation;
     }

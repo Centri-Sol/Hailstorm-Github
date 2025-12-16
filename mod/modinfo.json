@@ -3,7 +3,7 @@
 	"name": "Hailstorm",
 	"version": "0.3.0",
 	"authors": "Bry",
-	"description": "Brave an ever-harshening ice age as the Incandescent, a post-Saint slugcat with a rather extreme adaptation to ward off the blizzard's cold.\nCurrently featuring completely new spawns, four new creatures, and a plethora of small changes to the world, this campaign aims to be more difficult than most campaigns in the More Slugcats expansion!\n\nI'll... be honest, with you, though: I'm completely burnt out on this project. I wouldn't expect any more content from here, but hopefully what's here is enjoyable for you guys.",
+	"description": "Brave an ever-harshening ice age as the Incandescent, a post-Saint slugcat with a rather extreme adaptation to ward off the blizzard's cold.\nCurrently featuring completely new spawns, four new creatures, and a plethora of small changes to the world, this campaign aims to be more difficult than most campaigns in the More Slugcats expansion!",
 	"requirements": [ "moreslugcats", "slime-cubed.slugbase", "fisobs", "crs" ],
 	"requirements_names": [ "More Slugcats Expansion", "SlugBase", "Fisobs", "Custom Regions Support" ],
 	"tags": [ "Campaigns", "Creatures", "Items", "Custom Slugcat" ]

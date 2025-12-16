@@ -9,9 +9,10 @@ public class LizardHooks
     {
         //OverseerILHook();
         On.LizardLimb.ctor += HailstormLizLegSFX;
-        On.LizardVoice.GetMyVoiceTrigger += HailstormLizVoiceSFX;
-        On.LizardVoice.ctor += GorditoGreenieVoicePitch;
-        On.LizardVoice.Update += GorditoGreenieVoiceVolume;
+        On.LizardVoice.GetMyVoiceTrigger += HailstormLizVoices;
+        On.LizardVoice.GetMyLoveTrigger += HailstormLizLoveVoices;
+        On.LizardVoice.ctor += HailstormLizVoicePitch;
+        On.LizardVoice.Update += HailstormLizVoiceUpdate;
         On.LizardBreeds.BreedTemplate_Type_CreatureTemplate_CreatureTemplate_CreatureTemplate_CreatureTemplate += HailstormLizTemplates;
         On.LizardBreeds.BreedTemplate_Type_CreatureTemplate_CreatureTemplate += EelTemperatureResistances;
         On.Lizard.ctor += HailstormLizConstructors;
@@ -143,52 +144,29 @@ public class LizardHooks
             }
         }
     }
-    public static SoundID HailstormLizVoiceSFX(On.LizardVoice.orig_GetMyVoiceTrigger orig, LizardVoice lizVoice)
+    public static SoundID HailstormLizVoices(On.LizardVoice.orig_GetMyVoiceTrigger orig, LizardVoice lizVoice)
     {
-        SoundID res = orig(lizVoice);
-
-        if (lizVoice.lizard is Lizard liz)
+        SoundID voice = orig(lizVoice);
+        if (lizVoice?.lizard is not null)
         {
-            string[] voiceClips = new[] { "A", "B", "C", "D", "E" };
-            List<SoundID> list = new();
-            if (liz.Template.type == HSEnums.CreatureType.FreezerLizard)
-            {
-                for (int i = 0; i < voiceClips.Length; i++)
-                {
-                    SoundID soundID = SoundID.None;
-                    string voiceClip = "Lizard_Voice_Red_" + voiceClips[i];
-                    if (SoundID.values.entries.Contains(voiceClip))
-                    {
-                        soundID = new(voiceClip);
-                    }
-                    if (soundID != SoundID.None && soundID.Index != -1 && liz.abstractCreature.world.game.soundLoader.workingTriggers[soundID.Index])
-                    {
-                        list.Add(soundID);
-                    }
-                }
+            CreatureTemplate.Type lizType = lizVoice.lizard.Template.type;
 
-                res = list.Count == 0 ? SoundID.None : list[Random.Range(0, list.Count)];
-            }
-            else if (liz.Template.type == HSEnums.CreatureType.IcyBlueLizard)
+            if (lizType == HSEnums.CreatureType.FreezerLizard &&
+                lizVoice.lizard.abstractCreature.world.game.soundLoader.workingTriggers[HSEnums.Sound.FreezerHiss.Index])
             {
-                for (int i = 0; i < voiceClips.Length; i++)
-                {
-                    SoundID soundID = SoundID.None;
-                    string voiceClip = "Lizard_Voice_Blue_" + voiceClips[i];
-                    if (SoundID.values.entries.Contains(voiceClip))
-                    {
-                        soundID = new(voiceClip);
-                    }
-                    if (soundID != SoundID.None && soundID.Index != -1 && liz.abstractCreature.world.game.soundLoader.workingTriggers[soundID.Index])
-                    {
-                        list.Add(soundID);
-                    }
-                }
-
-                res = list.Count == 0 ? SoundID.None : list[Random.Range(0, list.Count)];
+                voice = HSEnums.Sound.FreezerHiss;
             }
-            else if (liz.Template.type == HSEnums.CreatureType.GorditoGreenieLizard)
+            else
+            if (lizType == HSEnums.CreatureType.IcyBlueLizard &&
+                lizVoice.lizard.abstractCreature.world.game.soundLoader.workingTriggers[HSEnums.Sound.IcyBlueHiss.Index])
             {
+                voice = HSEnums.Sound.IcyBlueHiss;
+            }
+            else
+            if (lizType == HSEnums.CreatureType.GorditoGreenieLizard)
+            {
+                List<SoundID> list = new();
+                string[] voiceClips = new[] { "A", "B", "C", "D", "E" };
                 for (int i = 0; i < voiceClips.Length; i++)
                 {
                     SoundID soundID = SoundID.None;
@@ -197,29 +175,61 @@ public class LizardHooks
                     {
                         soundID = new(voiceClip);
                     }
-                    if (soundID != SoundID.None && soundID.Index != -1 && liz.abstractCreature.world.game.soundLoader.workingTriggers[soundID.Index])
+                    if (soundID != SoundID.None && soundID.Index != -1 && lizVoice.lizard.abstractCreature.world.game.soundLoader.workingTriggers[soundID.Index])
                     {
                         list.Add(soundID);
                     }
                 }
 
-                res = list.Count == 0 ? SoundID.None : list[Random.Range(0, list.Count)];
+                voice = list.Count == 0 ? SoundID.None : list[Random.Range(0, list.Count)];
             }
         }
+        return voice;
+    }
+    public static SoundID HailstormLizLoveVoices(On.LizardVoice.orig_GetMyLoveTrigger orig, LizardVoice lizVoice)
+    {
+        SoundID res = orig(lizVoice);
+
+        if (lizVoice.lizard is Lizard liz &&
+            liz.Template.type == HSEnums.CreatureType.FreezerLizard)
+        {
+            res = HSEnums.Sound.FreezerLove;
+        }
+
         return res;
     }
-    public static void GorditoGreenieVoicePitch(On.LizardVoice.orig_ctor orig, LizardVoice voice, Lizard liz)
+
+    public static void HailstormLizVoicePitch(On.LizardVoice.orig_ctor orig, LizardVoice voice, Lizard liz)
     {
         orig(voice, liz);
-        if (liz is not null && liz.Template.type == HSEnums.CreatureType.GorditoGreenieLizard)
+        if (liz is null)
+        {
+            return;
+        }
+
+        if (liz.Template.type == HSEnums.CreatureType.GorditoGreenieLizard)
         {
             voice.myPitch *= 0.33f;
         }
+        else if (liz.Template.type == HSEnums.CreatureType.FreezerLizard)
+        {
+            voice.myPitch *= 0.85f;
+        }
     }
-    public static void GorditoGreenieVoiceVolume(On.LizardVoice.orig_Update orig, LizardVoice voice)
+    public static void HailstormLizVoiceUpdate(On.LizardVoice.orig_Update orig, LizardVoice voice)
     {
         orig(voice);
-        if (voice.lizard is not null && voice.lizard.Template.type == HSEnums.CreatureType.GorditoGreenieLizard && voice.articulationIndex > -1 && voice.currentArticulationProgression < 1)
+        if (voice.lizard is null ||
+            voice.articulationIndex == -1 ||
+            voice.currentArticulationProgression >= 1)
+        {
+            return;
+        }
+        if (voice.lizard is ColdLizard)
+        {
+            voice.currentArticulationProgression -= 0.5f / (voice.currentArt.length * Custom.LerpMap(voice.currentEmotionIntensity, 0, 2, 0.5f, 1.5f));
+        }
+        else if (voice.lizard.Template.type == HSEnums.CreatureType.GorditoGreenieLizard)
         {
             voice.Volume *= 0.7f / voice.myPitch;
         }
@@ -368,7 +378,7 @@ public class LizardHooks
             frzTemp.BlizzardAdapted = true; // If true, makes the lizard functionally immune to the Hypothermia mechaic.
             frzTemp.BlizzardWanderer = true; // If true, the lizard will stay outside after the cycle timer ends.
                                              // This is not tied to the blizzard mechanic at all; it's actually also used for nighttime spawns in Metropolis and the Wall.
-                                             //----Vision----//
+            //----Vision----//
             frzTemp.visualRadius = 1750f; // How far the lizard can see.
             frzTemp.waterVision = 0.2f; // Vision in water.
             frzTemp.throughSurfaceVision = 0.5f; // How well the lizard can see through the surface of water.
@@ -377,7 +387,7 @@ public class LizardHooks
                                                  // - At 0, the lizard has perfect vision for up to 90 degrees in either direction (180 total)
                                                  // - At 1, the perfect vision angle is pretty much non-existent.
             frzStats.periferalVisionAngle = -0.5f; // The angle through which the lizard can see creatures at all, even if not well. Functions similarly to perfectVisionAngle.
-                                                   //----Body----//
+            //----Body----//
             frzStats.bodyMass = 2.8f; // Weight.
             frzStats.bodySizeFac = 1.2f; // Overall scale of the lizard's body chunks.
             frzStats.bodyRadFac = 0.7f; //  W I D E N E S S
@@ -644,7 +654,10 @@ public class LizardHooks
                 liz.effectColor = Custom.HSL2RGB(Custom.ClampedRandomVariation(340 / 360f, 20 / 360f, 0.25f), Random.Range(0.7f, 0.8f), 0.4f);
                 Random.state = state;
             }
-            else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard && (IsIncanStory(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(absLiz, out CWT.AbsCtrInfo aI))
+            else
+			if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard &&
+				(IsIncanStory(world?.game) || HSRemix.EelLizardColorsEverywhere.Value is true) &&
+				CWT.AbsCtrData.TryGetValue(absLiz, out CWT.AbsCtrInfo aI))
             {
                 Random.State state = Random.state;
                 Random.InitState(absLiz.ID.RandomSeed);
@@ -657,32 +670,20 @@ public class LizardHooks
                 aI.functionTimer = Random.Range(0, 101);
                 Random.state = state;
             }
-            else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.ZoopLizard && (IsIncanStory(world?.game) || HSRemix.StrawberryLizardColorsEverywhere.Value is true))
-            {
-                Random.State state = Random.state;
-                Random.InitState(absLiz.ID.RandomSeed);
-                float hue =
-                    Random.value < 0.05f ?
-                    Custom.WrappedRandomVariation(30 / 360f, 20 / 360f, 0.33f) :
-                    Custom.WrappedRandomVariation(-10 / 360f, 35 / 360f, 0.25f);
-
-                liz.effectColor = Custom.HSL2RGB(hue, Custom.ClampedRandomVariation(0.525f, 0.1f, 0.2f), Custom.ClampedRandomVariation(0.83f, 0.05f, 0.25f));
-                Random.state = state;
-            }
             else if (IsIncanStory(world?.game))
             {
                 if (absLiz.Winterized)
                 {
                     if (liz.Template.type != CreatureTemplate.Type.WhiteLizard &&
                     liz.Template.type != CreatureTemplate.Type.YellowLizard &&
-                    liz.Template.type != DLCSharedEnums.CreatureTemplateType.EelLizard &&
-                    liz.Template.type != DLCSharedEnums.CreatureTemplateType.ZoopLizard)
+                    liz.Template.type != MoreSlugcatsEnums.CreatureTemplateType.EelLizard &&
+                    liz.Template.type != MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
                     {
                         for (int b = 0; b < liz.bodyChunks.Length; b++)
                         {
                             liz.bodyChunks[b].rad = liz.lizardParams.bodySizeFac * liz.lizardParams.bodyRadFac * 9f;
                             liz.bodyChunks[b].mass = liz.lizardParams.bodyMass / 2.7f;
-                            if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard)
+                            if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
                             {
                                 liz.bodyChunkConnections[b].distance =
                                     ((b != 2) ?
@@ -778,16 +779,16 @@ public class LizardHooks
     }
     public static void IncanHPandResistanceChanges(Lizard liz, Creature.DamageType dmgType, ref float dmg, ref float bonusStun)
     {
-        if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard)
+        if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
         {
             dmg *= 0.615384f; // Base HP: 1.6 -> 2.6
         }
-        else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard)
+        else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard)
         {
             dmg *= 2 / 3f; // Base HP: 5 -> 7.5
             bonusStun *= 2 / 3f;
         }
-        else if (liz.Template.type == DLCSharedEnums.CreatureTemplateType.ZoopLizard)
+        else if (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
         {
             dmg *= 1.5f; // Base HP: 2.4 -> 1.6
         }
@@ -904,7 +905,7 @@ public class LizardHooks
                     }
 
                     if (otherCtrType == CreatureTemplate.Type.GreenLizard ||
-                        otherCtrType == DLCSharedEnums.CreatureTemplateType.SpitLizard ||
+                        otherCtrType == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard ||
                         otherCtrType == CreatureTemplate.Type.CyanLizard ||
                         otherCtrType == CreatureTemplate.Type.RedLizard)
                     {
@@ -1023,7 +1024,7 @@ public class LizardHooks
             lizAI.lizard is not ColdLizard &&
             lizType != CreatureTemplate.Type.BlueLizard &&
             lizType != CreatureTemplate.Type.Salamander &&
-            lizType != DLCSharedEnums.CreatureTemplateType.EelLizard &&
+            lizType != MoreSlugcatsEnums.CreatureTemplateType.EelLizard &&
             dynamRelat.trackerRep.representedCreature?.realizedCreature is not null &&
             dynamRelat.trackerRep.representedCreature.creatureTemplate.type == CreatureTemplate.Type.Slugcat &&
             lizAI.friendTracker.giftOfferedToMe is null) // Lizards will be more aggressive towards the player in general... probably?
@@ -1094,15 +1095,15 @@ public class LizardHooks
     }
     public static CreatureTemplate.Relationship IncanSpecificRelationshipChanges(LizardAI lizAI, CreatureTemplate.Type lizType, Creature target)
     {
-        if ((lizType == CreatureTemplate.Type.Salamander || lizType == DLCSharedEnums.CreatureTemplateType.EelLizard) && target is Leech)
+        if ((lizType == CreatureTemplate.Type.Salamander || lizType == MoreSlugcatsEnums.CreatureTemplateType.EelLizard) && target is Leech)
         {
             return new CreatureTemplate.Relationship
                         (CreatureTemplate.Relationship.Type.Eats, 0.1f);
         }
 
-        if (lizType == DLCSharedEnums.CreatureTemplateType.ZoopLizard)
+        if (lizType == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
         {
-            if (target is Lizard && target.Template.type == DLCSharedEnums.CreatureTemplateType.ZoopLizard)
+            if (target is Lizard && target.Template.type == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard)
             {
                 return new CreatureTemplate.Relationship
                     (CreatureTemplate.Relationship.Type.Pack, 0.5f);
@@ -1141,7 +1142,7 @@ public class LizardHooks
                 new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Afraid, icy.ColdAI.NearAFreezer ? 1 : Mathf.Lerp(0.25f, 1, Mathf.InverseLerp(0.5f, 1, icy.ColdAI.PackPower))) :
                 new CreatureTemplate.Relationship(CreatureTemplate.Relationship.Type.Attacks, Mathf.Lerp(0.5f, 0.25f, Mathf.InverseLerp(0, 0.5f, icy.ColdAI.PackPower)))
             : lizType == CreatureTemplate.Type.GreenLizard ||
-            lizType == DLCSharedEnums.CreatureTemplateType.SpitLizard ||
+            lizType == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard ||
             lizType == MoreSlugcatsEnums.CreatureTemplateType.TrainLizard
             ? lizType == CreatureTemplate.Type.GreenLizard &&
                 icy.IcyBlue &&
@@ -1187,7 +1188,7 @@ public class LizardHooks
                 }
 
                 if (lizAI.redSpitAI is not null &&
-                    (liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard || liz.Template.type == CreatureTemplate.Type.RedLizard))
+                    (liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard || liz.Template.type == CreatureTemplate.Type.RedLizard))
                 {
                     if (lizAI.redSpitAI.spitting)
                     {
@@ -1220,7 +1221,7 @@ public class LizardHooks
     public static PathCost HailstormLizTravelPrefs(On.LizardAI.orig_TravelPreference orig, LizardAI lizAI, MovementConnection connection, PathCost cost)
     {
         if (IsIncanStory(lizAI?.lizard?.room?.game) &&
-            (lizAI.lizard.Template.type == CreatureTemplate.Type.Salamander || lizAI.lizard.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard))
+            (lizAI.lizard.Template.type == CreatureTemplate.Type.Salamander || lizAI.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard))
         {
             if (!lizAI.lizard.room.GetTile(connection.destinationCoord).AnyWater)
             {
@@ -1352,7 +1353,7 @@ public class LizardHooks
             }
             else if (IsIncanStory(lG.lizard.room?.game) && lG.lizard.abstractCreature.Winterized)
             {
-                if (lG.lizard.Template.type == CreatureTemplate.Type.Salamander || lG.lizard.Template.type == DLCSharedEnums.CreatureTemplateType.EelLizard)
+                if (lG.lizard.Template.type == CreatureTemplate.Type.Salamander || lG.lizard.Template.type == MoreSlugcatsEnums.CreatureTemplateType.EelLizard)
                 {
                     Random.State state = Random.state;
                     Random.InitState(lG.lizard.abstractCreature.ID.RandomSeed);

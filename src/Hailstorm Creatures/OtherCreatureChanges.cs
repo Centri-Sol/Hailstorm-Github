@@ -27,15 +27,6 @@ public class OtherCreatureChanges
         On.DropBugGraphics.InitiateSprites += WinterwigSize1;
         On.DropBugGraphics.DrawSprites += WinterwigSize2;
 
-        // Stowaway hooks
-        On.MoreSlugcats.StowawayBugAI.ctor += WAKETHEFUCKUP;
-        On.MoreSlugcats.StowawayBug.Update += StowawayUpdate;
-        On.MoreSlugcats.StowawayBug.Eat += StowFoodAway;
-        On.MoreSlugcats.StowawayBug.Die += StowawayProvidesFood;
-        On.MoreSlugcats.StowawayBugState.StartDigestion += EATFASTERDAMNIT;
-        On.MoreSlugcats.StowawayBug.Violence += StowawayViolence;
-        On.Creature.SpearStick += StowawayToughSides;
-
         // Grabby Plant hooks
         On.PoleMimic.Update += ErraticWindPoleHide;
         On.PoleMimic.Act += AngrierPolePlants;
@@ -97,13 +88,13 @@ public class OtherCreatureChanges
             CWT.CreatureData.Add(ctr, new CWT.CreatureInfo(ctr));
         }
 
-        if (absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.BigJelly && ctr.grasps is null)
+        if (absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.BigJelly && ctr.grasps is null)
         {
             ctr.grasps = new Creature.Grasp[ctr.Template.grasps];
         }
         if (IsIncanStory(world?.game))
         {
-            if (absCtr.creatureTemplate.type == CreatureTemplate.Type.LanternMouse || absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.Yeek)
+            if (absCtr.creatureTemplate.type == CreatureTemplate.Type.LanternMouse || absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.Yeek)
             {
                 absCtr.state.meatLeft = 1;
             }
@@ -120,11 +111,11 @@ public class OtherCreatureChanges
             {
                 spawnData += absCtr.spawnData[s];
             }
-            Debug.Log(absCtr.creatureTemplate.name + " spawndata: " + spawnData);
+            Plugin.TestingLog(absCtr.creatureTemplate.name + " spawndata: " + spawnData);
         }
         else
         {
-            Debug.Log("nope lol"); // this is for testing
+            Plugin.TestingLog("nope lol"); // this is for testing
         }
     }
 
@@ -150,10 +141,25 @@ public class OtherCreatureChanges
 
     #region Cicadas
 
+    public static bool CicadaH(Cicada sqt)
+    {
+        if (sqt is null)
+        {
+            return false;
+        }
+        if (IsIncanStory(sqt.room?.game) &&
+            sqt.Template.IsCicada &&
+            sqt.abstractCreature.Winterized)
+        {
+            return true;
+        }
+        return sqt is Snowcuttle;
+    }
+
     public static void CicadaH_iVars(On.Cicada.orig_GenerateIVars orig, Cicada sqt)
     {
         orig(sqt);
-        if (sqt is not null && sqt.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
+        if (sqt is not null && CicadaH(sqt))
         {
             Random.State state = Random.state;
             Random.InitState(sqt.abstractCreature.ID.RandomSeed);
@@ -171,7 +177,7 @@ public class OtherCreatureChanges
     public static void CicadaH_ctor(On.Cicada.orig_ctor orig, Cicada sqt, AbstractCreature absSqt, World world, bool gender)
     {
         orig(sqt, absSqt, world, gender);
-        if (sqt.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
+        if (CicadaH(sqt))
         {
             absSqt.state.meatLeft = 1;
             sqt.buoyancy += 0.02f;
@@ -208,7 +214,7 @@ public class OtherCreatureChanges
             if (self.grasps[i]?.grabbed is null ||
                 self.HeavyCarry(self.grasps[i].grabbed) ||
                 self.grasps[i].grabbed is not Cicada sqt ||
-                sqt.Template.ancestor.type != HSEnums.CreatureType.SnowcuttleTemplate)
+                !CicadaH(sqt))
             {
                 continue;
             }
@@ -255,7 +261,7 @@ public class OtherCreatureChanges
             if (self.grasps[i]?.grabbed is null ||
                 self.HeavyCarry(self.grasps[i].grabbed) ||
                 self.grasps[i].grabbed is not Cicada sqt ||
-                sqt.Template.ancestor.type != HSEnums.CreatureType.SnowcuttleTemplate)
+                !CicadaH(sqt))
             {
                 continue;
             }
@@ -299,7 +305,7 @@ public class OtherCreatureChanges
     }
     public static void CicadaH_Stamina(On.Cicada.orig_GrabbedByPlayer orig, Cicada sqt)
     {
-        if (sqt is not null && sqt.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate && sqt.currentlyLiftingPlayer)
+        if (sqt is not null && CicadaH(sqt) && sqt.currentlyLiftingPlayer)
         {
             sqt.stamina += 1f / (sqt.gender ? 160f : 150f);
             orig(sqt);
@@ -313,7 +319,7 @@ public class OtherCreatureChanges
     public static void CicadaH_Palette(On.CicadaGraphics.orig_ApplyPalette orig, CicadaGraphics sg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, RoomPalette palette)
     {
         orig(sg, sLeaser, rCam, palette);
-        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
+        if (sg?.cicada is not null && CicadaH(sg.cicada))
         {
             bool whiteCicada = sg.cicada.gender;
 
@@ -351,7 +357,8 @@ public class OtherCreatureChanges
     public static void WinterSquitSpriteSize(On.CicadaGraphics.orig_InitiateSprites orig, CicadaGraphics sg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam)
     {
         orig(sg, sLeaser, rCam);
-        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
+        if (sg?.cicada is not null &&
+            CicadaH(sg.cicada))
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
@@ -388,7 +395,8 @@ public class OtherCreatureChanges
     public static void WinterSquitSpriteCondense(On.CicadaGraphics.orig_DrawSprites orig, CicadaGraphics sg, RoomCamera.SpriteLeaser sLeaser, RoomCamera rCam, float timeStacker, Vector2 camPos)
     {
         orig(sg, sLeaser, rCam, timeStacker, camPos);
-        if (sg?.cicada is not null && sg.cicada.Template.ancestor.type == HSEnums.CreatureType.SnowcuttleTemplate)
+        if (sg?.cicada is not null &&
+            CicadaH(sg.cicada))
         {
             for (int s = 0; s < sLeaser.sprites.Length; s++)
             {
@@ -444,9 +452,9 @@ public class OtherCreatureChanges
         orig(DBG, sLeaser, rCam, palette);
         if (IsIncanStory(DBG?.bug?.room?.game) && DBG.bug.abstractCreature.Winterized)
         {
-            DBG.blackColor = Custom.HSL2RGB(DBG.hue, 0.033f, 0.4f);
+            DBG.blackColor = Color.Lerp(Custom.HSL2RGB(DBG.hue, 0.033f, 0.4f), palette.blackColor, DBG.darkness / 2f);
             DBG.shineColor = palette.blackColor;
-            DBG.camoColor = Custom.HSL2RGB(DBG.hue, 0, 0.3f);
+            DBG.camoColor = Color.Lerp(Custom.HSL2RGB(DBG.hue, 0, 0.3f), palette.blackColor, DBG.darkness / 2f);
             DBG.RefreshColor(0f, sLeaser);
         }
     }
@@ -495,534 +503,6 @@ public class OtherCreatureChanges
             worm.lungs += Mathf.Min(worm.lungs + (0.85f / 160f), 1f);
         }
     }
-
-    //----------------------------------------------------------------------------------
-    //----------------------------------------------------------------------------------
-
-    #region Stowaways
-
-    public static void WAKETHEFUCKUP(On.MoreSlugcats.StowawayBugAI.orig_ctor orig, StowawayBugAI stwAwyAI, AbstractCreature absCtr, World world)
-    {
-        orig(stwAwyAI, absCtr, world);
-        if (stwAwyAI is not null && (IsIncanStory(world?.game) || HSRemix.HailstormStowawaysEverywhere.Value is true))
-        {
-            if (!stwAwyAI.activeThisCycle)
-            {
-                stwAwyAI.activeThisCycle = !Weather.FogPrecycle;
-                stwAwyAI.behavior = Weather.FogPrecycle ?
-                    StowawayBugAI.Behavior.EscapeRain : StowawayBugAI.Behavior.Idle;
-            }
-        }
-    }
-    public static void StowawayUpdate(On.MoreSlugcats.StowawayBug.orig_Update orig, StowawayBug stwAwy, bool eu)
-    {
-        orig(stwAwy, eu);
-        if (stwAwy is not null && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
-        {
-            if (aI.ctrList.Count > 4)
-            {
-                aI.ctrList.RemoveAt(0);
-            }
-            if (stwAwy.State.dead && CWT.CreatureData.TryGetValue(stwAwy, out CWT.CreatureInfo cI))
-            {
-                if (aI.functionTimer == -1 && stwAwy.State is StowawayBugState SBS && SBS.digestionLength > 0 && aI.ctrList.Count > 0)
-                {
-                    aI.functionTimer = 0;
-                    SBS.digestionLength = (int)Mathf.Lerp(0, 2400, Mathf.InverseLerp(1, 8, aI.ctrList[aI.ctrList.Count - 1].creatureTemplate.baseDamageResistance));
-                }
-                if (cI.impactCooldown < -1)
-                {
-                    cI.impactCooldown++;
-                }
-                if (cI.impactCooldown == -2 && stwAwy.room.world is not null && stwAwy.room.abstractRoom is not null)
-                {
-                    int smallCreatures = 0;
-                    for (int c = 0; c < aI.ctrList.Count; c++)
-                    {
-                        if (aI.ctrList[c].creatureTemplate.smallCreature ||
-                            aI.ctrList[c].creatureTemplate.type == CreatureTemplate.Type.SeaLeech ||
-                            aI.ctrList[c].creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.JungleLeech)
-                        {
-                            smallCreatures++;
-                        }
-                    }
-                    for (bool addCtr = true; aI.functionTimer != 1; addCtr = Random.value < 1.75f - ((aI.ctrList.Count - smallCreatures) * 0.75f))
-                    {
-                        if (addCtr)
-                        {
-                            aI.ctrList.AddRange(StowawayIndigestion(stwAwy));
-                        }
-                        else
-                        {
-                            aI.functionTimer = 1;
-                        }
-                    }
-                    if (aI.ctrList.Count > 0 && aI.ctrList[aI.ctrList.Count - 1].creatureTemplate.type is not null)
-                    {
-
-                        stwAwy.room.PlaySound(SoundID.Red_Lizard_Spit, stwAwy.DangerPos, 1.5f, Random.Range(0.25f, 0.4f));
-                        stwAwy.room.PlaySound(SoundID.Red_Lizard_Spit, stwAwy.DangerPos, 1.5f, Random.Range(0.75f, 0.9f));
-                        stwAwy.room.PlaySound(SoundID.Red_Lizard_Spit_Hit_NPC, stwAwy.DangerPos, 1.5f, Random.Range(0.25f, 0.4f));
-
-                        int foodAtOnce = 0;
-                        for (int f = aI.ctrList.Count - 1; f >= 0; f--)
-                        {
-                            if (aI.ctrList[f].creatureTemplate.type == aI.ctrList[aI.ctrList.Count - 1].creatureTemplate.type)
-                            {
-                                foodAtOnce++;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-
-                        for (int j = foodAtOnce; j > 0; j--)
-                        {
-                            IntVector2 tilePosition = stwAwy.room.GetTilePosition(stwAwy.DangerPos - new Vector2(0, 25f));
-                            WorldCoordinate worldCoordinate = stwAwy.room.GetWorldCoordinate(tilePosition);
-
-                            AbstractCreature eatenCtr = aI.ctrList[aI.ctrList.Count - 1];
-                            AbstractCreature newCtr = new(stwAwy.room.world, eatenCtr.creatureTemplate, null, worldCoordinate, eatenCtr.ID);
-
-                            bool dead = false;
-                            CreatureTemplate.Type type = newCtr.creatureTemplate.type;
-                            bool tough =
-                                type == CreatureTemplate.Type.SeaLeech ||
-                                type == DLCSharedEnums.CreatureTemplateType.JungleLeech ||
-                                type == CreatureTemplate.Type.DropBug ||
-                                type == CreatureTemplate.Type.RedCentipede ||
-                                type == CreatureTemplate.Type.RedLizard ||
-                                type == HSEnums.CreatureType.FreezerLizard ||
-                                type == HSEnums.CreatureType.Cyanwing;
-                            if (Random.value < 0.6f)
-                            {
-                                dead = true;
-                            }
-                            else if (Random.value < 5 / 8f)
-                            {
-                                if (newCtr.state is HealthState HS && eatenCtr.state is HealthState HS2)
-                                {
-                                    float minPossibleHP =
-                                        (tough ? -0.20f : -0.50f) + HSRemix.StowawayFoodSurvivalBonus.Value;
-
-                                    HS.health =
-                                        Mathf.Min(HS2.health, Random.Range(minPossibleHP, Mathf.Lerp(0.75f, 1, HSRemix.StowawayFoodSurvivalBonus.Value)));
-                                }
-                                else if (Random.value < 0.5f)
-                                {
-                                    dead = true;
-                                }
-                            }
-
-                            if (dead && newCtr.state is not null)
-                            {
-                                newCtr.state.alive = false;
-                                if (newCtr.realizedCreature is not null)
-                                {
-                                    newCtr.realizedCreature.dead = true;
-                                }
-                            }
-
-                            stwAwy.room.abstractRoom.AddEntity(newCtr);
-                            CustomFlags(newCtr);
-                            newCtr.RealizeInRoom();
-                            newCtr.realizedCreature.mainBodyChunk.vel.x += Random.Range(-3f, 3f);
-                            if (newCtr.state is not null && newCtr.state.alive)
-                            {
-                                newCtr.realizedCreature.Stun(Random.Range(120, 240));
-                            }
-                            newCtr.realizedCreature.killTag = stwAwy.abstractCreature;
-
-                            aI.ctrList.RemoveAt(aI.ctrList.Count - 1);
-                        }
-
-
-                        if (aI.functionTimer != 1)
-                        {
-                            aI.functionTimer = 1;
-                        }
-                        cI.impactCooldown -= Random.Range(15, 40);
-
-                        /*
-                        if (RainWorld.ShowLogs)
-                        {
-                            Debug.Log(
-                                aI.ctrList.Count > 10 ? "[Hailstorm] DEAR LORD THAT STOWAWAY WAS HUNGRY; IT SPAT OUT " + aI.ctrList.Count + " CREATURES!" :
-                                aI.ctrList.Count > 05 ? "[Hailstorm] Stowaway spat out a whopping " + aI.ctrList.Count + " creatures!" :
-                                "[Hailstorm] Stowaway spat out " + aI.ctrList.Count + " creatures!");
-                        }
-                        */
-                    }
-                }
-            }
-        }
-    }
-    public static void StowFoodAway(On.MoreSlugcats.StowawayBug.orig_Eat orig, StowawayBug stwAwy, bool eu)
-    {
-        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
-        {
-            for (int i = stwAwy.eatObjects.Count - 1; i >= 0; i--)
-            {
-                if (stwAwy.eatObjects[i].progression > 1f && stwAwy.eatObjects[i].chunk.owner is not null && stwAwy.eatObjects[i].chunk.owner is Creature ctr && ctr is not Player)
-                {
-                    aI.ctrList.Add(ctr.abstractCreature);
-                }
-            }
-        }
-        orig(stwAwy, eu);
-    }
-    public static void StowawayProvidesFood(On.MoreSlugcats.StowawayBug.orig_Die orig, StowawayBug stwAwy)
-    {
-        if (stwAwy is not null && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.CreatureData.TryGetValue(stwAwy, out CWT.CreatureInfo cI) && cI.impactCooldown >= 0)
-        {
-            cI.impactCooldown = Random.Range(-130, -40);
-        }
-        orig(stwAwy);
-    }
-    public static void EATFASTERDAMNIT(On.MoreSlugcats.StowawayBugState.orig_StartDigestion orig, StowawayBugState sbs, int cycleTime)
-    {
-        orig(sbs, cycleTime);
-        if (sbs?.creature is not null && (IsIncanStory(sbs.creature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(sbs.creature, out CWT.AbsCtrInfo aI))
-        {
-            aI.functionTimer = -1;
-        }
-    }
-    public static void StowawayViolence(On.MoreSlugcats.StowawayBug.orig_Violence orig, StowawayBug stwAwy, BodyChunk source, Vector2? dirAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos hitAppen, Creature.DamageType dmgType, float dmg, float stun)
-    {
-        if (stwAwy?.room is not null)
-        {
-            if (hitAppen is not null && source?.owner is not null && source.owner is Lizard liz && liz.LizardState is ColdLizState)
-            {
-                dmg = 0.02f; // Gives Stowaways protection against icy lizard bites, and only their bites. (Spit from Freezers bypasses this)
-                stun = 0;
-            }
-            if (CWT.CreatureData.TryGetValue(stwAwy, out CWT.CreatureInfo cI) && (IsIncanStory(stwAwy.room.game) || HSRemix.HailstormStowawaysEverywhere.Value is true)) // I know adding "== true" is redundant, but I'm doing it here for clarity's sake.
-            {
-                dmg /= HSRemix.StowawayHPMultiplier.Value;
-                if (hitAppen is null)
-                {
-                    if (stwAwy.AI.behavior == StowawayBugAI.Behavior.EscapeRain)
-                    {
-                        dmg *= 0.3f;
-                    }
-                    else if (source?.owner is not null && source.owner is Weapon && dirAndMomentum.HasValue && Mathf.Abs(dirAndMomentum.Value.y) >= Mathf.Abs(dirAndMomentum.Value.x * 3))
-                    {
-                        dmg *= 1.4f; // Takes bonus damage from weapons thrown upwards or downwards
-                    }
-                    else if (!dirAndMomentum.HasValue || Mathf.Abs(dirAndMomentum.Value.y) < Mathf.Abs(dirAndMomentum.Value.x * 3))
-                    {
-                        cI.hitDeflected = HSRemix.StowawayToughSides.Value;
-                        dmg *= cI.hitDeflected ? 0 : 0.75f;
-                        if (cI.hitDeflected && source is not null && hitChunk is not null)
-                        {
-                            for (int num = 10; num > 0; num--)
-                            {
-                                stwAwy.room.AddObject(new Spark(Vector2.Lerp(hitChunk.pos, source.pos, 0.5f), Custom.RNV(), Color.white, null, 15, 25));
-                            }
-                            if (source.owner is not null && source.owner is Player plr && plr.animation != Player.AnimationIndex.Flip)
-                            {
-                                plr.room.PlaySound(SoundID.Spear_Bounce_Off_Creauture_Shell, source.pos, 1.25f, 0.75f);
-                                plr.room.PlaySound(SoundID.Spear_Bounce_Off_Wall, source.pos, 1.5f, 0.75f);
-                                if (plr.IsIncan(out IncanInfo Incan) && Incan.isIncan && !Incan.ReadyToMoveOn)
-                                {
-                                    plr.Stun(Random.Range(20, 30));
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (stwAwy.AI.behavior == StowawayBugAI.Behavior.Hidden ||
-                    stwAwy.AI.behavior == StowawayBugAI.Behavior.Digesting ||
-                    stwAwy.AI.behavior == StowawayBugAI.Behavior.EscapeRain)
-                {
-                    stwAwy.AI.behavior = StowawayBugAI.Behavior.Attacking;
-                    Debug.Log("[Hailstorm] A Stowaway took damage and got aggravated!");
-                }
-            }
-        }
-        orig(stwAwy, source, dirAndMomentum, hitChunk, hitAppen, dmgType, dmg, stun);
-    }
-    public static bool StowawayToughSides(On.Creature.orig_SpearStick orig, Creature victim, Weapon source, float dmg, BodyChunk chunk, PhysicalObject.Appendage.Pos appen, Vector2 direction)
-    {
-        if (victim?.room is not null && victim is StowawayBug && CWT.CreatureData.TryGetValue(victim, out CWT.CreatureInfo cI) && cI.hitDeflected)
-        {
-            cI.hitDeflected = false;
-            return false;
-        }
-        return orig(victim, source, dmg, chunk, appen, direction);
-    }
-
-    //--------------------------------------
-    public static bool StoreCreatureInsteadOfDestroy(StowawayBug stwAwy)
-    {
-        Vector2 pos = stwAwy.firstChunk.pos;
-        if (stwAwy?.eatObjects is not null && (IsIncanStory(stwAwy.abstractCreature.world.game) || HSRemix.HailstormStowawaysEverywhere.Value) && CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
-        {
-            for (int i = stwAwy.eatObjects.Count - 1; i >= 0; i--)
-            {
-                if (stwAwy.eatObjects[i].progression > 1f && stwAwy.eatObjects[i].chunk.owner is not null && stwAwy.eatObjects[i].chunk.owner is Creature ctr)
-                {
-                    if (ctr is Player && ctr.room is not null)
-                    {
-                        AbstractCreature ctrCopy = new(ctr.room.world, ctr.Template, new Player(ctr.abstractCreature, ctr.room.world), ctr.abstractCreature.pos, ctr.abstractCreature.ID);
-                        aI.ctrList.Add(ctrCopy);
-                    }
-                    else
-                    {
-                        aI.ctrList.Add(ctr.abstractCreature);
-                    }
-
-                    stwAwy.AI.tracker.ForgetCreature(ctr.abstractCreature);
-                    ctr.RemoveFromRoom();
-                    ctr.abstractPhysicalObject.Room.RemoveEntity(ctr.abstractPhysicalObject);
-                    stwAwy.eatObjects.RemoveAt(i);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    public static List<AbstractCreature> StowawayIndigestion(StowawayBug stwAwy)
-    {
-        List<CreatureTemplate.Type> regionSpawns = new();
-
-        if (stwAwy.room.world.spawners is not null && stwAwy.room.world.spawners.Length > 0)
-        {
-            foreach (World.CreatureSpawner cS in stwAwy.room.world.spawners)
-            {
-                if (cS is World.SimpleSpawner spawner &&
-                    spawner.creatureType is not null)
-                {
-                    bool smallCreature =
-                        StaticWorld.GetCreatureTemplate(spawner.creatureType).smallCreature ||
-                        spawner.creatureType == CreatureTemplate.Type.Fly ||
-                        spawner.creatureType == CreatureTemplate.Type.Leech ||
-                        spawner.creatureType == CreatureTemplate.Type.SeaLeech ||
-                        spawner.creatureType == DLCSharedEnums.CreatureTemplateType.JungleLeech ||
-                        spawner.creatureType == CreatureTemplate.Type.Spider;
-
-                    for (int s = 0; s < (smallCreature ? 1 : Mathf.Max(1, spawner.amount / 3)); s++)
-                    {
-                        regionSpawns.Add(spawner.creatureType);
-                    }
-                }
-                else if (cS is World.Lineage lineage &&
-                    lineage.creatureTypes is not null &&
-                    stwAwy.room.game.session is not null &&
-                    stwAwy.room.game.session is StoryGameSession SGS &&
-                    lineage.CurrentType(SGS.saveState) is not null)
-                {
-                    regionSpawns.Add(lineage.CurrentType(SGS.saveState));
-                }
-            }
-        }
-
-        CreatureTemplate.Type ctrType = null;
-        if (regionSpawns is not null && regionSpawns.Count > 0 && stwAwy.AI is not null)
-        {
-            int smallCreatures = 0;
-            if (CWT.AbsCtrData.TryGetValue(stwAwy.abstractCreature, out CWT.AbsCtrInfo aI) && aI.ctrList is not null)
-            {
-                for (int i = 0; i < aI.ctrList.Count; i++)
-                {
-                    if (aI.ctrList[i].creatureTemplate.smallCreature ||
-                        aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.Fly ||
-                        aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.Leech ||
-                        aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.SeaLeech ||
-                        aI.ctrList[i].creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.JungleLeech ||
-                        aI.ctrList[i].creatureTemplate.type == CreatureTemplate.Type.Spider)
-                    {
-                        smallCreatures++;
-                    }
-                }
-            }
-
-            for (int i = regionSpawns.Count - 1; i >= 0; i--)
-            {
-                if (!stwAwy.AI.WantToEat(regionSpawns[i]) || ctrType == MoreSlugcatsEnums.CreatureTemplateType.SlugNPC ||
-                    (smallCreatures > 3 &&
-                    (regionSpawns[i] == CreatureTemplate.Type.Fly ||
-                    regionSpawns[i] == CreatureTemplate.Type.Leech ||
-                    regionSpawns[i] == CreatureTemplate.Type.SeaLeech ||
-                    regionSpawns[i] == CreatureTemplate.Type.Spider ||
-                    regionSpawns[i] == DLCSharedEnums.CreatureTemplateType.JungleLeech)))
-                {
-                    regionSpawns.RemoveAt(i);
-                }
-            }
-
-            int ctrNum =
-                Random.Range(0, regionSpawns.Count);
-
-            float strength =
-                StaticWorld.GetCreatureTemplate(regionSpawns[ctrNum]).baseDamageResistance +
-                StaticWorld.GetCreatureTemplate(regionSpawns[ctrNum]).baseStunResistance;
-
-            if (regionSpawns[ctrNum] == CreatureTemplate.Type.RedCentipede ||
-                regionSpawns[ctrNum] == HSEnums.CreatureType.Cyanwing)
-            {
-                strength = 10;
-            }
-
-            if (strength >= (StaticWorld.GetCreatureTemplate(regionSpawns[ctrNum]).ancestor == StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate) ? 6 : 8) &&
-                Random.value < 0.2f + (strength / 30f))
-            {
-                ctrNum = (ctrNum + 1 >= regionSpawns.Count) ? 0 : ctrNum + 1;
-            }
-
-            ctrType = regionSpawns[ctrNum];
-        }
-        else
-        {
-            switch (Random.value)
-            {
-                case < 0.100f:
-                    ctrType =
-                        Random.value > 0.5f ?
-                        CreatureTemplate.Type.SmallNeedleWorm :
-                        CreatureTemplate.Type.BigNeedleWorm;
-                    break;
-                case < 0.150f:
-                    ctrType = CreatureTemplate.Type.EggBug;
-                    break;
-                case < 0.225f:
-                    ctrType = CreatureTemplate.Type.TubeWorm;
-                    break;
-                case < 0.325f:
-                    ctrType = CreatureTemplate.Type.Hazer;
-                    break;
-                case < 0.400f:
-                    ctrType =
-                        Random.value > 0.5f ?
-                        CreatureTemplate.Type.Centipede :
-                        CreatureTemplate.Type.Centiwing;
-                    break;
-                case < 0.475f:
-                    ctrType = CreatureTemplate.Type.JetFish;
-                    break;
-                case < 0.550f:
-                    ctrType = CreatureTemplate.Type.LanternMouse;
-                    break;
-                case < 0.650f:
-                    switch (Random.Range(0, 4))
-                    {
-                        case 0:
-                            ctrType = CreatureTemplate.Type.Spider;
-                            break;
-                        case 1:
-                            ctrType = CreatureTemplate.Type.BigSpider;
-                            break;
-                        case 2:
-                            ctrType = CreatureTemplate.Type.SpitterSpider;
-                            break;
-                        case 3:
-                            ctrType = DLCSharedEnums.CreatureTemplateType.MotherSpider;
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case < 0.725f:
-                    ctrType = CreatureTemplate.Type.Snail;
-                    break;
-                case < 0.800f:
-                    ctrType =
-                        Random.value > 0.5f ?
-                        CreatureTemplate.Type.CicadaA :
-                        CreatureTemplate.Type.CicadaB;
-                    break;
-                case < 0.850f:
-                    ctrType = DLCSharedEnums.CreatureTemplateType.Yeek;
-                    break;
-                case < 0.925f:
-                    ctrType = CreatureTemplate.Type.DropBug;
-                    break;
-                case < 1f:
-                    ctrType = Random.Range(0, 10) switch
-                    {
-                        0 => Random.value < 0.75f ? CreatureTemplate.Type.PinkLizard :
-                                                        Random.value < 0.75f ? DLCSharedEnums.CreatureTemplateType.ZoopLizard :
-                                                        CreatureTemplate.Type.RedLizard,
-                        1 => CreatureTemplate.Type.GreenLizard,
-                        2 => Random.value < 0.75 ? CreatureTemplate.Type.BlueLizard :
-                                                        Random.value < 0.75 ? HSEnums.CreatureType.IcyBlueLizard :
-                                                        HSEnums.CreatureType.FreezerLizard,
-                        3 => CreatureTemplate.Type.Salamander,
-                        4 => DLCSharedEnums.CreatureTemplateType.EelLizard,
-                        5 => CreatureTemplate.Type.WhiteLizard,
-                        6 => CreatureTemplate.Type.YellowLizard,
-                        7 => CreatureTemplate.Type.BlackLizard,
-                        8 => DLCSharedEnums.CreatureTemplateType.SpitLizard,
-                        9 => CreatureTemplate.Type.CyanLizard,
-                        _ => null,
-                    };
-                    break;
-                default:
-                    ctrType = null;
-                    break;
-            }
-        }
-
-        if (IsIncanStory(stwAwy.room.game) && stwAwy.room.abstractRoom.name == "GW_A08")
-        {
-            ctrType =
-                (Random.value < 0.50f) ? CreatureTemplate.Type.DropBug :
-                (Random.value < 0.50f) ? CreatureTemplate.Type.SeaLeech :
-                (Random.value < 0.50f) ? CreatureTemplate.Type.Snail :
-                (Random.value < 0.50f) ? CreatureTemplate.Type.Salamander : DLCSharedEnums.CreatureTemplateType.EelLizard;
-        }
-
-        List<AbstractCreature> newCtrList = new();
-        if (ctrType is not null)
-        {
-            bool altForm = false;
-            if (regionSpawns is null && (ctrType == CreatureTemplate.Type.Centipede || ctrType == CreatureTemplate.Type.Centiwing))
-            {
-                if (Random.value < 0.65f)
-                {
-                    altForm = ctrType == CreatureTemplate.Type.Centiwing;
-                    ctrType = CreatureTemplate.Type.SmallCentipede;
-                }
-                else if (Random.value < 0.03f)
-                {
-                    ctrType =
-                        ctrType == CreatureTemplate.Type.Centipede ?
-                        CreatureTemplate.Type.RedCentipede :
-                        HSEnums.CreatureType.Cyanwing;
-                }
-            }
-
-            int reps =
-                ctrType == CreatureTemplate.Type.Fly ? (Random.value < 0.5f ? 3 : 2) :
-                ctrType == CreatureTemplate.Type.Hazer ? (Random.value < 0.25f ? 2 : 1) :
-                ctrType == CreatureTemplate.Type.LanternMouse ||
-                 ctrType == DLCSharedEnums.CreatureTemplateType.Yeek ? (Random.value < 0.15f ? 2 : 1) :
-                ctrType == CreatureTemplate.Type.Leech ||
-                ctrType == CreatureTemplate.Type.SeaLeech ||
-                ctrType == DLCSharedEnums.CreatureTemplateType.JungleLeech ? Random.Range(3, 6) :
-                ctrType == CreatureTemplate.Type.Spider ? Random.Range(4, 8) : 1;
-
-            for (int i = 0; i < reps; i++)
-            {
-                IntVector2 tilePosition = stwAwy.room.GetTilePosition(stwAwy.DangerPos - new Vector2(0, 25f));
-                WorldCoordinate worldCoordinate = stwAwy.room.GetWorldCoordinate(tilePosition);
-                EntityID newID = stwAwy.room.game.GetNewID();
-                AbstractCreature newCtr = new(stwAwy.room.world, StaticWorld.GetCreatureTemplate(ctrType), null, worldCoordinate, newID);
-
-                if (ctrType == CreatureTemplate.Type.SmallCentipede && altForm)
-                {
-                    newCtr.superSizeMe = true;
-                }
-
-                newCtrList.Add(newCtr);
-            }
-        }
-        return newCtrList;
-    }
-
-    #endregion
 
     //----------------------------------------------------------------------------------
     //----------------------------------------------------------------------------------
@@ -1290,7 +770,7 @@ public class OtherCreatureChanges
             {
                 if (RainWorld.ShowLogs)
                 {
-                    Debug.Log("Die! " + bigJelly.Template.name);
+                    Plugin.TestingLog("Die! " + bigJelly.Template.name);
                 }
                 if (ModManager.MSC && bigJelly.room is not null && bigJelly.room.world.game.IsArenaSession && bigJelly.room.world.game.GetArenaGameSession.chMeta is not null && (bigJelly.room.world.game.GetArenaGameSession.chMeta.secondaryWinMethod == ChallengeInformation.ChallengeMeta.WinCondition.PROTECT || bigJelly.room.world.game.GetArenaGameSession.chMeta.winMethod == ChallengeInformation.ChallengeMeta.WinCondition.PROTECT))
                 {
@@ -1434,7 +914,7 @@ public class OtherCreatureChanges
         {
             for (int j = 0; j < 2; j++)
             {
-                sLeaser.sprites[yGrph.HeadSpritesStart + 2 + j].color = Color.Lerp(yGrph.eyeColor, yGrph.featherColor, yGrph.darkness);
+                sLeaser.sprites[yGrph.HeadSpritesStart + j + 1].color = Color.Lerp(yGrph.eyeColor, yGrph.featherColor, yGrph.darkness);
             }
         }
     }
@@ -1449,9 +929,32 @@ public class OtherCreatureChanges
     // The following section manages my own version of the IProvideWarmth interface, which I made to be able to customize and edit heat sources more freely.
     #region WarmthSources
     public static List<UpdatableAndDeletable> tempSources;
-    public static void BootlegIProvideWarmth(On.Room.orig_ctor orig, Room room, RainWorldGame game, World world, AbstractRoom abstractRoom, bool devUI)
+    public static bool RemoveTempSource(UpdatableAndDeletable obj)
     {
-        orig(room, game, world, abstractRoom, devUI);
+        if (obj is not null)
+        {
+            if (obj is Creature ctr && (
+                (ctr is EggBug egg && egg.FireBug) ||
+                (ctr is Player plr && plr.IsIncan()) ||
+                (ctr is ColdLizard) ||
+                ctr.IsBurning()))
+            {
+                return true;
+            }
+            else if (obj is Weapon wpn && wpn is Spear spr && (spr.bugSpear || spr.abstractSpear is AbstractBurnSpear))
+            {
+                return true;
+            }
+            else if (obj is PlayerCarryableItem UaD && (UaD is Lantern || UaD is FireEgg))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public static void BootlegIProvideWarmth(On.Room.orig_ctor orig, Room room, RainWorldGame game, World world, AbstractRoom abstractRoom)
+    {
+        orig(room, game, world, abstractRoom);
 
         tempSources = new List<UpdatableAndDeletable>();
     }
@@ -1462,8 +965,9 @@ public class OtherCreatureChanges
         {
             if (obj is Creature ctr && (
                 (ctr is EggBug egg && !egg.dead && egg.FireBug) ||
-                (ctr is Player plr && !plr.dead && plr.IsIncan(out IncanInfo Incan)) ||
-                (ctr is ColdLizard)
+                (ctr is Player plr && !plr.dead && plr.IsIncan()) ||
+                (ctr is ColdLizard) ||
+                ctr.IsBurning()
                 ))
             {
                 tempSources.Add(ctr);
@@ -1481,24 +985,9 @@ public class OtherCreatureChanges
     public static void BootlegIPWRemover(On.Room.orig_CleanOutObjectNotInThisRoom orig, Room room, UpdatableAndDeletable obj)
     {
         orig(room, obj);
-        if (obj is not null)
+        if (RemoveTempSource(obj))
         {
-            if (obj is Creature ctr && (
-                (ctr is EggBug egg && egg.FireBug) ||
-                (ctr is Player plr && plr.IsIncan(out IncanInfo _)) ||
-                (ctr is ColdLizard)
-                ))
-            {
-                tempSources.Remove(ctr);
-            }
-            else if (obj is Weapon wpn && wpn is Spear spr && (spr.bugSpear || spr.abstractSpear is AbstractBurnSpear))
-            {
-                tempSources.Remove(wpn);
-            }
-            else if (obj is PlayerCarryableItem UaD && (UaD is Lantern || UaD is FireEgg))
-            {
-                tempSources.Remove(UaD);
-            }
+            tempSources.Remove(obj);
         }
     }
     #endregion
@@ -1583,8 +1072,8 @@ public class OtherCreatureChanges
                         aI.debuffs.Remove(aI.debuffs[b]);
                         continue;
                     }
-                    debuff.DebuffUpdate(ctr, b == 0);
-                    debuff.DebuffVisuals(ctr, eu);
+                    debuff.Update(ctr, b == 0);
+                    debuff.Visuals(ctr, eu);
                 }
                 if (aI.debuffs.Count < 1)
                 {
@@ -1593,9 +1082,22 @@ public class OtherCreatureChanges
             }
 
 
-            if (tempSources.Contains(ctr) && ctr.dead && ((ctr is Player plr && plr.SlugCatClass == HSEnums.Incandescent) || (ctr is EggBug f && f.FireBug)))
+            if (tempSources.Contains(ctr))
             {
-                tempSources.Remove(ctr);
+                if (ctr.dead && (
+                        (ctr is Player plr && plr.IsIncan()) ||
+                        (ctr is EggBug f && f.FireBug)))
+                {
+                    tempSources.Remove(ctr);
+                }
+                else if (!RemoveTempSource(ctr) && !ctr.IsBurning())
+                {
+                    tempSources.Remove(ctr);
+                }
+            }
+            else if (!tempSources.Contains(ctr) && ctr.IsBurning())
+            {
+                tempSources.Add(ctr);
             }
 
             if (IsIncanStory(ctr.room.game) && ctr.room.blizzardGraphics is not null)
@@ -1732,7 +1234,7 @@ public class OtherCreatureChanges
             selfHypo += Mathf.Lerp(self.Hypothermia, other.Hypothermia, 0.006f) - self.Hypothermia;
             otherHypo += Mathf.Lerp(other.Hypothermia, self.Hypothermia, 0.012f) - other.Hypothermia;
         }
-        Debug.Log("hypothermia body contact is workiiiiiiiiing");
+        Plugin.TestingLog("hypothermia body contact is workiiiiiiiiing");
         self.Hypothermia += selfHypo;
         other.Hypothermia += otherHypo;
 
@@ -1775,6 +1277,7 @@ public class OtherCreatureChanges
                     if (target is DropBug)
                     {
                         dmg *= 0.5f; // 2x HP
+                        stun *= 2/3f;
                         if (dmgType == HSEnums.DamageTypes.Cold ||
                             dmgType == HSEnums.DamageTypes.Heat)
                         {
@@ -1815,16 +1318,26 @@ public class OtherCreatureChanges
 
     public static Player.ObjectGrabability GrababilityChanges(On.Player.orig_Grabability orig, Player self, PhysicalObject obj)
     {
-        return IsIncanStory(self?.abstractCreature.world?.game) && obj is Cicada ccd && ccd.abstractCreature.Winterized && !ccd.Charging && (ccd.cantPickUpCounter == 0 || ccd.cantPickUpPlayer != self)
-            ? Player.ObjectGrabability.OneHand
-            : obj is Luminescipede lmn && (lmn.dead || (SlugcatStats.SlugcatCanMaul(self.SlugCatClass) && self.dontGrabStuff < 1 && obj != self && !lmn.Consious))
-            ? Player.ObjectGrabability.OneHand
-            : orig(self, obj);
+        if (obj is Cicada sqt &&
+            CicadaH(sqt) &&
+            !sqt.Charging &&
+            (sqt.cantPickUpCounter == 0 || sqt.cantPickUpPlayer != self))
+        {
+            return Player.ObjectGrabability.OneHand;
+        }
+        if (obj is Luminescipede lmn &&
+            (lmn.dead || (SlugcatStats.SlugcatCanMaul(self.SlugCatClass) &&
+            self.dontGrabStuff < 1 &&
+            obj != self &&
+            !lmn.Consious)))
+        {
+            return Player.ObjectGrabability.OneHand;
+        }
+        return orig(self, obj);
     }
     public static bool LuminDenUpdate(On.AbstractCreature.orig_WantToStayInDenUntilEndOfCycle orig, AbstractCreature absCtr)
     {
-        return (absCtr is null || absCtr.creatureTemplate.type != HSEnums.CreatureType.Luminescipede || Luminescipede.WantToHideInDen(absCtr))
-&& orig(absCtr);
+        return (absCtr is null || absCtr.creatureTemplate.type != HSEnums.CreatureType.Luminescipede || Luminescipede.WantToHideInDen(absCtr)) && orig(absCtr);
     }
     public static void ActivateCustomFlags(On.AbstractCreature.orig_setCustomFlags orig, AbstractCreature absCtr)
     {
@@ -1840,9 +1353,7 @@ public class OtherCreatureChanges
         IL.AbstractCreature.InDenUpdate += IL =>
         {
             ILCursor c = new(IL);
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = IL.DefineLabel();
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             c.Emit(OpCodes.Ldarg_0);
             c.Emit(OpCodes.Ldarg_1);
             c.EmitDelegate((AbstractCreature absCtr, int time) =>
@@ -1878,9 +1389,7 @@ public class OtherCreatureChanges
         IL.AbstractCreature.WantToStayInDenUntilEndOfCycle += IL =>
         {
             ILCursor c1 = new(IL);
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = null;
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             if (c1.TryGotoNext(
                 MoveType.After,
                 x => x.MatchLdarg(0),
@@ -1970,10 +1479,7 @@ public class OtherCreatureChanges
 
         IL.AbstractCreatureAI.WantToStayInDenUntilEndOfCycle += IL =>
         {
-#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
             ILLabel? label = null;
-#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
-
             ILCursor c1 = new(IL);
             if (c1.TryGotoNext(
                 MoveType.After,
@@ -2042,9 +1548,9 @@ public class OtherCreatureChanges
 
         if (absCtr.spawnData is not null && absCtr.spawnData[0] == '{')
         {
-            if (aI.HailstormAvoider)
+            if (aI.HailAvoider)
             {
-                aI.HailstormAvoider = false;
+                aI.HailAvoider = false;
             }
 
             if (aI.FogRoamer)
@@ -2097,10 +1603,10 @@ public class OtherCreatureChanges
                         break;
 
                     case "PreCycle":
-                        absCtr.preCycle = !aI.HailstormAvoider;
+                        absCtr.preCycle = !aI.HailAvoider;
                         break;
-                    case "HailstormAvoider":
-                        aI.HailstormAvoider = true;
+                    case "HailAvoider":
+                        aI.HailAvoider = true;
                         absCtr.preCycle = false;
                         break;
                     case "FogRoamer":
@@ -2137,7 +1643,7 @@ public class OtherCreatureChanges
             {
                 if (RainWorld.ShowLogs)
                 {
-                    Debug.Log("[HAILSTORM] " + absCtr + "'s fog-roamer flag disabled, creature started with player in the shelter!");
+                    Plugin.TestingLog("[HAILSTORM] " + absCtr + "'s fog-roamer flag disabled, creature started with player in the shelter!");
                 }
                 aI.FogRoamer = false;
             }
@@ -2154,9 +1660,9 @@ public class OtherCreatureChanges
                     (ctrType == CreatureTemplate.Type.Spider ||
                     ctrType == CreatureTemplate.Type.BigSpider ||
                     ctrType == CreatureTemplate.Type.SpitterSpider ||
-                    ctrType == DLCSharedEnums.CreatureTemplateType.MotherSpider ||
+                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
                     ctrType == CreatureTemplate.Type.Scavenger ||
-                    ctrType == DLCSharedEnums.CreatureTemplateType.ScavengerElite ||
+                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite ||
                     ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing ||
                     ctrType == CreatureTemplate.Type.Vulture ||
                     ctrType == CreatureTemplate.Type.KingVulture)) ||
@@ -2168,8 +1674,8 @@ public class OtherCreatureChanges
                     ctrType == CreatureTemplate.Type.PoleMimic ||
                     ctrType == CreatureTemplate.Type.TentaclePlant ||
                     ctrType == CreatureTemplate.Type.DropBug ||
-                    ctrType == DLCSharedEnums.CreatureTemplateType.StowawayBug ||
-                    ctrType == DLCSharedEnums.CreatureTemplateType.Yeek ||
+                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
+                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.Yeek ||
                     (absCtr.creatureTemplate.ancestor == StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.LizardTemplate) && ctrType != CreatureTemplate.Type.BlueLizard))))
             {
                 absCtr.Winterized = true;
@@ -2201,10 +1707,10 @@ public class OtherCreatureChanges
                     ctrType == CreatureTemplate.Type.Spider ||
                     ctrType == CreatureTemplate.Type.BigSpider ||
                     ctrType == CreatureTemplate.Type.SpitterSpider ||
-                    ctrType == DLCSharedEnums.CreatureTemplateType.MotherSpider ||
+                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
                     ctrType == CreatureTemplate.Type.DropBug ||
-                    ctrType == DLCSharedEnums.CreatureTemplateType.StowawayBug ||
-                    ctrType == DLCSharedEnums.CreatureTemplateType.Yeek))))
+                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
+                    ctrType == MoreSlugcatsEnums.CreatureTemplateType.Yeek))))
         {
             absCtr.ignoreCycle = true;
         }
@@ -2215,13 +1721,13 @@ public class OtherCreatureChanges
                 ctrType == CreatureTemplate.Type.CyanLizard ||
                 ctrType == CreatureTemplate.Type.BrotherLongLegs ||
                 ctrType == CreatureTemplate.Type.DaddyLongLegs ||
-                ctrType == DLCSharedEnums.CreatureTemplateType.TerrorLongLegs ||
+                ctrType == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy ||
-                ctrType == DLCSharedEnums.CreatureTemplateType.ZoopLizard ||
-                ctrType == DLCSharedEnums.CreatureTemplateType.ScavengerElite ||
+                ctrType == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard ||
+                ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing))
         {
-            aI.HailstormAvoider = true;
+            aI.HailAvoider = true;
         }
 
         if (!aI.FogRoamer && (
@@ -2229,11 +1735,11 @@ public class OtherCreatureChanges
                 ctrType == CreatureTemplate.Type.SmallCentipede ||
                 ctrType == CreatureTemplate.Type.BrotherLongLegs ||
                 ctrType == CreatureTemplate.Type.DaddyLongLegs ||
-                ctrType == DLCSharedEnums.CreatureTemplateType.TerrorLongLegs ||
+                ctrType == MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs ||
                 ctrType == MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy ||
-                ctrType == DLCSharedEnums.CreatureTemplateType.ZoopLizard ||
-                ctrType == DLCSharedEnums.CreatureTemplateType.EelLizard ||
-                ctrType == HSEnums.CreatureType.InfantAquapede))
+                ctrType == MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard ||
+                ctrType == MoreSlugcatsEnums.CreatureTemplateType.EelLizard ||
+                ctrType == new CreatureTemplate.Type("InfantAquapede")))
         {
             aI.FogAvoider = true;
         }
@@ -2241,18 +1747,18 @@ public class OtherCreatureChanges
         if (!aI.ErraticWindRoamer && Weather.ErraticWindFearers.Contains(ctrType) && !(
             ctrType == CreatureTemplate.Type.TentaclePlant ||
             ctrType == CreatureTemplate.Type.Scavenger ||
-            ctrType == DLCSharedEnums.CreatureTemplateType.ScavengerElite ||
+            ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite ||
             ctrType == MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing))
         {
             aI.ErraticWindAvoider = true;
         }
 
-        if (ctrType == DLCSharedEnums.CreatureTemplateType.JungleLeech)
+        if (ctrType == MoreSlugcatsEnums.CreatureTemplateType.JungleLeech)
         {
             absCtr.HypothermiaImmune = false;
         }
 
-        if (aI.HailstormAvoider || aI.FogRoamer || aI.FogAvoider || aI.ErraticWindRoamer || aI.ErraticWindAvoider || aI.LateBlizzardRoamer)
+        if (aI.HailAvoider || aI.FogRoamer || aI.FogAvoider || aI.ErraticWindRoamer || aI.ErraticWindAvoider || aI.LateBlizzardRoamer)
         {
             aI.HasHSCustomFlag = true;
         }
@@ -2285,7 +1791,7 @@ public class OtherCreatureChanges
                 }
             }
             return !(absCtr.remainInDenCounter > -1 &&
-                    (!aI.HailstormAvoider || (aI.HailstormAvoider && Weather.FogPrecycle) || (aI.HailstormAvoider && !Weather.FogPrecycle && absCtr.world.rainCycle.preTimer < 1)) &&
+                    (!aI.HailAvoider || (aI.HailAvoider && Weather.FogPrecycle) || (aI.HailAvoider && !Weather.FogPrecycle && absCtr.world.rainCycle.preTimer < 1)) &&
                     (!aI.FogRoamer || (aI.FogRoamer && absCtr.world.rainCycle.maxPreTimer > 0 && Weather.FogPrecycle)) &&
                     (!aI.FogAvoider || (aI.FogAvoider && !Weather.FogPrecycle) || (aI.FogAvoider && Weather.FogPrecycle && absCtr.world.rainCycle.preTimer < 1)) &&
                     (!aI.LateBlizzardRoamer || (aI.LateBlizzardRoamer && absCtr.world.rainCycle.timer >= Weather.LateBlizzardTime(absCtr.world))) &&
@@ -2314,7 +1820,27 @@ public class OtherCreatureChanges
             }
 
             float distance = Vector2.Distance(target.firstChunk.pos, obj.firstChunk.pos);
-            bool receiverIsIncan = target is Player incCheck && incCheck.SlugCatClass == HSEnums.Incandescent;
+            bool ReceiverIsIncan = target is Player incCheck && incCheck.IsIncan();
+
+            int burns = (tempSource is Creature burny) ? burny.Burns() : 0;
+            if (burns > 0 &&
+                target.Hypothermia > 0 &&
+                tempSource.room == target.room)
+            {
+                float range = 160 + (40 * burns);
+                if (distance < range)
+                {
+                    float heat = Mathf.Lerp(0.0003f * (1f + (0.25f * burns)), 0, target.HypothermiaExposure);
+                    heat *= Mathf.InverseLerp(range, range * 0.2f, distance);
+
+                    if (CustomTemplateInfo.IsFireCreature(target))
+                    {
+                        heat /= 5f;
+                    }
+
+                    target.Hypothermia -= heat;
+                }
+            }
 
             // Lantern warmth changes
             if (tempSource is Lantern lan)
@@ -2324,7 +1850,7 @@ public class OtherCreatureChanges
                     float heat = Mathf.Lerp(0.0005f, 0, target.HypothermiaExposure);
                     heat *= Mathf.InverseLerp(350, 70, distance);
 
-                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != DLCSharedEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
+                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != MoreSlugcatsEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
                     {
                         target.Hypothermia -= heat; // Enables the warming capabilities of Lanterns at pretty much all times. 
                     }
@@ -2346,7 +1872,7 @@ public class OtherCreatureChanges
                     heat *= Mathf.InverseLerp(190, 38, distance);
                     heat *= Mathf.InverseLerp(0f, 3500f, mse.State.battery);
 
-                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != DLCSharedEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
+                    if (target.room.blizzardGraphics is null || target.room.roomSettings.DangerType != MoreSlugcatsEnums.RoomRainDangerType.Blizzard || target.room.world.rainCycle.CycleProgression <= 0f)
                     {
                         target.Hypothermia -= heat; // Enables the warming capabilities of Lanterns at pretty much all times. 
                     }
@@ -2359,7 +1885,7 @@ public class OtherCreatureChanges
             }
 
             // Heat sources
-            if (target.Hypothermia > 0.001f)
+            else if (target.Hypothermia > 0.001f)
             {
                 // Incan heat
                 if (tempSource is Player plr &&
@@ -2376,7 +1902,7 @@ public class OtherCreatureChanges
                         float heatStrength = Mathf.InverseLerp(heatRad, heatRad / 5f, distance);
                         float heat = Mathf.Lerp(0, 0.0005f, (heatRad - 30) / 45);
 
-                        if (receiverIsIncan && !(target == plr && Incan.inArena && target.room.blizzardGraphics is not null)) // Weakens incan heat effectiveness for anyone playing Incan.
+                        if (ReceiverIsIncan && !(target == plr && Incan.inArena && target.room.blizzardGraphics is not null)) // Weakens incan heat effectiveness for anyone playing Incan.
                         {
                             heat /= 3f;
                         }
@@ -2409,8 +1935,8 @@ public class OtherCreatureChanges
                     {
                         float heatStrength = Mathf.InverseLerp(incSpr.glow.rad, incSpr.glow.rad / 5f, distance);
                         target.HypothermiaExposure = Mathf.Min(target.HypothermiaExposure, Mathf.Lerp(1, 0.7f, distance));
-                        target.Hypothermia -= Mathf.Lerp(receiverIsIncan ? 0.0001f : 0.0003f, 0f, target.HypothermiaExposure) * heatStrength;
-                        if (!receiverIsIncan && target.HypothermiaGain * Mathf.Lerp(0, 0.75f, incSpr.heat) > HypoRes)
+                        target.Hypothermia -= Mathf.Lerp(ReceiverIsIncan ? 0.0001f : 0.0003f, 0f, target.HypothermiaExposure) * heatStrength;
+                        if (!ReceiverIsIncan && target.HypothermiaGain * Mathf.Lerp(0, 0.75f, incSpr.heat) > HypoRes)
                         {
                             HypoRes = target.HypothermiaGain * Mathf.Lerp(0, 0.75f, incSpr.heat);
                         }
@@ -2457,7 +1983,7 @@ public class OtherCreatureChanges
         {
             float num;
             CreatureTemplate.Type ctrType = absCtr.creatureTemplate.type;
-            if (ctrType == HSEnums.CreatureType.InfantAquapede)
+            if (ctrType == new CreatureTemplate.Type("InfantAquapede"))
             {
                 return orig(ovrAbsAI, absCtr);
             }

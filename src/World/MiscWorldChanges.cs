@@ -7,8 +7,8 @@ public class MiscWorldChanges
 
         // Echo changes
         On.World.CheckForRegionGhost += Incan_AllowAllEchoesToSpawn;
-        On.World.LoadWorld_Name_List1_Int32Array_Int32Array_Int32Array += EchoSpawning;
-        On.GhostWorldPresence.ctor_World_GhostID += EchoSpawnLocationChanges;
+        On.World.LoadWorld += EchoSpawning;
+        On.GhostWorldPresence.ctor += EchoSpawnLocationChanges;
         On.GhostWorldPresence.GhostMode_AbstractRoom_Vector2 += EchoAuraLocationChanges;
 
         // Moon
@@ -52,7 +52,7 @@ public class MiscWorldChanges
         return (saveFile == HSEnums.Incandescent && ghostID != GhostWorldPresence.GhostID.NoGhost && ghostID != MoreSlugcatsEnums.GhostID.LC)
 || orig(saveFile, regionString);
     }
-    public static void EchoSpawning(On.World.orig_LoadWorld_Name_List1_Int32Array_Int32Array_Int32Array orig, World world, SlugcatStats.Name playerChar, List<AbstractRoom> absRoomsList, int[] swarmRooms, int[] shelters, int[] gates)
+    public static void EchoSpawning(On.World.orig_LoadWorld orig, World world, SlugcatStats.Name playerChar, List<AbstractRoom> absRoomsList, int[] swarmRooms, int[] shelters, int[] gates)
     {
         orig(world, playerChar, absRoomsList, swarmRooms, shelters, gates);
         if (world.game.setupValues.ghosts >= 0 && world is not null && IsIncanStory(world.game) && !world.singleRoomWorld && world.game.session is not null && world.game.session is StoryGameSession SGS)
@@ -65,21 +65,21 @@ public class MiscWorldChanges
                 {
                     ghostPreviouslyEncountered = SGS.saveState.deathPersistentSaveData.ghostsTalkedTo[ghostID];
                 }
-                Debug.Log("Save state properly loaded: " + SGS.saveState.loaded);
-                Debug.Log("Found the " + ghostID.ToString() + " Echo. Previously met?: " + ghostPreviouslyEncountered);
-                Debug.Log("Karma: " + SGS.saveState.deathPersistentSaveData.karma);
+                Plugin.HailstormLog("Save state properly loaded: " + SGS.saveState.loaded);
+                Plugin.HailstormLog("Found the " + ghostID.ToString() + " Echo. Previously met?: " + ghostPreviouslyEncountered);
+                Plugin.HailstormLog("Karma: " + SGS.saveState.deathPersistentSaveData.karma);
 
-                bool canSeeEcho = ghostID == MoreSlugcatsEnums.GhostID.MS
-                    ? SGS.saveState.cycleNumber > 0
-                    : (ghostID == MoreSlugcatsEnums.GhostID.SL ||
-                        ghostID == MoreSlugcatsEnums.GhostID.CL ||
-                        ghostID == MoreSlugcatsEnums.GhostID.UG ||
-                        ghostID == GhostWorldPresence.GhostID.CC ||
-                        ghostID == GhostWorldPresence.GhostID.SI ||
-                        ghostID == GhostWorldPresence.GhostID.LF ||
-                        ghostID == GhostWorldPresence.GhostID.SB)
-&& (world.game.setupValues.ghosts > 0 ||
-                            SGS.saveState.deathPersistentSaveData.karma == SGS.saveState.deathPersistentSaveData.karmaCap);
+                bool canSeeEcho =
+                    ghostID == MoreSlugcatsEnums.GhostID.MS ? SGS.saveState.cycleNumber > 0 :
+                    (ghostID == MoreSlugcatsEnums.GhostID.SL ||
+                    ghostID == MoreSlugcatsEnums.GhostID.CL ||
+                    ghostID == MoreSlugcatsEnums.GhostID.UG ||
+                    ghostID == GhostWorldPresence.GhostID.CC ||
+                    ghostID == GhostWorldPresence.GhostID.SI ||
+                    ghostID == GhostWorldPresence.GhostID.LF ||
+                    ghostID == GhostWorldPresence.GhostID.SB) &&
+                    (world.game.setupValues.ghosts > 0 || SGS.saveState.deathPersistentSaveData.karma == SGS.saveState.deathPersistentSaveData.karmaCap);
+
                 if (SGS.saveState.deathPersistentSaveData.ghostsTalkedTo.ContainsKey(ghostID) &&
                     SGS.saveState.deathPersistentSaveData.ghostsTalkedTo[ghostID] == 2)
                 {
@@ -89,11 +89,11 @@ public class MiscWorldChanges
                 {
                     world.worldGhost = new GhostWorldPresence(world, ghostID);
                     world.migrationInfluence = world.worldGhost;
-                    Debug.Log(ghostID.value + " ghost in region");
+                    Plugin.HailstormLog(ghostID.value + " ghost in region");
                 }
                 else
                 {
-                    Debug.Log("No ghost in region");
+                    Plugin.HailstormLog("No ghost in region");
                 }
             }
 
@@ -113,11 +113,11 @@ public class MiscWorldChanges
                     ghostsMet++;
                     if (RainWorld.ShowLogs)
                     {
-                        Debug.Log(ghost.Key.value + " echo has been met.");
+                        Plugin.HailstormLog(ghost.Key.value + " echo has been met.");
                     }
                 }
             }
-            Debug.Log("Echoes met: " + ghostsMet + "/8");
+            Plugin.HailstormLog("Echoes met: " + ghostsMet + "/8");
             if (ghostsMet >= 8)
             {
                 AllEchoesMet = true;
@@ -128,7 +128,7 @@ public class MiscWorldChanges
             // 0 = can be seen, but karma is not high enough
         }
     }
-    public static void EchoSpawnLocationChanges(On.GhostWorldPresence.orig_ctor_World_GhostID orig, GhostWorldPresence GWP, World world, GhostWorldPresence.GhostID ghostID)
+    public static void EchoSpawnLocationChanges(On.GhostWorldPresence.orig_ctor orig, GhostWorldPresence GWP, World world, GhostWorldPresence.GhostID ghostID)
     {
         orig(GWP, world, ghostID);
         if (IsIncanStory(world?.game))

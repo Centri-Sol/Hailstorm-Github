@@ -1,0 +1,19 @@
+Template: SU_SettingsTemplate_Inside
+DangerType: Blizzard
+CeilingDrips: 0
+RumbleIntensity: 0.675159
+WaveSpeed: 0.617586
+WaveLength: 0.694207
+WaveAmplitude: 0.04937512
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 1
+RandomItemDensity: 0.375
+RandomItemSpearChance: 0.25
+EffectColorA: 10
+EffectColorB: 10
+Effects: WaterDepth-0.1159988-0-0, LightBurn-0.1082658-194.3864-103.3198, Dustpuffs-1-30-30, IceWater-1-180.1573-76.28437, Coldness-1-202.9635-17.98438, WaterViscosity-0.3015964-40-40, 
+PlacedObjects: SlipperyZone><561.2974><277.3315><100~50~3^2~0.3736077~False~False, ExitSymbolHidden><257.451><337.9022><, ClimbablePole><507.6096><481.7441><-4.980225~-51.54065~17.32051~-10~Black, 
+AmbientSounds: SPOT><AM_ENV-LightWind.ogg><719.6034><521.6036><0.3917342><1><590.5952><527.2318><8.04364><-36.77826><0><0.03040148, 
+FadePalette: 8, 0.08506592
+WetTerrain: OFF

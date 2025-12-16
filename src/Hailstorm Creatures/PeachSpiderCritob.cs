@@ -100,8 +100,8 @@ public class PeachSpiderCritob : Critob
         pchSpd.Fears(HSEnums.CreatureType.Cyanwing, 1);
         pchSpd.Fears(CreatureTemplate.Type.RedCentipede, 1);
         pchSpd.Fears(CreatureTemplate.Type.SpitterSpider, 1);
-        pchSpd.Fears(DLCSharedEnums.CreatureTemplateType.MotherSpider, 1);
-        pchSpd.Fears(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 1);
+        pchSpd.Fears(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 1);
+        pchSpd.Fears(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
         pchSpd.Fears(CreatureTemplate.Type.Centipede, 0.5f);
         pchSpd.Fears(CreatureTemplate.Type.BigSpider, 0.5f);
 
@@ -112,8 +112,8 @@ public class PeachSpiderCritob : Critob
         pchSpd.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.4f);
         pchSpd.EatenBy(CreatureTemplate.Type.Spider, 0.5f);
         pchSpd.EatenBy(CreatureTemplate.Type.BigSpider, 0.5f);
-        pchSpd.EatenBy(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.6f);
-        pchSpd.EatenBy(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 1);
+        pchSpd.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.6f);
+        pchSpd.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 1);
 
     }
 

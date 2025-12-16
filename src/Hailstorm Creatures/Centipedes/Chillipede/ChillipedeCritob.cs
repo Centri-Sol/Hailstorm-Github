@@ -90,14 +90,9 @@ public class ChillipedeCritob : Critob
 
         Chl.Eats(CreatureTemplate.Type.Spider, 0.4f);
         Chl.Eats(CreatureTemplate.Type.BigSpider, 0.4f);
-        Chl.Eats(CreatureTemplate.Type.SpitterSpider, 0.4f);
-        Chl.Eats(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.4f);
-        Chl.Eats(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 0.4f);
-        Chl.Eats(CreatureTemplate.Type.SmallCentipede, 0.4f);
         Chl.Eats(CreatureTemplate.Type.Centipede, 0.4f);
-        Chl.Eats(CreatureTemplate.Type.Centiwing, 0.4f);
-        Chl.Eats(DLCSharedEnums.CreatureTemplateType.AquaCenti, 0.4f);
-        Chl.Eats(HSEnums.CreatureType.InfantAquapede, 0.4f);
+        Chl.Eats(CreatureTemplate.Type.DropBug, 0.4f);
+        Chl.Eats(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 0.4f);
 
         Chl.Fears(CreatureTemplate.Type.RedCentipede, 1);
         Chl.Fears(HSEnums.CreatureType.Cyanwing, 1);
@@ -111,25 +106,21 @@ public class ChillipedeCritob : Critob
 
         Chl.FearedBy(CreatureTemplate.Type.LizardTemplate, 0.3f);
 
-        Chl.EatenBy(DLCSharedEnums.CreatureTemplateType.AquaCenti, 0.2f);
-        Chl.EatenBy(CreatureTemplate.Type.RedLizard, 0.2f);
-        Chl.EatenBy(CreatureTemplate.Type.GreenLizard, 0.4f);
-        Chl.EatenBy(CreatureTemplate.Type.SmallCentipede, 0.4f);
-        Chl.EatenBy(CreatureTemplate.Type.Centipede, 0.4f);
-        Chl.EatenBy(CreatureTemplate.Type.RedCentipede, 0.4f);
-        Chl.EatenBy(CreatureTemplate.Type.Centiwing, 0.4f);
-        Chl.EatenBy(HSEnums.CreatureType.Cyanwing, 0.4f);
-        Chl.EatenBy(HSEnums.CreatureType.InfantAquapede, 0.4f);
-        Chl.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.6f);
-        Chl.EatenBy(DLCSharedEnums.CreatureTemplateType.SpitLizard, 0.8f);
         Chl.EatenBy(HSEnums.CreatureType.GorditoGreenieLizard, 1);
+        Chl.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.8f);
+        Chl.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 0.6f);
+        Chl.EatenBy(CreatureTemplate.Type.Centipede, 0.4f);
+        Chl.EatenBy(CreatureTemplate.Type.GreenLizard, 0.4f);
+        Chl.EatenBy(CreatureTemplate.Type.RedLizard, 0.2f);
+        Chl.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.AquaCenti, 0.2f);
 
-        Chl.Intimidates(CreatureTemplate.Type.BigSpider, 0.5f);
         Chl.Intimidates(HSEnums.CreatureType.Luminescipede, 0.75f);
+        Chl.Intimidates(CreatureTemplate.Type.BigSpider, 0.5f);
 
         Chl.FearedBy(CreatureTemplate.Type.Spider, 0.5f);
-        Chl.FearedBy(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 0.7f);
+        Chl.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.7f);
 
+        Chl.IgnoredBy(HSEnums.CreatureType.Chillipede);
         Chl.IgnoredBy(HSEnums.CreatureType.IcyBlueLizard);
         Chl.IgnoredBy(HSEnums.CreatureType.FreezerLizard);
 

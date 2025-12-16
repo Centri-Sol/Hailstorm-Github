@@ -24,7 +24,7 @@ LINEAGE : UG_GUTTER03 : 5 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.1, Cyan-0
 LINEAGE : UG_GUTTER03 : 5 : NONE-1.0, NONE-1.0, NONE-0.2, Eel-0
 UG_GUTTER02 : 2-SpitterSpider, 2-BigSpider-{Night}-3, 2-MotherSpider-{Night}
 UG_GUTTER01 : 2-Snail-3, 3-Salamander, 4-JungleLeech-12
-UG_A25 : 3-Eel, 4-Spider-30, 5-JungleLeech-6, 6-JungleLeech-8
+UG_A25 : 3-Eel, 5-JungleLeech-6, 6-JungleLeech-8
 UG_Filters : 2-Snail-{PreCycle}-4, 3-Salamander, 4-JungleLeech-7
 UG_TOLL : 3-Green, 5-Green, 7-Salamander-{PreCycle}, 9-Snail-{PreCycle}-3
 LINEAGE : UG_TOLL : 4 : Mimic-{11}-1.0, TentaclePlant-0

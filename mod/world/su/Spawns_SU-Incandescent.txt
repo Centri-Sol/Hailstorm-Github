@@ -4,11 +4,11 @@ LINEAGE : OFFSCREEN_SU : 0 : Vulture-0.25, NONE-0.33, MirosVulture-0
 SU_B11 : 3-Centiwing-2, 4-Cyan-{Night}, 6-Small Centipede-{AlternateForm}-2, 7-Centiwing-{Night}, 8-TentaclePlant-{Night}
 LINEAGE : SU_B11 : 5 : NONE-0.25, Cyan-{Ignorecycle}-0.3, Strawberry-0.5, White-0.15, IcyBlue-0
 LINEAGE : SU_B11 : 7 : Centiwing-{Night}-0.25, DropBug-{Night}-0.4, NONE-0.1, Cyanwing-{Night}-0.25, IcyBlue-{Night}-0
-SU_B02 : 5-CicadaA, 5-CicadaB, 7-Strawberry, 8-DropBug-{Night}-2
+SU_B02 : 7-Strawberry, 8-DropBug-{Night}-2
 LINEAGE : SU_B02 : 4 : NONE-1.0, NONE-0.1, Centiwing-0.02, IcyBlue-0
 LINEAGE : SU_B02 : 6 : Mimic-{17}-0.7, Mimic-{14}-1.0, TentaclePlant-0.02, IcyBlue-0
-SU_A13 : 2-CicadaA-{Night}, 2-CicadaB-{PreCycle}, 3-Mimic-{5}, 5-Mimic-{8}
-LINEAGE : SU_A13 : 4 : NONE-0.2, Cicada-0.3, NONE-1.0, NONE-0.2, Yeek-0
+SU_A13 : 3-Mimic-{5}, 5-Mimic-{8}
+LINEAGE : SU_A13 : 4 : NONE-1.0, NONE-0.2, Yeek-0
 
 SU_B07 : 2-Yellow, 3-TentaclePlant-{PreCycle}
 LINEAGE : SU_B07 : 2 : Yellow-{Ignorecycle}-0.25, NONE-0.5, Strawberry-0.75, IcyBlue-0
@@ -35,8 +35,7 @@ LINEAGE : SU_B06 : 4 : NONE-1.0, NONE-0.5, Centipede-{0.7}-1.0, Centipede-{1.0}-
 SU_B05 : 3-IcyBlue-{Night}
 LINEAGE : SU_B05 : 4 : Mimic-{14}-1.0, Mimic-{18}-1.0, NONE-1.0, TentaclePlant-0.02, IcyBlue-0
 
-SU_A32 : 2-Freezer
-SU_B08 : 2-IcyBlue-{Night}, 3-Cicada-{Night}-2, 4-Centiwing, 4-Small Centipede-{AlternateForm}
+SU_B08 : 2-Freezer, 2-IcyBlue-{Night}, 4-Centiwing, 4-Small Centipede-{AlternateForm}
 LINEAGE : SU_B08 : 2 : NONE-1.0, NONE-1.0, NONE-0.2, Caramel-0.2, IcyBlue-0
 LINEAGE : SU_B08 : 3 : IcyBlue-0.2, Freezer-0
 LINEAGE : SU_A30 : 2 : NONE-0.1, BigSpider-0.15, Salamander-{Ignorecycle}-0.3, MotherSpider-0.5, IcyBlue-0
@@ -44,12 +43,12 @@ SU_A31 : 3-Centiwing
 
 SU_C01 : 5-Eel-{Ignorecycle}, 5-BigSpider-{Night}-2
 LINEAGE : SU_C01 : 3 : NONE-1.0, NONE-1.0, NONE-1.0, NONE-0.33, MotherSpider-0
-LINEAGE : SU_C01 : 4 : NONE-1.0, NONE-0.05, Cicada-0.5, BigSpider-0
+LINEAGE : SU_C01 : 4 : NONE-1.0, NONE-0.05, Yeek-0.5, BigSpider-0
 SU_B14 : 2-Spider-39, 2-MotherSpider-{PreCycle}
 LINEAGE : SU_B14 : 2 : Spider-0.33, BigSpider-0
 
 SU_A04 : 2-IcyBlue, 4-Strawberry, 5-Mimic-{12}
-SU_B01 : 4-CicadaA, 4-CicadaB, 5-Cicada
+SU_B01 : 4-Centiwing
 LINEAGE : SU_B01 : 6 : NONE-1.0, NONE-0.25, Salamander-{Night}-0.25, Salamander-{Ignorecycle}-0.5, Eel-{Night}-0.5, Eel-{Ignorecycle}-0.02, IcyBlue-0
 SU_A06 : 4-Strawberry
 SU_A02 : 3-Strawberry

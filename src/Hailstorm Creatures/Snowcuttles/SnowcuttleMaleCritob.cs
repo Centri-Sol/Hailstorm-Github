@@ -3,7 +3,8 @@
 public class SnowcuttleMaleCritob : SnowcuttleTemplate
 {
 
-    public override Color SnowcuttleColor => Custom.HSL2RGB(320 / 360f, 0.25f, 0.6f);
+    public override string IconSpriteName => $"Kill_Snowcuttle_Male";
+    public override Color SnowcuttleColor => Custom.HSL2RGB(220 / 360f, 0.25f, 0.6f);
 
     internal SnowcuttleMaleCritob() : base(HSEnums.CreatureType.SnowcuttleMale, HSEnums.SandboxUnlock.SnowcuttleMale, HSEnums.SandboxUnlock.SnowcuttleFemale) { }
     public override string DevtoolsMapName(AbstractCreature absCtl) => "ctlM";

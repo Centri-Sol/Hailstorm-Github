@@ -1,0 +1,15 @@
+CeilingDrips: 0
+WaveSpeed: 0.5
+WaveLength: 1
+WaveAmplitude: 5.605194E-45
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 0.6195652
+RandomItemDensity: 0.25
+RandomItemSpearChance: 0.25
+EffectColorB: 21
+Effects: LightBurn-0.4565217-20-20, 
+PlacedObjects: LightSource><1485.699><1674.057><0.2934783~White~274~540~50~86.60254~1~0~None~0~0, LightSource><1456.813><1100.928><0.2608696~White~459~-227~177~50.60254~1~0~None~0~0, DangleFruit><1504.801><2018.193><427~147~4~6, DangleFruit><1436.553><1996.035><496~91~4~6, 
+AmbientSounds: OMNI><AM_ENV-CityTone.ogg><853.3845><582.3367><0.1847826><1, 
+FadePalette: 0, 0.3695652, 0.3804348, 0.3152174, 0.2391304
+WetTerrain: OFF

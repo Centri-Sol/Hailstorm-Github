@@ -224,19 +224,37 @@ public class ChillipedeAI : CentipedeAI, IUseARelationshipTracker
         {
             Creature target = relat.trackerRep.representedCreature.realizedCreature;
 
-            return target.dead
-                ? new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Ignores, 0)
-                : result.type == CreatureTemplate.Relationship.Type.Eats && target.TotalMass < chl.TotalMass
-                ? target.Hypothermia >= 2
-                    ? new CreatureTemplate.Relationship
-                        (CreatureTemplate.Relationship.Type.Ignores, 0)
-                    : new CreatureTemplate.Relationship
-                    (CreatureTemplate.Relationship.Type.Eats,
-                        MassFac(target) * ColdFac(target) * Mathf.Clamp(result.intensity, 0, 1))
-                : new CreatureTemplate.Relationship
-                (CreatureTemplate.Relationship.Type.Afraid,
-                    0.2f + (0.8f * Mathf.InverseLerp(chl.TotalMass, chl.TotalMass * 1.5f, target.TotalMass)));
+            if (target.dead)
+            {
+                return new CreatureTemplate.Relationship
+                    (CreatureTemplate.Relationship.Type.Ignores, 0);
+            }
+
+            float ColdResistance = target.abstractCreature.HypothermiaImmune ? 4 : 1;
+            if (target is Player)
+            {
+                ColdResistance /= CustomTemplateInfo.DamageResistances.SlugcatDamageMultipliers(target as Player, HSEnums.DamageTypes.Cold);
+            }
+            else if (target.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0] > 0)
+            {
+                ColdResistance *= target.Template.damageRestistances[HSEnums.DamageTypes.Cold.index, 0];
+            }
+
+            if (result.type == CreatureTemplate.Relationship.Type.Eats &&
+                chl.TotalMass > target.TotalMass * ColdResistance)
+            {
+                if (target.Hypothermia >= 2)
+                {
+                    return new CreatureTemplate.Relationship
+                        (CreatureTemplate.Relationship.Type.Ignores, 0);
+                }
+                return new CreatureTemplate.Relationship
+                    (CreatureTemplate.Relationship.Type.Eats, MassFac(target) * ColdFac(target) * Mathf.Clamp(result.intensity, 0, 1));
+            }
+
+            float targetMassFac = Mathf.InverseLerp(chl.TotalMass, chl.TotalMass * 1.5f, target.TotalMass);
+            return new CreatureTemplate.Relationship
+                (CreatureTemplate.Relationship.Type.Afraid, 0.2f + (0.8f * targetMassFac));
         }
         return result;
     }

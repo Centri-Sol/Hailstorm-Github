@@ -121,7 +121,8 @@ public class IncanVisuals
         // Sad head and faces.
         if (!Head.element.name.Contains("incanSad") && (!player.ReadyToMoveOn || incSad))
         {
-            if ((Head.element.name.Contains("HeadA") || Head.element.name.Contains("HeadC")) && !ModManager.ActiveMods.Any(mod => mod.id == "sunhat"))
+            if (Head.element.name.Contains("HeadA") ||
+                Head.element.name.Contains("HeadC"))
             {
                 Head.SetElementByName("incanSad" + Head.element.name);
             }

@@ -5,8 +5,8 @@ public class Regions
     public static void Hooks()
     {
         // Region changes
-        On.Region.ctor_string_int_int_Name += HailstormRegionParams;
-        On.Region.GetProperRegionAcronym_Name_string += Incan_RegionSwaps;
+        On.Region.ctor += HailstormRegionParams;
+        On.Region.GetProperRegionAcronym += Incan_RegionSwaps;
         //On.SlugcatStats.getSlugcatStoryRegions += Incan_StoryRegions;
         On.MoreSlugcats.CollectiblesTracker.ctor += Incan_SleepScreenRegionUnlocks;
         On.Room.SlugcatGamemodeUniqueRoomSettings += Incan_RoomSettings;
@@ -31,7 +31,7 @@ public class Regions
 
     public static ConditionalWeakTable<Region, RegionInfo> RegionData = new();
 
-    public static void HailstormRegionParams(On.Region.orig_ctor_string_int_int_Name orig, Region region, string name, int firstRoomIndex, int regionNumber, SlugcatStats.Name campaign)
+    public static void HailstormRegionParams(On.Region.orig_ctor orig, Region region, string name, int firstRoomIndex, int regionNumber, SlugcatStats.Name campaign)
     {
         if (campaign is not null &&
             campaign == HSEnums.Incandescent &&
@@ -41,7 +41,7 @@ public class Regions
         }
         orig(region, name, firstRoomIndex, regionNumber, campaign);
     }
-    public static string Incan_RegionSwaps(On.Region.orig_GetProperRegionAcronym_Name_string orig, SlugcatStats.Name playerChar, string baseAcronym)
+    public static string Incan_RegionSwaps(On.Region.orig_GetProperRegionAcronym orig, SlugcatStats.Name playerChar, string baseAcronym)
     {
         if (playerChar is not null && playerChar.value == HSEnums.Incandescent.value)
         {

@@ -82,8 +82,8 @@ public class CyanwingCritob : Critob
             StunResistances = new() { Base = 1, Electric = 10000 },
             HasAI = true,
             Pathing = PreBakedPathing.Ancestral(CreatureTemplate.Type.Centiwing),
-            DefaultRelationship = new(CreatureTemplate.Relationship.Type.Ignores, 1f),
         }.IntoTemplate();
+
         cf.meatPoints = 12;
         cf.bodySize = 8.5f;
         cf.dangerousToPlayer = 0.7f;
@@ -95,6 +95,7 @@ public class CyanwingCritob : Critob
         cf.waterVision = 0.5f;
 
         cf.socialMemory = true;
+
         return cf;
     }
     public override void EstablishRelationships()
@@ -104,68 +105,51 @@ public class CyanwingCritob : Critob
         s.IsInPack(CreatureTemplate.Type.Centiwing, 1);
 
         s.Ignores(CreatureTemplate.Type.TentaclePlant);
-        s.Ignores(HSEnums.CreatureType.InfantAquapede);
+        s.Ignores(new("InfantAquapede"));
+
+        // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
         // "IgnoredBy" makes the given creatures ignore this one.
         s.IgnoredBy(CreatureTemplate.Type.Centipede);
-        s.IgnoredBy(CreatureTemplate.Type.RedCentipede);
-        s.IgnoredBy(DLCSharedEnums.CreatureTemplateType.AquaCenti);
 
         // "FearedBy" causes other creatures to actively avoid this creature.
         s.FearedBy(CreatureTemplate.Type.Slugcat, 1);
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.SlugNPC, 1);
         s.FearedBy(CreatureTemplate.Type.Fly, 1);
-        s.FearedBy(CreatureTemplate.Type.PinkLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.GreenLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.BlueLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.Salamander, 1);
-        s.FearedBy(CreatureTemplate.Type.WhiteLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.YellowLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.BlackLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.CyanLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.RedLizard, 1);
-        s.FearedBy(DLCSharedEnums.CreatureTemplateType.EelLizard, 1);
-        s.FearedBy(DLCSharedEnums.CreatureTemplateType.SpitLizard, 1);
-        s.FearedBy(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 1);
-        s.FearedBy(CreatureTemplate.Type.CicadaA, 1);
-        s.FearedBy(CreatureTemplate.Type.CicadaB, 1);
+        s.FearedBy(CreatureTemplate.Type.LizardTemplate, 1); // Applies to most lizards
+        s.FearedBy(CreatureTemplate.Type.CicadaA, 1); // Applies to all squidcadas
         s.FearedBy(CreatureTemplate.Type.EggBug, 1);
         s.FearedBy(CreatureTemplate.Type.VultureGrub, 1);
-        s.FearedBy(CreatureTemplate.Type.Vulture, 0.5f);
         s.FearedBy(CreatureTemplate.Type.PoleMimic, 1);
         s.FearedBy(CreatureTemplate.Type.TentaclePlant, 1);
         s.FearedBy(CreatureTemplate.Type.Hazer, 1);
         s.FearedBy(CreatureTemplate.Type.Snail, 1);
         s.FearedBy(CreatureTemplate.Type.JetFish, 1);
-        s.FearedBy(CreatureTemplate.Type.Leech, 1);
-        s.FearedBy(CreatureTemplate.Type.SeaLeech, 1);
-        s.FearedBy(DLCSharedEnums.CreatureTemplateType.JungleLeech, 1);
+        s.FearedBy(CreatureTemplate.Type.Leech, 1); // Applies to all leeches
         s.FearedBy(CreatureTemplate.Type.SmallNeedleWorm, 1);
         s.FearedBy(CreatureTemplate.Type.BigNeedleWorm, 1);
         s.FearedBy(CreatureTemplate.Type.DropBug, 1);
-        s.FearedBy(CreatureTemplate.Type.BigSpider, 1);
-        s.FearedBy(CreatureTemplate.Type.SpitterSpider, 1);
-        s.FearedBy(DLCSharedEnums.CreatureTemplateType.MotherSpider, 1);
+        s.FearedBy(CreatureTemplate.Type.BigSpider, 1); // Applies to other large spiders
         s.FearedBy(CreatureTemplate.Type.LanternMouse, 1);
         s.FearedBy(CreatureTemplate.Type.TubeWorm, 1);
-        s.FearedBy(CreatureTemplate.Type.Deer, 0.5f);
         s.FearedBy(CreatureTemplate.Type.Scavenger, 1);
-        s.FearedBy(DLCSharedEnums.CreatureTemplateType.ScavengerElite, 0.75f);
-        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.75f);
-        s.FearedBy(DLCSharedEnums.CreatureTemplateType.Yeek, 1);
+        s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.Yeek, 1);
         s.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
         s.FearedBy(HSEnums.CreatureType.Luminescipede, 1);
         s.FearedBy(HSEnums.CreatureType.Chillipede, 1);
+        s.FearedBy(CreatureTemplate.Type.Vulture, 1);
+        s.FearedBy(CreatureTemplate.Type.Deer, 0.75f);
 
         // "Eaten By" makes other creatures prey on this one.
-        s.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
-        s.EatenBy(CreatureTemplate.Type.DaddyLongLegs, 0.4f);
-        s.EatenBy(DLCSharedEnums.CreatureTemplateType.TerrorLongLegs, 0.6f);
-        s.EatenBy(DLCSharedEnums.CreatureTemplateType.BigJelly, 0.6f);
-        s.EatenBy(CreatureTemplate.Type.KingVulture, 0.8f);
-        s.EatenBy(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.8f);
-        s.EatenBy(DLCSharedEnums.CreatureTemplateType.StowawayBug, 1);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 1);
         s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
+        s.EatenBy(HSEnums.CreatureType.FreezerLizard, 1);
+        s.EatenBy(HSEnums.CreatureType.GorditoGreenieLizard, 1);
+        s.EatenBy(CreatureTemplate.Type.KingVulture, 0.8f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.8f);
+        s.EatenBy(CreatureTemplate.Type.DaddyLongLegs, 0.6f);
+        s.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0.6f);
+        s.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
     }
 
     public override ArtificialIntelligence CreateRealizedAI(AbstractCreature absCnt) => new CyanwingAI(absCnt, absCnt.world);

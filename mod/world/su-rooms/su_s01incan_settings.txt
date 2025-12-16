@@ -1,0 +1,21 @@
+Template: NONE
+DangerType: Blizzard
+CeilingDrips: 0
+RainIntensity: 0.4818732
+RumbleIntensity: 0
+WaveSpeed: 0.4831836
+WaveLength: 0.8229362
+WaveAmplitude: 0.03373111
+SecondWaveLength: 1
+SecondWaveAmplitude: 0.0001
+Clouds: 1
+Grime: 0.1752041
+RandomItemDensity: 0.375
+RandomItemSpearChance: 0.25
+WaterReflectionAlpha: 0.40454
+EffectColorA: 10
+EffectColorB: 10
+Effects: WaterDepth-0.02319983-20-20, DarkenLights-0.08747731-96.16562-65.57291, LightBurn-0.04639949-62.76666-84.82188, Coldness-0.8506569-134.6635-115.4542, 
+PlacedObjects: PlacedWaterfall><481.1666><262.2832><-356.7564~183.0428~0.1333618~1, LanternOnStick><429.2859><347.2754><-21.34375~-66.48123, Shroud><-198.7375><201.4253><0;0^426.9543;-1.422928^426.2426;20.00003^-2.134329;18.57697, Shroud><727.7844><176.7454><0;0^434.7803;-16.36353^441.1833;69.09064^-27.74683;27.82596, ColouredLightSource><472.8849><177.2995><-464.2528~-109.4251~000001~89.6438^-28.16982~1~False~1~0~0.5~Always~0~100, 
+FadePalette: 8, 0.1159986
+WetTerrain: OFF

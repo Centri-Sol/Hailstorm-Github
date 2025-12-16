@@ -113,7 +113,7 @@ public class LuminescipedeCritob : Critob
         Lumin.Eats(CreatureTemplate.Type.TubeWorm, 0.25f);
         Lumin.Eats(CreatureTemplate.Type.SeaLeech, 0.25f);
         Lumin.Eats(CreatureTemplate.Type.Leech, 0.2f);
-        Lumin.Eats(DLCSharedEnums.CreatureTemplateType.JungleLeech, 0.15f);
+        Lumin.Eats(MoreSlugcatsEnums.CreatureTemplateType.JungleLeech, 0.15f);
         Lumin.Eats(CreatureTemplate.Type.Fly, 0.1f);
 
         // Hunts down and chomps away at these creatures with the help of other Lumins, whittling them down over time.
@@ -121,7 +121,7 @@ public class LuminescipedeCritob : Critob
         Lumin.Attacks(CreatureTemplate.Type.EggBug, 1);
         Lumin.Attacks(CreatureTemplate.Type.PoleMimic, 1);
         Lumin.Attacks(CreatureTemplate.Type.TentaclePlant, 1);
-        Lumin.Attacks(DLCSharedEnums.CreatureTemplateType.StowawayBug, 1);
+        Lumin.Attacks(MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 1);
 
         // Moves away from these creatures if they get too close.
         Lumin.IntimidatedBy(MoreSlugcatsEnums.CreatureTemplateType.FireBug, 1);
@@ -132,7 +132,7 @@ public class LuminescipedeCritob : Critob
         Lumin.Fears(CreatureTemplate.Type.BigEel, 1);
         Lumin.Fears(CreatureTemplate.Type.BrotherLongLegs, 1);
         Lumin.Fears(CreatureTemplate.Type.DaddyLongLegs, 1);
-        Lumin.Fears(DLCSharedEnums.CreatureTemplateType.TerrorLongLegs, 1);
+        Lumin.Fears(MoreSlugcatsEnums.CreatureTemplateType.TerrorLongLegs, 1);
         Lumin.Fears(MoreSlugcatsEnums.CreatureTemplateType.HunterDaddy, 1);
         Lumin.Fears(CreatureTemplate.Type.RedLizard, 1);
         Lumin.Fears(MoreSlugcatsEnums.CreatureTemplateType.TrainLizard, 1);
@@ -156,18 +156,18 @@ public class LuminescipedeCritob : Critob
         Lumin.EatenBy(CreatureTemplate.Type.BlackLizard, 1);
         Lumin.EatenBy(CreatureTemplate.Type.BigEel, 1);
         Lumin.EatenBy(HSEnums.CreatureType.GorditoGreenieLizard, 1);
-        Lumin.EatenBy(DLCSharedEnums.CreatureTemplateType.ZoopLizard, 0.9f);
-        Lumin.EatenBy(DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.8f);
+        Lumin.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard, 0.9f);
+        Lumin.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.8f);
         Lumin.EatenBy(CreatureTemplate.Type.SpitterSpider, 0.7f);
         Lumin.EatenBy(CreatureTemplate.Type.BigSpider, 0.6f);
         Lumin.EatenBy(HSEnums.CreatureType.FreezerLizard, 0.6f);
         Lumin.EatenBy(HSEnums.CreatureType.Raven, 0.6f);
         Lumin.EatenBy(CreatureTemplate.Type.MirosBird, 0.4f);
         Lumin.EatenBy(CreatureTemplate.Type.GreenLizard, 0.3f);
-        Lumin.EatenBy(DLCSharedEnums.CreatureTemplateType.SpitLizard, 0.3f);
+        Lumin.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.SpitLizard, 0.3f);
         Lumin.EatenBy(CreatureTemplate.Type.Spider, 0.3f);
         Lumin.EatenBy(CreatureTemplate.Type.Vulture, 0.2f);
-        Lumin.EatenBy(DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.15f);
+        Lumin.EatenBy(MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.15f);
         Lumin.EatenBy(CreatureTemplate.Type.KingVulture, 0.1f);
 
         Lumin.FearedBy(CreatureTemplate.Type.VultureGrub, 1);
@@ -175,11 +175,11 @@ public class LuminescipedeCritob : Critob
         Lumin.FearedBy(CreatureTemplate.Type.LanternMouse, 0.75f);
         Lumin.FearedBy(CreatureTemplate.Type.SmallCentipede, 0.5f);
         Lumin.FearedBy(CreatureTemplate.Type.Scavenger, 0.5f);
-        Lumin.FearedBy(DLCSharedEnums.CreatureTemplateType.ScavengerElite, 0.5f);
+        Lumin.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite, 0.5f);
         Lumin.FearedBy(MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing, 0.5f);
         Lumin.FearedBy(HSEnums.CreatureType.PeachSpider, 0.5f);
         Lumin.FearedBy(CreatureTemplate.Type.SmallNeedleWorm, 0.25f);
-        Lumin.FearedBy(HSEnums.CreatureType.InfantAquapede, 0.25f);
+        Lumin.FearedBy(new("InfantAquapede"), 0.25f);
 
         Lumin.IgnoredBy(CreatureTemplate.Type.WhiteLizard);
     }

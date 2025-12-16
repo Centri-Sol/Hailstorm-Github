@@ -449,77 +449,85 @@ public class IncanFeatures
             return;
         }
 
+        int FuelGain = 0;
+
         if (food is Luminescipede)
         {
-            player.firefuel += 1200;
+            FuelGain += 1200;
         }
         else if (food is FireEgg)
         {
-            player.firefuel += 1200;
+            FuelGain += 1200;
             self.Hypothermia -= 0.3f;
         }
         else if (food is SLOracleSwarmer or SSOracleSwarmer)
         {
-            player.firefuel += 4800;
+            FuelGain += 4800;
         }
         else if (food is KarmaFlower)
         {
-            player.firefuel += 7200;
+            FuelGain += 7200;
             player.waterGlow += 7200;
         }
         else if (food is SwollenWaterNut)
         {
             player.soak += 1800;
-            self.room.PlaySound(SoundID.Medium_Object_Into_Water_Slow, self.bodyChunks[1].pos, 0.9f, Random.Range(1.4f, 1.6f));
-            self.room.PlaySound(SoundID.Firecracker_Burn, self.bodyChunks[1].pos, 0.75f, Random.Range(1.75f, 2f));
+            self.room.PlaySound(SoundID.Medium_Object_Into_Water_Slow, self.bodyChunks[1].pos, 0.6f, Random.Range(1.4f, 1.6f));
+            self.room.PlaySound(SoundID.Firecracker_Burn, self.bodyChunks[1].pos, 0.6f, Random.Range(1.75f, 2f));
         }
         else // All food types below this point cannot increase glow radius past a certain point.                 
         {    // The foods *above* this point have no such restriction.
 
-            int fuel = 0;
             if (food is JellyFish || (food is Centipede cnt2 && cnt2.Template.type == CreatureTemplate.Type.SmallCentipede))
             {
-                fuel = 1600;
+                FuelGain = 1600;
             }
-            else if (food is GlowWeed || (food is Centipede cnt1 && cnt1.Template.type == HSEnums.CreatureType.InfantAquapede))
+            else if (food is GlowWeed || (food is Centipede cnt1 && cnt1.Template.type == new CreatureTemplate.Type("InfantAquapede")))
             {
-                fuel = 1200;
+                FuelGain = 1200;
                 player.waterGlow += 1200;
             }
             else if (food is SlimeMold SM)
             {
                 if (SM.big)
                 {
-                    fuel = 2400;
+                    FuelGain = 2400;
                     player.soak -= 2400;
                 }
                 else
                 {
-                    fuel = 1200;
+                    FuelGain = 1200;
                     player.soak -= 1200;
                 }
             }
             else if (food is LillyPuck)
             {
-                fuel = 800;
+                FuelGain = 800;
                 player.waterGlow += 4800;
             }
             else if (food is Mushroom)
             {
-                fuel = 2400;
+                FuelGain = 2400;
             }
 
-            if (HSRemix.IncanNoFireFuelLimit.Value is false && player.firefuel + fuel > 2400) // Prevents fireFuel from going over 2400.
+            if (!HSRemix.IncanNoFireFuelLimit.Value &&
+                player.firefuel + FuelGain > 2400) // Prevents fireFuel from going over 2400.
             {
-                fuel = Mathf.Max(2400 - player.firefuel, 0);
+                FuelGain = Mathf.Max(2400 - player.firefuel, 0);
             }
-            player.firefuel += fuel;
+            player.firefuel += FuelGain;
         }
+
+        if (FuelGain > 0)
+        {
+            self.room.PlaySound(HSEnums.Sound.IncanFuel, self.bodyChunks[1].pos, 1, Custom.LerpMap(FuelGain, 0, 2400, 1.4f, 0.6f));
+        }
+
     }
 
     public static int SaintNoYouCantEatTheseFuckOff_WaitNoPUTAWAYYOURASCENSIONPOWERSDONOTBLOWUPMYMINDLIKEPANCA(On.SlugcatStats.orig_NourishmentOfObjectEaten orig, SlugcatStats.Name slugcat, IPlayerEdible eatenobject)
     {
-        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob || eatenobject is SnowcuttleCreature)
+        return slugcat == MoreSlugcatsEnums.SlugcatStatsName.Saint && (eatenobject is Luminescipede || eatenobject is PeachSpiderCritob || eatenobject is Snowcuttle)
             ? -1
             : orig(slugcat, eatenobject);
     }
@@ -776,7 +784,7 @@ public class IncanFeatures
                     (self.graphicsModule as PlayerGraphics).head.vel += Custom.RNV() * (self.Hypothermia * 0.75f); // Head shivers
                 }
 
-                if (self.room.roomSettings.DangerType != DLCSharedEnums.RoomRainDangerType.Blizzard)
+                if (self.room.roomSettings.DangerType != MoreSlugcatsEnums.RoomRainDangerType.Blizzard)
                 {
                     self.Hypothermia -= 0.00015f;
                     if (!self.dead && self.Hypothermia >= 1.5f)
@@ -1010,7 +1018,7 @@ public class IncanFeatures
 
             if (RainWorld.ShowLogs)
             {
-                Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: " + DMG + " | Burn Time: " + (BURNTIME / 40f) + "s | Stun: " + (STUN / 40f) + "s");
+                Plugin.HailstormLog("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: " + DMG + " | Burn Time: " + (BURNTIME / 40f) + "s | Stun: " + (STUN / 40f) + "s");
             }
         }
         else
@@ -1022,7 +1030,7 @@ public class IncanFeatures
 
             if (RainWorld.ShowLogs)
             {
-                Debug.Log("Player " + (self.playerState.playerNumber + 1) + " BONKED something! | Damage: " + DMG + " | Stun: " + (STUN / 40f) + "s | Impact velocity: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Distance: " + (self.lastGroundY - self.firstChunk.pos.y));
+                Plugin.HailstormLog("Player " + (self.playerState.playerNumber + 1) + " BONKED something! | Damage: " + DMG + " | Stun: " + (STUN / 40f) + "s | Impact velocity: " + Mathf.Max(self.mainBodyChunk.vel.y, self.mainBodyChunk.vel.magnitude) + " | Distance: " + (self.lastGroundY - self.firstChunk.pos.y));
             }
         }
 
@@ -1224,7 +1232,7 @@ public class IncanFeatures
                     liz.turnedByRockCounter =
                         (liz.Template.type == HSEnums.CreatureType.FreezerLizard ||
                         liz.Template.type == CreatureTemplate.Type.GreenLizard ||
-                        liz.Template.type == DLCSharedEnums.CreatureTemplateType.SpitLizard) ? 20 : 40;
+                        liz.Template.type == MoreSlugcatsEnums.CreatureTemplateType.SpitLizard) ? 20 : 40;
                     liz.turnedByRockDirection = (int)Mathf.Sign(chunk.pos.x - tailEnd.pos.x);
                 }
                 if (target.SpearStick(null, 0.25f, chunk, null, hitVel) && CWT.AbsCtrData.TryGetValue(target.abstractCreature, out CWT.AbsCtrInfo aI))
@@ -1247,7 +1255,7 @@ public class IncanFeatures
 
                 if (RainWorld.ShowLogs)
                 {
-                    Debug.Log("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: 0.25 | Burn Time: 12.5s | Stun: 1.25s");
+                    Plugin.HailstormLog("Player " + (self.playerState.playerNumber + 1) + " burned something! | Damage: 0.25 | Burn Time: 12.5s | Stun: 1.25s");
                 }
 
                 self.Hypothermia += HEATLOSS;

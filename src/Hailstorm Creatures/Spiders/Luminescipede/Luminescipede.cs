@@ -603,7 +603,7 @@ public class Luminescipede : InsectoidCreature, IPlayerEdible
     {
         if (room.GetTile(coord).Solid && !room.GetTile(lastCoord).Solid)
         {
-            Debug.Log("trying to set pos back in-bounds");
+            Plugin.TestingLog("trying to set pos back in-bounds");
             Body.HardSetPosition(room.MiddleOfTile(lastCoord));
         }
         if (Submersion > 0.3f || AI.inAccessibleTerrain)

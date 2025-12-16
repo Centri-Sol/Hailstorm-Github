@@ -17,11 +17,6 @@ public class HailstormSpiders
 
         // Big Spiders
         On.BigSpider.ctor += WinterSpiders;
-        On.BigSpider.Update += WinterMotherSpiderBabySpawn;
-        On.BigSpider.Collide += WinterMotherCRONCH;
-        On.BigSpider.Violence += WinterMotherHP;
-        On.BigSpider.Die += WinterMotherSpiderBabyPuff;
-        On.BigSpiderAI.IUseARelationshipTracker_UpdateDynamicRelationship += WinterMotherSpiderHostility;
         On.BigSpiderAI.TryAddReviveBuddy += PeachSpiderShouldntRevive;
         On.BigSpider.Revive += PeachSpiderGetsRevivedForLonger;
         On.BigSpider.ShortCutColor += PeachSpiderShortcutColor;
@@ -269,7 +264,7 @@ public class HailstormSpiders
     public static void WinterSpiders(On.BigSpider.orig_ctor orig, BigSpider bigSpd, AbstractCreature absSpd, World world)
     {
         orig(bigSpd, absSpd, world);
-        if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(world?.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true))
+        if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(world?.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true))
         {
             absSpd.state.meatLeft = 9;
             if (bigSpd.bodyChunks is not null)
@@ -279,10 +274,6 @@ public class HailstormSpiders
                     bigSpd.bodyChunks[b].mass *= 1.33f;
                     bigSpd.bodyChunks[b].rad *= 1.33f;
                 }
-            }
-            if (CWT.AbsCtrData.TryGetValue(absSpd, out CWT.AbsCtrInfo aI))
-            {
-                aI.functionTimer = 450 + (int)(HSRemix.MotherSpiderEvenMoreSpiders.Value * 10);
             }
         }
 
@@ -306,7 +297,7 @@ public class HailstormSpiders
         }
         else if (IsIncanStory(world?.game) || HSRemix.BigSpiderColorsEverywhere.Value is true)
         {
-            if (IsIncanStory(world?.game) && bigSpd.Template.type != DLCSharedEnums.CreatureTemplateType.MotherSpider && bigSpd.bodyChunks is not null)
+            if (IsIncanStory(world?.game) && bigSpd.Template.type != MoreSlugcatsEnums.CreatureTemplateType.MotherSpider && bigSpd.bodyChunks is not null)
             {
                 for (int b = 0; b < bigSpd.bodyChunks.Length; b++)
                 {
@@ -336,7 +327,7 @@ public class HailstormSpiders
                             Random.value * 0.2f);
                 Random.state = state;
             }
-            else if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider)
+            else if (bigSpd.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider)
             {
                 Random.State state = Random.state;
                 Random.InitState(absSpd.ID.RandomSeed);
@@ -352,7 +343,7 @@ public class HailstormSpiders
 
     //-----------------------------------------
 
-    public static void WinterMotherSpiderBabySpawn(On.BigSpider.orig_Update orig, BigSpider bigSpd, bool eu)
+    public static void WinterSpiderUpdate(On.BigSpider.orig_Update orig, BigSpider bigSpd, bool eu)
     {
         orig(bigSpd, eu);
         if (bigSpd?.room is null)
@@ -371,89 +362,17 @@ public class HailstormSpiders
                 bigSpd.canCling = 0;
             }
         }
-        else if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo aI))
+        else if (bigSpd.Template.type == CreatureTemplate.Type.BigSpider && IsIncanStory(bigSpd.room.game))
         {
-            // Partially counteracts the Mother Spider's regeneration, or else it would be WAY too fast thanks to the health increase that Mother Spiders get (it's pretty much percentage-based).
-            if (bigSpd.State.health is > 0 and < 1)
+            if (bigSpd.Stunned &&
+                bigSpd.State.health > 0f)
             {
-                bigSpd.State.health -=
-                    0.0014705883f * (bigSpd.State.health < 0.5f ? 0.5f : 0.875f);
-            }
-
-            // Once a creature is on a Mother Spider's shitlist, the Mother won't be afraid of it anymore. At least, that's what I HOPE this does...
-            if (aI.ctrList is not null && aI.ctrList.Count > 0 && bigSpd.AI?.relationshipTracker?.relationships is not null)
-            {
-                for (int r = 0; r < bigSpd.AI.relationshipTracker.relationships.Count; r++)
-                {
-                    for (int s = 0; s < aI.ctrList.Count; s++)
-                    {
-                        RelationshipTracker.DynamicRelationship relationship = bigSpd.AI.relationshipTracker.relationships[r];
-                        if (relationship.trackerRep.representedCreature is not null &&
-                            relationship.trackerRep.representedCreature == aI.ctrList[s] &&
-                            (relationship.state as BigSpiderAI.SpiderTrackState).accustomed < 600)
-                        {
-                            (relationship.state as BigSpiderAI.SpiderTrackState).accustomed = 1800;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Allows the Mother Spider to spawn little baby spiders while it's in stun.
-            if (aI.functionTimer > 0 &&
-                !bigSpd.dead &&
-                !bigSpd.Consious &&
-                !bigSpd.spewBabies &&
-                !bigSpd.inShortcut &&
-                !bigSpd.slatedForDeletetion &&
-                bigSpd.room.world is not null &&
-                bigSpd.room.game.cameras[0].room == bigSpd.room)
-            {
-                aI.functionTimer--;
-                if (aI.functionTimer % 10 == 0)
-                {
-                    InsectCoordinator smallInsects = null;
-                    for (int i = 0; i < bigSpd.room.updateList.Count; i++)
-                    {
-                        if (bigSpd.room.updateList[i] is InsectCoordinator)
-                        {
-                            smallInsects = bigSpd.room.updateList[i] as InsectCoordinator;
-                            break;
-                        }
-                    }
-
-                    Vector2 pos = bigSpd.mainBodyChunk.pos;
-                    for (int j = 0; j < 5; j++)
-                    {
-                        SporeCloud sC = new(pos, Custom.RNV() * Random.value * 10f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.4f), 1f, null, j % 20, smallInsects)
-                        {
-                            nonToxic = true
-                        };
-                        bigSpd.room.AddObject(sC);
-                    }
-
-                    SporePuffVisionObscurer sPVO = new(pos)
-                    {
-                        doNotCallDeer = true
-                    };
-                    bigSpd.room.AddObject(sPVO);
-
-                    bigSpd.room.AddObject(new PuffBallSkin(pos, Custom.RNV() * Random.value * 16f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.2f), Color.Lerp(bigSpd.yellowCol, Color.black, 0.6f)));
-
-                    AbstractCreature absSpd = new(bigSpd.room.world, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.Spider), null, bigSpd.room.GetWorldCoordinate(pos), bigSpd.room.world.game.GetNewID())
-                    {
-                        Winterized = bigSpd.abstractCreature.Winterized,
-                        ignoreCycle = bigSpd.abstractCreature.ignoreCycle,
-                        HypothermiaImmune = bigSpd.abstractCreature.HypothermiaImmune
-                    };
-                    bigSpd.room.abstractRoom.AddEntity(absSpd);
-                    absSpd.RealizeInRoom();
-                    (absSpd.realizedCreature as Spider).bloodLust = 1f;
-                }
+                bigSpd.State.health = Mathf.Max(0, bigSpd.State.health - 0.0014705883f);
+                // Stops Big Spiders' health regen in Incan's campaign while they're stunned.
             }
         }
     }
-    public static void WinterMotherCRONCH(On.BigSpider.orig_Collide orig, BigSpider bigSpd, PhysicalObject obj, int myChunk, int otherChunk)
+    public static void PeachSpiderFullAccustomOnContact(On.BigSpider.orig_Collide orig, BigSpider bigSpd, PhysicalObject obj, int myChunk, int otherChunk)
     {
         if (bigSpd?.AI is not null && bigSpd.Template.type == HSEnums.CreatureType.PeachSpider && obj is Creature ctr)
         {
@@ -468,147 +387,16 @@ public class HailstormSpiders
                 }
             }
         }
-        else if (HSRemix.MotherSpiderCRONCH.Value is true &&
-            obj is not null &&
-            obj is Creature target &&
-            !target.dead &&
-            target is not Spider &&
-            target is not BigSpider &&
-            bigSpd?.room is not null &&
-            bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider &&
-            (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) &&
-            bigSpd.bodyChunks[myChunk].vel.magnitude >= 12.5f &&
-            bigSpd.TotalMass > target.TotalMass &&
-            CWT.CreatureData.TryGetValue(bigSpd, out CWT.CreatureInfo jI) &&
-            CWT.CreatureData.TryGetValue(target, out CWT.CreatureInfo vI) &&
-            (jI.impactCooldown == 0 || vI.impactCooldown == 0))
-        {
-            jI.impactCooldown = 40;
-            vI.impactCooldown = 40;
-
-            float damage =
-                bigSpd.bodyChunks[myChunk].vel.magnitude >= 22.5f ? 1.0f :
-                bigSpd.bodyChunks[myChunk].vel.magnitude >= 17.5f ? 0.5f : 0;
-
-            float stun =
-                Mathf.Lerp(25, 50, Mathf.InverseLerp(12.5f, 22.5f, bigSpd.bodyChunks[myChunk].vel.magnitude));
-
-            target.Violence(bigSpd.bodyChunks[myChunk], bigSpd.bodyChunks[myChunk].vel, target.bodyChunks[otherChunk], null, Creature.DamageType.Blunt, damage, stun);
-
-            _ = bigSpd.room.PlaySound(SoundID.Cicada_Heavy_Terrain_Impact, bigSpd.bodyChunks[myChunk]);
-            bigSpd.room.PlaySound(SoundID.Big_Needle_Worm_Impale_Terrain, bigSpd.bodyChunks[myChunk], false, 1.4f, 1.1f);
-            _ = bigSpd.room.PlaySound(SoundID.Rock_Hit_Wall, bigSpd.bodyChunks[myChunk], false, 1.5f, Random.Range(0.66f, 0.8f));
-            if ((target.State is HealthState HS && HS.ClampedHealth == 0) || target.State.dead)
-            {
-                _ = bigSpd.room.PlaySound(SoundID.Spear_Stick_In_Creature, bigSpd.bodyChunks[myChunk], false, 1.7f, Random.Range(0.6f, 0.8f));
-            }
-        }
+		
         orig(bigSpd, obj, myChunk, otherChunk);
     }
-    public static void WinterMotherHP(On.BigSpider.orig_Violence orig, BigSpider bigSpd, BodyChunk source, Vector2? dirAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos hitAppendage, Creature.DamageType dmgType, float dmg, float stun)
+    public static void WinterWolfHP(On.BigSpider.orig_Violence orig, BigSpider bigSpd, BodyChunk source, Vector2? dirAndMomentum, BodyChunk hitChunk, PhysicalObject.Appendage.Pos hitAppendage, Creature.DamageType dmgType, float dmg, float stun)
     {
-        if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true))
-        {
-            dmg /= 2f; // x2 HP
-            stun *= 0.4f;
-            if (source?.owner is not null && source.owner is Creature ctr && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo abI) && abI.ctrList is not null && !abI.ctrList.Contains(ctr.abstractCreature))
-            {
-                abI.ctrList.Add(ctr.abstractCreature);
-            }
-        }
         if (IsIncanStory(bigSpd?.room?.game) && bigSpd.Template.type == CreatureTemplate.Type.BigSpider && bigSpd.abstractCreature.Winterized)
         {
             dmg /= 2f;
         }
         orig(bigSpd, source, dirAndMomentum, hitChunk, hitAppendage, dmgType, dmg, stun);
-    }
-    public static void WinterMotherSpiderBabyPuff(On.BigSpider.orig_Die orig, BigSpider bigSpd)
-    {
-        if (bigSpd?.room is not null && (IsIncanStory(bigSpd.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) && CWT.AbsCtrData.TryGetValue(bigSpd.abstractCreature, out CWT.AbsCtrInfo aI))
-        {
-            if (bigSpd.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider)
-            {
-                bigSpd.spewBabies = true;
-
-                if (aI.functionTimer > 0 &&
-                    !bigSpd.dead &&
-                    !bigSpd.Consious &&
-                    !bigSpd.inShortcut &&
-                    !bigSpd.slatedForDeletetion &&
-                    bigSpd.room.world is not null &&
-                    bigSpd.room.game.cameras[0].room == bigSpd.room)
-                {
-                    int remainingSpiders = aI.functionTimer / 10;
-                    aI.functionTimer = 0;
-
-                    InsectCoordinator smallInsects = null;
-                    for (int i = 0; i < bigSpd.room.updateList.Count; i++)
-                    {
-                        if (bigSpd.room.updateList[i] is InsectCoordinator)
-                        {
-                            smallInsects = bigSpd.room.updateList[i] as InsectCoordinator;
-                            break;
-                        }
-                    }
-
-                    Vector2 pos = bigSpd.mainBodyChunk.pos;
-                    for (int j = 0; j < remainingSpiders * 2; j++)
-                    {
-                        SporeCloud sC = new(pos, Custom.RNV() * Random.value * 10f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.2f), 1f, null, j % 20, smallInsects)
-                        {
-                            nonToxic = true
-                        };
-                        bigSpd.room.AddObject(sC);
-                    }
-
-                    SporePuffVisionObscurer sPVO = new(pos)
-                    {
-                        doNotCallDeer = true
-                    };
-                    bigSpd.room.AddObject(sPVO);
-
-                    for (int k = 0; k < remainingSpiders * 0.2f; k++)
-                    {
-                        bigSpd.room.AddObject(new PuffBallSkin(pos, Custom.RNV() * Random.value * 16f, Color.Lerp(bigSpd.yellowCol, Color.black, 0.2f), Color.Lerp(bigSpd.yellowCol, Color.black, 0.6f)));
-                    }
-
-                    for (int s = 0; s < remainingSpiders; s++)
-                    {
-                        AbstractCreature absSpd = new(bigSpd.room.world, StaticWorld.GetCreatureTemplate(CreatureTemplate.Type.Spider), null, bigSpd.room.GetWorldCoordinate(pos), bigSpd.room.world.game.GetNewID())
-                        {
-                            Winterized = bigSpd.abstractCreature.Winterized,
-                            ignoreCycle = bigSpd.abstractCreature.ignoreCycle,
-                            HypothermiaImmune = bigSpd.abstractCreature.HypothermiaImmune
-                        };
-                        bigSpd.room.abstractRoom.AddEntity(absSpd);
-                        absSpd.RealizeInRoom();
-                        (absSpd.realizedCreature as Spider).bloodLust = 1f;
-                    }
-                }
-            }
-        }
-        orig(bigSpd);
-    }
-    public static CreatureTemplate.Relationship WinterMotherSpiderHostility(On.BigSpiderAI.orig_IUseARelationshipTracker_UpdateDynamicRelationship orig, BigSpiderAI AI, RelationshipTracker.DynamicRelationship dynamRelat)
-    {
-        if (AI?.bug?.room is not null &&
-            AI.bug.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider &
-            (IsIncanStory(AI.bug.room.game) || HSRemix.HailstormMotherSpidersEverywhere.Value is true) &&
-            CWT.AbsCtrData.TryGetValue(AI.bug.abstractCreature, out CWT.AbsCtrInfo aI))
-        {
-            foreach (AbstractCreature absCtr in aI.ctrList)
-            {
-                if (absCtr?.realizedCreature is not null &&
-                    dynamRelat.trackerRep.representedCreature.realizedCreature is not null &&
-                    absCtr.realizedCreature == dynamRelat.trackerRep.representedCreature.realizedCreature &&
-                    !dynamRelat.trackerRep.representedCreature.state.dead)
-                {
-                    return new CreatureTemplate.Relationship
-                        (CreatureTemplate.Relationship.Type.Attacks, 1.2f);
-                }
-            }
-        }
-        return orig(AI, dynamRelat);
     }
     public static void PeachSpiderShouldntRevive(On.BigSpiderAI.orig_TryAddReviveBuddy orig, BigSpiderAI AI, Tracker.CreatureRepresentation candidate)
     {
@@ -738,7 +526,7 @@ public class HailstormSpiders
         orig(bsg, sLeaser, rCam, timeStacker, camPos);
         if (bsg?.bug?.room is not null && (bsg.bug.Template.type == HSEnums.CreatureType.PeachSpider || IsIncanStory(bsg.bug.room.game)))
         {
-            if (bsg.bug.Template.type == DLCSharedEnums.CreatureTemplateType.MotherSpider || bsg.bug.Template.type == CreatureTemplate.Type.BigSpider)
+            if (bsg.bug.Template.type == CreatureTemplate.Type.BigSpider)
             {
                 if (sLeaser.sprites[bsg.MeshSprite] is TriangleMesh mesh)
                 {

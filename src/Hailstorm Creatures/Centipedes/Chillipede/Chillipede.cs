@@ -476,7 +476,9 @@ public class Chillipede : Centipede
                 damage *= 1 - (0.25f * (shell.health - 1));
             }
 
-            shellDamage = attackTooWeak ? 0 : 2;
+            shellDamage =
+                attackTooWeak ? 0 :
+                LargeSize ? 2 : 3;
 
             if (!attackTooWeak)
             {
@@ -590,6 +592,7 @@ public class Chillipede : Centipede
             }
         }
     }
+
     public override void Stun(int time)
     {
         if (time >= 10)

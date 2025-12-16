@@ -57,11 +57,11 @@ public class CWT
                 {
                     King = true;
                 }
-                else if (vul.Template.type == DLCSharedEnums.CreatureTemplateType.MirosVulture)
+                else if (vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture)
                 {
                     Miros = true;
                 }
-                else if (vul.Template.type == HSEnums.CreatureType.Raven)
+                else if (vul is Raven)
                 {
                     Raven = true;
                 }
@@ -92,7 +92,7 @@ public class CWT
     {
 
         public bool LateBlizzardRoamer;
-        public bool HailstormAvoider;
+        public bool HailAvoider;
         public bool FogRoamer;
         public bool FogAvoider;
         public bool ErraticWindRoamer;
@@ -109,11 +109,13 @@ public class CWT
 
         public AbsCtrInfo(AbstractCreature absCtr)
         {
+            debuffs = new();
+
             if (absCtr is not null)
             {
                 if (ctrList is null && (
-                    absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.MotherSpider ||
-                    absCtr.creatureTemplate.type == DLCSharedEnums.CreatureTemplateType.StowawayBug))
+                    absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.MotherSpider ||
+                    absCtr.creatureTemplate.type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug))
                 {
                     ctrList = new List<AbstractCreature>();
                 }

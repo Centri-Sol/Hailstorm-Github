@@ -1,12 +1,12 @@
 OFFSCREEN : 0-Vulture-3, 0-KingVulture-2-{Night}, 0-Deer-6, 0-Deer-{Night}, 0-Scavenger-10, 0-Scavenger-{Night}-5
 LINEAGE : OFFSCREEN_LF : 0 : Vulture-0.25, KingVulture-0
 
-LF_F02 : 3-Cicada-2, 3-Cicada-{PreCycle}-2, 4-Strawberry, 5-Strawberry-{Night}
-LINEAGE : LF_F02 : 3 : Centiwing-0.25, Cicada-0
+LF_F02 : 3-Yeek-2, 3-Yeek-{PreCycle}-2, 4-Strawberry, 5-Strawberry-{Night}
+LINEAGE : LF_F02 : 3 : Centiwing-0.25, Yeek-0
 LF_E04 : 2-Small Centipede-{AlternateForm}, 3-Centiwing, 4-Salamander-{PreCycle}, 5-Caramel
 LF_A03 : 3-Centipede
 LINEAGE : LF_A03 : 3 : Centipede-{0.4}-0.4, Centipede-{0.7}-0.7, Centipede-{1.0}-1.0, NONE-0
-LF_H01 : 4-Mimic-{10}, 4-BigSpider-{Night}, 5-Strawberry-{Night}, 6-Mimic-{17}, 6-Strawberry-{PreCycle}, 7-Mimic-{12}, 8-BigSpider, 8-BigSpider-{Night}, 9-BigSpider, 9-MotherSpider-{Night}, 10-Cyan, 10-Cyan-{Ignorecycle}, 10-Cyan-{Night}, 11-Yeek-{Winter}-7, 11-Salamander-{PreCycle}-2, 12-Caramel, 12-Caramel-{Night}, 13-Cyanwing-{Night}, 13-Centiwing-{Night}
+LF_H01 : 4-Mimic-{10}, 4-BigSpider-{Night}, 5-Strawberry-{Night}, 6-Mimic-{17}, 6-Strawberry-{PreCycle}, 7-Mimic-{12}, 8-BigSpider, 8-BigSpider-{Night}, 9-BigSpider, 9-MotherSpider-{Night}, 10-Cyan, 10-Cyan-{Ignorecycle}, 10-Cyan-{Night}, 11-Yeek-7, 11-Salamander-{PreCycle}-2, 12-Caramel, 12-Caramel-{Night}, 13-Cyanwing-{Night}, 13-Centiwing-{Night}
 LINEAGE : LF_H01 : 5 : Mimic-{15}-0.5, NONE-0.25, BigSpider-1.0, NONE-1.0, TentaclePlant-0
 LINEAGE : LF_H01 : 9 : BigSpider-0.1, MotherSpider-0.2, Centiwing-{0.7}-0.35, Cyanwing-0
 LINEAGE : LF_H01 : 10 : NONE-1.0, NONE-1.0, NONE-0.15, White-0
@@ -26,20 +26,20 @@ LINEAGE : LF_J01 : 10 : Mimic-{17}-0.5, NONE-0.1 IcyBlue-0.25, Cyan-{Ignorecycle
 LINEAGE : LF_J01 : 13 : NONE-1.0, NONE-1.0, DropBug-0.5, NONE-0.1, Mimic-{14}-0
 LINEAGE : LF_J01 : 14 : Caramel-0.3, Strawberry-{Night}-0.1, IcyBlue-0.25, Cyan-{Ignorecycle}-0
 LINEAGE : LF_J01 : 15 : NONE-0.2, DropBug-{Night}-0.15, BigSpider-{Night}-0.3, MotherSpider-{Night}-0.5, SpitterSpider-{Night}-0
-LF_C03 : 3-Yeek-{Winter}-6, 4-Strawberry-{Night}
+LF_C03 : 3-Yeek-6, 4-Strawberry-{Night}
 LF_M04 : 2-TentaclePlant, 3-Salamander-{Ignorecycle}-2, 4-Eel-{PreCycle}, 5-TentaclePlant-{Night}, 6-Mimic-{9}
 LF_M03 : 3-Centiwing-2, 4-Centiwing, 4-Small Centipede-{AlternateForm}-2, 4-BigSpider-{Night}-2
 LINEAGE : LF_M03 : 4 : NONE-0.25, Centiwing-0.25, MotherSpider-0
-LF_M02INCAN : 5-Yellow-{Ignorecycle}-3, 5-Yellow-{Night}-2, 6-Cicada-{PreCycle}-2, 7-Cicada, 8-TentaclePlant-{Night}, 8-Yellow, 9-Salamander-{PreCycle}
-LINEAGE : LF_M02INCAN : 6 : Cicada-{PreCycle}-1.0, Strawberry-0
-LINEAGE : LF_M02INCAN : 7 : Cicada-0.4, Strawberry-0
+LF_M02INCAN : 5-Yellow-{Ignorecycle}-3, 5-Yellow-{Night}-2, 6-Yeek-{PreCycle}-2, 7-Yeek, 8-TentaclePlant-{Night}, 8-Yellow, 9-Salamander-{PreCycle}
+LINEAGE : LF_M02INCAN : 6 : Yeek-{PreCycle}-1.0, Strawberry-0
+LINEAGE : LF_M02INCAN : 7 : Yeek-0.4, Strawberry-0
 LINEAGE : LF_M02INCAN : 9 : Mimic-{15}-1.0, NONE-1.0, NONE-0.5, DropBug-0.25, TentaclePlant-0
 
-LF_D08 : 3-Spider-25, 3-SpitterSpider, 6-Spider-25, 8-MotherSpider, 8-MotherSpider-{PreCycle}, 9-BigSpider-4
+LF_D08 : 3-MotherSpider, 3-SpitterSpider, 6-MotherSpider, 8-BigSpider-{PreCycle}-2, 9-BigSpider-4
 LINEAGE : LF_D08 : 7 : NONE-0.33, MotherSpider-{Night}-0.5, DropBug-{Night}-0
 LF_B04 : 4-Centipede, 5-Small Centipede-2, 6-Eel-{Night}
 LINEAGE : LF_B04 : 3 : Centipede-{0.3}-0.3, Centipede-{0.8}-0.8, BigSpider-0.55, DropBug-0
-LF_E05 : 2-Strawberry-{Night}, 2-Mimic-{17}, 3-Mimic-{11}, 3-Strawberry, 4-Caramel, 4-White-{Night}-2, 5-Yeek-{Winter}-2, 5-Cicada-2, 6-BigSpider-3, 6-BigSpider-{Night}-3, 10-Salamander-{PreCycle}, 11-Salamander-{Ignorecycle}, 13-Salamander-{PreCycle}
+LF_E05 : 2-Strawberry-{Night}, 2-Mimic-{17}, 3-Mimic-{11}, 3-Strawberry, 4-Caramel, 4-White-{Night}-2, 5-Yeek-2, 5-Yeek-2, 6-BigSpider-3, 6-BigSpider-{Night}-3, 10-Salamander-{PreCycle}, 11-Salamander-{Ignorecycle}, 13-Salamander-{PreCycle}
 LINEAGE : LF_E05 : 5 : TentaclePlant-0.33, NONE-1.0, NONE-0.15, White-{Night}-0.33, IcyBlue-{Night}-0.15, Cyan-{Night}-0
 LINEAGE : LF_E05 : 7 : NONE-0.35, Mimic-{12}-0
 LINEAGE : LF_E05 : 8 : NONE-0.3, Mimic-{16}-0
@@ -52,13 +52,13 @@ LF_H02 : 3-White, 4-BigSpider, 6-Eel, 6-Salamander-{Night}
 LINEAGE : LF_H02 : 2 : Caramel-0.25, Strawberry-0.3, IcyBlue-0.4, White-0.5, Cyan-{Ignorecycle}-0
 LINEAGE : LF_H02 : 4 : Mimic-{7}-0.25, NONE-1.0, NONE-0.25, TentaclePlant-0
 LINEAGE : LF_H02 : 5 : BigSpider-0.15, MotherSpider-0
-LF_C02 : 3-Centiwing-3, 4-Yeek-{Winter}-5, 5-Cicada-4, 6-BigSpider-2, 6-MotherSpider-{PreCycle}, 7-Mimic-{10}, 8-Mimic-{6}, 9-Mimic-{7}, 10-Caramel-{Night}, 10-TentaclePlant-{PreCycle}, 11-Mimic-{11}, 12-Mimic-{12}, 14-Caramel
+LF_C02 : 3-Centiwing-3, 4-Yeek-3, 5-Yeek-2, 6-BigSpider-2, 6-MotherSpider-{PreCycle}, 7-Mimic-{10}, 8-Mimic-{6}, 9-Mimic-{7}, 10-Caramel-{Night}, 10-TentaclePlant-{PreCycle}, 11-Mimic-{11}, 12-Mimic-{12}, 14-Caramel
 LINEAGE : LF_C02 : 6 : NONE-1.0, NONE-0.15, White-{Night}-0.33, IcyBlue-{Night}-0
 LINEAGE : LF_C02 : 13 : Strawberry-0.33, Cyan-{Ignorecycle}-0.2, White-0
 LF_A13 : 3-BigSpider
 LINEAGE : LF_A13 : 4 : BigSpider-0.2, MotherSpider-0
 LINEAGE : LF_A13 : 5 : NONE-1.0, NONE-1.0, NONE-0.25, BigSpider-0.25, IcyBlue-0
-LF_B01 : 3-Centiwing-2, 4-Yeek-{Winter}-2
+LF_B01 : 3-Centiwing-2, 4-Yeek-2
 LINEAGE : LF_B01 : 2 : BigSpider-0.25, SpitterSpider-0.5, MotherSpider-0
 LINEAGE : LF_B01 : 4 : Mimic-{60}-1.0, Mimic-{6}-1.0, NONE-0
 LF_D07 : 2-Centiwing-{Night}, 3-Centiwing-{Night}, 4-MotherSpider, 6-Mimic-{15}, 8-Caramel-{Night}, 9-Mimic-{18}, 10-Caramel, 11-Cyan-{Night}, 13-Caramel, 14-Salamander-{Night}, 14-Eel-{PreCycle}
@@ -76,7 +76,7 @@ LINEAGE : LF_D09 : 6 : Mimic-{17}-1.0, NONE-0.25, Salamander-{Ignorecycle}-0
 LF_D06 : 4-Small Centipede, 4-Centipede, 5-Centipede-{1.0}
 LINEAGE : LF_D06 : 5 : Centipede-{0.6}-0.6, Centipede-{0.8}-0.8, Centipede-{1.0}-1.0, RedCentipede-0
 
-LF_D04 : 3-Centiwing-2, 3-Cicada-{Night}-4, 4-Yeek-{Winter}-3, 6-Cicada-2
+LF_D04 : 3-Centiwing-2, 3-Yeek-{Night}-2, 4-Yeek-3, 6-Yeek-2
 LINEAGE : LF_D04 : 5 : NONE-1.0, NONE-0.2, IcyBlue-0.1, NONE-0.05, Freezer-0
 LINEAGE : LF_D04 : 7 : Mimic-{55}-1.0, TentaclePlant-1.0, Eggbug-1.0, NONE-0
 LF_B03 : 3-Centipede-3, 3-Centipede-{1.0}
@@ -90,11 +90,11 @@ LF_E01 : 2-Strawberry, 4-Centiwing-2, 4-TentaclePlant-{Night}, 5-Yellow-{Night}-
 LINEAGE : LF_E01 : 3 : Mimic-{11}-0.33, NONE-0.5, Caramel-0.25, TentaclePlant-0
 LINEAGE : LF_E01 : 4 : White-{Night}-0.33, White-0.33, Red-0
 LINEAGE : LF_E01 : 6 : Mimic-{16}-0.33, NONE-0.33, White-0.33, Cyan-{Ignorecycle}-0
-LF_D02 : 3-Centiwing-2, 3-Small Centipede-{AlternateForm}, 4-Cicada-2, 5-Yeek-2
+LF_D02 : 3-Centiwing-2, 3-Small Centipede-{AlternateForm}, 4-Yeek-2, 5-Yeek-2
 LF_E03 : 2-White, 3-BigSpider-{Night}-3, 3-Centipede-{PreCycle}, 3-RedCentipede-{PreCycle}, 4-Salamander-{PreCycle}-2
 LINEAGE : LF_E03 : 2 : White-{Night}-0.5, White-0.2, Red-0
-LF_E02 : 3-Yeek-{Winter}-2, 4-Cicada-3, 5-SpitterSpider-{PreCycle}, 5-MotherSpider-{Night}, 5-MotherSpider-{PreCycle}, 6-Caramel
+LF_E02 : 3-Yeek-2, 4-Yeek-3, 5-SpitterSpider-{PreCycle}, 5-MotherSpider-{Night}, 5-MotherSpider-{PreCycle}, 6-Caramel
 LINEAGE : LF_E02 : 2 : Caramel-0.2, Strawberry-0.25, White-0.33, Cyan-{Ignorecycle}-0.5, IcyBlue-1.0, Freezer-0
-LINEAGE : LF_E02 : 4 : NONE-1.0, NONE-0.05, Cicada-0
+LINEAGE : LF_E02 : 4 : NONE-1.0, NONE-0.05, Yeek-0
 LINEAGE : LF_E02 : 5 : SpitterSpider-{Night}-0.5, DropBug-0.2, Cyanwing-0
 LF_D03 : 2-Centiwing, 3-Small Centipede-{AlternateForm}, 4-Small Centipede-{AlternateForm}, 5-Centiwing, 6-Caramel, 6-Salamander-{Night}, 6-Salamander-{PreCycle}-2

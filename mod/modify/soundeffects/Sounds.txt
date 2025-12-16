@@ -1,2 +1,8 @@
 [ADD]CyanwingDeath : cyandeath1, cyandeath2
 [ADD]FireImpact/vol=0.33 : fireimpact1, fireimpact2
+[ADD]IncanTailFlameLOOP : incantailflameloop
+[ADD]FireBurnLOOP/vol=0.25 : fireburnloop
+[ADD]IncanFuel/vol=0.33 : incanfuel
+[ADD]IcyBlueHiss/vol=0.5 : icybluehiss
+[ADD]FreezerHiss/vol=0.33 : freezerhiss
+[ADD]FreezerLove : freezerlove

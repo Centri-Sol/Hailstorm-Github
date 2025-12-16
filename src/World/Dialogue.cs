@@ -42,7 +42,7 @@ public class Dialogue
 
             if (gConv.id == MoreSlugcatsEnums.ConversationID.Ghost_MS) // Submerged Superstructure [Eight Spots on a Blind Eye]
             {
-                AddDialogue(gConv, 0, "In all my time spent bound to these peaks, never have I beared witness to a beast such as you.", 20);
+                AddDialogue(gConv, 0, "In all my time spent bound to these peaks, never have I borne witness to a beast such as you.", 20);
                 AddDialogue(gConv, 0, "A brilliant flame that pierces the darkness, paired with such great sorrow...<LINE>Little one, a great tragedy has befallen you, hasn't it?", 30);
                 AddDialogue(gConv, 0, "After watching you hide away for so many moons in this desolate place, I wish to<LINE>impart a warning: what you are doing will only bring you more pain.", 40);
                 AddDialogue(gConv, 0, "Allowing fear and pain to control you will leave you trapped up here,<LINE>where there is nothing to accompany you but vicious birds and a bitter cold.", 40);

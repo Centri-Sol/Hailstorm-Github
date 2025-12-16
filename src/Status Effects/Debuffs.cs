@@ -4,7 +4,7 @@ public abstract class Debuff
 {
     public AbstractPhysicalObject source;
     public int? chunk;
-    public Creature appendagePos;
+    public Creature owner;
     public float duration;
 
     public Color mainColor;
@@ -19,12 +19,12 @@ public abstract class Debuff
         this.secondColor = secondColor;
     }
 
-    public virtual void DebuffUpdate(Creature victim, bool setKillTag)
+    public virtual void Update(Creature victim, bool setKillTag)
     {
 
     }
 
-    public virtual void DebuffVisuals(Creature victim, bool eu)
+    public virtual void Visuals(Creature victim, bool eu)
     {
 
     }

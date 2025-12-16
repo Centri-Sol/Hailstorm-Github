@@ -49,16 +49,16 @@ public class Weather
         { CreatureTemplate.Type.SmallCentipede, 0.75f },
         { CreatureTemplate.Type.Centipede, 0.75f },
         { CreatureTemplate.Type.Centiwing, 0.75f },
-        { DLCSharedEnums.CreatureTemplateType.MirosVulture, 0.75f },
-        { DLCSharedEnums.CreatureTemplateType.EelLizard, 0.35f },
-        { DLCSharedEnums.CreatureTemplateType.MotherSpider, 0.35f },
+        { MoreSlugcatsEnums.CreatureTemplateType.MirosVulture, 0.75f },
+        { MoreSlugcatsEnums.CreatureTemplateType.EelLizard, 0.35f },
+        { MoreSlugcatsEnums.CreatureTemplateType.MotherSpider, 0.35f },
         { CreatureTemplate.Type.KingVulture, 0.25f },
-        { DLCSharedEnums.CreatureTemplateType.StowawayBug, 0.25f },
+        { MoreSlugcatsEnums.CreatureTemplateType.StowawayBug, 0.25f },
         { CreatureTemplate.Type.RedCentipede, 0.25f },
         { HSEnums.CreatureType.Cyanwing, 0.25f },
         { CreatureTemplate.Type.Salamander, 0 },
         { CreatureTemplate.Type.Deer, 0 },
-        { DLCSharedEnums.CreatureTemplateType.BigJelly, 0 },
+        { MoreSlugcatsEnums.CreatureTemplateType.BigJelly, 0 },
         { HSEnums.CreatureType.GorditoGreenieLizard, 0 }
     }; // For each listed creature type, hail damage and stun are multiplied by the given number.
 
@@ -87,10 +87,10 @@ public class Weather
         CreatureTemplate.Type.PoleMimic,
         CreatureTemplate.Type.TentaclePlant,
         CreatureTemplate.Type.Scavenger,
-        DLCSharedEnums.CreatureTemplateType.ScavengerElite,
+        MoreSlugcatsEnums.CreatureTemplateType.ScavengerElite,
         MoreSlugcatsEnums.CreatureTemplateType.ScavengerKing,
-        DLCSharedEnums.CreatureTemplateType.ZoopLizard,
-        DLCSharedEnums.CreatureTemplateType.MirosVulture,
+        MoreSlugcatsEnums.CreatureTemplateType.ZoopLizard,
+        MoreSlugcatsEnums.CreatureTemplateType.MirosVulture,
         HSEnums.CreatureType.Luminescipede
     };
 
@@ -207,7 +207,7 @@ public class Weather
                 gs.ChangeBehavior(Idle, 2);
                 if (RainWorld.ShowLogs)
                 {
-                    Debug.Log("[Hailstorm] Lumin returned " + itemList + " to home den at (" + den.ToString() + ")!");
+                    Plugin.HailstormLog("Lumin returned " + itemList + " to home den at (" + den.ToString() + ")!");
                 }
             }
 
@@ -324,7 +324,7 @@ public class Weather
                     2 => "What the heck's going on with the wind this cycle?",
                     _ => "The winds are looking pretty erratic this cycle...",
                 };
-                Debug.Log("[Hailstorm] " + logMessage);
+                Plugin.HailstormLog(logMessage);
             }
             if (FogPrecycle)
             {
@@ -335,7 +335,7 @@ public class Weather
                     2 => "It's, uh... a bit CHILLIER this cycle, isn't it? And foggier...",
                     _ => "Lookin' a little foggy this cycle.",
                 };
-                Debug.Log("[Hailstorm] " + logMessage);
+                Plugin.HailstormLog(logMessage);
             }
             else if (HailPrecycle)
             {
@@ -346,13 +346,13 @@ public class Weather
                     2 => "Oh hey, it's hailing outside. That stuff looks like it'll HURT!",
                     _ => "There's a hailstorm going on this cycle!",
                 };
-                Debug.Log("[Hailstorm] " + logMessage);
+                Plugin.HailstormLog(logMessage);
             }
         }
 
         if (RainWorld.ShowLogs && (HSRemix.HailstormStowawaysEverywhere.Value is true || IsIncanStory(world?.game)) && !FogPrecycle)
         {
-            Debug.Log("[Hailstorm] Stowaways have all been WOKED!");
+            Plugin.HailstormLog("Stowaways have all been WOKED!");
         }
 
     }
@@ -451,11 +451,11 @@ public class Weather
 
                 BG.WindAngle = Mathf.Lerp(lerpedWind, Mathf.Sign(whatEven), 0.2f * (0f - Mathf.Abs(lerpedWind)));
                 BG.WindAngle = Mathf.Lerp(BG.WindAngle, Mathf.Sign(BG.WindAngle), 0.05f * Mathf.InverseLerp(0, 0.2f, Mathf.Abs(BG.WindAngle)));
-                Debug.Log("Current wind angle1: " + BG.WindAngle);
+                Plugin.TestingLog("Current wind angle1: " + BG.WindAngle);
                 if (Mathf.Abs(BG.WindAngle) > 0.8f)
                 {
                     BG.WindAngle = Mathf.Lerp(BG.WindAngle, 0.8f * Mathf.Sign(BG.WindAngle), 0.5f);
-                    Debug.Log("Current wind angle2: " + BG.WindAngle);
+                    Plugin.TestingLog("Current wind angle2: " + BG.WindAngle);
                 }
 
             }
@@ -752,6 +752,14 @@ public class Weather
             }
             if (spawnCoordinate.HasValue)
             {
+                AbstractConsumable dp = new(room.world, MoreSlugcatsEnums.AbstractObjectType.DandelionPeach, null, spawnCoordinate.Value, room.game.GetNewID(), room.abstractRoom.index, -1, null);
+                room.abstractRoom.AddEntity(dp);
+                dp.RealizeInRoom();
+                foreach (BodyChunk chunk in dp.realizedObject.bodyChunks)
+                {
+                    chunk.pos.y += 100;
+                }
+                return;
                 if (Random.value < rI.erraticWindWrongDandelionTypeChance)
                 {
                     AbstractCreature PeachSpider = new(room.world, StaticWorld.GetCreatureTemplate(HSEnums.CreatureType.PeachSpider), null, spawnCoordinate.Value, room.game.GetNewID());
@@ -765,7 +773,7 @@ public class Weather
                 }
                 else
                 {
-                    AbstractConsumable DandelionPeach = new(room.world, DLCSharedEnums.AbstractObjectType.DandelionPeach, null, spawnCoordinate.Value, room.game.GetNewID(), room.abstractRoom.index, -1, null);
+                    AbstractConsumable DandelionPeach = new(room.world, MoreSlugcatsEnums.AbstractObjectType.DandelionPeach, null, spawnCoordinate.Value, room.game.GetNewID(), room.abstractRoom.index, -1, null);
                     room.abstractRoom.AddEntity(DandelionPeach);
                     DandelionPeach.RealizeInRoom();
                     foreach (BodyChunk chunk in DandelionPeach.realizedObject.bodyChunks)
@@ -810,7 +818,7 @@ public class Weather
             }
 
             if (obj is Creature windImmune && (
-                windImmune.Template.type == DLCSharedEnums.CreatureTemplateType.StowawayBug ||
+                windImmune.Template.type == MoreSlugcatsEnums.CreatureTemplateType.StowawayBug ||
                 windImmune.Template.type == HSEnums.CreatureType.GorditoGreenieLizard))
             {
                 return;

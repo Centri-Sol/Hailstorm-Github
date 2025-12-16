@@ -69,7 +69,7 @@ public class AmbientSpark : GreenSparks.GreenSpark
             }
             if (room.PointSubmerged(pos))
             {
-                pos.y = room.FloatWaterLevel(pos);
+                pos.y = room.FloatWaterLevel(pos.x);
                 life -= 0.025f;
             }
         }

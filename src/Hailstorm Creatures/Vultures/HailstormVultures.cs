@@ -46,13 +46,25 @@ public class HailstormVultures
     public static ConditionalWeakTable<Vulture, CWT.VultureInfo> VulData = new();
     public static bool AddVultureToCWT(Vulture vul, AbstractCreature absVul, World world)
     {
-        return absVul is null
-            ? throw new ArgumentNullException(nameof(absVul))
-            : vul.Template.type == HSEnums.CreatureType.Raven
-|| (IsIncanStory(world.game) && (
+        if (absVul is null)
+        {
+            throw new ArgumentNullException(nameof(absVul));
+        }
+        if (vul is Raven)
+        {
+            return true;
+        }
+        if (IsIncanStory(world.game) && (
                 vul.Template.type == CreatureTemplate.Type.KingVulture ||
-                vul.Template.type == DLCSharedEnums.CreatureTemplateType.MirosVulture))
-|| (vul.Template.type == DLCSharedEnums.CreatureTemplateType.MirosVulture && HSRemix.AuroricMirosEverywhere.Value);
+                vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture))
+        {
+            return true;
+        }
+        if (vul.Template.type == MoreSlugcatsEnums.CreatureTemplateType.MirosVulture && HSRemix.AuroricMirosEverywhere.Value)
+        {
+            return true;
+        }
+        return false;
     }
 
     public static void HailstormVulturesSetup(On.Vulture.orig_ctor orig, Vulture vul, AbstractCreature absVul, World world)
@@ -357,15 +369,15 @@ public class HailstormVultures
                 blizzPush = new Vector2(0f - tusk.room.blizzardGraphics.WindAngle, 0.1f) * 0.75f;
                 blizzPush *= blizzardPixel.g * (5f * tusk.room.blizzardGraphics.WindStrength);
 
-                if (tusk.room.waterInverted && tuskPos.y > tusk.room.FloatWaterLevel(tuskPos))
+                if (tusk.room.waterInverted && tuskPos.y > tusk.room.FloatWaterLevel(tuskPos.x))
                 {
                     break;
                 }
-                else if (!MMF.cfgVanillaExploits.Value && tusk.room.FloatWaterLevel(tuskPos) > (tusk.room.abstractRoom.size.y + 20) * 20f)
+                else if (!MMF.cfgVanillaExploits.Value && tusk.room.FloatWaterLevel(tuskPos.x) > (tusk.room.abstractRoom.size.y + 20) * 20f)
                 {
                     break;
                 }
-                else if (tusk.room.FloatWaterLevel(tuskPos) > tuskPos.y)
+                else if (tusk.room.FloatWaterLevel(tuskPos.x) > tuskPos.y)
                 {
                     break;
                 }
@@ -392,9 +404,7 @@ public class HailstormVultures
     }
     public static bool ErraticWindTuskWait(On.KingTusks.orig_WantToShoot orig, KingTusks kt, bool checkVisualOnAnyTargetChunk, bool checkMinDistance)
     {
-        return (!Weather.ErraticWindCycle ||
-!Weather.ExtremeWindIntervals[Weather.WindInterval])
-&& orig(kt, checkVisualOnAnyTargetChunk, checkMinDistance);
+        return (!Weather.ErraticWindCycle || !Weather.ExtremeWindIntervals[Weather.WindInterval]) && orig(kt, checkVisualOnAnyTargetChunk, checkMinDistance);
     }
 
     //---------------------------------------
@@ -466,7 +476,7 @@ public class HailstormVultures
             {
                 if (vul.LaserLight is null)
                 {
-                    vul.LaserLight = new(vi.currentPrey.mainBodyChunk.pos, false, Custom.HSL2RGB(Mathf.Lerp(80 / 360f, 0, vul.LaserLight.alpha), 1, 0.5f), vul)
+                    vul.LaserLight = new(vi.currentPrey.mainBodyChunk.pos, false, Custom.HSL2RGB(Mathf.Lerp(80 / 360f, 0, 0), 1, 0.5f), vul)
                     {
                         affectedByPaletteDarkness = 0,
                         submersible = true
@@ -521,44 +531,45 @@ public class HailstormVultures
     }
     public static void AuroricMirosShortcutProtection(On.Vulture.orig_JawSlamShut orig, Vulture vul)
     {
-        if (vul?.room?.abstractRoom?.creatures != null &&
-            vul.bodyChunks != null &&
-            VulData != null &&
-            VulData.TryGetValue(vul, out CWT.VultureInfo vi) &&
-            vi != null &&
-            vi.Miros)
+        if (vul?.room?.abstractRoom?.creatures is null ||
+            vul.bodyChunks is null ||
+            !VulData.TryGetValue(vul, out CWT.VultureInfo vi) ||
+            !vi.Miros)
         {
-            for (int i = 0; i < vul.room.abstractRoom.creatures.Count; i++)
+            orig(vul);
+            return;
+        }
+
+        for (int i = 0; i < vul.room.abstractRoom.creatures.Count; i++)
+        {
+            if (vul.grasps[0] is not null)
+            {
+                break;
+            }
+            Creature ctr = vul.room.abstractRoom.creatures[i]?.realizedCreature;
+            if (ctr is null ||
+                ctr is not Player plr ||
+                plr.cantBeGrabbedCounter <= 0 ||
+                plr.enteringShortCut.HasValue ||
+                plr.inShortcut ||
+                (vul.AI is not null && !vul.AI.DoIWantToBiteCreature(vul.room.abstractRoom.creatures[i])))
+            {
+                continue;
+            }
+
+            for (int j = 0; j < ctr.bodyChunks.Length; j++)
             {
                 if (vul.grasps[0] is not null)
                 {
                     break;
                 }
-                Creature ctr = vul.room.abstractRoom.creatures[i].realizedCreature;
-                if (vul.room.abstractRoom.creatures[i] == vul.abstractCreature ||
-                    !vul.AI.DoIWantToBiteCreature(vul.room.abstractRoom.creatures[i]) ||
-                    ctr is null ||
-                    ctr is not Player plr ||
-                    plr.cantBeGrabbedCounter <= 0 ||
-                    plr.enteringShortCut.HasValue ||
-                    plr.inShortcut)
+                Vector2 headDirection = Custom.DirVec(vul.neck.Tip.pos, vul.Head().pos);
+                if (!Custom.DistLess(vul.Head().pos + (headDirection * 20f), ctr.bodyChunks[j].pos, 20f + ctr.bodyChunks[j].rad) || !vul.room.VisualContact(vul.Head().pos, ctr.bodyChunks[j].pos))
                 {
                     continue;
                 }
-                for (int j = 0; j < ctr.bodyChunks.Length; j++)
-                {
-                    if (vul.grasps[0] is not null)
-                    {
-                        break;
-                    }
-                    Vector2 headDirection = Custom.DirVec(vul.neck.Tip.pos, vul.Head().pos);
-                    if (!Custom.DistLess(vul.Head().pos + (headDirection * 20f), ctr.bodyChunks[j].pos, 20f + ctr.bodyChunks[j].rad) || !vul.room.VisualContact(vul.Head().pos, ctr.bodyChunks[j].pos))
-                    {
-                        continue;
-                    }
-                    _ = vul.Grab(ctr, 0, j, Creature.Grasp.Shareability.CanOnlyShareWithNonExclusive, 1, overrideEquallyDominant: true, pacifying: false);
-                    break;
-                }
+                _ = vul.Grab(ctr, 0, j, Creature.Grasp.Shareability.CanOnlyShareWithNonExclusive, 1, overrideEquallyDominant: true, pacifying: false);
+                break;
             }
         }
         orig(vul);

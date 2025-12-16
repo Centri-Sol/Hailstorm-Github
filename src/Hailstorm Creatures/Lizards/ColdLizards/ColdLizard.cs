@@ -223,6 +223,10 @@ public class ColdLizard : Lizard
     }
     public virtual void GrabbedUpdate()
     {
+        if (room is null)
+        {
+            return;
+        }
 
         foreach (AbstractCreature absCtr in room.abstractRoom.creatures)
         {
@@ -520,8 +524,7 @@ public class ColdLizard : Lizard
 
     public override bool SpearStick(Weapon source, float DMG, BodyChunk hitChunk, Appendage.Pos onAppendagePos, Vector2 direction)
     {
-        return (!ColdState.armored || (hitChunk.index != 1 && hitChunk.index != 2))
-&& base.SpearStick(source, DMG, hitChunk, onAppendagePos, direction);
+        return (!ColdState.armored || (hitChunk.index != 1 && hitChunk.index != 2)) && base.SpearStick(source, DMG, hitChunk, onAppendagePos, direction);
     }
     public override void Violence(BodyChunk source, Vector2? directionAndMomentum, BodyChunk hitChunk, Appendage.Pos onAppendagePos, DamageType dmgType, float DMG, float XSTUN)
     {

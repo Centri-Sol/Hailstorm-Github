@@ -45,9 +45,9 @@ public class Cyanwing : Centipede
                     Mathf.Lerp(4, 6.5f, size),
                     Mathf.Pow(Mathf.Clamp(Mathf.Sin(Mathf.PI * bodyLengthProgression), 0, 1), Mathf.Lerp(0.7f, 0.3f, size)));
             chunkRad += 0.3f;
+            chunkRad = Mathf.Lerp(chunkRad, Mathf.Lerp(2, 3.5f, size), 0.4f);
 
             float chunkMass = Mathf.Lerp(3 / 70f, 11 / 34f, Mathf.Pow(size, 1.4f));
-
             chunkMass += 0.02f + (0.08f * Mathf.Clamp01(Mathf.Sin(Mathf.InverseLerp(0f, bodyChunks.Length - 1, c) * Mathf.PI)) * 0.5f);
 
             bodyChunks[c] = new(this, c, default, chunkRad, chunkMass);
@@ -94,7 +94,8 @@ public class Cyanwing : Centipede
     {
         List<CyanwingState.Shell> oldShells = CyanState.superShells;
         CyanState.superShells = new(bodyChunks.Length);
-        if (oldShells is not null && oldShells.Count > 0)
+        if (oldShells is not null &&
+            oldShells.Count > 0)
         {
 
         }
@@ -443,7 +444,6 @@ public class Cyanwing : Centipede
 
         base.Violence(source, dirAndMomentum, hitChunk, hitAppen, dmgType, damage, bonusStun);
 
-        Debug.Log("damage " + damage + " | source: " + (source?.owner?.abstractPhysicalObject?.type?.value ?? "null"));
     }
 
     public virtual void ZapGrabber(Creature grabber, BodyChunk grabbedChunk)
@@ -555,7 +555,7 @@ public class Cyanwing : Centipede
             BodyChunk smokeChunk = unfortunateMotherfucker.bodyChunks[Random.Range(0, unfortunateMotherfucker.bodyChunks.Length)];
             if (vaporSmoke.AddParticle(smokeChunk.pos, (Custom.RNV() * Random.Range(8f, 12f)) + new Vector2(0f, 30f), 200) is Smoke.FireSmoke.FireSmokeParticle vapor)
             {
-                vapor.lifeTime = 240f;
+                vapor.lifeTime = 160f;
                 vapor.colorFadeTime = 100;
                 vapor.effectColor = ShortCutColor();
                 vapor.rad *= 6f;
@@ -617,7 +617,8 @@ public class Cyanwing : Centipede
             ctr.Stun(spasmTime);
             ctr.LoseAllGrasps();
             ctr.Hypothermia -= 1 / ElectricResistance;
-
+			
+			LoseAllGrasps();
             shockGiveUpCounter = Math.Max(shockGiveUpCounter, 30);
             AI.annoyingCollisions = Math.Min(AI.annoyingCollisions / 2, 150);
         }
@@ -868,10 +869,7 @@ public class Cyanwing : Centipede
 
     }
 
-    public override Color ShortCutColor()
-    {
-        return Custom.HSL2RGB((minHue + maxHue) / 2f, saturation, 0.5f);
-    }
+    public override Color ShortCutColor() => Custom.HSL2RGB((minHue + maxHue) / 2f, saturation, 0.5f);
 
     // - - - - - - - - - - - - - - - - - - - -
 
